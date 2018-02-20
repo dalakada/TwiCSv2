@@ -91,7 +91,7 @@ class EntityResolver ():
         self.incomplete_tweets=self.get_incomplete_tf(untrashed_tweets)
 
         #recording tp, fp , f1
-        self.accuracy_tuples_prev_batch.append((just_converted_tweets.tp.sum(), just_converted_tweets.total_mention.sum(),just_converted_tweets.fp.sum(),just_converted_tweets.fn.sum()))
+        #self.accuracy_tuples_prev_batch.append((just_converted_tweets.tp.sum(), just_converted_tweets.total_mention.sum(),just_converted_tweets.fp.sum(),just_converted_tweets.fn.sum()))
 
 
         #operations for getting ready for next batch.
