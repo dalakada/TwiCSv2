@@ -7,7 +7,11 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
 import pandas as pd
+import math
 from scipy import spatial
+from sklearn.decomposition import PCA as sklearnPCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from pandas.tools.plotting import parallel_coordinates
 
 
 #entity_synvec_agg=[0.6103390782,0.0017224607,0.0819329593,0.1391210505,0.0210878352,0.1420126381]
@@ -17,48 +21,48 @@ ambiguous_synvec_agg=[0.3107914277,0.2406605708,0.0971315279,0.0478697633,0.1069
 candidate_records=pd.read_csv("candidate_base_new_analysis.csv",sep =',')
 
 #-----------------------------------------------------Correlation Coefficients w Scatter Plots-----------------------------------------------------------
-temp_candidate_records=candidate_records[(candidate_records['normalized_cap']>0)]
-print("Capitalized:", temp_candidate_records['normalized_cap'].corr(temp_candidate_records['probability']))
+# temp_candidate_records=candidate_records[(candidate_records['normalized_cap']>0)]
+# print("Capitalized:", temp_candidate_records['normalized_cap'].corr(temp_candidate_records['probability']))
 # plt.plot(temp_candidate_records['normalized_cap'], temp_candidate_records['probability'], 'r.')
 # plt.xlabel('Capitalized frequency')
 # plt.ylabel('Probability')
 # plt.axis([0, 1, 0, 1])
 # plt.show()
 
-temp_candidate_records=candidate_records[(candidate_records['normalized_non-cap']>0)]
-print("Non-capitalized:", temp_candidate_records['normalized_non-cap'].corr(temp_candidate_records['probability']))
+# temp_candidate_records=candidate_records[(candidate_records['normalized_non-cap']>0)]
+# print("Non-capitalized:", temp_candidate_records['normalized_non-cap'].corr(temp_candidate_records['probability']))
 # plt.plot(temp_candidate_records['normalized_non-cap'], temp_candidate_records['probability'], 'g.')
 # plt.xlabel('Non Capitalized frequency')
 # plt.ylabel('Probability')
 # plt.axis([0, 1, 0, 1])
 # plt.show()
 
-temp_candidate_records=candidate_records[(candidate_records['normalized_capnormalized_substring-cap']>0)]
-print("Substring Capitalized:",	temp_candidate_records['normalized_capnormalized_substring-cap'].corr(temp_candidate_records['probability']))
+# temp_candidate_records=candidate_records[(candidate_records['normalized_capnormalized_substring-cap']>0)]
+# print("Substring Capitalized:",	temp_candidate_records['normalized_capnormalized_substring-cap'].corr(temp_candidate_records['probability']))
 # plt.plot(temp_candidate_records['normalized_capnormalized_substring-cap'], temp_candidate_records['probability'], 'b.')
 # plt.xlabel('Substring Capitalized frequency')
 # plt.ylabel('Probability')
 # plt.axis([0, 1, 0, 1])
 # plt.show()
 
-temp_candidate_records=candidate_records[(candidate_records['normalized_s-o-sCap']>0)]
-print("Start-of-sentence Capitalized:",	temp_candidate_records['normalized_s-o-sCap'].corr(temp_candidate_records['probability']))
+# temp_candidate_records=candidate_records[(candidate_records['normalized_s-o-sCap']>0)]
+# print("Start-of-sentence Capitalized:",	temp_candidate_records['normalized_s-o-sCap'].corr(temp_candidate_records['probability']))
 # plt.plot(temp_candidate_records['normalized_s-o-sCap'], temp_candidate_records['probability'], 'm.')
 # plt.xlabel('Start-of-Sentence Capitalized frequency')
 # plt.ylabel('Probability')
 # plt.axis([0, 1, 0, 1])
 # plt.show()
 
-temp_candidate_records=candidate_records[(candidate_records['normalized_all-cap']>0)]
-print("All Capitalized:",	temp_candidate_records['normalized_all-cap'].corr(temp_candidate_records['probability']))
+# temp_candidate_records=candidate_records[(candidate_records['normalized_all-cap']>0)]
+# print("All Capitalized:",	temp_candidate_records['normalized_all-cap'].corr(temp_candidate_records['probability']))
 # plt.plot(temp_candidate_records['normalized_all-cap'], temp_candidate_records['probability'], 'c.')
 # plt.xlabel('All Capitalized frequency')
 # plt.ylabel('Probability')
 # plt.axis([0, 1, 0, 1])
 # plt.show()
 
-temp_candidate_records=candidate_records[(candidate_records['normalized_non-discriminative']>0)]
-print("Non-discriminative:",	temp_candidate_records['normalized_non-discriminative'].corr(temp_candidate_records['probability']))
+# temp_candidate_records=candidate_records[(candidate_records['normalized_non-discriminative']>0)]
+# print("Non-discriminative:",	temp_candidate_records['normalized_non-discriminative'].corr(temp_candidate_records['probability']))
 # plt.plot(temp_candidate_records['normalized_non-discriminative'], temp_candidate_records['probability'], 'y.')
 # plt.xlabel('Non-discriminative frequency')
 # plt.ylabel('Probability')
@@ -146,3 +150,73 @@ ambiguous_candidate_records=candidate_records[(candidate_records.status=="a")]
 #  	cosine_distance_ent=spatial.distance.cosine(candidate_synvec, entity_synvec_agg)
 #  	cosine_distance_non_ent=spatial.distance.cosine(candidate_synvec, non_entity_synvec_agg)
 #  	print(row['candidate'],abs(cosine_distance_ent-cosine_distance_non_ent))
+
+
+#--------------------------------Multi-dimensional data plot---------------------------------------------------
+
+y=candidate_records['class']
+candidate_records['normalized_length']=candidate_records['length']/(candidate_records['length'].max())
+x=candidate_records[['normalized_length','normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
+
+#print(candidate_records['normalized_length'])
+#--------------Using PCA
+pca = sklearnPCA(n_components=2) #2-dimensional PCA
+transformed = pd.DataFrame(pca.fit_transform(x))
+#print(transformed[y==1])
+plt.scatter(transformed[y==1][0], transformed[y==1][1], label='Entity', c='red')
+# for i, row in transformed[y==1].iterrows():
+# 	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
+#     plt.annotate(str(i), ((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1]))
+
+#print(transformed[y==2])
+plt.scatter(transformed[y==2][0], transformed[y==2][1], label='Ambiguous', c='blue')
+for i, row in transformed[y==2].iterrows():
+	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
+    plt.annotate(str(i), ((transformed[y==2].loc[[i]])[0],(transformed[y==2].loc[[i]])[1]))
+
+plt.scatter(transformed[y==3][0], transformed[y==3][1], label='Non-Entity', c='lightgreen')
+#print(len(transformed))
+# for index in range(len(transformed)):
+# 	plt.text(transformed[index,0], transformed[index,1], str(index))
+plt.xlabel('Transformed X-axis')
+plt.ylabel('Transformed Y-axis')
+plt.title("PCA plot of Entity Candidates")
+plt.legend()
+#plt.savefig('test-point-visualization-PCA.png', dpi = 600)
+plt.show()
+
+
+#--------------Using LDA
+# lda = LDA(n_components=2) #2-dimensional LDA
+# lda_transformed = pd.DataFrame(lda.fit_transform(x, y))
+
+# # Plot all three series
+# plt.scatter(lda_transformed[y==1][0], lda_transformed[y==1][1], label='Entity', c='red')
+# plt.scatter(lda_transformed[y==2][0], lda_transformed[y==2][1], label='Ambiguous', c='blue')
+# plt.scatter(lda_transformed[y==3][0], lda_transformed[y==3][1], label='Non-Entity', c='lightgreen')
+# plt.xlabel('Transformed X-axis')
+# plt.ylabel('Transformed Y-axis')
+# plt.title("LDA plot of Entity Candidates")
+
+# # Display legend and show plot
+# plt.legend(loc=3)
+# plt.show()
+
+
+#--------------Using Parallel Coordinates
+# y=candidate_records['status']
+# # Select features to include in the plot
+# plot_feat = ['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']
+
+# # Concat classes with the normalized data
+# data_norm = pd.concat([x, y], axis=1)
+
+# # Perform parallel coordinate plot
+# parallel_coordinates(data_norm, 'status')
+# #my_labels=['Entity','Ambiguous','Non-Entity']
+# plt.xticks(rotation=90)
+# plt.legend()
+# plt.title("Entity Candidates on Parallel Feature Coordinates")
+# plt.savefig('test-point-visualization-parallel-coordinates.png', dpi = 600)
+# plt.show()
+
