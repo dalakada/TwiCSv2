@@ -34,8 +34,9 @@ global total_time
 total_time=0
 Phase1= phase1.SatadishaModule()
 Phase2 = phase2.EntityResolver()
-tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',')
-# tweets=tweets[:1000:]
+#tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',')
+tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
+tweets_unpartitoned=tweets_unpartitoned[:20000:]
 print('Tweets are in memory...')
 batch_size=600
 length=len(tweets_unpartitoned)
@@ -54,7 +55,7 @@ batch_size_recorder=[]
 
 whole_level=[]
 tweets = shuffle(tweets_unpartitoned)
-z_score=-0.2
+z_score=-0.124
 
 #kf = KFold(n_splits=5,random_state=1000) 
 # for train_ind,test_ind in kf.split(tweets_unpartitoned):

@@ -294,7 +294,7 @@ class EntityResolver ():
 
     # recall_correction
     def set_partition_dict(self,candidate_featureBase_DF,infrequent_candidates):
-        #print(candidate_featureBase_DF)
+        #print(list(self.partition_dict.keys()))
         ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="a")|(candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
         good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF.status=="g")].candidate.tolist()
         flag1=False
@@ -304,13 +304,14 @@ class EntityResolver ():
             ambiguous_bad_candidates_wFilter= ambiguous_bad_candidates[ambiguous_bad_candidates.max_column=='substring-cap']
 
             #good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF.status=="g")].candidate.tolist()
-            #print(len(ambiguous_bad_candidates_wFilter.candidate.tolist()))
+            #print(ambiguous_bad_candidates_wFilter.candidate.tolist())
 
             for candidate in ambiguous_bad_candidates_wFilter.candidate.tolist():
                 #print(candidate)
                 if candidate not in self.partition_dict.keys():
                     substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates,False)
                     if(len(substring_candidates)>0):
+                        #print(candidate,substring_candidates)
                         self.partition_dict[candidate]=substring_candidates
 
             flag1= True

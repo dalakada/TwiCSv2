@@ -139,6 +139,7 @@ class SatadishaModule():
 
         #--------------------------------------PHASE I---------------------------------------------------
         for index, row in self.batch.iterrows():
+
             now = datetime.datetime.now()
             #now=str(now.hour)+":"+str(now.minute)+":"+str(now.second)
 
@@ -147,34 +148,40 @@ class SatadishaModule():
             user=str(row['User'])
             #userType=str(row['User Type'])
             tweetText=str(row['TweetText'])
+            #print(tweetText)
             #correct_candidates_tweet=str(row['Mentions'])
             #print(str(index))
 
-            annot_raw=str(row['mentions_other'])
+            #annot_raw=str(row['mentions_other'])
+            annot_raw=""
 
-            stanford_candidates=str(row['stanford_candidates'])
-            stanford_candidates=stanford_candidates.split(",")
-            stanford_candidates=list(filter(None, stanford_candidates))
-            stanford_candidates = [candidatee for candidatee in stanford_candidates if str(candidatee) != 'nan']
+            # stanford_candidates=str(row['stanford_candidates'])
+            # stanford_candidates=stanford_candidates.split(",")
+            # stanford_candidates=list(filter(None, stanford_candidates))
+            # stanford_candidates = [candidatee for candidatee in stanford_candidates if str(candidatee) != 'nan']
+            stanford_candidates=""
 
-            ritter_candidates=str(row['ritter_candidates'])
-            ritter_candidates=ritter_candidates.split(",")
-            ritter_candidates=list(filter(None, ritter_candidates))
-            ritter_candidates = [candidatee for candidatee in ritter_candidates if str(candidatee) != 'nan']
+            # ritter_candidates=str(row['ritter_candidates'])
+            # ritter_candidates=ritter_candidates.split(",")
+            # ritter_candidates=list(filter(None, ritter_candidates))
+            # ritter_candidates = [candidatee for candidatee in ritter_candidates if str(candidatee) != 'nan']
+            ritter_candidates = ""
 
-            calai_candidates=str(row['calai_candidates'])
-            calai_candidates=ast.literal_eval(calai_candidates)
+            # calai_candidates=str(row['calai_candidates'])
+            calai_candidates=""
+            #calai_candidates=ast.literal_eval(calai_candidates)
             # print(calai_candidates)
 
 
 
-            split_list=annot_raw.split(";")
-            #split_listFilter=list(filter(lambda element: element.strip()!='', split_list))
-            split_listFilter=list(filter(None, split_list))
+            # split_list=annot_raw.split(";")
+            # #split_listFilter=list(filter(lambda element: element.strip()!='', split_list))
+            # split_listFilter=list(filter(None, split_list))
 
 
             #annotations in list of list structure
-            filtered_2_times=list(map(lambda element: list(filter(None, element.split(','))), split_list))
+            #filtered_2_times=list(map(lambda element: list(filter(None, element.split(','))), split_list))
+            
             #capitalization module
             #if all words are capitalized:
             # print(index)
@@ -200,9 +207,9 @@ class SatadishaModule():
 
 
             #filtering nan values 
-            if(len(filtered_2_times[0])==1):
-                if(filtered_2_times[0][0]=='nan'):
-                    filtered_2_times[0]=[]
+            # if(len(filtered_2_times[0])==1):
+            #     if(filtered_2_times[0][0]=='nan'):
+            #         filtered_2_times[0]=[]
 
 
             # print(index,filtered_2_times,tweetSentenceList)
@@ -214,14 +221,14 @@ class SatadishaModule():
                 sentence=tweetSentenceList[sen_index]
 
                 # uncomment this 
-                modified_annotations=[self.normalize(candidate)for candidate in filtered_2_times[sen_index]]
+                #modified_annotations=[self.normalize(candidate)for candidate in filtered_2_times[sen_index]]
 
                 annotation=[]
-                for candidate in modified_annotations:
-                    if(candidate=="nan"):
-                        pass
-                    else:
-                        annotation.append(candidate)
+                # for candidate in modified_annotations:
+                #     if(candidate=="nan"):
+                #         pass
+                #     else:
+                #         annotation.append(candidate)
 
 
                 # for i in filtered_2_times[sen_index]:

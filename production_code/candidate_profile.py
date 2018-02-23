@@ -164,20 +164,20 @@ pca = sklearnPCA(n_components=2) #2-dimensional PCA
 transformed = pd.DataFrame(pca.fit_transform(x))
 #print(transformed[y==1])
 plt.scatter(transformed[y==1][0], transformed[y==1][1], label='Entity', c='red')
-# for i, row in transformed[y==1].iterrows():
-# 	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
-#     plt.annotate(str(i), ((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1]))
+for i, row in transformed[y==1].iterrows():
+	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
+    plt.annotate(str(i), ((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1]))
 
 #print(transformed[y==2])
 plt.scatter(transformed[y==2][0], transformed[y==2][1], label='Ambiguous', c='blue')
-for i, row in transformed[y==2].iterrows():
-	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
-    plt.annotate(str(i), ((transformed[y==2].loc[[i]])[0],(transformed[y==2].loc[[i]])[1]))
+# for i, row in transformed[y==2].iterrows():
+# 	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
+#     plt.annotate(str(i), ((transformed[y==2].loc[[i]])[0],(transformed[y==2].loc[[i]])[1]))
 
 plt.scatter(transformed[y==3][0], transformed[y==3][1], label='Non-Entity', c='lightgreen')
 #print(len(transformed))
-# for index in range(len(transformed)):
-# 	plt.text(transformed[index,0], transformed[index,1], str(index))
+# for i, row in transformed[y==3].iterrows():
+# 	plt.annotate(str(i), ((transformed[y==3].loc[[i]])[0],(transformed[y==3].loc[[i]])[1]))
 plt.xlabel('Transformed X-axis')
 plt.ylabel('Transformed Y-axis')
 plt.title("PCA plot of Entity Candidates")
@@ -197,7 +197,7 @@ plt.show()
 # plt.xlabel('Transformed X-axis')
 # plt.ylabel('Transformed Y-axis')
 # plt.title("LDA plot of Entity Candidates")
-
+# plt.savefig('test_point_visualization_LDA_20K.png')
 # # Display legend and show plot
 # plt.legend(loc=3)
 # plt.show()
