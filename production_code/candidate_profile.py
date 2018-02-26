@@ -247,7 +247,14 @@ plt.scatter(transformed[y==3][:, 0], transformed[y==3][:, 1], label='Non-Entity'
 plt.xlabel('Transformed X-axis')
 plt.ylabel('Transformed Y-axis')
 plt.legend()
+
 plt.title("t-SNE plot of Entity Candidates")
 
 #plt.savefig('test-point-visualization-PCA.png', dpi = 600)
 plt.show()
+
+plt.title("y-SNE plot of Entity Candidates")
+
+#plt.savefig('test-point-visualization-PCA.png', dpi = 600)
+plt.show()
+
