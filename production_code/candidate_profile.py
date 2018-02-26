@@ -11,6 +11,7 @@ import math
 from scipy import spatial
 from sklearn.decomposition import PCA as sklearnPCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.manifold import TSNE
 from pandas.tools.plotting import parallel_coordinates
 
 
@@ -18,7 +19,7 @@ from pandas.tools.plotting import parallel_coordinates
 ambiguous_synvec_agg=[0.3107914277,0.2406605708,0.0971315279,0.0478697633,0.1069009451,0.1966457653]
 #non_entity_synvec_agg=[0.1042614218,0.0083554817,0.0556537306,0.0464007013,0.6816091473,0.1037195173]
 
-candidate_records=pd.read_csv("candidate_base_new_analysis.csv",sep =',')
+candidate_records=pd.read_csv("candidate_base_new_analysis_3k.csv",sep =',')
 
 #-----------------------------------------------------Correlation Coefficients w Scatter Plots-----------------------------------------------------------
 # temp_candidate_records=candidate_records[(candidate_records['normalized_cap']>0)]
@@ -159,31 +160,31 @@ candidate_records['normalized_length']=candidate_records['length']/(candidate_re
 x=candidate_records[['normalized_length','normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
 
 #print(candidate_records['normalized_length'])
-#--------------Using PCA
-pca = sklearnPCA(n_components=2) #2-dimensional PCA
-transformed = pd.DataFrame(pca.fit_transform(x))
-#print(transformed[y==1])
-plt.scatter(transformed[y==1][0], transformed[y==1][1], label='Entity', c='red')
-for i, row in transformed[y==1].iterrows():
-	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
-    plt.annotate(str(i), ((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1]))
-
-#print(transformed[y==2])
-plt.scatter(transformed[y==2][0], transformed[y==2][1], label='Ambiguous', c='blue')
-# for i, row in transformed[y==2].iterrows():
+# #--------------Using PCA
+# pca = sklearnPCA(n_components=2) #2-dimensional PCA
+# transformed = pd.DataFrame(pca.fit_transform(x))
+# #print(transformed[y==1])
+# plt.scatter(transformed[y==1][0], transformed[y==1][1], label='Entity', c='red')
+# for i, row in transformed[y==1].iterrows():
 # 	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
-#     plt.annotate(str(i), ((transformed[y==2].loc[[i]])[0],(transformed[y==2].loc[[i]])[1]))
+#     plt.annotate(str(i), ((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1]))
 
-plt.scatter(transformed[y==3][0], transformed[y==3][1], label='Non-Entity', c='lightgreen')
-#print(len(transformed))
-# for i, row in transformed[y==3].iterrows():
-# 	plt.annotate(str(i), ((transformed[y==3].loc[[i]])[0],(transformed[y==3].loc[[i]])[1]))
-plt.xlabel('Transformed X-axis')
-plt.ylabel('Transformed Y-axis')
-plt.title("PCA plot of Entity Candidates")
-plt.legend()
-#plt.savefig('test-point-visualization-PCA.png', dpi = 600)
-plt.show()
+# #print(transformed[y==2])
+# plt.scatter(transformed[y==2][0], transformed[y==2][1], label='Ambiguous', c='blue')
+# # for i, row in transformed[y==2].iterrows():
+# # 	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
+# #     plt.annotate(str(i), ((transformed[y==2].loc[[i]])[0],(transformed[y==2].loc[[i]])[1]))
+
+# plt.scatter(transformed[y==3][0], transformed[y==3][1], label='Non-Entity', c='lightgreen')
+# #print(len(transformed))
+# # for i, row in transformed[y==3].iterrows():
+# # 	plt.annotate(str(i), ((transformed[y==3].loc[[i]])[0],(transformed[y==3].loc[[i]])[1]))
+# plt.xlabel('Transformed X-axis')
+# plt.ylabel('Transformed Y-axis')
+# plt.title("PCA plot of Entity Candidates")
+# plt.legend()
+# #plt.savefig('test-point-visualization-PCA.png', dpi = 600)
+# plt.show()
 
 
 #--------------Using LDA
@@ -220,3 +221,32 @@ plt.show()
 # plt.savefig('test-point-visualization-parallel-coordinates.png', dpi = 600)
 # plt.show()
 
+#--------------Using t-SNE
+
+tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=500)
+transformed = tsne.fit_transform(x)
+print(len(transformed[y]))
+plt.scatter(transformed[y==1][:, 0], transformed[y==1][:, 1], label='Entity', c='red')
+# # for i, row in transformed[y==1].iterrows():
+# # 	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
+# #     plt.annotate(str(i), ((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1]))
+
+# #print(transformed[y==2])
+plt.scatter(transformed[y==2][:, 0], transformed[y==2][:, 1], label='Ambiguous', c='blue')
+# # for i, row in transformed[y==2].iterrows():
+# # 	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
+# #     plt.annotate(str(i), ((transformed[y==2].loc[[i]])[0],(transformed[y==2].loc[[i]])[1]))
+
+plt.scatter(transformed[y==3][:, 0], transformed[y==3][:, 1], label='Non-Entity', c='lightgreen')
+#print(len(transformed))
+# for index in range(len(transformed)):
+# 	plt.text(transformed[index,0], transformed[index,1], str(index))
+
+#plt.scatter(transformed[:, 0], transformed[:, 1], c=y,label=['Entity','Ambiguous','Non-Entity'])
+plt.xlabel('Transformed X-axis')
+plt.ylabel('Transformed Y-axis')
+plt.legend()
+plt.title("y-SNE plot of Entity Candidates")
+
+#plt.savefig('test-point-visualization-PCA.png', dpi = 600)
+plt.show()
