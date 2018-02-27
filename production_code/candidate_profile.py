@@ -224,24 +224,37 @@ x=candidate_records[['normalized_length','normalized_cap','normalized_capnormali
 
 #--------------Using t-SNE
 
-tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=500)
+#tsne = TSNE(n_components=2, verbose=1, init='random', perplexity=50, n_iter=5000)
+# tsne = TSNE(n_components=2,perplexity=50)
+
+#ALTERNATE FUNCTION CONFIGS-- #early_exaggeration=4.0
+
+# For 3K set
+# tsne = TSNE(n_components=2, perplexity=40,  learning_rate=200, 
+#             min_grad_norm=0, init='random', method='exact', verbose=1)
+
+# For 20K set
+tsne = TSNE(n_components=2, perplexity=50,  learning_rate=1000,
+	# early_exaggeration=4.0, n_iter=1000,
+            min_grad_norm=0, init='random', method='exact', verbose=1)
+
 transformed = tsne.fit_transform(x)
-print(len(transformed[y]))
+#print((transformed[y]))
 plt.scatter(transformed[y==1][:, 0], transformed[y==1][:, 1], label='Entity', c='red')
-# # for i, row in transformed[y==1].iterrows():
-# # 	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
-# #     plt.annotate(str(i), ((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1]))
+# for i in range(len(transformed[y==1])):
+# 	#print(i)
+# 	plt.annotate(str(i), (transformed[y==1][i:(i+1),0],transformed[y==1][i:(i+1),1]))
 
 # #print(transformed[y==2])
 plt.scatter(transformed[y==2][:, 0], transformed[y==2][:, 1], label='Ambiguous', c='blue')
-# # for i, row in transformed[y==2].iterrows():
-# # 	#print((transformed[y==1].loc[[i]])[0],(transformed[y==1].loc[[i]])[1])
-# #     plt.annotate(str(i), ((transformed[y==2].loc[[i]])[0],(transformed[y==2].loc[[i]])[1]))
+# for i in range(len(transformed[y==2])):
+# 	#print(i)
+# 	plt.annotate(str(i+(len(transformed[y==1]))), (transformed[y==2][i:(i+1),0],transformed[y==2][i:(i+1),1]))
 
 plt.scatter(transformed[y==3][:, 0], transformed[y==3][:, 1], label='Non-Entity', c='lightgreen')
-#print(len(transformed))
-# for index in range(len(transformed)):
-# 	plt.text(transformed[index,0], transformed[index,1], str(index))
+# for i in range(len(transformed[y==3])):
+# 	#print(i)
+# 	plt.annotate(str(i+(len(transformed[y==1]))+(len(transformed[y==2]))), (transformed[y==3][i:(i+1),0],transformed[y==3][i:(i+1),1]))
 
 #plt.scatter(transformed[:, 0], transformed[:, 1], c=y,label=['Entity','Ambiguous','Non-Entity'])
 plt.xlabel('Transformed X-axis')
@@ -253,8 +266,6 @@ plt.title("t-SNE plot of Entity Candidates")
 #plt.savefig('test-point-visualization-PCA.png', dpi = 600)
 plt.show()
 
-plt.title("y-SNE plot of Entity Candidates")
-
 #plt.savefig('test-point-visualization-PCA.png', dpi = 600)
-plt.show()
+#plt.show()
 
