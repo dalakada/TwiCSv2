@@ -36,29 +36,26 @@ Phase1= phase1.SatadishaModule()
 Phase2 = phase2.EntityResolver()
 #tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',')
 tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
-tweets_unpartitoned=tweets_unpartitoned[:50000:]
+#tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
+#tweets_unpartitoned=tweets_unpartitoned[:50000:]
 print('Tweets are in memory...')
-batch_size=600
-length=len(tweets_unpartitoned)
-val=math.ceil(length/batch_size)-1
+batch_size=10000
 
+# Z_scores=[-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
+# # 
+# # Z_scores=[-0.2]
+# execution_time_list=[]
+# accuracy_list=[]
+# batch_size_recorder=[]
 
-Z_scores=[-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
-# 
-# Z_scores=[-0.2]
-
-Phase1= phase1.SatadishaModule()
-Phase2 = phase2.EntityResolver()
-execution_time_list=[]
-accuracy_list=[]
-batch_size_recorder=[]
-
-whole_level=[]
+# whole_level=[]
 tweets = shuffle(tweets_unpartitoned)
 
-#z_score=-0.11      #-----20K
+#z_score=-0.078      #-----20K
 #z_score=-0.2      #-----3K
-z_score=-0.09      #-----50K
+#z_score=-0.09      #-----50K
+z_score=-0.078         #-----50K, multiple batches
+#z_score=-0.04         #-----deduplicated_tweets,
 #kf = KFold(n_splits=5,random_state=1000) 
 # for train_ind,test_ind in kf.split(tweets_unpartitoned):
 #     print(train_ind,test_ind)
@@ -75,61 +72,69 @@ z_score=-0.09      #-----50K
         # # print(batch_size_ratio_float)
         # batch_size=len(tweets)*batch_size_ratio_float
         # batch_size_recorder.append(batch_size)
-val=math.ceil(length/batch_size)-1
+
 Phase1= phase1.SatadishaModule()
 Phase2 = phase2.EntityResolver()
 total_time=0
 execution_time_list=[]
 tweets_been_processed_list=[]
 tweets_been_processed=0
-batch_size=500
+length=len(tweets)
+val=math.ceil(length/batch_size)-1
+count=0
+
+
+for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
+
+    tuple_of= Phase1.extract(tweet_batch,g)
+    tweet_base=tuple_of[0]
+    #tweet_base.to_csv('tweet_base.csv' ,sep=',',   encoding='utf-8')
+
+    # with open('tweet_base'+str(g)+'.pkl', 'wb') as output:
+    #     pickle.dump(tweet_base, output, pickle.HIGHEST_PROTOCOL)
+
+    candidate_base=tuple_of[1]
+    phase2stopwordList=tuple_of[4]
+    # candidateList=candidate_base.displayTrie("",[])
+    # candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
+    # candidateBase.to_csv('candidate_base.csv' ,sep=',', encoding='utf-8')
+
+    # with open('candidate_base'+str(g)+'.pkl', 'wb') as output2:
+    #     pickle.dump(candidate_base, output2, pickle.HIGHEST_PROTOCOL)
 
 
 
-tuple_of= Phase1.extract(tweets,0)
-tweet_base=tuple_of[0]
-#tweet_base.to_csv('tweet_base.csv' ,sep=',',   encoding='utf-8')
+    # print('len of tweet_base = ' , len(tweet_base))
+    elapsedTime= tuple_of[3] - tuple_of[2]
+    total_time+=elapsedTime
+    print(elapsedTime,total_time)
+    print (g,' ','Produced')
+    print("**********************************************************")
+    # if(g==val):
+    #     candidateList=candidate_base.displayTrie("",[])
+    #     candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
+    #     #print(len(candidateBase))
+    #     candidateBase.to_csv('candidateBase.csv' ,sep=',', encoding='utf-8')
+    #     print('Finished writing Candidate Base')
+    time_in=time.time()
 
-# with open('tweet_base'+str(g)+'.pkl', 'wb') as output:
-#     pickle.dump(tweet_base, output, pickle.HIGHEST_PROTOCOL)
+    tweets_been_processed=tweets_been_processed+len(tweet_base)
+    tweets_been_processed_list.append(tweets_been_processed)
+    phase2TweetBase=Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,tweet_base)
+    accuracy_list=Phase2.finish()
+    time_out=time.time()
+    elapsedTime= time_out-time_in
+    total_time+=elapsedTime
+    execution_time_list.append(total_time)
+    print(elapsedTime,total_time)
+    print(g,' ','Consumed')
+    print("**********************************************************")
 
-candidate_base=tuple_of[1]
-phase2stopwordList=tuple_of[4]
-# candidateList=candidate_base.displayTrie("",[])
-# candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
-# candidateBase.to_csv('candidate_base.csv' ,sep=',', encoding='utf-8')
+    #if (g==0):
+    candidate_records=pd.read_csv("candidate_base_new.csv",sep =',')
+    ambiguous_candidate=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
+    print(ambiguous_candidate)
 
-# with open('candidate_base'+str(g)+'.pkl', 'wb') as output2:
-#     pickle.dump(candidate_base, output2, pickle.HIGHEST_PROTOCOL)
-
-
-
-# print('len of tweet_base = ' , len(tweet_base))
-elapsedTime= tuple_of[3] - tuple_of[2]
-total_time+=elapsedTime
-print(elapsedTime,total_time)
-print ('Produced')
-print("**********************************************************")
-# if(g==val):
-#     candidateList=candidate_base.displayTrie("",[])
-#     candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
-#     #print(len(candidateBase))
-#     candidateBase.to_csv('candidateBase.csv' ,sep=',', encoding='utf-8')
-#     print('Finished writing Candidate Base')
-time_in=time.time()
-
-tweets_been_processed=tweets_been_processed+len(tweet_base)
-tweets_been_processed_list.append(tweets_been_processed)
-phase2TweetBase=Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,tweet_base)
-accuracy_list=Phase2.finish()
-time_out=time.time()
-elapsedTime= time_out-time_in
-total_time+=elapsedTime
-execution_time_list.append(total_time)
-
-print(elapsedTime,total_time)
-# print(g,' ','Consumed')
-# print("**********************************************************")
 #print(len(phase2TweetBase))
 
 

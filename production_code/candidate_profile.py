@@ -234,16 +234,17 @@ x=candidate_records[['normalized_length','normalized_cap','normalized_capnormali
 #             min_grad_norm=0, init='random', method='exact', verbose=1)
 
 # For 20K set
-tsne = TSNE(n_components=2, perplexity=50,  learning_rate=1000,
-	# early_exaggeration=4.0, n_iter=1000,
+tsne = TSNE(n_components=2, perplexity=50,  learning_rate=100,
+	 early_exaggeration=4.0, 
+	n_iter=5000,
             min_grad_norm=0, init='random', method='exact', verbose=1)
 
 transformed = tsne.fit_transform(x)
 #print((transformed[y]))
 plt.scatter(transformed[y==1][:, 0], transformed[y==1][:, 1], label='Entity', c='red')
-# for i in range(len(transformed[y==1])):
-# 	#print(i)
-# 	plt.annotate(str(i), (transformed[y==1][i:(i+1),0],transformed[y==1][i:(i+1),1]))
+for i in range(len(transformed[y==1])):
+	#print(i)
+	plt.annotate(str(i), (transformed[y==1][i:(i+1),0],transformed[y==1][i:(i+1),1]))
 
 # #print(transformed[y==2])
 plt.scatter(transformed[y==2][:, 0], transformed[y==2][:, 1], label='Ambiguous', c='blue')
