@@ -219,6 +219,8 @@ class SatadishaModule():
 
             for sen_index in range(len(tweetSentenceList)):
                 sentence=tweetSentenceList[sen_index]
+                # if(index==14155):
+                #     print(sentence)
 
                 # uncomment this 
                 #modified_annotations=[self.normalize(candidate)for candidate in filtered_2_times[sen_index]]
@@ -269,6 +271,11 @@ class SatadishaModule():
                             if(temp1):
                                 temp=list(map(lambda elem: elem+'/', temp1[:-1]))
                             temp.append(temp1[-1])
+                        # elif (("-" in word)&(not word.endswith("-"))):
+                        #     temp1=list(filter(lambda elem: elem!='',word.split("-")))
+                        #     if(temp1):
+                        #         temp=list(map(lambda elem: elem+'-', temp1[:-1]))
+                        #     temp.append(temp1[-1])
                         elif "..." in word:
                             #print("here")
                             temp=list(filter(lambda elem: elem!='',word.split("...")))
@@ -344,22 +351,24 @@ class SatadishaModule():
 
                     #self.df_out=self.df_out.append(outrow,ignore_index=True)
 
-                for candidate in ne_List_final:
-                    #self.insert_dict (candidate,self.NE_container,candidateBase,index,candidate.sen_index,batch_number)
-                    candidateText=(((candidate.phraseText.lstrip(string.punctuation)).rstrip(string.punctuation)).strip(' \t\n\r')).lower()
-                    candidateText=(candidateText.lstrip('“‘’”')).rstrip('“‘’”')
-                    candidateText= self.rreplace(self.rreplace(self.rreplace(candidateText,"'s","",1),"’s","",1),"’s","",1)
-                    combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list
-                    if not ((candidateText in combined)|(candidateText.isdigit())|(self.is_float(candidateText))):
-                        self.CTrie.__setitem__(candidateText.split(),len(candidateText.split()),candidate.features,batch_number)
-                # if(index==191):
-                #     print(sentence)
-                #     self.printList(ne_List_final)
-                #if(userMention_List_final):
-                #    print(userMention_List_final)
+            for candidate in ne_List_final:
+                #self.insert_dict (candidate,self.NE_container,candidateBase,index,candidate.sen_index,batch_number)
+                candidateText=(((candidate.phraseText.lstrip(string.punctuation)).rstrip(string.punctuation)).strip(' \t\n\r')).lower()
+                candidateText=(candidateText.lstrip('“‘’”')).rstrip('“‘’”')
+                candidateText= self.rreplace(self.rreplace(self.rreplace(candidateText,"'s","",1),"’s","",1),"’s","",1)
+                if(candidateText=="hitler didn't"):
+                    print(index)
+                combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list
+                if not ((candidateText in combined)|(candidateText.isdigit())|(self.is_float(candidateText))):
+                    self.CTrie.__setitem__(candidateText.split(),len(candidateText.split()),candidate.features,batch_number)
+            # if(index==191):
+            #     print(sentence)
+            #     self.printList(ne_List_final)
+            #if(userMention_List_final):
+            #    print(userMention_List_final)
 
-                NE_list_phase1+=ne_List_final
-                UserMention_list+=userMention_List_final
+            NE_list_phase1+=ne_List_final
+            UserMention_list+=userMention_List_final
                 #print ("\n")
 
 

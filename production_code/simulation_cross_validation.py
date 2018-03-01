@@ -35,11 +35,11 @@ total_time=0
 Phase1= phase1.SatadishaModule()
 Phase2 = phase2.EntityResolver()
 #tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',')
-tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
-#tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
+#tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
+tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
 #tweets_unpartitoned=tweets_unpartitoned[:50000:]
 print('Tweets are in memory...')
-batch_size=10000
+batch_size=len(tweets_unpartitoned)
 
 # Z_scores=[-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
 # # 
@@ -54,8 +54,10 @@ tweets = shuffle(tweets_unpartitoned)
 #z_score=-0.078      #-----20K
 #z_score=-0.2      #-----3K
 #z_score=-0.09      #-----50K
-z_score=-0.078         #-----50K, multiple batches
-#z_score=-0.04         #-----deduplicated_tweets,
+#z_score=-0.078         #-----50K, multiple batches
+z_score=-0.2         #-----deduplicated_tweets,
+
+
 #kf = KFold(n_splits=5,random_state=1000) 
 # for train_ind,test_ind in kf.split(tweets_unpartitoned):
 #     print(train_ind,test_ind)
@@ -131,9 +133,9 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     print("**********************************************************")
 
     #if (g==0):
-    candidate_records=pd.read_csv("candidate_base_new.csv",sep =',')
-    ambiguous_candidate=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
-    print(ambiguous_candidate)
+    # candidate_records=pd.read_csv("candidate_base_new.csv",sep =',')
+    # ambiguous_candidate=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
+    # print(ambiguous_candidate)
 
 #print(len(phase2TweetBase))
 

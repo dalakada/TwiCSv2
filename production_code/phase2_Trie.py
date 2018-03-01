@@ -948,6 +948,7 @@ class EntityResolver ():
     #     return candidateList
 
     def get_Candidates(self, sequence, CTrie,flag):
+        #flag: debug_flag
         candidateList=[]
         left=0
         start_node=CTrie
@@ -967,15 +968,37 @@ class EntityResolver ():
             #normalized curr_text
             curr=self.normalize(sequence[right][0])
             cand_str=self.normalize(last_cand_substr+" "+curr)
+            cand_str_wPunct=(last_cand_substr+" "+curr).lower()
             last_cand_sequence=sequence[left:(right+1)]
             last_cand_text=' '.join(str(e[0]) for e in last_cand_sequence)
             last_cand_text_norm=self.normalize(' '.join(str(e[0]) for e in last_cand_sequence))
-            #print("==>",cand_str,last_cand_text)
-            if ((curr in start_node.path.keys())&(cand_str==last_cand_text_norm)):
-                # if flag:
-                #     print("=>",cand_str,last_cand_text)
+            # if(flag):
+            #     print("==>",cand_str,last_cand_text)
+            if (((curr in start_node.path.keys())&(cand_str==last_cand_text_norm))|(curr_text.lower() in start_node.path.keys())):
+                if flag:
+                    print("=>",cand_str,last_cand_text)
                 reset=False
-                if (start_node.path[curr].value_valid):
+                if (curr_text.lower() in start_node.path.keys()):
+                    if (start_node.path[curr_text.lower()].value_valid):
+                        last_cand_pos=[e[1] for e in last_cand_sequence]
+                        last_cand_batch=start_node.path[curr_text.lower()].feature_list[-1]
+                        last_cand=last_cand_text
+                    elif(curr in start_node.path.keys()):
+                        if ((start_node.path[curr].value_valid)):
+                            last_cand_pos=[e[1] for e in last_cand_sequence]
+                            last_cand=last_cand_text
+                            last_cand_batch=start_node.path[curr].feature_list[-1]
+                        else:
+                            if((right==(len(sequence)-1))&(last_cand=="NAN")&(left<right)):
+                                #print("hehe",cand_str)
+                                right=left
+                                reset=True
+                    else:
+                        if((right==(len(sequence)-1))&(last_cand=="NAN")&(left<right)):
+                            #print("hehe",cand_str)
+                            right=left
+                            reset=True
+                elif ((start_node.path[curr].value_valid)):
                     # if flag:
                     #     print("==",last_cand_text)
                     last_cand_pos=[e[1] for e in last_cand_sequence]
@@ -986,8 +1009,12 @@ class EntityResolver ():
                         #print("hehe",cand_str)
                         right=left
                         reset=True
-                start_node=start_node.path[curr]
-                last_cand_substr=cand_str
+                if(curr in start_node.path.keys()):
+                    start_node=start_node.path[curr]
+                    last_cand_substr=cand_str
+                else:
+                    start_node=start_node.path[curr_text.lower()]
+                    last_cand_substr=cand_str_wPunct
             else:
                 #print("=>",cand_str,last_cand_text)
                 if(last_cand!="NAN"):
@@ -1299,9 +1326,10 @@ class EntityResolver ():
 
             ne_candidate_list=[]
             for sequence in sequences:
-                '''print(sequence)
-                seq_candidates=self.check_sequence(sequence, len(sequence), CTrie)'''
-                #print([y[0] for y in sequence])
+                # if(tweetID=="31612"):
+                #     print(sequence)
+                #     seq_candidate_list=self.get_Candidates(sequence, CTrie,True)
+                # else:
                 seq_candidate_list=self.get_Candidates(sequence, CTrie,False)
                 if(seq_candidate_list):
                     '''seq_candidate_list= list(map(lambda e: self.join_token_tuples(e) ,seq_candidates))
@@ -1322,6 +1350,8 @@ class EntityResolver ():
             phase2_candidates_holder.append(phase2_candidates)
 
             #print(phase1Candidates,"====",phase2_candidates)
+            if(tweetID=="31612"):
+                print(phase1Candidates,"====",phase2_candidates)
             dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'annotation':annotation,'stanford_candidates':stanford}
 
             df_holder.append(dict1)
