@@ -1350,8 +1350,8 @@ class EntityResolver ():
             phase2_candidates_holder.append(phase2_candidates)
 
             #print(phase1Candidates,"====",phase2_candidates)
-            if(tweetID=="31612"):
-                print(phase1Candidates,"====",phase2_candidates)
+            # if(tweetID=="31612"):
+            #     print(phase1Candidates,"====",phase2_candidates)
             dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'annotation':annotation,'stanford_candidates':stanford}
 
             df_holder.append(dict1)

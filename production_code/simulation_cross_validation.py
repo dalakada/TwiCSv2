@@ -20,6 +20,11 @@ from sklearn.model_selection import KFold
 import numpy as np
 import pandas as pd
 from sklearn.utils import shuffle
+from scipy import spatial
+# from sklearn.decomposition import PCA as sklearnPCA
+# from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.manifold import TSNE
+# from pandas.tools.plotting import parallel_coordinates
 
 warnings.filterwarnings("ignore")
 
@@ -39,7 +44,7 @@ Phase2 = phase2.EntityResolver()
 tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
 #tweets_unpartitoned=tweets_unpartitoned[:50000:]
 print('Tweets are in memory...')
-batch_size=len(tweets_unpartitoned)
+batch_size=10000
 
 # Z_scores=[-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
 # # 
@@ -55,7 +60,7 @@ tweets = shuffle(tweets_unpartitoned)
 #z_score=-0.2      #-----3K
 #z_score=-0.09      #-----50K
 #z_score=-0.078         #-----50K, multiple batches
-z_score=-0.2         #-----deduplicated_tweets,
+z_score=-0.08         #-----deduplicated_tweets,
 
 
 #kf = KFold(n_splits=5,random_state=1000) 
@@ -132,10 +137,48 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     print(g,' ','Consumed')
     print("**********************************************************")
 
-    #if (g==0):
-    # candidate_records=pd.read_csv("candidate_base_new.csv",sep =',')
-    # ambiguous_candidate=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
-    # print(ambiguous_candidate)
+
+    candidate_records=pd.read_csv("candidate_base_new.csv",sep =',')
+    if (g==0):
+        ambiguous_candidates=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
+        #sprint(ambiguous_candidates)
+    y=candidate_records['status']
+    candidate_records['normalized_length']=candidate_records['length']/(candidate_records['length'].max())
+    x=candidate_records[['normalized_length','normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
+
+    tsne = TSNE(n_components=2, perplexity=50,  learning_rate=100,
+     early_exaggeration=4.0, 
+    n_iter=5000,
+            min_grad_norm=0, init='random', method='exact', verbose=1)
+
+    transformed = tsne.fit_transform(x)
+    print(len(transformed),len(y))
+    plt.figure()
+    plt.scatter(transformed[y=='g'][:, 0], transformed[y=='g'][:, 1], label='Entity', c='red')
+    # # for i in range(len(transformed[y=='g'])):
+    # #     #print(i)
+    # #     plt.annotate(str(i), (transformed[y=='g'][i:(i+1),0],transformed[y=='g'][i:(i+1),1]))
+
+    # # #print(transformed[y==2])
+    plt.scatter(transformed[y=='a'][:, 0], transformed[y=='a'][:, 1], label='Ambiguous', c='blue')
+    # for i in range(len(transformed[y=='a'])):
+    #   #print(i)
+    #   plt.annotate(str(i+(len(transformed[y=='a']))), (transformed[y=='a'][i:(i+1),0],transformed[y=='a'][i:(i+1),1]))
+
+    plt.scatter(transformed[y=='b'][:, 0], transformed[y=='b'][:, 1], label='Non-Entity', c='lightgreen')
+    # # for i in range(len(transformed[y=='b'])):
+    # #   #print(i)
+    # #   plt.annotate(str(i+(len(transformed[y=='b']))), (transformed[y=='b'][i:(i+1),0],transformed[y=='b'][i:(i+1),1]))
+
+    # #plt.scatter(transformed[:, 0], transformed[:, 1], c=y,label=['Entity','Ambiguous','Non-Entity'])
+    plt.xlabel('Transformed X-axis')
+    plt.ylabel('Transformed Y-axis')
+    plt.legend()
+
+    plt.title("t-SNE plot of Entity Candidates")
+
+    plt.savefig('tsne_'+str(g)+'.png', dpi = 600)
+    #plt.show()
 
 #print(len(phase2TweetBase))
 
