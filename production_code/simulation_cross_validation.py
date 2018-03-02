@@ -39,7 +39,10 @@ global total_time
 total_time=0
 Phase1= phase1.SatadishaModule()
 Phase2 = phase2.EntityResolver()
+
+#input names: 3K; deduplicates--> politics; malcolm; 1M
 #tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',')
+input_name="ericTrump"
 #tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
 tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
 #tweets_unpartitoned=tweets_unpartitoned[:50000:]
@@ -57,7 +60,7 @@ batch_size=10000
 tweets = shuffle(tweets_unpartitoned)
 
 #z_score=-0.078      #-----20K
-#z_score=-0.2      #-----3K
+#z_score=-0.8      #-----3K
 #z_score=-0.09      #-----50K
 #z_score=-0.078         #-----50K, multiple batches
 z_score=-0.08         #-----deduplicated_tweets,
@@ -146,13 +149,14 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     candidate_records['normalized_length']=candidate_records['length']/(candidate_records['length'].max())
     x=candidate_records[['normalized_length','normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
 
-    tsne = TSNE(n_components=2, perplexity=50,  learning_rate=100,
+    tsne = TSNE(n_components=2, perplexity=50,  learning_rate=200,
      early_exaggeration=4.0, 
     n_iter=5000,
             min_grad_norm=0, init='random', method='exact', verbose=1)
 
     transformed = tsne.fit_transform(x)
     print(len(transformed),len(y))
+
     plt.figure()
     plt.scatter(transformed[y=='g'][:, 0], transformed[y=='g'][:, 1], label='Entity', c='red')
     # # for i in range(len(transformed[y=='g'])):
@@ -161,24 +165,31 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
 
     # # #print(transformed[y==2])
     plt.scatter(transformed[y=='a'][:, 0], transformed[y=='a'][:, 1], label='Ambiguous', c='blue')
-    # for i in range(len(transformed[y=='a'])):
-    #   #print(i)
-    #   plt.annotate(str(i+(len(transformed[y=='a']))), (transformed[y=='a'][i:(i+1),0],transformed[y=='a'][i:(i+1),1]))
+    # for i in transformed[y=='a']:
+    #   print(transformed.index(i))
+      #plt.annotate(str(i+(len(transformed[y=='a']))), (transformed[y=='a'][i:(i+1),0],transformed[y=='a'][i:(i+1),1]))
 
     plt.scatter(transformed[y=='b'][:, 0], transformed[y=='b'][:, 1], label='Non-Entity', c='lightgreen')
     # # for i in range(len(transformed[y=='b'])):
     # #   #print(i)
     # #   plt.annotate(str(i+(len(transformed[y=='b']))), (transformed[y=='b'][i:(i+1),0],transformed[y=='b'][i:(i+1),1]))
 
-    # #plt.scatter(transformed[:, 0], transformed[:, 1], c=y,label=['Entity','Ambiguous','Non-Entity'])
+    for candidate in ambiguous_candidates:
+        a_index=candidate_records.index[(candidate_records['candidate']==candidate)][0]
+        plt.annotate(candidate, (transformed[a_index:(a_index+1),0],transformed[a_index:(a_index+1),1]), fontsize='xx-small')
+        #print(a_index)
+
     plt.xlabel('Transformed X-axis')
     plt.ylabel('Transformed Y-axis')
     plt.legend()
 
-    plt.title("t-SNE plot of Entity Candidates")
+    plt.title("t-SNE plot of Entity Candidates for "+input_name+" ("+str(g)+")")
 
-    plt.savefig('tsne_'+str(g)+'.png', dpi = 600)
-    #plt.show()
+    plt.savefig('tsne_'+input_name+'_'+str(g)+'.png', dpi = 600)
+    plt.show()
+
+
+#--------------------------------------------------------------------IGNORE!!!!!!!!!!!!!!!!!!!!!!--------------------------------------------------------------------
 
 #print(len(phase2TweetBase))
 

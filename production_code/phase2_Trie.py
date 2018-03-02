@@ -968,13 +968,14 @@ class EntityResolver ():
             #normalized curr_text
             curr=self.normalize(sequence[right][0])
             cand_str=self.normalize(last_cand_substr+" "+curr)
-            cand_str_wPunct=(last_cand_substr+" "+curr).lower()
+            cand_str_wPunct=(last_cand_substr+" "+curr_text).lower()
             last_cand_sequence=sequence[left:(right+1)]
             last_cand_text=' '.join(str(e[0]) for e in last_cand_sequence)
             last_cand_text_norm=self.normalize(' '.join(str(e[0]) for e in last_cand_sequence))
-            # if(flag):
-            #     print("==>",cand_str,last_cand_text)
-            if (((curr in start_node.path.keys())&(cand_str==last_cand_text_norm))|(curr_text.lower() in start_node.path.keys())):
+            if(flag):
+                print("==>",cand_str,last_cand_text_norm)
+            if((cand_str==last_cand_text_norm)&((curr in start_node.path.keys())|(curr_text.lower() in start_node.path.keys()))):
+            #if (((curr in start_node.path.keys())&(cand_str==last_cand_text_norm))|(curr_text.lower() in start_node.path.keys())):
                 if flag:
                     print("=>",cand_str,last_cand_text)
                 reset=False
@@ -998,7 +999,7 @@ class EntityResolver ():
                             #print("hehe",cand_str)
                             right=left
                             reset=True
-                elif ((start_node.path[curr].value_valid)):
+                elif ((start_node.path[curr].value_valid)&(cand_str==last_cand_text_norm)):
                     # if flag:
                     #     print("==",last_cand_text)
                     last_cand_pos=[e[1] for e in last_cand_sequence]
@@ -1009,12 +1010,12 @@ class EntityResolver ():
                         #print("hehe",cand_str)
                         right=left
                         reset=True
-                if(curr in start_node.path.keys()):
-                    start_node=start_node.path[curr]
-                    last_cand_substr=cand_str
-                else:
+                if((curr_text.lower() in start_node.path.keys())&(cand_str==last_cand_text_norm)):
                     start_node=start_node.path[curr_text.lower()]
                     last_cand_substr=cand_str_wPunct
+                else:
+                    start_node=start_node.path[curr]
+                    last_cand_substr=cand_str
             else:
                 #print("=>",cand_str,last_cand_text)
                 if(last_cand!="NAN"):
@@ -1326,7 +1327,7 @@ class EntityResolver ():
 
             ne_candidate_list=[]
             for sequence in sequences:
-                # if(tweetID=="31612"):
+                # if(tweetID=="14155"):
                 #     print(sequence)
                 #     seq_candidate_list=self.get_Candidates(sequence, CTrie,True)
                 # else:
@@ -1350,7 +1351,7 @@ class EntityResolver ():
             phase2_candidates_holder.append(phase2_candidates)
 
             #print(phase1Candidates,"====",phase2_candidates)
-            # if(tweetID=="31612"):
+            # if((tweetID=="9423")|(tweetID=="14155")):
             #     print(phase1Candidates,"====",phase2_candidates)
             dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'annotation':annotation,'stanford_candidates':stanford}
 

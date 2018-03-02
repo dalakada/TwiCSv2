@@ -356,8 +356,8 @@ class SatadishaModule():
                 candidateText=(((candidate.phraseText.lstrip(string.punctuation)).rstrip(string.punctuation)).strip(' \t\n\r')).lower()
                 candidateText=(candidateText.lstrip('“‘’”')).rstrip('“‘’”')
                 candidateText= self.rreplace(self.rreplace(self.rreplace(candidateText,"'s","",1),"’s","",1),"’s","",1)
-                if(candidateText=="hitler didn't"):
-                    print(index)
+                # if(index==9423):
+                #     print(candidateText)
                 combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list
                 if not ((candidateText in combined)|(candidateText.isdigit())|(self.is_float(candidateText))):
                     self.CTrie.__setitem__(candidateText.split(),len(candidateText.split()),candidate.features,batch_number)
