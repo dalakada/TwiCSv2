@@ -348,7 +348,7 @@ class EntityResolver ():
           sketch_vector[5]+=normalized_non_discriminative
           candidate_count+=1
         sketch_vector=list(map(lambda elem: elem/candidate_count, sketch_vector))
-        print(sketch_vector)
+        print("aggregated sketch:", sketch_vector)
         return sketch_vector
 
     def set_cb(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold):
