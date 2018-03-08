@@ -282,8 +282,9 @@ class EntityResolver ():
 
         candidate_featureBase_DF['Z_ScoreUnweighted']=zscore_array1
         print(set(candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==10].Z_ScoreUnweighted.tolist()))
-        candidate_featureBase_DF.to_csv("cf_new_with_z_score.csv", sep=',', encoding='utf-8')
+        #candidate_featureBase_DF.to_csv("cf_new_with_z_score.csv", sep=',', encoding='utf-8')
 
+        #multi-word infrequent candidates ---> to be used for recall correction
         infrequent_candidates=candidate_featureBase_DF[(candidate_featureBase_DF['Z_ScoreUnweighted'] < z_score_threshold) & (candidate_featureBase_DF.length>1)].candidate.tolist()
         candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] > z_score_threshold]
 
@@ -622,11 +623,13 @@ class EntityResolver ():
 
         merged_g_b= bad_candidates+good_candidates
 
-        candidate_featureBase_DF.to_csv("cf_before_labeling_comp.csv", sep=',', encoding='utf-8')
+        #candidate_featureBase_DF.to_csv("cf_before_labeling_comp.csv", sep=',', encoding='utf-8')
         ambiguous_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"].candidate.tolist()
 
         if(correction_flag):
             phase2_candidates_holder,data_frame_holder=self.recall_correction(phase2_candidates_holder,data_frame_holder)
+
+
 
         
         truth_vals=[False if any(x not in merged_g_b for x in list1) else True for list1 in phase2_candidates_holder]
@@ -639,7 +642,7 @@ class EntityResolver ():
         #         truth_vals.append(False)
         #     else:
         #         truth_vals.append(True)
-
+ 
 
 
         #print(truth_vals)

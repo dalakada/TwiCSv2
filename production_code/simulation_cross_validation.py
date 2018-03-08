@@ -1,7 +1,8 @@
 
 #import SatadishaModule as phase1
 import SatadishaModule_final_trie as phase1
-import phase2_Trie as phase2
+#import phase2_Trie as phase2
+import phase2_Trie_reintroduction as phase2
 import datetime
 from threading import Thread
 import random
@@ -118,6 +119,7 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     elapsedTime= tuple_of[3] - tuple_of[2]
     total_time+=elapsedTime
     print(elapsedTime,total_time)
+    print(len(tweet_base))
     print (g,' ','Produced')
     print("**********************************************************")
     # if(g==val):
@@ -141,55 +143,55 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     print("**********************************************************")
 
 
-    candidate_records=pd.read_csv("candidate_base_new.csv",sep =',')
-    if (g==0):
-        ambiguous_candidates=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
-        #sprint(ambiguous_candidates)
-    y=candidate_records['status']
-    candidate_records['normalized_length']=candidate_records['length']/(candidate_records['length'].max())
-    x=candidate_records[['normalized_length','normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
+    # candidate_records=pd.read_csv("candidate_base_new.csv",sep =',')
+    # if (g==0):
+    #     ambiguous_candidates=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
+    #     #sprint(ambiguous_candidates)
+    # y=candidate_records['status']
+    # candidate_records['normalized_length']=candidate_records['length']/(candidate_records['length'].max())
+    # x=candidate_records[['normalized_length','normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
 
-    tsne = TSNE(n_components=2, perplexity=50,  learning_rate=200,
-     early_exaggeration=4.0, 
-    n_iter=5000,
-            min_grad_norm=0, init='random', method='exact', verbose=1)
+    # tsne = TSNE(n_components=2, perplexity=50,  learning_rate=200,
+    #  early_exaggeration=4.0, 
+    # n_iter=5000,
+    #         min_grad_norm=0, init='random', method='exact', verbose=1)
 
-    transformed = tsne.fit_transform(x)
-    print(len(transformed),len(y))
+    # transformed = tsne.fit_transform(x)
+    # print(len(transformed),len(y))
 
-    plt.figure()
-    plt.scatter(transformed[y=='g'][:, 0], transformed[y=='g'][:, 1], label='Entity', c='red')
-    # # for i in range(len(transformed[y=='g'])):
-    # #     #print(i)
-    # #     plt.annotate(str(i), (transformed[y=='g'][i:(i+1),0],transformed[y=='g'][i:(i+1),1]))
+    # plt.figure()
+    # plt.scatter(transformed[y=='g'][:, 0], transformed[y=='g'][:, 1], label='Entity', c='red')
+    # # # for i in range(len(transformed[y=='g'])):
+    # # #     #print(i)
+    # # #     plt.annotate(str(i), (transformed[y=='g'][i:(i+1),0],transformed[y=='g'][i:(i+1),1]))
 
-    # # #print(transformed[y==2])
-    plt.scatter(transformed[y=='a'][:, 0], transformed[y=='a'][:, 1], label='Ambiguous', c='blue')
-    # for i in transformed[y=='a']:
-    #   print(transformed.index(i))
-      #plt.annotate(str(i+(len(transformed[y=='a']))), (transformed[y=='a'][i:(i+1),0],transformed[y=='a'][i:(i+1),1]))
+    # # # #print(transformed[y==2])
+    # plt.scatter(transformed[y=='a'][:, 0], transformed[y=='a'][:, 1], label='Ambiguous', c='blue')
+    # # for i in transformed[y=='a']:
+    # #   print(transformed.index(i))
+    #   #plt.annotate(str(i+(len(transformed[y=='a']))), (transformed[y=='a'][i:(i+1),0],transformed[y=='a'][i:(i+1),1]))
 
-    plt.scatter(transformed[y=='b'][:, 0], transformed[y=='b'][:, 1], label='Non-Entity', c='lightgreen')
-    # # for i in range(len(transformed[y=='b'])):
-    # #   #print(i)
-    # #   plt.annotate(str(i+(len(transformed[y=='b']))), (transformed[y=='b'][i:(i+1),0],transformed[y=='b'][i:(i+1),1]))
+    # plt.scatter(transformed[y=='b'][:, 0], transformed[y=='b'][:, 1], label='Non-Entity', c='lightgreen')
+    # # # for i in range(len(transformed[y=='b'])):
+    # # #   #print(i)
+    # # #   plt.annotate(str(i+(len(transformed[y=='b']))), (transformed[y=='b'][i:(i+1),0],transformed[y=='b'][i:(i+1),1]))
 
-    for candidate in ambiguous_candidates:
-        a_index=candidate_records.index[(candidate_records['candidate']==candidate)][0]
-        plt.annotate(candidate, (transformed[a_index:(a_index+1),0],transformed[a_index:(a_index+1),1]), fontsize='xx-small')
-        #print(a_index)
+    # for candidate in ambiguous_candidates:
+    #     a_index=candidate_records.index[(candidate_records['candidate']==candidate)][0]
+    #     plt.annotate(candidate, (transformed[a_index:(a_index+1),0],transformed[a_index:(a_index+1),1]), fontsize='xx-small')
+    #     #print(a_index)
 
-    plt.xlabel('Transformed X-axis')
-    plt.ylabel('Transformed Y-axis')
-    plt.legend()
+    # plt.xlabel('Transformed X-axis')
+    # plt.ylabel('Transformed Y-axis')
+    # plt.legend()
 
-    plt.title("t-SNE plot of Entity Candidates for "+input_name+" ("+str(g)+")")
+    # plt.title("t-SNE plot of Entity Candidates for "+input_name+" ("+str(g)+")")
 
-    plt.savefig('tsne_'+input_name+'_'+str(g)+'.png', dpi = 600)
-    plt.show()
+    # plt.savefig('tsne_'+input_name+'_'+str(g)+'.png', dpi = 600)
+    # plt.show()
 
 
-#--------------------------------------------------------------------IGNORE!!!!!!!!!!!!!!!!!!!!!!--------------------------------------------------------------------
+#--------------------------------------------------------------------IGNORE from here!!!!!!!!!!!!!!!!!!!!!!--------------------------------------------------------------------
 
 #print(len(phase2TweetBase))
 

@@ -80,7 +80,7 @@ ambiguous_candidate_records=candidate_records[(candidate_records.status=="a")]
 
 #--------------------------------------------------------calculate aggregate vectors-------------------------------------------------------
 
-#entity_vec_agg
+##entity_vec_agg
 # entity_count=0
 # entity_synvec_agg=[0.0,0.0,0.0,0.0,0.0]
 # for index, row in entity_candidate_records.iterrows():
