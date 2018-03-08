@@ -330,6 +330,27 @@ class EntityResolver ():
         return (flag1|flag2)
 
 
+    def get_aggregate_sketch(self,candidate_featureBase):
+        candidate_count=0
+        sketch_vector=[0.0,0.0,0.0,0.0,0.0,0.0]
+        for index, row in candidate_featureBase.iterrows():
+          normalized_cap=row['cap']/row['cumulative']
+          sketch_vector[0]+=normalized_cap
+          normalized_capnormalized_substring_cap=row['substring-cap']/row['cumulative']
+          sketch_vector[1]+=normalized_capnormalized_substring_cap
+          normalized_sosCap=row['s-o-sCap']/row['cumulative']
+          sketch_vector[2]+=normalized_sosCap
+          normalized_allCap=row['all-cap']/row['cumulative']
+          sketch_vector[3]+=normalized_allCap
+          normalized_non_cap=row['non-cap']/row['cumulative']
+          sketch_vector[4]+=normalized_non_cap
+          normalized_non_discriminative=row['non-discriminative']/row['cumulative']
+          sketch_vector[5]+=normalized_non_discriminative
+          candidate_count+=1
+        sketch_vector=list(map(lambda elem: elem/candidate_count, sketch_vector))
+        print(sketch_vector)
+        return sketch_vector
+
     def set_cb(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold):
 
         #input new_tweets, z_score, Updated candidatebase of phase1
@@ -349,9 +370,11 @@ class EntityResolver ():
             entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]
             non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
             ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates_in_batch)]
-            print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_records), ambiguous_candidate_records.columns)
+            print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_records))
+            entity_sketch= self.get_aggregate_sketch(entity_candidate_records)
+            non_entity_sketch=self.get_aggregate_sketch(non_entity_candidate_records)
 
-            #candidates for Reintroduction
+            #tweet candidates for Reintroduction
             candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(self.incomplete_tweets,CTrie,phase2stopwordList,1)
             phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
             df_holder.extend(df_holder_extracted)
