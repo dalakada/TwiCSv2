@@ -18,6 +18,7 @@ import datetime
 import trie as trie
 import re
 import pickle
+from scipy import spatial
 
 cachedStopWords = stopwords.words("english")
 tempList=["i","and","or","other","another","across","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always"]
@@ -351,6 +352,22 @@ class EntityResolver ():
         print("aggregated sketch:", sketch_vector)
         return sketch_vector
 
+    def get_cosine_distance(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch):
+        cosine_distance_dict={}
+        for index, row in ambiguous_candidate_records.iterrows():
+          candidate_synvec=[(row['cap']/row['cumulative']),
+                              (row['substring-cap']/row['cumulative']),
+                              (row['s-o-sCap']/row['cumulative']),
+                              (row['all-cap']/row['cumulative']),
+                              (row['non-cap']/row['cumulative']),
+                              (row['non-discriminative']/row['cumulative'])]
+          cosine_distance_ent=spatial.distance.cosine(candidate_synvec, entity_sketch)
+          cosine_distance_non_ent=spatial.distance.cosine(candidate_synvec, non_entity_sketch)
+          candidate_distance_array=[cosine_distance_ent,cosine_distance_non_ent]
+          #cosine_distance_array.append(candidate_distance_array)
+          cosine_distance_dict[row['candidate']]=candidate_distance_array
+        return cosine_distance_dict
+
     def set_cb(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold):
 
         #input new_tweets, z_score, Updated candidatebase of phase1
@@ -367,12 +384,20 @@ class EntityResolver ():
 
 
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
-            entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]
-            non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
-            ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates_in_batch)]
-            print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_records))
-            entity_sketch= self.get_aggregate_sketch(entity_candidate_records)
-            non_entity_sketch=self.get_aggregate_sketch(non_entity_candidate_records)
+            
+            ambiguous_candidate_inBatch_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates_in_batch)]
+            print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_inBatch_records))
+            cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch)
+            print(len(self.ambiguous_candidate_distanceDict_prev),len(cosine_distance_dict))
+            for candidate in cosine_distance_dict.keys():
+                displacement=[]
+                # if(cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate]))-self.ambiguous_candidate_distanceDict_prev[candidate].index(min(self.ambiguous_candidate_distanceDict_prev[candidate]))==0):
+                #     displacement=min(self.ambiguous_candidate_distanceDict_prev[candidate])-min(cosine_distance_dict[candidate])
+                displacement=[(self.ambiguous_candidate_distanceDict_prev[candidate][0]-cosine_distance_dict[candidate][0]),
+                                (self.ambiguous_candidate_distanceDict_prev[candidate][1]-cosine_distance_dict[candidate][1])]
+                print(candidate,min(cosine_distance_dict[candidate]),cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate])),
+                    cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate]))-self.ambiguous_candidate_distanceDict_prev[candidate].index(min(self.ambiguous_candidate_distanceDict_prev[candidate])),
+                    displacement)
 
             #tweet candidates for Reintroduction
             candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(self.incomplete_tweets,CTrie,phase2stopwordList,1)
@@ -381,7 +406,7 @@ class EntityResolver ():
 
         #print(len(df_holder))
         data_frame_holder = pd.DataFrame(df_holder)
-        print(len(self.incomplete_tweets),len(data_frame_holder),len(candidate_featureBase_DF))
+        #print(len(self.incomplete_tweets),len(data_frame_holder),len(candidate_featureBase_DF))
         
         #print(self.ambiguous_candidates)
 
@@ -392,6 +417,12 @@ class EntityResolver ():
         self.good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
         self.ambiguous_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"].candidate.tolist()
         self.bad_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"].candidate.tolist()
+        entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]
+        non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
+        ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
+        self.entity_sketch= self.get_aggregate_sketch(entity_candidate_records)
+        self.non_entity_sketch=self.get_aggregate_sketch(non_entity_candidate_records)
+        self.ambiguous_candidate_distanceDict_prev=self.get_cosine_distance(ambiguous_candidate_records,self.entity_sketch,self.non_entity_sketch)
         #candidate_featureBase_DF.to_csv("cb_with_prob_label.csv", sep=',', encoding='utf-8')
         correction_flag=self.set_partition_dict(candidate_featureBase_DF,infrequent_candidates)
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
@@ -1269,10 +1300,13 @@ class EntityResolver ():
             self.data_frame_holder_OQ=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             self.incomplete_tweets=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             self.CandidateBase_dict= {}
+            self.ambiguous_candidate_distanceDict_prev={}
             self.partition_dict={}
             self.good_candidates=[]
             self.bad_candidates=[]
             self.ambiguous_candidates=[]
+            self.entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
+            self.non_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.aggregator_incomplete_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             #self.data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
