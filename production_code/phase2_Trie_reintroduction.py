@@ -382,7 +382,6 @@ class EntityResolver ():
         self.ambiguous_candidates_in_batch=list(set(self.ambiguous_candidates_in_batch))
 
 
-
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
             
             ambiguous_candidate_inBatch_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates_in_batch)]
@@ -426,6 +425,9 @@ class EntityResolver ():
         #candidate_featureBase_DF.to_csv("cb_with_prob_label.csv", sep=',', encoding='utf-8')
         correction_flag=self.set_partition_dict(candidate_featureBase_DF,infrequent_candidates)
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
+        if(self.counter>0):
+            #print("==>",list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch)))
+            print(self.good_candidates, self.ambiguous_candidates_in_batch)
 
 
         #['probability'],['a,g,b']
