@@ -380,23 +380,23 @@ class EntityResolver ():
         phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
         df_holder.extend(df_holder_extracted)
         self.ambiguous_candidates_in_batch=list(set(self.ambiguous_candidates_in_batch))
-
+        print(len(self.ambiguous_candidates_in_batch))
 
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
             
             ambiguous_candidate_inBatch_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates_in_batch)]
-            print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_inBatch_records))
+            #print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_inBatch_records))
             cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch)
-            print(len(self.ambiguous_candidate_distanceDict_prev),len(cosine_distance_dict))
+            #print(len(self.ambiguous_candidate_distanceDict_prev),len(cosine_distance_dict))
             for candidate in cosine_distance_dict.keys():
                 displacement=[]
                 # if(cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate]))-self.ambiguous_candidate_distanceDict_prev[candidate].index(min(self.ambiguous_candidate_distanceDict_prev[candidate]))==0):
                 #     displacement=min(self.ambiguous_candidate_distanceDict_prev[candidate])-min(cosine_distance_dict[candidate])
                 displacement=[(self.ambiguous_candidate_distanceDict_prev[candidate][0]-cosine_distance_dict[candidate][0]),
                                 (self.ambiguous_candidate_distanceDict_prev[candidate][1]-cosine_distance_dict[candidate][1])]
-                print(candidate,min(cosine_distance_dict[candidate]),cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate])),
-                    cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate]))-self.ambiguous_candidate_distanceDict_prev[candidate].index(min(self.ambiguous_candidate_distanceDict_prev[candidate])),
-                    displacement)
+                # print(candidate,min(cosine_distance_dict[candidate]),cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate])),
+                #     cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate]))-self.ambiguous_candidate_distanceDict_prev[candidate].index(min(self.ambiguous_candidate_distanceDict_prev[candidate])),
+                #     displacement)
 
             #tweet candidates for Reintroduction
             candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(self.incomplete_tweets,CTrie,phase2stopwordList,1)
@@ -407,7 +407,7 @@ class EntityResolver ():
         data_frame_holder = pd.DataFrame(df_holder)
         #print(len(self.incomplete_tweets),len(data_frame_holder),len(candidate_featureBase_DF))
         
-        #print(self.ambiguous_candidates)
+        print(len(self.ambiguous_candidates_in_batch))
 
         #set ['probabilities'] for candidate_featureBase_DF
         candidate_featureBase_DF,infrequent_candidates= self.classify_candidate_base(z_score_threshold,candidate_featureBase_DF)
@@ -426,8 +426,8 @@ class EntityResolver ():
         correction_flag=self.set_partition_dict(candidate_featureBase_DF,infrequent_candidates)
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
         if(self.counter>0):
-            #print("==>",list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch)))
-            print(self.good_candidates, self.ambiguous_candidates_in_batch)
+            print("==>",list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch)))
+            #print(self.good_candidates, self.ambiguous_candidates_in_batch)
 
 
         #['probability'],['a,g,b']
@@ -1331,7 +1331,9 @@ class EntityResolver ():
         phase1_holder_holder=[]
         phase2_candidates_holder=[]
         df_holder=[]
-        self.ambiguous_candidates_in_batch=[]
+        if(new_or_old==0):
+            self.ambiguous_candidates_in_batch=[]
+        
         #candidateBase_holder=[]
 
         #this has to be changed to an append function since IPQ already has incomplete tweets from prev batch  
@@ -1442,6 +1444,7 @@ class EntityResolver ():
             phase2_candidates=[self.normalize(e[0]) for e in ne_candidate_list]
             #print(len(self.ambiguous_candidates))
             if(new_or_old==0):
+                #self.ambiguous_candidates_in_batch=[]
                 self.ambiguous_candidates_in_batch.extend(list(filter(lambda candidate: candidate in self.ambiguous_candidates, phase2_candidates)))
                 #print(len(self.ambiguous_candidates_in_batch))
             # for candidate in phase2_candidates:
