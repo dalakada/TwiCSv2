@@ -382,6 +382,36 @@ class EntityResolver ():
           cosine_distance_dict[row['candidate']]=candidate_distance_array
         return cosine_distance_dict
 
+    def get_euclidean_distance(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch):
+        euclidean_distance_dict={}
+        for index, row in ambiguous_candidate_records.iterrows():
+          candidate_synvec=[(row['cap']/row['cumulative']),
+                              (row['substring-cap']/row['cumulative']),
+                              (row['s-o-sCap']/row['cumulative']),
+                              (row['all-cap']/row['cumulative']),
+                              (row['non-cap']/row['cumulative']),
+                              (row['non-discriminative']/row['cumulative'])]
+          euclidean_distance_ent=spatial.distance.euclidean(candidate_synvec, entity_sketch)
+          euclidean_distance_non_ent=spatial.distance.euclidean(candidate_synvec, non_entity_sketch)
+          candidate_distance_array=[euclidean_distance_ent,euclidean_distance_non_ent]
+          #cosine_distance_array.append(candidate_distance_array)
+          euclidean_distance_dict[row['candidate']]=candidate_distance_array
+        return euclidean_distance_dict
+
+    def get_euclidean_distance_1(self, ambiguous_candidate_records,ambiguous_entity_sketch):
+        euclidean_distance_dict={}
+        for index, row in ambiguous_candidate_records.iterrows():
+          candidate_synvec=[(row['cap']/row['cumulative']),
+                              (row['substring-cap']/row['cumulative']),
+                              (row['s-o-sCap']/row['cumulative']),
+                              (row['all-cap']/row['cumulative']),
+                              (row['non-cap']/row['cumulative']),
+                              (row['non-discriminative']/row['cumulative'])]
+          euclidean_distance_amb=spatial.distance.euclidean(candidate_synvec, ambiguous_entity_sketch)
+          candidate_distance_array=euclidean_distance_amb
+          euclidean_distance_dict[row['candidate']]=candidate_distance_array
+        return euclidean_distance_dict
+
     def set_cb(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold):
 
         #input new_tweets, z_score, Updated candidatebase of phase1
@@ -402,6 +432,9 @@ class EntityResolver ():
             #print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_inBatch_records))
             cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch)
             cosine_distance_dict_wAmb=self.get_cosine_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch)
+
+            euclidean_distance_dict=self.get_euclidean_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch)
+            euclidean_distance_dict_wAmb=self.get_euclidean_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch)
             #print(len(self.ambiguous_candidate_distanceDict_prev),len(cosine_distance_dict))
             for candidate in cosine_distance_dict.keys():
                 displacement=[]
@@ -447,13 +480,25 @@ class EntityResolver ():
             ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
             
             for cand in (ambiguous_turned_good):
-                print(cand,cosine_distance_dict_wAmb[cand],cosine_distance_dict[cand])
-            print("------------------------------------------")
+                row=candidate_featureBase_DF[candidate_featureBase_DF.candidate==cand]
+                candidate_synvec=[(row['normalized_cap'].values.tolist()),(row['normalized_capnormalized_substring-cap'].values.tolist()),(row['normalized_s-o-sCap'].values.tolist()),(row['normalized_all-cap'].values.tolist()),(row['normalized_non-cap'].values.tolist()),(row['normalized_non-discriminative'].values.tolist())]
+                print(cand,cosine_distance_dict_wAmb[cand],cosine_distance_dict[cand],euclidean_distance_dict_wAmb[cand],euclidean_distance_dict[cand])
+                print(candidate_synvec)
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print("-----------------------------------------------------------------------------------")
             for cand in (ambiguous_turned_bad):
-                print(cand,cosine_distance_dict_wAmb[cand],cosine_distance_dict[cand])
-            print("=============================================================================")
+                row=candidate_featureBase_DF[candidate_featureBase_DF.candidate==cand]
+                candidate_synvec=[(row['normalized_cap'].values.tolist()),(row['normalized_capnormalized_substring-cap'].values.tolist()),(row['normalized_s-o-sCap'].values.tolist()),(row['normalized_all-cap'].values.tolist()),(row['normalized_non-cap'].values.tolist()),(row['normalized_non-discriminative'].values.tolist())]
+                print(cand,cosine_distance_dict_wAmb[cand],cosine_distance_dict[cand],euclidean_distance_dict_wAmb[cand],euclidean_distance_dict[cand])
+                print(candidate_synvec)
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print("=========================================================================================")
             for cand in ambiguous_remaining_ambiguous:
-                print(cand, cosine_distance_dict_wAmb[cand],cosine_distance_dict[cand])
+                row=candidate_featureBase_DF[candidate_featureBase_DF.candidate==cand]
+                candidate_synvec=[(row['normalized_cap'].values.tolist()),(row['normalized_capnormalized_substring-cap'].values.tolist()),(row['normalized_s-o-sCap'].values.tolist()),(row['normalized_all-cap'].values.tolist()),(row['normalized_non-cap'].values.tolist()),(row['normalized_non-discriminative'].values.tolist())]
+                print(cand,cosine_distance_dict_wAmb[cand],cosine_distance_dict[cand],euclidean_distance_dict_wAmb[cand],euclidean_distance_dict[cand])
+                print(candidate_synvec)
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             #print(self.good_candidates, self.ambiguous_candidates_in_batch)
 
 
