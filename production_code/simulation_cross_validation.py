@@ -93,7 +93,7 @@ tweets_been_processed=0
 length=len(tweets)
 val=math.ceil(length/batch_size)-1
 count=0
-#reintroduction_threshold_array=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+#reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 reintroduction_threshold_array=[0.0]
 for reintroduction_threshold in reintroduction_threshold_array:
 
