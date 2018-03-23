@@ -41,12 +41,12 @@ string.punctuation=string.punctuation+'…‘’'
 class EntityResolver ():
 
 
-    def executor(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,raw_tweets_for_others):
+    def executor(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold,raw_tweets_for_others):
 
 
         # SET CB
-        print(phase2stopwordList)
-        candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold)
+        #print(phase2stopwordList)
+        candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         
         candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
 
@@ -94,8 +94,8 @@ class EntityResolver ():
         #incomplete tweets at the end of current batch
         incomplete_tweets=self.get_incomplete_tf(untrashed_tweets)
         #all incomplete_tweets---> incomplete_tweets at the end of current batch + incomplete_tweets not reintroduced
-        self.incomplete_tweets=incomplete_tweets #without reintroduction--- when everything is reintroduced, just incomplete_tweets
-
+        self.incomplete_tweets=pd.concat([incomplete_tweets,self.not_reintroduced],ignore_index=True) #without reintroduction--- when everything is reintroduced, just incomplete_tweets
+        #print(self.incomplete_tweets.index)
         #recording tp, fp , f1
         #self.accuracy_tuples_prev_batch.append((just_converted_tweets.tp.sum(), just_converted_tweets.total_mention.sum(),just_converted_tweets.fp.sum(),just_converted_tweets.fn.sum()))
 
@@ -287,7 +287,7 @@ class EntityResolver ():
         zscore_array1=stats.zscore(mert1)
 
         candidate_featureBase_DF['Z_ScoreUnweighted']=zscore_array1
-        print(set(candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==10].Z_ScoreUnweighted.tolist()))
+        #print(set(candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==10].Z_ScoreUnweighted.tolist()))
         #candidate_featureBase_DF.to_csv("cf_new_with_z_score.csv", sep=',', encoding='utf-8')
 
         #multi-word infrequent candidates ---> to be used for recall correction
@@ -354,10 +354,11 @@ class EntityResolver ():
           sketch_vector[5]+=normalized_non_discriminative
           candidate_count+=1
         sketch_vector=list(map(lambda elem: elem/candidate_count, sketch_vector))
-        print("aggregated sketch:", sketch_vector)
+        #print("aggregated sketch:", sketch_vector)
         return sketch_vector
 
-    def get_cosine_distance(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch):
+    #single entity/non-entity sketch; minimal cosine distance
+    def get_cosine_distance(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch,reintroduction_threshold):
         cosine_distance_dict={}
         for index, row in ambiguous_candidate_records.iterrows():
           candidate_synvec=[(row['cap']/row['cumulative']),
@@ -374,7 +375,8 @@ class EntityResolver ():
         #cosine_distance_array_dict= OrderedDict(sorted(cosine_distance_dict.items(), key=lambda x: x[1]))
         return cosine_distance_dict
 
-    def get_cosine_distance_1(self, ambiguous_candidate_records,ambiguous_entity_sketch):
+    #single ambiguous sketch; maximal cosine distance
+    def get_cosine_distance_1(self, ambiguous_candidate_records,ambiguous_entity_sketch,reintroduction_threshold):
         cosine_distance_dict={}
         for index, row in ambiguous_candidate_records.iterrows():
           candidate_synvec=[(row['cap']/row['cumulative']),
@@ -384,12 +386,14 @@ class EntityResolver ():
                               (row['non-cap']/row['cumulative']),
                               (row['non-discriminative']/row['cumulative'])]
           cosine_distance_amb=spatial.distance.cosine(candidate_synvec, ambiguous_entity_sketch)
-          candidate_distance_array=cosine_distance_amb
+          candidate_distance_array=cosine_distance_amb #not an array; just single value
           cosine_distance_dict[row['candidate']]=candidate_distance_array
         cosine_distance_dict_sorted= OrderedDict(sorted(cosine_distance_dict.items(), key=lambda x: x[1], reverse=True))
-        return cosine_distance_dict_sorted
+        cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value > reintroduction_threshold }
+        return cosine_distance_dict_sorted_final
 
-    def get_euclidean_distance(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch):
+    #single entity/non-entity sketch; maximal euclidean distance
+    def get_euclidean_distance(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch,reintroduction_threshold):
         euclidean_distance_dict={}
         for index, row in ambiguous_candidate_records.iterrows():
           candidate_synvec=[(row['cap']/row['cumulative']),
@@ -406,7 +410,8 @@ class EntityResolver ():
         #euclidean_distance_array_sorted= OrderedDict(sorted(cosine_distance_dict.items(), key=lambda x: x[1]))
         return euclidean_distance_dict
 
-    def get_euclidean_distance_1(self, ambiguous_candidate_records,ambiguous_entity_sketch):
+    #single ambiguous sketch; maximal euclidean distance
+    def get_euclidean_distance_1(self, ambiguous_candidate_records,ambiguous_entity_sketch,reintroduction_threshold):
         euclidean_distance_dict={}
         for index, row in ambiguous_candidate_records.iterrows():
           candidate_synvec=[(row['cap']/row['cumulative']),
@@ -421,11 +426,20 @@ class EntityResolver ():
         euclidean_distance_dict_sorted= OrderedDict(sorted(euclidean_distance_dict.items(), key=lambda x: x[1], reverse=True))
         return euclidean_distance_dict_sorted
 
-    def get_reintroduced_tweets(self):
+    def get_reintroduced_tweets(self,cosine_distance_dict_wAmb):
         #no reintroduction
-        return self.incomplete_tweets
+        #print(self.incomplete_tweets['ambiguous_candidates'])
+        # get union of tweet-set of selected candidates 
+        #print(self.incomplete_tweets[any(x in list(cosine_distance_dict_wAmb.keys()) for x in self.incomplete_tweets['ambiguous_candidates'])])
+        reintroduced_tweets=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in list(cosine_distance_dict_wAmb.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
+        #not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in list(cosine_distance_dict_wAmb.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
+        self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets.index)]
+        print(len(self.incomplete_tweets))
+        print("=>",len(reintroduced_tweets),len(self.not_reintroduced))
+        #print((len(not_reintroduced)==len(self.not_reintroduced)),(len(reintroduced_tweets)+len(self.not_reintroduced)==len(self.incomplete_tweets)))
+        return reintroduced_tweets
 
-    def set_cb(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold):
+    def set_cb(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold):
 
         #input new_tweets, z_score, Updated candidatebase of phase1
         #output candidate_featureBase_DF, Incomplete_tweets
@@ -437,42 +451,44 @@ class EntityResolver ():
         phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
         df_holder.extend(df_holder_extracted)
         self.ambiguous_candidates_in_batch=list(set(self.ambiguous_candidates_in_batch))
-        print(len(self.ambiguous_candidates_in_batch))
+        #print(len(self.ambiguous_candidates_in_batch))
         cosine_distance_dict_wAmb={}
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
             
             ambiguous_candidate_inBatch_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates_in_batch)]
             #print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_inBatch_records))
-            cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch)
-            cosine_distance_dict_wAmb=self.get_cosine_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch)
+            cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
+            cosine_distance_dict_wAmb=self.get_cosine_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch,reintroduction_threshold)
+            print(len(self.ambiguous_candidates_in_batch),len(cosine_distance_dict))
 
-            euclidean_distance_dict=self.get_euclidean_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch)
-            euclidean_distance_dict_wAmb=self.get_euclidean_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch)
-            #print(len(self.ambiguous_candidate_distanceDict_prev),len(cosine_distance_dict))
-            for candidate in cosine_distance_dict.keys():
-                displacement=[]
-                # if(cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate]))-self.ambiguous_candidate_distanceDict_prev[candidate].index(min(self.ambiguous_candidate_distanceDict_prev[candidate]))==0):
-                #     displacement=min(self.ambiguous_candidate_distanceDict_prev[candidate])-min(cosine_distance_dict[candidate])
-                displacement=[(self.ambiguous_candidate_distanceDict_prev[candidate][0]-cosine_distance_dict[candidate][0]),
-                                (self.ambiguous_candidate_distanceDict_prev[candidate][1]-cosine_distance_dict[candidate][1])]
-                # print(candidate,min(cosine_distance_dict[candidate]),cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate])),
-                #     cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate]))-self.ambiguous_candidate_distanceDict_prev[candidate].index(min(self.ambiguous_candidate_distanceDict_prev[candidate])),
-                #     displacement)
+            #euclidean_distance_dict=self.get_euclidean_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
+            #euclidean_distance_dict_wAmb=self.get_euclidean_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch,reintroduction_threshold)
+            
+            # for candidate in cosine_distance_dict.keys():
+            #     displacement=[]
+            #     # if(cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate]))-self.ambiguous_candidate_distanceDict_prev[candidate].index(min(self.ambiguous_candidate_distanceDict_prev[candidate]))==0):
+            #     #     displacement=min(self.ambiguous_candidate_distanceDict_prev[candidate])-min(cosine_distance_dict[candidate])
+            #     displacement=[(self.ambiguous_candidate_distanceDict_prev[candidate][0]-cosine_distance_dict[candidate][0]),
+            #                     (self.ambiguous_candidate_distanceDict_prev[candidate][1]-cosine_distance_dict[candidate][1])]
+            #     # print(candidate,min(cosine_distance_dict[candidate]),cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate])),
+            #     #     cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate]))-self.ambiguous_candidate_distanceDict_prev[candidate].index(min(self.ambiguous_candidate_distanceDict_prev[candidate])),
+            #     #     displacement)
 
-            for candidate in cosine_distance_dict_wAmb.keys():
-                print(candidate,cosine_distance_dict_wAmb[candidate])
+            # for candidate in cosine_distance_dict_wAmb.keys():
+            #     print(candidate,cosine_distance_dict_wAmb[candidate])
 
             #tweet candidates for Reintroduction
-            reintroduced_tweets=self.get_reintroduced_tweets()
+            reintroduced_tweets=self.get_reintroduced_tweets(cosine_distance_dict_wAmb)
             candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(reintroduced_tweets,CTrie,phase2stopwordList,1)
             phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
             df_holder.extend(df_holder_extracted)
+
 
         #print(len(df_holder))
         data_frame_holder = pd.DataFrame(df_holder)
         #print(len(self.incomplete_tweets),len(data_frame_holder),len(candidate_featureBase_DF))
         
-        print(len(self.ambiguous_candidates_in_batch))
+        print("ambiguous_candidates_in_batch: ",len(self.ambiguous_candidates_in_batch))
 
         #set ['probabilities'] for candidate_featureBase_DF
         candidate_featureBase_DF,infrequent_candidates= self.classify_candidate_base(z_score_threshold,candidate_featureBase_DF)
@@ -487,17 +503,43 @@ class EntityResolver ():
         self.entity_sketch= self.get_aggregate_sketch(entity_candidate_records)
         self.non_entity_sketch=self.get_aggregate_sketch(non_entity_candidate_records)
         self.ambiguous_entity_sketch=self.get_aggregate_sketch(ambiguous_candidate_records)
-        self.ambiguous_candidate_distanceDict_prev=self.get_cosine_distance(ambiguous_candidate_records,self.entity_sketch,self.non_entity_sketch)
+        # #need to calculate cosine distance of all ambiguous candidates at the end of the batch to get displacement in next batch... do not use cutoff
+        # self.ambiguous_candidate_distanceDict_prev=self.get_all_cosine_distance(ambiguous_candidate_records,self.entity_sketch,self.non_entity_sketch)
         #candidate_featureBase_DF.to_csv("cb_with_prob_label.csv", sep=',', encoding='utf-8')
         correction_flag=self.set_partition_dict(candidate_featureBase_DF,infrequent_candidates)
+        print("reintroduction_threshold:", reintroduction_threshold)
+        print("good: ",len(self.good_candidates))
+        print("ambiguous: ",len(self.ambiguous_candidates))
+        print("bad: ",len(self.bad_candidates))
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
-        if(self.counter>0):
-            ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
-            ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
-            ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
-            print(ambiguous_turned_good)
-            print(ambiguous_turned_bad)
-            print(ambiguous_remaining_ambiguous)
+        #if(self.counter>0):
+            # ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
+            # ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
+            # ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
+            # print(len(ambiguous_turned_good))
+            # print(len(ambiguous_turned_bad))
+            # print(len(ambiguous_remaining_ambiguous))
+            
+            # #testing what happens without reintroduction
+            # CandidateBase_dict_prev=self.CandidateBase_dict
+            
+            # candidate_featureBase_DF_wO,df_holder_extracted_wO,phase2_candidates_holder_extracted_wO = self.extract(self.not_reintroduced,CTrie,phase2stopwordList,1)
+            # candidate_featureBase_DF_wO,infrequent_candidates= self.classify_candidate_base(z_score_threshold,candidate_featureBase_DF_wO)
+            # candidate_featureBase_DF_wO=self.set_readable_labels(candidate_featureBase_DF_wO)
+            # good_candidates_wO=candidate_featureBase_DF_wO[candidate_featureBase_DF_wO.status=="g"].candidate.tolist()
+            # ambiguous_candidates_wO=candidate_featureBase_DF_wO[candidate_featureBase_DF_wO.status=="a"].candidate.tolist()
+            # bad_candidates_wO=candidate_featureBase_DF_wO[candidate_featureBase_DF_wO.status=="b"].candidate.tolist()
+            # # ambiguous_turned_good_wO=list(filter(lambda element: element in good_candidates_wO, self.ambiguous_candidates_in_batch))
+            # # ambiguous_turned_bad_wO=list(filter(lambda element: element in bad_candidates_wO, self.ambiguous_candidates_in_batch))
+            # # ambiguous_remaining_ambiguous_wO=list(filter(lambda element: element in ambiguous_candidates_wO, self.ambiguous_candidates_in_batch))
+            # print("reintroduction_threshold:", reintroduction_threshold)
+            # print("good: ",len(self.good_candidates),len(good_candidates_wO))
+            # print("ambiguous: ",len(self.ambiguous_candidates),len(ambiguous_candidates_wO))
+            # print("bad: ",len(self.bad_candidates),len(bad_candidates_wO))
+
+            # #setting back the CandidateBase to with_Reintroduction state (excludes candidate frequencies from not-reintroduced tweets)
+            # self.CandidateBase_dict=CandidateBase_dict_prev
+
             # for cand in (ambiguous_turned_good):
             #     row=candidate_featureBase_DF[candidate_featureBase_DF.candidate==cand]
             #     candidate_synvec=[(row['normalized_cap'].values.tolist()),(row['normalized_capnormalized_substring-cap'].values.tolist()),(row['normalized_s-o-sCap'].values.tolist()),(row['normalized_all-cap'].values.tolist()),(row['normalized_non-cap'].values.tolist()),(row['normalized_non-discriminative'].values.tolist())]
@@ -1377,8 +1419,8 @@ class EntityResolver ():
             feature_list[0]=self.counter
             feature_list[1]=len(normalized_candidate.split())
         feature_to_update=self.check_feature_update(candidate_tuple,non_discriminative_flag)
-        if(normalized_candidate=="not even hitler"):
-            print(candidateText,feature_to_update)
+        # if(normalized_candidate=="not even hitler"):
+        #     print(candidateText,feature_to_update)
         feature_list[feature_to_update]+=1
         feature_list[8]+=1
         self.CandidateBase_dict[normalized_candidate]=feature_list

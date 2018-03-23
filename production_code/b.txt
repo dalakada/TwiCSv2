@@ -1,0 +1,61 @@
+hello
+Tweets are in memory...
+hello
+Phase I extracting now
+6.408509969711304 6.408509969711304
+15953
+0   Produced
+**********************************************************
+ambiguous_candidates_in_batch:  0
+reintroduction_threshold: 0.0
+good:  160
+ambiguous:  55
+bad:  516
+7.035598993301392 13.444108963012695
+0   Consumed
+**********************************************************
+Phase I extracting now
+6.556575298309326 20.00068426132202
+16194
+1   Produced
+**********************************************************
+3063
+=> 616 2447
+ambiguous_candidates_in_batch:  55
+reintroduction_threshold: 0.0
+good:  268
+ambiguous:  93
+bad:  893
+8.255159616470337 28.25584387779236
+1   Consumed
+**********************************************************
+Phase I extracting now
+6.653552532196045 34.9093964099884
+15959
+2   Produced
+**********************************************************
+6037
+=> 1150 4887
+ambiguous_candidates_in_batch:  92
+reintroduction_threshold: 0.0
+good:  370
+ambiguous:  135
+bad:  1191
+9.714787244796753 44.624183654785156
+2   Consumed
+**********************************************************
+Phase I extracting now
+5.961883783340454 50.58606743812561
+14265
+3   Produced
+**********************************************************
+8789
+=> 1560 7229
+ambiguous_candidates_in_batch:  121
+reintroduction_threshold: 0.0
+good:  469
+ambiguous:  168
+bad:  1459
+10.544136762619019 61.13020420074463
+3   Consumed
+**********************************************************

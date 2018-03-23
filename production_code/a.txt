@@ -2,414 +2,512 @@ hello
 Tweets are in memory...
 hello
 Phase I extracting now
-10.4013671875 10.4013671875
-16037
+6.603451490402222 6.603451490402222
+15963
 0   Produced
 **********************************************************
-['his', 'today', 'not', 'please', 'to', 'against', 'down', 'must', 'with', 'into', 'after', 'of', 'even', 'my', 'we', "you're", 'the', 'in', 'on', 'over', 'now', 'tomorrow', 'a', 'me', 'be', 'yourself', 'no', 'him', 'just', 'as', "i'm", 'and', 'i', 'for', "he's", 'from']
-not even hitler 7
-Not even Hitler 2
-Not even Hitler 2
-Not even Hitler 2
-"Not even Hitler 2
-NOT EVEN HITLER 7
-Not Even Hitler 2
-"not even Hitler 3
-"not even Hitler 3
-Not Even Hitler 2
-Not Even Hitler 2
-NOT EVEN HITLER 7
-"Not even Hitler" 2
-NOT EVEN HITLER 7
-"Not even Hitler 2
-0
-0
-{0.008906551358164472}
-aggregated sketch: [0.6074769678945589, 0.013839359790804381, 0.06624736897200596, 0.14396054861230037, 0.033562807286180545, 0.13491294744414967]
-aggregated sketch: [0.07096018930361839, 0.0454402595451806, 0.041659670836605205, 0.028077045353315653, 0.7240952688965353, 0.08976756606474542]
-aggregated sketch: [0.2943204825348513, 0.26154923701424515, 0.07221500721500722, 0.0602892947812734, 0.09593424697702772, 0.21569173147759513]
-10.215358018875122 20.616725206375122
+ambiguous_candidates_in_batch:  0
+7.071619272232056 13.675070762634277
 0   Consumed
 **********************************************************
 Phase I extracting now
-11.668823003768921 32.28554821014404
-16033
+6.790140151977539 20.465210914611816
+16047
 1   Produced
 **********************************************************
-['his', 'today', 'not', 'please', 'to', 'who', 'against', 'make', 'with', 'into', 'down', 'must', 'of', 'after', 'is', 'even', 'my', 'we', 'most', "you're", 'the', 'in', 'on', 'but', 'thanks', 'over', 'now', 'up', 'tomorrow', 'never', "didn't", 'a', 'me', 'be', 'yourself', 'no', 'him', 'am', 'just', 'as', "i'm", 'and', 'i', 'for', 'an', 'again', "can't", 'same', 'this', "he's", 'here', 'what', 'from']
-Not even Hitler 7
-Not even Hitler 2
-Not even Hitler 2
-not even Hitler 3
-"not even Hitler" 3
-Not even Hitler 2
-Not even Hitler 2
-Not even Hitler 2
-NOT EVEN HITLER 7
-not even Hitler 3
-not even hitler 7
-"not even Hitler 3
-"Not even Hitler 2
-Not even Hitler? 7
-NOT EVEN HITLER 7
-"Not even Hitler 2
-55
-tv 0.768980010986
-hmm 0.691451114037
-gee 0.60952261438
-ffs 0.597254593921
-meanwhile 0.589530308329
-breaking 0.544135850756
-dybala 0.46076591511
-oath 0.456791723797
-nope 0.437655563672
-retweet 0.434893349522
-sean spicer must be fired 0.370222998468
-jesus 0.354785560127
-tomahawk 0.349962985376
-we heard 0.339440886953
-welp 0.339023386025
-sean spicer holocaust centers 0.336144157683
-see sean spicer 0.32780063031
-father's decision 0.321258293401
-millions of jews 0.30866428224
-white house spokesman 0.306217605701
-nancy 0.298935664238
-syria strike 0.297405375214
-spicy 0.281317057106
-trump kids 0.27191193413
-spice 0.268873190211
-alex 0.268654960726
-bless 0.262344007455
-leftists 0.26148981344
-wonγçöt 0.255853864049
-holy shit 0.255746695248
-hitler comments 0.255707841705
-strike syria 0.251144395769
-trumps 0.250505919296
-eric trump says syria strike 0.230237974547
-pres 0.228667394163
-happy passover 0.224648021706
-literally hitler 0.223750461187
-fire sean spicer now 0.217154261695
-sessions 0.214432225545
-holocaust comments 0.210180636484
-white house press secretary sean spicer 0.186598654047
-republican 0.18318701505
-fire sean spicer 0.180752030752
-sean spicer claims hitler 0.163193319687
-monitor carter page 0.147633736529
-hitler didnγçöt use chemical weapons 0.138288935519
-deep state 0.134046938737
-russia ties 0.123846586993
-white house press secretary 0.112795730979
-sean spicer apologizes 0.0897410922031
-holocaust centres 0.0750782522203
-holocaust centers 0.0564072505029
-syria strike proves 0.0548833767983
-holocaust center 0.0489676161746
-anne frank center calls 0.0452458496675
-55
-{-0.027385960341217267}
-aggregated sketch: [0.6391653282754814, 0.019482357922509724, 0.054536626004043416, 0.12998117657220762, 0.030188259053664825, 0.1266462521720927]
-aggregated sketch: [0.07305728151159187, 0.0524800963859611, 0.04232339707948515, 0.026177574195685626, 0.722328021246525, 0.08363362958075116]
-aggregated sketch: [0.2661017885626366, 0.3260684445847924, 0.07079164142835344, 0.0547401397667108, 0.07460114670833992, 0.20769683894916663]
-['alex', 'pres', 'we heard', 'trumps', 'spicy']
-['holocaust centres', 'millions of jews', 'spice', "father's decision", 'see sean spicer', 'holy shit', 'hitler comments', 'retweet', 'oath', 'literally hitler']
-['sean spicer holocaust centers', 'sean spicer apologizes', 'syria strike', 'white house press secretary sean spicer', 'white house spokesman', 'ffs', 'trump kids', 'breaking', 'hitler didnγçöt use chemical weapons', 'deep state', 'happy passover', 'tomahawk', 'nope', 'nancy', 'bless', 'leftists', 'white house press secretary', 'fire sean spicer', 'monitor carter page', 'sean spicer must be fired', 'russia ties', 'holocaust centers', 'hmm', 'meanwhile', 'syria strike proves', 'holocaust center', 'wonγçöt', 'fire sean spicer now', 'tv', 'gee', 'holocaust comments', 'eric trump says syria strike', 'jesus', 'welp', 'dybala', 'sean spicer claims hitler', 'anne frank center calls', 'republican', 'strike syria', 'sessions']
-15.67980694770813 47.96535515785217
+3201
+=> 0 3201
+ambiguous_candidates_in_batch:  53
+reintroduction_threshold: 0.9
+good:  270 270
+ambiguous:  86 91
+bad:  887 916
+10.257993221282959 30.723204135894775
 1   Consumed
 **********************************************************
 Phase I extracting now
-11.34263014793396 59.30798530578613
-15894
+6.872108221054077 37.59531235694885
+16143
 2   Produced
 **********************************************************
-['his', 'today', "there's", 'please', 'to', 'who', 'against', 'down', 'with', 'into', 'is', 'even', 'my', 'we', 'most', "you're", 'can', 'the', 'in', 'but', 'thanks', 'over', 'up', 'tomorrow', 'never', "didn't", 'a', 'me', 'be', 'no', 'him', 'am', 'just', 'as', "i'm", 'and', 'i', 'an', 'again', "can't", 'u', 'are', 'you', 'what', 'from', 'same', 'this', 'at', 'not', 'make', 'must', 'after', 'of', 'nobody', 'on', 'now', 'by', 'yourself', 'it', 'for', 'do', 'that', 'than', "he's", 'here', 'or', 'was', 'damn']
-Not Even Hitler 7
-NOT EVEN HITLER 7
-Not even Hitler 2
-"not even Hitler 3
-NOT EVEN HITLER 7
-"not even Hitler 3
-Not Even Hitler 2
-"not even Hitler 3
-Not Even Hitler 2
-Not even Hitler. 7
-"Not even Hitler 2
-"Not even Hitler 2
-100
-tv 0.802378677268
-ps 0.790996687602
-hrc 0.740124993914
-gee 0.710975985654
-maga 0.698227628543
-meanwhile 0.644606323005
-hmm 0.639880544772
-ffs 0.624140453728
-breaking 0.610946477695
-ah 0.579986265025
-omfg 0.553522525089
-pos 0.494716778096
-dybala 0.481398976255
-pence 0.45848392704
-jr 0.445495071218
-sadly 0.43879994465
-nope 0.43879876223
-dortmund 0.435845801077
-tomahawk 0.434489199426
-sean spicer holocaust centers 0.418218695952
-welp 0.41188877434
-juve 0.406740640543
-jesus 0.380706765105
-barca 0.378562376642
-fed 0.372553443679
-congress 0.372143428838
-secretary 0.36425133188
-leftists 0.359745347618
-im 0.353480689991
-whitehouse 0.353443596536
-twitter 0.346638129996
-fbi fisa warrant 0.341340016823
-infowars 0.332824368913
-sessions 0.324433915733
-cubs 0.315701750954
-sean spicer flubbed the holocaust 0.307157097216
-sean spicer tells press corps hitler 0.302069974497
-kim 0.301196616179
-ivanka influenced syria strike decision 0.300297711355
-republicans 0.300215331014
-bless 0.299212763379
-nancy 0.296423701642
-republican 0.283837751784
-senate 0.281659651253
-donγçöt 0.278295530918
-united flight 0.276574306828
-happy passover 0.269376373945
-sean spicer must be fired 0.263654969947
-white house spokesman 0.249875124652
-spicer apologizes 0.238147494544
-fisa court 0.232188362535
-fun fact 0.228072313229
-itγçös 0.20159597777
-trump kids 0.200478380207
-strike syria 0.197681139482
-hitler never used chemical weapons 0.196837979953
-wonγçöt 0.19263941718
-didnγçöt 0.189174920899
-white house press secretary sean spicer 0.188303599521
-deep state 0.188192526535
-sean spicer's holocaust comments 0.186296298437
-didnγçöt use chemical weapons 0.178250015198
-good lord 0.171077132347
-nazi death camps 0.169566195463
-syria strike 0.168751233576
-hitler gassed millions 0.158257157637
-trump russia 0.155198486929
-defending hitler 0.153936780166
-doesnγçöt 0.152517135971
-sean spicer tries 0.149012679002
-love of god 0.148537562229
-holocaust centre 0.140056883842
-fire sean spicer now 0.137799471949
-holocaust comments 0.137396480239
-eric trump says syria strike 0.13310060859
-ivanka encouraged 0.131085483553
-watching sean spicer 0.13039695358
-sean spicer meant 0.121242039035
-monitor carter page 0.118949607529
-russia ties 0.103344828141
-anne frank center calls on trump 0.101562783519
-holocaust center 0.101218755677
-fire sean spicer 0.100864500647
-holocaust centers 0.0997486317694
-trump aide 0.0973424178067
-fbi granted fisa warrant 0.0967553977944
-hitler didnγçöt use chemical weapons 0.094663222196
-tillerson arrives in moscow 0.0807385478276
-sean spicer claims hitler 0.0782097838357
-weγçöre 0.0742928550854
-sean spicer gets 0.0703628592192
-white house press secretary 0.0605282110711
-hitler comment 0.0488514994888
-white house press 0.043361500587
-sean spicer apologizes 0.0395457621106
-hitler gaffe 0.0384681702511
-eric trump admits 0.0376085913621
-syria strike proves 0.0343747824636
-anne frank center calls 0.0324457654353
-fire spicer 0.0224390568313
-100
-{-0.037966339947731714}
-aggregated sketch: [0.6557227136402165, 0.021146205421465905, 0.05245418058217745, 0.11006505643084022, 0.029023196660468282, 0.1315886472648312]
-aggregated sketch: [0.07360669316281564, 0.058910382889448845, 0.038751320653656496, 0.02680264868509672, 0.7200925255850965, 0.08183642902388723]
-aggregated sketch: [0.29084430834402536, 0.3238729921682763, 0.04676209150839142, 0.0440097783561354, 0.07753270216086729, 0.21697812746230427]
-['kim', 'hrc', 'trump russia', 'senate', 'weγçöre', 'sessions', 'tomahawk', 'nancy']
-['united flight', 'jr', 'hmm', 'fed', 'good lord', 'white house spokesman', 'holocaust centre', 'hitler gassed millions', 'sean spicer gets', 'fisa court', 'sean spicer tries', 'sadly', 'monitor carter page', 'defending hitler', 'pos', 'nope', 'love of god', 'leftists', 'secretary', 'strike syria']
-['im', 'infowars', 'hitler never used chemical weapons', 'juve', "sean spicer's holocaust comments", 'white house press secretary sean spicer', 'doesnγçöt', 'trump kids', 'breaking', 'hitler didnγçöt use chemical weapons', 'deep state', 'twitter', 'ps', 'eric trump admits', 'didnγçöt use chemical weapons', 'maga', 'barca', 'pence', 'didnγçöt', 'nazi death camps', 'dybala', 'ivanka influenced syria strike decision', 'fbi fisa warrant', 'ivanka encouraged', 'sean spicer apologizes', 'syria strike', 'cubs', 'ah', 'sean spicer flubbed the holocaust', 'anne frank center calls on trump', 'sean spicer must be fired', 'holocaust centers', 'wonγçöt', 'holocaust center', 'fire sean spicer now', 'holocaust comments', 'welp', 'hitler gaffe', 'congress', 'sean spicer claims hitler', 'fbi granted fisa warrant', 'spicer apologizes', 'omfg', 'ffs', 'happy passover', 'dortmund', 'sean spicer tells press corps hitler', 'watching sean spicer', 'fire sean spicer', 'russia ties', 'meanwhile', 'syria strike proves', 'tv', 'jesus', 'donγçöt', 'fire spicer', 'itγçös', 'hitler comment', 'whitehouse', 'sean spicer holocaust centers', 'republicans', 'white house press', 'fun fact', 'bless', 'trump aide', 'white house press secretary', 'tillerson arrives in moscow', 'gee', 'eric trump says syria strike', 'sean spicer meant', 'anne frank center calls', 'republican']
-18.05518913269043 77.36317443847656
+6108
+=> 0 6108
+ambiguous_candidates_in_batch:  78
+reintroduction_threshold: 0.9
+good:  364 365
+ambiguous:  133 141
+bad:  1227 1261
+12.744740962982178 50.34005331993103
 2   Consumed
 **********************************************************
 Phase I extracting now
-10.664560079574585 88.02773451805115
-14407
+5.921142816543579 56.26119613647461
+14218
 3   Produced
 **********************************************************
-['his', 'today', "there's", 'please', 'to', 'who', 'against', 'with', 'down', 'into', 'is', 'know', 'even', 'my', 'we', 'most', 'thank', "you're", 'can', 'the', 'in', 'but', 'your', 'thanks', 'over', 'up', 'tomorrow', 'never', "didn't", 'a', 'me', 'be', 'no', 'him', 'am', 'just', 'as', "i'm", 'and', 'i', 'an', 'again', "can't", 'u', 'are', 'you', 'what', 'does', 'same', 'this', 'from', 'more', 'at', 'not', 'did', 'will', 'make', 'must', 'done', 'after', 'of', 'nobody', 'on', 'all', 'now', 'by', 'yourself', 'it', 'had', 'if', 'have', 'for', 'do', 'that', 'than', "he's", 'here', 'or', 'was', 'damn']
-"Not even Hitler 2
-NOT EVEN HITLER 7
-not even Hitler 3
-NOT EVEN HITLER 7
-Not even Hitler 2
-"not even Hitler 3
-"Not even Hitler 2
-NOT EVEN HITLER 7
-137
-ww3 0.855632261198
-tv 0.826185018566
-gee 0.768909878994
-ps 0.766283732559
-maga 0.750794590752
-meanwhile 0.715990875081
-hello 0.705818833883
-breaking news 0.633285114849
-breaking 0.618489789773
-ffs 0.614294700684
-omfg 0.577793424589
-analysis 0.556710266184
-spy on trump adviser 0.555009348903
-ah 0.520237879673
-sean spicer dybala barca 0.507051457985
-whoops 0.50020342732
-billion 0.498253838353
-drumpf 0.468147120189
-dybala 0.456793655861
-western 0.44405134511
-neocons 0.443124504516
-male 0.440385699787
-objectivity 0.429260944734
-welp 0.427034844737
-seder 0.412908535736
-democrat 0.412008853197
-pence 0.402322167744
-apprentice 0.401503200509
-jesus 0.401277309215
-sean spicer holocaust centers 0.39677287087
-fox 0.393830544491
-fbi fisa warrant 0.39202183368
-boom 0.391394499414
-frankly 0.390847440859
-hill 0.386123797901
-sean spicer barca 0.385357626016
-juve 0.376920144262
-im 0.358959994407
-dortmund 0.347395208178
-congress 0.347033460373
-monitor former trump adviser carter page 0.340574701266
-whitehouse 0.333960000173
-barca 0.333810943291
-twitter 0.322486676318
-donγçöt 0.322334162442
-christ 0.318904112852
-monitor trump adviser carter page 0.318058623475
-cubs 0.316237173173
-pres 0.313347336759
-sickening 0.312627275214
-infowars 0.302040585014
-holocaust centers sean spicer 0.299178936721
-sean spicer must be fired 0.298564611934
-mike 0.294617556729
-worst pr 0.292904014869
-republicans 0.289487206173
-spicer apologizes 0.287257170151
-ivanka influenced syria strike decision 0.284035467933
-bless 0.282781790058
-prison planet 0.279814973682
-sean spicer draws backlash by comparing 0.278772192794
-republican 0.278374226679
-pesach sameach 0.277041072918
-sean spicer tells press corps hitler 0.273121960093
-yesterday pepsi 0.271675902749
-syrian strike 0.271675902749
-sean spicer flubbed the holocaust 0.270457025582
-national pet day 0.256571849126
-youtube 0.25527543905
-wonγçöt 0.254678318561
-pants on fire 0.249543427139
-hitler never used chemical weapons 0.246668907066
-trump kids 0.235470052136
-claims hitler 0.231000917599
-happy passover 0.229066884343
-itγçös 0.21828463654
-sean spicer's holocaust comments 0.21215515557
-didnγçöt 0.20762306537
-didnγçöt use chemical weapons 0.196223147455
-heγçös 0.196223147455
-says ivanka 0.196223147455
-ivanka encouraged 0.192698775262
-doesnγçöt 0.185970138621
-white women 0.184654582327
-hitler used chemical weapons 0.181061191572
-ivanka convinced 0.175784822797
-carter page spied 0.174569163109
-engaging in holocaust denial 0.1734500082
-holocaust comments 0.17282682134
-tillerson arrives in moscow 0.171107074942
-fun fact 0.170858713895
-colluding with russia 0.154900598036
-white house press secretary sean spicer 0.154875132513
-syria strike 0.15097156944
-missile strike in syria 0.147593639568
-wh press secretary 0.141806009195
-nazi death camps 0.139585894712
-nancy pelosi calls 0.139585894712
-wasnγçöt 0.138323229083
-sean spicer meant 0.137861249967
-fbi obtained warrant 0.137861249967
-sean spicerγçös firing 0.132633733897
-warrant on carter page 0.12700652329
-idiot sean spicer 0.12700652329
-us secretary of state 0.124860721579
-fire sean spicer now 0.121563179089
-trump aide 0.12019710359
-fbi granted fisa warrant 0.120181339516
-eric trump says syria strike 0.119180508491
-russian spy 0.118930416171
-russia ties 0.115709771747
-watching sean spicer 0.111054561033
-sean spicer got in a fight 0.108960936595
-god bless 0.105138294549
-watch sean spicer 0.100605808779
-sean spicer claims hitler 0.0976268607239
-fire sean spicer 0.0939550418023
-hitler didnγçöt use chemical weapons 0.0862511397965
-spreading holocaust denial 0.0818040844723
-fbi got fisa warrant 0.0799388686693
-says trump 0.0781254116285
-anne frank center calls on trump 0.075956963555
-bye bye 0.0708809470074
-holocaust center 0.0664630342593
-holocaust centers 0.0641757559786
-making america 0.0548199219375
-daughter ivanka 0.053839820177
-hitler comment 0.0527531742938
-white house press secretary 0.0521089903987
-former trump adviser carter page 0.0443967635498
-fire spicer 0.0423498332082
-sean spicer apologizes 0.0380105501767
-syria strike proves 0.0321707412505
-eric trump admits 0.031373070039
-anne frank center calls 0.0221682998073
-hitler gaffe 0.0210758866324
-white house press 0.0106225795144
-137
-{-0.04332797558198395}
-aggregated sketch: [0.6699751167205988, 0.01897595200853493, 0.049444110320183275, 0.10334809220972575, 0.029660427578277037, 0.1285963011626794]
-aggregated sketch: [0.074163027449609, 0.06079654127294444, 0.037663894452088315, 0.02596505186735351, 0.7188544034149316, 0.082557081543074]
-aggregated sketch: [0.2813722877026284, 0.32850723558254336, 0.048031599298577636, 0.038120323152845914, 0.0702663664711692, 0.23370218779223545]
-['apprentice', 'breaking news', 'missile strike in syria', 'watch sean spicer', 'youtube', 'congress', 'pesach sameach', 'dortmund', 'fox', 'whitehouse']
-['claims hitler', 'trump kids', 'yesterday pepsi', 'syrian strike', 'worst pr', 'democrat', 'male', 'spicer apologizes', 'pants on fire', 'omfg', 'objectivity', 'sickening', 'drumpf', 'billion', 'analysis']
-['im', 'infowars', 'hitler never used chemical weapons', 'juve', "sean spicer's holocaust comments", 'white house press secretary sean spicer', 'ww3', 'western', 'doesnγçöt', 'breaking', 'hitler didnγçöt use chemical weapons', 'twitter', 'mike', 'ps', 'eric trump admits', 'pres', 'didnγçöt use chemical weapons', 'says ivanka', 'maga', 'barca', 'pence', 'didnγçöt', 'fbi obtained warrant', 'fbi fisa warrant', 'nazi death camps', 'dybala', 'ivanka influenced syria strike decision', 'ivanka encouraged', 'sean spicer apologizes', 'sean spicer got in a fight', 'syria strike', 'daughter ivanka', 'fbi got fisa warrant', 'cubs', 'ah', 'sean spicer flubbed the holocaust', 'national pet day', 'anne frank center calls on trump', 'holocaust centers sean spicer', 'sean spicer must be fired', 'holocaust centers', 'holocaust center', 'wonγçöt', 'sean spicer draws backlash by comparing', 'fire sean spicer now', 'us secretary of state', 'holocaust comments', 'white women', 'welp', 'hitler gaffe', 'sean spicer claims hitler', 'former trump adviser carter page', 'prison planet', 'fbi granted fisa warrant', 'idiot sean spicer', 'wasnγçöt', 'seder', 'warrant on carter page', 'ffs', 'neocons', 'engaging in holocaust denial', 'happy passover', 'sean spicer tells press corps hitler', 'boom', 'whoops', 'watching sean spicer', 'hitler used chemical weapons', 'fire sean spicer', 'christ', 'sean spicer barca', 'russia ties', 'spy on trump adviser', 'hello', 'meanwhile', 'syria strike proves', 'tv', 'jesus', 'donγçöt', 'ivanka convinced', 'nancy pelosi calls', 'carter page spied', 'fire spicer', 'itγçös', 'hitler comment', 'sean spicer holocaust centers', 'republicans', 'god bless', 'white house press', 'russian spy', 'hill', 'fun fact', 'monitor trump adviser carter page', 'sean spicer dybala barca', 'wh press secretary', 'sean spicerγçös firing', 'bless', 'trump aide', 'colluding with russia', 'monitor former trump adviser carter page', 'white house press secretary', 'heγçös', 'frankly', 'making america', 'tillerson arrives in moscow', 'bye bye', 'gee', 'eric trump says syria strike', 'sean spicer meant', 'says trump', 'anne frank center calls', 'republican', 'spreading holocaust denial']
-20.798336029052734 108.82607054710388
+9003
+=> 0 9003
+ambiguous_candidates_in_batch:  117
+reintroduction_threshold: 0.9
+good:  452 452
+ambiguous:  171 170
+bad:  1487 1530
+14.512826204299927 70.77402234077454
+3   Consumed
+**********************************************************
+hello
+Tweets are in memory...
+hello
+Phase I extracting now
+6.390599727630615 6.390599727630615
+16054
+0   Produced
+**********************************************************
+ambiguous_candidates_in_batch:  0
+6.827589511871338 13.218189239501953
+0   Consumed
+**********************************************************
+Phase I extracting now
+6.503427267074585 19.721616506576538
+16057
+1   Produced
+**********************************************************
+3142
+=> 0 3142
+ambiguous_candidates_in_batch:  47
+reintroduction_threshold: 0.8
+good:  235 234
+ambiguous:  89 92
+bad:  942 964
+10.147057294845581 29.86867380142212
+1   Consumed
+**********************************************************
+Phase I extracting now
+6.654149293899536 36.522823095321655
+16004
+2   Produced
+**********************************************************
+6296
+=> 10 6286
+ambiguous_candidates_in_batch:  86
+reintroduction_threshold: 0.8
+good:  344 344
+ambiguous:  147 152
+bad:  1245 1291
+12.569557428359985 49.09238052368164
+2   Consumed
+**********************************************************
+Phase I extracting now
+6.03211784362793 55.12449836730957
+14256
+3   Produced
+**********************************************************
+9402
+=> 16 9386
+ambiguous_candidates_in_batch:  128
+reintroduction_threshold: 0.8
+good:  437 437
+ambiguous:  192 195
+bad:  1503 1538
+14.681995630264282 69.80649399757385
+3   Consumed
+**********************************************************
+hello
+Tweets are in memory...
+hello
+Phase I extracting now
+6.518296718597412 6.518296718597412
+15990
+0   Produced
+**********************************************************
+ambiguous_candidates_in_batch:  0
+6.881902456283569 13.400199174880981
+0   Consumed
+**********************************************************
+Phase I extracting now
+6.564364433288574 19.964563608169556
+15979
+1   Produced
+**********************************************************
+3209
+=> 17 3192
+ambiguous_candidates_in_batch:  54
+reintroduction_threshold: 0.7
+good:  266 266
+ambiguous:  105 109
+bad:  893 914
+10.194604635238647 30.159168243408203
+1   Consumed
+**********************************************************
+Phase I extracting now
+6.66777491569519 36.826943159103394
+16064
+2   Produced
+**********************************************************
+6349
+=> 18 6331
+ambiguous_candidates_in_batch:  102
+reintroduction_threshold: 0.7
+good:  364 364
+ambiguous:  137 141
+bad:  1210 1247
+12.74048137664795 49.56742453575134
+2   Consumed
+**********************************************************
+Phase I extracting now
+5.928902864456177 55.49632740020752
+14338
+3   Produced
+**********************************************************
+9261
+=> 60 9201
+ambiguous_candidates_in_batch:  123
+reintroduction_threshold: 0.7
+good:  448 449
+ambiguous:  182 185
+bad:  1492 1524
+14.888144969940186 70.3844723701477
+3   Consumed
+**********************************************************
+hello
+Tweets are in memory...
+hello
+Phase I extracting now
+6.648866176605225 6.648866176605225
+16004
+0   Produced
+**********************************************************
+ambiguous_candidates_in_batch:  0
+6.978359699249268 13.627225875854492
+0   Consumed
+**********************************************************
+Phase I extracting now
+6.841147184371948 20.46837306022644
+16221
+1   Produced
+**********************************************************
+3273
+=> 30 3243
+ambiguous_candidates_in_batch:  57
+reintroduction_threshold: 0.6
+good:  264 265
+ambiguous:  104 102
+bad:  877 910
+10.351263761520386 30.819636821746826
+1   Consumed
+**********************************************************
+Phase I extracting now
+6.636427164077759 37.456063985824585
+15909
+2   Produced
+**********************************************************
+6278
+=> 69 6209
+ambiguous_candidates_in_batch:  101
+reintroduction_threshold: 0.6
+good:  352 355
+ambiguous:  126 130
+bad:  1212 1255
+12.679322004318237 50.13538599014282
+2   Consumed
+**********************************************************
+Phase I extracting now
+5.875450372695923 56.010836362838745
+14237
+3   Produced
+**********************************************************
+9163
+=> 107 9056
+ambiguous_candidates_in_batch:  118
+reintroduction_threshold: 0.6
+good:  447 447
+ambiguous:  166 168
+bad:  1485 1522
+14.732356071472168 70.74319243431091
+3   Consumed
+**********************************************************
+hello
+Tweets are in memory...
+hello
+Phase I extracting now
+6.452013731002808 6.452013731002808
+15983
+0   Produced
+**********************************************************
+ambiguous_candidates_in_batch:  0
+6.92045521736145 13.372468948364258
+0   Consumed
+**********************************************************
+Phase I extracting now
+6.550296306610107 19.922765254974365
+15987
+1   Produced
+**********************************************************
+3133
+=> 75 3058
+ambiguous_candidates_in_batch:  52
+reintroduction_threshold: 0.5
+good:  244 245
+ambiguous:  97 104
+bad:  896 910
+10.170183181762695 30.09294843673706
+1   Consumed
+**********************************************************
+Phase I extracting now
+6.628997564315796 36.721946001052856
+16026
+2   Produced
+**********************************************************
+6168
+=> 117 6051
+ambiguous_candidates_in_batch:  93
+reintroduction_threshold: 0.5
+good:  359 360
+ambiguous:  150 150
+bad:  1209 1240
+12.509979009628296 49.23192501068115
+2   Consumed
+**********************************************************
+Phase I extracting now
+5.91812539100647 55.15005040168762
+14375
+3   Produced
+**********************************************************
+9051
+=> 207 8844
+ambiguous_candidates_in_batch:  139
+reintroduction_threshold: 0.5
+good:  450 452
+ambiguous:  183 186
+bad:  1478 1523
+14.335584878921509 69.48563528060913
+3   Consumed
+**********************************************************
+hello
+Tweets are in memory...
+hello
+Phase I extracting now
+6.413123369216919 6.413123369216919
+16069
+0   Produced
+**********************************************************
+ambiguous_candidates_in_batch:  0
+6.884429693222046 13.297553062438965
+0   Consumed
+**********************************************************
+Phase I extracting now
+6.547062158584595 19.84461522102356
+16080
+1   Produced
+**********************************************************
+3225
+=> 164 3061
+ambiguous_candidates_in_batch:  66
+reintroduction_threshold: 0.4
+good:  263 263
+ambiguous:  118 116
+bad:  892 922
+10.303081035614014 30.147696256637573
+1   Consumed
+**********************************************************
+Phase I extracting now
+6.675647258758545 36.82334351539612
+16037
+2   Produced
+**********************************************************
+6314
+=> 340 5974
+ambiguous_candidates_in_batch:  112
+reintroduction_threshold: 0.4
+good:  362 362
+ambiguous:  157 162
+bad:  1231 1266
+12.955553770065308 49.778897285461426
+2   Consumed
+**********************************************************
+Phase I extracting now
+5.873296737670898 55.652194023132324
+14185
+3   Produced
+**********************************************************
+9104
+=> 428 8676
+ambiguous_candidates_in_batch:  140
+reintroduction_threshold: 0.4
+good:  463 463
+ambiguous:  194 194
+bad:  1461 1499
+14.380280017852783 70.03247404098511
+3   Consumed
+**********************************************************
+hello
+Tweets are in memory...
+hello
+Phase I extracting now
+6.491257429122925 6.491257429122925
+16036
+0   Produced
+**********************************************************
+ambiguous_candidates_in_batch:  0
+7.148494243621826 13.639751672744751
+0   Consumed
+**********************************************************
+Phase I extracting now
+6.642230033874512 20.281981706619263
+16102
+1   Produced
+**********************************************************
+3203
+=> 226 2977
+ambiguous_candidates_in_batch:  58
+reintroduction_threshold: 0.3
+good:  262 264
+ambiguous:  110 113
+bad:  899 920
+11.05154824256897 31.333529949188232
+1   Consumed
+**********************************************************
+Phase I extracting now
+6.776503801345825 38.11003375053406
+16004
+2   Produced
+**********************************************************
+6355
+=> 644 5711
+ambiguous_candidates_in_batch:  108
+reintroduction_threshold: 0.3
+good:  367 367
+ambiguous:  136 140
+bad:  1215 1247
+12.964121103286743 51.0741548538208
+2   Consumed
+**********************************************************
+Phase I extracting now
+6.045362949371338 57.11951780319214
+14229
+3   Produced
+**********************************************************
+9015
+=> 681 8334
+ambiguous_candidates_in_batch:  127
+reintroduction_threshold: 0.3
+good:  460 460
+ambiguous:  189 193
+bad:  1459 1493
+14.715331792831421 71.83484959602356
+3   Consumed
+**********************************************************
+hello
+Tweets are in memory...
+hello
+Phase I extracting now
+6.5366809368133545 6.5366809368133545
+16039
+0   Produced
+**********************************************************
+ambiguous_candidates_in_batch:  0
+6.925063133239746 13.4617440700531
+0   Consumed
+**********************************************************
+Phase I extracting now
+6.5728349685668945 20.034579038619995
+16105
+1   Produced
+**********************************************************
+3237
+=> 311 2926
+ambiguous_candidates_in_batch:  74
+reintroduction_threshold: 0.2
+good:  266 266
+ambiguous:  115 119
+bad:  870 899
+10.664562225341797 30.699141263961792
+1   Consumed
+**********************************************************
+Phase I extracting now
+6.67696475982666 37.37610602378845
+15978
+2   Produced
+**********************************************************
+6068
+=> 516 5552
+ambiguous_candidates_in_batch:  111
+reintroduction_threshold: 0.2
+good:  364 365
+ambiguous:  180 182
+bad:  1171 1213
+12.979423761367798 50.35552978515625
+2   Consumed
+**********************************************************
+Phase I extracting now
+6.390264511108398 56.74579429626465
+14249
+3   Produced
+**********************************************************
+9021
+=> 890 8131
+ambiguous_candidates_in_batch:  168
+reintroduction_threshold: 0.2
+good:  455 457
+ambiguous:  238 237
+bad:  1438 1475
+14.971069812774658 71.7168641090393
+3   Consumed
+**********************************************************
+hello
+Tweets are in memory...
+hello
+Phase I extracting now
+6.6039042472839355 6.6039042472839355
+16089
+0   Produced
+**********************************************************
+ambiguous_candidates_in_batch:  0
+7.469581842422485 14.073486089706421
+0   Consumed
+**********************************************************
+Phase I extracting now
+6.814295530319214 20.887781620025635
+16064
+1   Produced
+**********************************************************
+3131
+=> 425 2706
+ambiguous_candidates_in_batch:  50
+reintroduction_threshold: 0.1
+good:  260 260
+ambiguous:  94 96
+bad:  882 896
+10.673774242401123 31.561555862426758
+1   Consumed
+**********************************************************
+Phase I extracting now
+6.785815000534058 38.347370862960815
+15830
+2   Produced
+**********************************************************
+6103
+=> 789 5314
+ambiguous_candidates_in_batch:  91
+reintroduction_threshold: 0.1
+good:  370 372
+ambiguous:  139 141
+bad:  1218 1239
+12.823262929916382 51.1706337928772
+2   Consumed
+**********************************************************
+Phase I extracting now
+5.969850301742554 57.14048409461975
+14388
+3   Produced
+**********************************************************
+8794
+=> 1037 7757
+ambiguous_candidates_in_batch:  124
+reintroduction_threshold: 0.1
+good:  453 453
+ambiguous:  177 177
+bad:  1496 1535
+14.705121517181396 71.84560561180115
 3   Consumed
 **********************************************************
