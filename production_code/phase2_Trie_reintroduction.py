@@ -107,8 +107,9 @@ class EntityResolver ():
         self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
         self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
 
-        print(len(just_converted_tweets),len(incomplete_tweets),len(self.not_reintroduced))
-
+        print(len(self.just_converted_tweets),len(incomplete_tweets),len(self.not_reintroduced))
+        for i in range(self.counter):
+            print(str(i)+':',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
 
         self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
 
@@ -373,9 +374,11 @@ class EntityResolver ():
           cosine_distance_non_ent=spatial.distance.cosine(candidate_synvec, non_entity_sketch)
           candidate_distance_array=[cosine_distance_ent,cosine_distance_non_ent]
           #cosine_distance_array.append(candidate_distance_array)
-          cosine_distance_dict[row['candidate']]=candidate_distance_array
-        #cosine_distance_array_dict= OrderedDict(sorted(cosine_distance_dict.items(), key=lambda x: x[1]))
-        return cosine_distance_dict
+          cosine_distance_dict[row['candidate']]=min(candidate_distance_array)
+
+        cosine_distance_dict_sorted= OrderedDict(sorted(cosine_distance_dict.items(), key=lambda x: x[1]))
+        cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value < reintroduction_threshold }
+        return cosine_distance_dict_sorted_final
 
     #single ambiguous sketch; maximal cosine distance
     def get_cosine_distance_1(self, ambiguous_candidate_records,ambiguous_entity_sketch,reintroduction_threshold):
@@ -393,6 +396,26 @@ class EntityResolver ():
         cosine_distance_dict_sorted= OrderedDict(sorted(cosine_distance_dict.items(), key=lambda x: x[1], reverse=True))
         cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value > reintroduction_threshold }
         return cosine_distance_dict_sorted_final
+
+    def get_combined_score(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch,ambiguous_entity_sketch,reintroduction_threshold):
+        combined_score_dict={}
+        for index, row in ambiguous_candidate_records.iterrows():
+          candidate_synvec=[(row['cap']/row['cumulative']),
+                              (row['substring-cap']/row['cumulative']),
+                              (row['s-o-sCap']/row['cumulative']),
+                              (row['all-cap']/row['cumulative']),
+                              (row['non-cap']/row['cumulative']),
+                              (row['non-discriminative']/row['cumulative'])]
+          cosine_distance_ent=spatial.distance.cosine(candidate_synvec, entity_sketch)
+          cosine_distance_non_ent=spatial.distance.cosine(candidate_synvec, non_entity_sketch)
+          candidate_distance_array=[cosine_distance_ent,cosine_distance_non_ent]
+          cosine_distance_amb=spatial.distance.cosine(candidate_synvec, ambiguous_entity_sketch)
+          #cosine_distance_array.append(candidate_distance_array)
+          combined_score_dict[row['candidate']]=min(candidate_distance_array)/cosine_distance_amb
+
+        combined_score_dict_sorted= OrderedDict(sorted(combined_score_dict.items(), key=lambda x: x[1]))
+        combined_score_sorted_final= { key:value for key, value in combined_score_dict_sorted.items() if value < reintroduction_threshold }
+        return combined_score_sorted_final
 
     #single entity/non-entity sketch; maximal euclidean distance
     def get_euclidean_distance(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch,reintroduction_threshold):
@@ -428,17 +451,20 @@ class EntityResolver ():
         euclidean_distance_dict_sorted= OrderedDict(sorted(euclidean_distance_dict.items(), key=lambda x: x[1], reverse=True))
         return euclidean_distance_dict_sorted
 
-    def get_reintroduced_tweets(self,cosine_distance_dict_wAmb):
+    def get_reintroduced_tweets(self,cosine_distance_dict):
         #no reintroduction
+        print(len(self.incomplete_tweets))
+        for i in range(self.counter):
+            print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
         return self.incomplete_tweets
-        # #print(self.incomplete_tweets['ambiguous_candidates'])
+        
         # # get union of tweet-set of selected candidates 
-        # #print(self.incomplete_tweets[any(x in list(cosine_distance_dict_wAmb.keys()) for x in self.incomplete_tweets['ambiguous_candidates'])])
-        # reintroduced_tweets=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in list(cosine_distance_dict_wAmb.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
-        # #not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in list(cosine_distance_dict_wAmb.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
+        # #print(self.incomplete_tweets[any(x in list(cosine_distance_dict.keys()) for x in self.incomplete_tweets['ambiguous_candidates'])])
+        # reintroduced_tweets=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in list(cosine_distance_dict.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
+        # #not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in list(cosine_distance_dict.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
         # self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets.index)]
         # # print(len(self.incomplete_tweets))
-        # # print("=>",len(reintroduced_tweets),len(self.not_reintroduced))
+        # print("=>",len(reintroduced_tweets),len(self.not_reintroduced))
         # #print((len(not_reintroduced)==len(self.not_reintroduced)),(len(reintroduced_tweets)+len(self.not_reintroduced)==len(self.incomplete_tweets)))
         # return reintroduced_tweets
         
@@ -462,7 +488,9 @@ class EntityResolver ():
             ambiguous_candidate_inBatch_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates_in_batch)]
             #print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_inBatch_records))
             cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
-            cosine_distance_dict_wAmb=self.get_cosine_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch,reintroduction_threshold)
+            # cosine_distance_dict_wAmb=self.get_cosine_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch,reintroduction_threshold)
+            #comebined_score_dict=self.get_combined_score(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,self.ambiguous_entity_sketch,reintroduction_threshold)
+            #print(len(comebined_score_dict))
             #print(len(self.ambiguous_candidates_in_batch),len(cosine_distance_dict))
 
             #euclidean_distance_dict=self.get_euclidean_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
@@ -478,11 +506,15 @@ class EntityResolver ():
             #     #     cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate]))-self.ambiguous_candidate_distanceDict_prev[candidate].index(min(self.ambiguous_candidate_distanceDict_prev[candidate])),
             #     #     displacement)
 
+            # for candidate in comebined_score_dict.keys():
+            #     print(candidate,comebined_score_dict[candidate])
             # for candidate in cosine_distance_dict_wAmb.keys():
             #     print(candidate,cosine_distance_dict_wAmb[candidate])
 
             #tweet candidates for Reintroduction
-            reintroduced_tweets=self.get_reintroduced_tweets(cosine_distance_dict_wAmb)
+            #reintroduced_tweets=self.get_reintroduced_tweets(cosine_distance_dict_wAmb) #single ambiguous sketch
+            reintroduced_tweets=self.get_reintroduced_tweets(cosine_distance_dict) #single entity/non-entity sketch sketch
+            #reintroduced_tweets=self.get_reintroduced_tweets(comebined_score_dict) #combined 3 sketch score
             candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(reintroduced_tweets,CTrie,phase2stopwordList,1)
             phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
             df_holder.extend(df_holder_extracted)
@@ -512,9 +544,9 @@ class EntityResolver ():
         #candidate_featureBase_DF.to_csv("cb_with_prob_label.csv", sep=',', encoding='utf-8')
         correction_flag=self.set_partition_dict(candidate_featureBase_DF,infrequent_candidates)
         print("reintroduction_threshold:", reintroduction_threshold)
-        # print("good: ",len(self.good_candidates))
-        # print("ambiguous: ",len(self.ambiguous_candidates))
-        # print("bad: ",len(self.bad_candidates))
+        print("good: ",len(self.good_candidates))
+        print("ambiguous: ",len(self.ambiguous_candidates))
+        print("bad: ",len(self.bad_candidates))
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
 
         #if(self.counter>0):
