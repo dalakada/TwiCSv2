@@ -1,0 +1,4 @@
+hello
+Tweets are in memory...
+hello
+Phase I extracting now

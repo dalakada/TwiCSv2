@@ -295,12 +295,13 @@ class EntityResolver ():
 
         #multi-word infrequent candidates ---> to be used for recall correction
         infrequent_candidates=candidate_featureBase_DF[(candidate_featureBase_DF['Z_ScoreUnweighted'] < z_score_threshold) & (candidate_featureBase_DF.length>1)].candidate.tolist()
+        #all infrequent candidates
+        all_infrequent= candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] < z_score_threshold]
         candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] > z_score_threshold]
 
 
-
         #returns updated candidate_featureBase_DF with ["Z_score"], ["probability"],["class"] attributes.
-        return (self.my_classifier.run(candidate_featureBase_DF,z_score_threshold),infrequent_candidates)
+        return (self.my_classifier.run(candidate_featureBase_DF,z_score_threshold),infrequent_candidates,all_infrequent)
 
 
     # recall_correction
@@ -527,12 +528,21 @@ class EntityResolver ():
         print("ambiguous_candidates_in_batch: ",len(self.ambiguous_candidates_in_batch))
 
         #set ['probabilities'] for candidate_featureBase_DF
-        candidate_featureBase_DF,infrequent_candidates= self.classify_candidate_base(z_score_threshold,candidate_featureBase_DF)
+        candidate_featureBase_DF,multiWord_infrequent_candidates,all_infrequent= self.classify_candidate_base(z_score_threshold,candidate_featureBase_DF)
         # set readable labels (a,g,b) for candidate_featureBase_DF based on ['probabilities.']
         candidate_featureBase_DF=self.set_readable_labels(candidate_featureBase_DF)
+        if(self.counter>0):
+            print(len(candidate_featureBase_DF[candidate_featureBase_DF.status=="a"]))
+            print("good to amb: ",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))]))
+            print("bad to amb: ",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.bad_candidates)&(candidate_featureBase_DF["status"]=="a"))]))
+            print("amb to amb: ",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)&(candidate_featureBase_DF["status"]=="a"))]))
+            print("infrequent to amb:",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.all_infrequent_candidates)&(candidate_featureBase_DF["status"]=="a"))]))
+        
         self.good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
         self.ambiguous_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"].candidate.tolist()
         self.bad_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"].candidate.tolist()
+        self.all_infrequent_candidates=all_infrequent.candidate.tolist()
+        
         entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]
         non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
         ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
@@ -542,20 +552,27 @@ class EntityResolver ():
         # #need to calculate cosine distance of all ambiguous candidates at the end of the batch to get displacement in next batch... do not use cutoff
         # self.ambiguous_candidate_distanceDict_prev=self.get_all_cosine_distance(ambiguous_candidate_records,self.entity_sketch,self.non_entity_sketch)
         #candidate_featureBase_DF.to_csv("cb_with_prob_label.csv", sep=',', encoding='utf-8')
-        correction_flag=self.set_partition_dict(candidate_featureBase_DF,infrequent_candidates)
+        correction_flag=self.set_partition_dict(candidate_featureBase_DF,multiWord_infrequent_candidates)
         print("reintroduction_threshold:", reintroduction_threshold)
         print("good: ",len(self.good_candidates))
         print("ambiguous: ",len(self.ambiguous_candidates))
         print("bad: ",len(self.bad_candidates))
+        print("infrequent: ",len(self.all_infrequent_candidates))
+        
+        for i in range(self.counter+1):
+            print(str(i)+':',len(ambiguous_candidate_records[ambiguous_candidate_records['batch']==i]))
+            print(str(i)+':',len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==i)&(candidate_featureBase_DF['status']=="a")]))
+            # print(i)
+            # print(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==i)&(candidate_featureBase_DF['status']=="a")])
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
 
-        #if(self.counter>0):
-            # ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
-            # ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
-            # ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
-            # print(len(ambiguous_turned_good))
-            # print(len(ambiguous_turned_bad))
-            # print(len(ambiguous_remaining_ambiguous))
+        # if(self.counter>0):
+        #     ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
+        #     ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
+        #     ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
+        #     print(len(ambiguous_turned_good))
+        #     print(len(ambiguous_turned_bad))
+        #     print(len(ambiguous_remaining_ambiguous))
             
             # #testing what happens without reintroduction
             # CandidateBase_dict_prev=self.CandidateBase_dict
@@ -1480,6 +1497,7 @@ class EntityResolver ():
             self.good_candidates=[]
             self.bad_candidates=[]
             self.ambiguous_candidates=[]
+            self.all_infrequent_candidates=[]
             self.entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.non_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.ambiguous_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
