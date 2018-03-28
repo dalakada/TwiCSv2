@@ -33,7 +33,7 @@ prep_list=["in","at","of","on","&;"] #includes common conjunction as well
 article_list=["a","an","the"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["please","nope","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 string.punctuation=string.punctuation+'…‘’'
 
 
@@ -531,13 +531,34 @@ class EntityResolver ():
         candidate_featureBase_DF,multiWord_infrequent_candidates,all_infrequent= self.classify_candidate_base(z_score_threshold,candidate_featureBase_DF)
         # set readable labels (a,g,b) for candidate_featureBase_DF based on ['probabilities.']
         candidate_featureBase_DF=self.set_readable_labels(candidate_featureBase_DF)
-        if(self.counter>0):
-            print(len(candidate_featureBase_DF[candidate_featureBase_DF.status=="a"]))
-            print("good to amb: ",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))]))
-            print("bad to amb: ",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.bad_candidates)&(candidate_featureBase_DF["status"]=="a"))]))
-            print("amb to amb: ",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)&(candidate_featureBase_DF["status"]=="a"))]))
-            print("infrequent to amb:",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.all_infrequent_candidates)&(candidate_featureBase_DF["status"]=="a"))]))
-        
+        lst=[]
+        # if(self.counter>0):
+        #     print(len(candidate_featureBase_DF[candidate_featureBase_DF.status=="a"]))
+            # for i in range(self.counter):
+            #     print("batch: "+str(i))
+            # lst+=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
+            # lst+=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.bad_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
+        #     print("good to amb: ",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))]))
+        #     print("bad to amb: ",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.bad_candidates)&(candidate_featureBase_DF["status"]=="a"))]))
+        # #         print("amb to amb: ",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)&(candidate_featureBase_DF["status"]=="a")&(candidate_featureBase_DF['batch']==i))]))
+        new_to_amb=candidate_featureBase_DF[((candidate_featureBase_DF["batch"]==self.counter)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
+        good_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
+        bad_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.bad_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
+        infreq_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.all_infrequent_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
+        self.ambiguous_candidates_transition_dict[self.counter]=[]
+        #print(len(new_to_amb),len(infreq_to_amb),len(self.ambiguous_candidates_transition_dict[self.counter]))
+        # for i in range(self.counter):
+        #     print("==>",str(i), len([x for x in self.ambiguous_candidates_transition_dict[self.counter] if x in self.ambiguous_candidates_transition_dict[i]]))
+        for item in (new_to_amb+good_to_amb+bad_to_amb+infreq_to_amb):
+            flag=True
+            for i in range(self.counter):
+                if item in (self.ambiguous_candidates_transition_dict[i]):
+                    flag=False
+                    break
+            if(flag):
+                self.ambiguous_candidates_transition_dict[self.counter].append(item)
+
+
         self.good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
         self.ambiguous_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"].candidate.tolist()
         self.bad_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"].candidate.tolist()
@@ -555,13 +576,16 @@ class EntityResolver ():
         correction_flag=self.set_partition_dict(candidate_featureBase_DF,multiWord_infrequent_candidates)
         print("reintroduction_threshold:", reintroduction_threshold)
         print("good: ",len(self.good_candidates))
-        print("ambiguous: ",len(self.ambiguous_candidates))
+        print("ambiguous: ",len(self.ambiguous_candidates),len(ambiguous_candidate_records))
         print("bad: ",len(self.bad_candidates))
         print("infrequent: ",len(self.all_infrequent_candidates))
+
         
         for i in range(self.counter+1):
-            print(str(i)+':',len(ambiguous_candidate_records[ambiguous_candidate_records['batch']==i]))
-            print(str(i)+':',len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==i)&(candidate_featureBase_DF['status']=="a")]))
+            #lst+=ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])].candidate.tolist()
+            print(str(i)+':',len(ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])]))
+        #print(ambiguous_candidate_records[~ ambiguous_candidate_records['candidate'].isin(lst)])
+        #     print(str(i)+':',len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==i)&(candidate_featureBase_DF['status']=="a")]))
             # print(i)
             # print(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==i)&(candidate_featureBase_DF['status']=="a")])
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
@@ -1497,6 +1521,7 @@ class EntityResolver ():
             self.good_candidates=[]
             self.bad_candidates=[]
             self.ambiguous_candidates=[]
+            self.ambiguous_candidates_transition_dict={}
             self.all_infrequent_candidates=[]
             self.entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.non_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
