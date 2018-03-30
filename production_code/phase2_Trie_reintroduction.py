@@ -107,15 +107,15 @@ class EntityResolver ():
         self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
         self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
 
-        print(len(self.just_converted_tweets),len(incomplete_tweets),len(self.not_reintroduced))
-        for i in range(self.counter):
-            print(str(i)+':',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
 
-        self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
+        # #printing incomplete sentence estimates here
+        # print(len(self.just_converted_tweets),len(incomplete_tweets),len(self.not_reintroduced))
+        # for i in range(self.counter):
+        #     print(str(i)+':',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
 
-
-        self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
-        self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
+        #self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
+        # self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
+        # self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
 
 
 
@@ -455,8 +455,8 @@ class EntityResolver ():
     def get_reintroduced_tweets(self,cosine_distance_dict):
         #no reintroduction
         print(len(self.incomplete_tweets))
-        for i in range(self.counter):
-            print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
+        # for i in range(self.counter):
+        #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
         return self.incomplete_tweets
         
         # # get union of tweet-set of selected candidates 

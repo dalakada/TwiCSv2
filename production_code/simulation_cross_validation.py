@@ -41,12 +41,14 @@ total_time=0
 Phase1= phase1.SatadishaModule()
 Phase2 = phase2.EntityResolver()
 
-#input names: 3K; deduplicates--> politics; malcolm; 1M
+#input names: 3K; deduplicated--> politics; malcolm; 1M
 #tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',')
 input_name="ericTrump"
 #tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
-tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
-#tweets_unpartitoned=tweets_unpartitoned[:50000:]
+#tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
+tweets_unpartitoned=pd.read_csv("tweets_1million_for_others.csv",sep =',')
+tweets_unpartitoned=tweets_unpartitoned[:200000:]
+print("***",len(tweets_unpartitoned))
 print('Tweets are in memory...')
 batch_size=10000
 
@@ -64,7 +66,8 @@ tweets = shuffle(tweets_unpartitoned)
 #z_score=-0.8      #-----3K
 #z_score=-0.09      #-----50K
 #z_score=-0.078         #-----50K, multiple batches
-z_score=-0.08         #-----deduplicated_tweets,
+#z_score=-0.08         #-----deduplicated_tweets,
+z_score=-0.104         #-----tweets_1million_for_others, 200K
 
 
 #kf = KFold(n_splits=5,random_state=1000) 
