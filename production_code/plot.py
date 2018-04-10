@@ -6,7 +6,7 @@ import pandas as pd
 
 plt.hold(True)
 plt.xticks(np.arange(0, 20, 1.0))
-filename='entity-level-estimates-average.csv'
+filename='sentence-level-estimates-average.csv'
 data=pd.read_csv(filename,sep =',', index_col=False)
 for i in range(20):
 	x_val=list(range(i,20))
