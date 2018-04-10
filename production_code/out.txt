@@ -1,0 +1,4 @@
+*** 200000
+Tweets are in memory...
+hello
+Phase I extracting now

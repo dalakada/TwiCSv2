@@ -108,11 +108,11 @@ class EntityResolver ():
         self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
 
 
-        self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
+        #self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
 
 
-        self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
-        self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
+        #self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
+        #self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
 
 
 
@@ -256,11 +256,11 @@ class EntityResolver ():
         # tweet_ids_df["fn"+state_of_art]=false_negative_holder
         # tweet_ids_df['fp'+state_of_art]= false_positive_holder
         
-        if(state_of_art=="ritter_candidates"):
-            tweet_ids_df.to_csv("ritter_results.csv", sep=',', encoding='utf-8')
+        # if(state_of_art=="ritter_candidates"):
+        #     tweet_ids_df.to_csv("ritter_results.csv", sep=',', encoding='utf-8')
 
-        if(state_of_art=="stanford_candidates"):
-            tweet_ids_df.to_csv("stanford_results.csv", sep=',', encoding='utf-8')
+        # if(state_of_art=="stanford_candidates"):
+        #     tweet_ids_df.to_csv("stanford_results.csv", sep=',', encoding='utf-8')
 
 
 

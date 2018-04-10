@@ -46,9 +46,16 @@ class EntityResolver ():
 
         # SET CB
         #print(phase2stopwordList)
+        # for j in range(self.counter+1):
+        #     print(len(self.entity_level_arr[j]),self.entity_level_arr[j])
+        #print(self.entity_level_arr)
+
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         
         candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
+        # for j in range(self.counter+1):
+        #     print(len(self.entity_level_arr[j]),self.entity_level_arr[j])
+        #print(self.entity_level_arr)
 
         # SET TF 
         untrashed_tweets=self.set_tf(data_frame_holder,
@@ -109,18 +116,28 @@ class EntityResolver ():
 
 
         # #printing incomplete sentence estimates here
-        # print(len(self.just_converted_tweets),len(incomplete_tweets),len(self.not_reintroduced))
+        print(len(self.just_converted_tweets),len(incomplete_tweets),len(self.not_reintroduced))
+        # sentence_arr=[-1]*20
         # for i in range(self.counter):
-        #     print(str(i)+':',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
+        #     sentence_estimate=len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i])
+        #     print(str(i)+':',sentence_estimate)
+        #     sentence_arr[i]=sentence_estimate
+        # self.sentence_level_arr.append(copy.deepcopy(sentence_arr))
+        #print(self.sentence_level_arr)
+
 
         #self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
         # self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
         # self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
+        #return self.entity_level_arr, self.mention_level_arr
 
 
 
     def __init__(self):
         self.counter=0
+        self.entity_level_arr=[]
+        self.mention_level_arr=[]
+        self.sentence_level_arr=[]
         self.my_classifier= svm.SVM1('training.csv')
 
 
@@ -259,11 +276,11 @@ class EntityResolver ():
         # tweet_ids_df["fn"+state_of_art]=false_negative_holder
         # tweet_ids_df['fp'+state_of_art]= false_positive_holder
         
-        if(state_of_art=="ritter_candidates"):
-            tweet_ids_df.to_csv("ritter_results.csv", sep=',', encoding='utf-8')
+        # if(state_of_art=="ritter_candidates"):
+        #     tweet_ids_df.to_csv("ritter_results.csv", sep=',', encoding='utf-8')
 
-        if(state_of_art=="stanford_candidates"):
-            tweet_ids_df.to_csv("stanford_results.csv", sep=',', encoding='utf-8')
+        # if(state_of_art=="stanford_candidates"):
+        #     tweet_ids_df.to_csv("stanford_results.csv", sep=',', encoding='utf-8')
 
 
 
@@ -290,14 +307,15 @@ class EntityResolver ():
         zscore_array1=stats.zscore(mert1)
 
         candidate_featureBase_DF['Z_ScoreUnweighted']=zscore_array1
-        #print(set(candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==10].Z_ScoreUnweighted.tolist()))
+        z_score_threshold=candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==10].Z_ScoreUnweighted.tolist()[0]
+        print(z_score_threshold)
         #candidate_featureBase_DF.to_csv("cf_new_with_z_score.csv", sep=',', encoding='utf-8')
 
         #multi-word infrequent candidates ---> to be used for recall correction
         infrequent_candidates=candidate_featureBase_DF[(candidate_featureBase_DF['Z_ScoreUnweighted'] < z_score_threshold) & (candidate_featureBase_DF.length>1)].candidate.tolist()
         #all infrequent candidates
         all_infrequent= candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] < z_score_threshold]
-        candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] > z_score_threshold]
+        candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] >= z_score_threshold]
 
 
         #returns updated candidate_featureBase_DF with ["Z_score"], ["probability"],["class"] attributes.
@@ -454,7 +472,7 @@ class EntityResolver ():
 
     def get_reintroduced_tweets(self,cosine_distance_dict):
         #no reintroduction
-        print(len(self.incomplete_tweets))
+        print("incomplete tweets in batch: ",len(self.incomplete_tweets))
         # for i in range(self.counter):
         #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
         return self.incomplete_tweets
@@ -477,6 +495,7 @@ class EntityResolver ():
         data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
         phase2_candidates_holder=[]
         df_holder=[]
+
 
         candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted= self.extract(TweetBase,CTrie,phase2stopwordList,0)
         phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
@@ -567,23 +586,43 @@ class EntityResolver ():
         entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]
         non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
         ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
+        # print('columns: ',ambiguous_candidate_records.columns)
+
         self.entity_sketch= self.get_aggregate_sketch(entity_candidate_records)
         self.non_entity_sketch=self.get_aggregate_sketch(non_entity_candidate_records)
         self.ambiguous_entity_sketch=self.get_aggregate_sketch(ambiguous_candidate_records)
+        
         # #need to calculate cosine distance of all ambiguous candidates at the end of the batch to get displacement in next batch... do not use cutoff
         # self.ambiguous_candidate_distanceDict_prev=self.get_all_cosine_distance(ambiguous_candidate_records,self.entity_sketch,self.non_entity_sketch)
         #candidate_featureBase_DF.to_csv("cb_with_prob_label.csv", sep=',', encoding='utf-8')
         correction_flag=self.set_partition_dict(candidate_featureBase_DF,multiWord_infrequent_candidates)
         print("reintroduction_threshold:", reintroduction_threshold)
-        print("good: ",len(self.good_candidates))
-        print("ambiguous: ",len(self.ambiguous_candidates),len(ambiguous_candidate_records))
-        print("bad: ",len(self.bad_candidates))
-        print("infrequent: ",len(self.all_infrequent_candidates))
+        print("good: ",len(self.good_candidates),candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]['cumulative'].sum())
+        print("ambiguous: ",len(self.ambiguous_candidates),len(ambiguous_candidate_records),ambiguous_candidate_records['cumulative'].sum())
+        print("bad: ",len(self.bad_candidates),candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]['cumulative'].sum())
+        print("infrequent: ",len(self.all_infrequent_candidates),all_infrequent['cumulative'].sum())
 
-        
+        #taking entity level and mention level ambiguous candidate propagation estimates here
+        entity_arr=[-1]*20
+        mention_arr=[-1]*20
         for i in range(self.counter+1):
             #lst+=ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])].candidate.tolist()
-            print(str(i)+':',len(ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])]))
+
+            entity_estimate= len(ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])])
+            entity_arr[i]=entity_estimate
+            # self.entity_level_arr.append(copy.deepcopy(arr))  
+            mention_estimate= ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])]['cumulative'].sum()-self.ambiguous_candidate_records_old[self.ambiguous_candidate_records_old['candidate'].isin(ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])].candidate.tolist())]['cumulative'].sum()
+            mention_arr[i]=mention_estimate
+
+            print(self.counter,str(i)+':',entity_estimate,mention_estimate)
+            #print(self.entity_level_arr[i])
+        #print(self.entity_level_arr)
+        self.entity_level_arr.append(copy.deepcopy(entity_arr))
+        self.mention_level_arr.append(copy.deepcopy(mention_arr))
+        #------------------------------------------------------------------------------
+
+        self.ambiguous_candidate_records_old=ambiguous_candidate_records
+
         #print(ambiguous_candidate_records[~ ambiguous_candidate_records['candidate'].isin(lst)])
         #     print(str(i)+':',len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==i)&(candidate_featureBase_DF['status']=="a")]))
             # print(i)
@@ -688,7 +727,7 @@ class EntityResolver ():
     # experiment function
     def set_x_axis(self,just_converted_tweets_for_current_batch):
 
-        self.incomplete_tweets.to_csv("set_x_axis_debug.csv", sep=',', encoding='utf-8')
+        #self.incomplete_tweets.to_csv("set_x_axis_debug.csv", sep=',', encoding='utf-8')
 
         self.incomplete_tweets['number_of_seen_tweets'] = self.incomplete_tweets['entry_batch'].apply(lambda x: self.compute_seen_tweets_so_far(x,self.counter))
 
@@ -944,7 +983,7 @@ class EntityResolver ():
         data_frame_holder['completeness']=completeness_series
         data_frame_holder["current_minus_entry"]=self.counter-data_frame_holder['entry_batch']
 
-        data_frame_holder.to_csv("phase2output_with_completeness.csv", sep=',', encoding='utf-8')
+        #data_frame_holder.to_csv("phase2output_with_completeness.csv", sep=',', encoding='utf-8')
 
         return data_frame_holder
 
@@ -1530,7 +1569,7 @@ class EntityResolver ():
             self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             #self.data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
             self.raw_tweets_for_others=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
-
+            self.ambiguous_candidate_records_old=pd.DataFrame([],columns=['candidate', 'batch', 'length', 'cap', 'substring-cap', 's-o-sCap','all-cap', 'non-cap', 'non-discriminative', 'cumulative','Z_ScoreUnweighted', 'normalized_cap','normalized_capnormalized_substring-cap', 'normalized_s-o-sCap','normalized_all-cap', 'normalized_non-cap', 'normalized_non-discriminative', 'probability', 'status'])
             self.accuracy_tuples_prev_batch=[]
             self.accuracy_vals=[]
             

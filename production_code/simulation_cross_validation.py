@@ -38,19 +38,21 @@ fieldnames=['candidate','freq','length','cap','start_of_sen','abbrv','all_cap','
 
 global total_time
 total_time=0
-Phase1= phase1.SatadishaModule()
-Phase2 = phase2.EntityResolver()
+# Phase1= phase1.SatadishaModule()
+# Phase2 = phase2.EntityResolver()
 
 #input names: 3K; deduplicated--> politics; malcolm; 1M
 #tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',')
 input_name="ericTrump"
 #tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
 #tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
-tweets_unpartitoned=pd.read_csv("tweets_1million_for_others.csv",sep =',')
+tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
 tweets_unpartitoned=tweets_unpartitoned[:200000:]
+
 print("***",len(tweets_unpartitoned))
 print('Tweets are in memory...')
 batch_size=10000
+# batch_size=len(tweets_unpartitoned)
 
 # Z_scores=[-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
 # # 
@@ -60,16 +62,17 @@ batch_size=10000
 # batch_size_recorder=[]
 
 # whole_level=[]
-tweets = shuffle(tweets_unpartitoned)
+
 
 #z_score=-0.078      #-----20K
 #z_score=-0.8      #-----3K
 #z_score=-0.09      #-----50K
 #z_score=-0.078         #-----50K, multiple batches
 #z_score=-0.08         #-----deduplicated_tweets,
-z_score=-0.104         #-----tweets_1million_for_others, 200K
+#z_score=-0.1119        #-----tweets_1million_for_others, 200K
 
 
+#print(entity_level_arr)
 #kf = KFold(n_splits=5,random_state=1000) 
 # for train_ind,test_ind in kf.split(tweets_unpartitoned):
 #     print(train_ind,test_ind)
@@ -86,7 +89,15 @@ z_score=-0.104         #-----tweets_1million_for_others, 200K
         # # print(batch_size_ratio_float)
         # batch_size=len(tweets)*batch_size_ratio_float
         # batch_size_recorder.append(batch_size)
+# for iter in range(10):
+#     print('run: ',str(iter))
 
+# tweets = shuffle(tweets_unpartitoned)
+tweets=tweets_unpartitoned
+z_score=-0.1119
+entity_level_arr=[[-1]*20]*20
+mention_level_arr=[[-1]*20]*20
+sentence_level_arr=[[-1]*20]*20
 Phase1= phase1.SatadishaModule()
 Phase2 = phase2.EntityResolver()
 total_time=0
@@ -98,6 +109,8 @@ val=math.ceil(length/batch_size)-1
 count=0
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 reintroduction_threshold_array=[0.0]
+iter=0
+print('run: ',str(iter))
 for reintroduction_threshold in reintroduction_threshold_array:
 
     for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
@@ -139,6 +152,10 @@ for reintroduction_threshold in reintroduction_threshold_array:
         tweets_been_processed_list.append(tweets_been_processed)
         #reintroduction_threshold=0.2
         phase2TweetBase=Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
+        entity_level_arr=Phase2.entity_level_arr
+        mention_level_arr=Phase2.mention_level_arr
+        sentence_level_arr=Phase2.sentence_level_arr
+        #print('::',len(phase2TweetBase))
         accuracy_list=Phase2.finish()
         time_out=time.time()
         elapsedTime= time_out-time_in
@@ -148,6 +165,14 @@ for reintroduction_threshold in reintroduction_threshold_array:
         print(g,' ','Consumed')
         print("**********************************************************")
 
+column_headers=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19']
+#Taking propagation estimates
+entity_dataframe=pd.DataFrame(entity_level_arr, columns=column_headers)
+entity_dataframe.to_csv('entity-level-estimates-'+str(iter)+'.csv')
+mention_dataframe=pd.DataFrame(mention_level_arr, columns=column_headers)
+mention_dataframe.to_csv('mention-level-estimates-'+str(iter)+'.csv')
+# incomplete_sentence_dataframe=pd.DataFrame(sentence_level_arr, columns=column_headers)
+# incomplete_sentence_dataframe.to_csv('sentence-level-estimates-'+str(iter)+'.csv')
 
         # candidate_records=pd.read_csv("candidate_base_new.csv",sep =',')
         # if (g==0):
@@ -195,6 +220,7 @@ for reintroduction_threshold in reintroduction_threshold_array:
 
         # plt.savefig('tsne_'+input_name+'_'+str(g)+'.png', dpi = 600)
         # plt.show()
+
 
 
 #--------------------------------------------------------------------IGNORE from here!!!!!!!!!!!!!!!!!!!!!!--------------------------------------------------------------------
