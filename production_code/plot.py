@@ -2,44 +2,43 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from scipy.optimize import curve_fit
 
 
-plt.hold(True)
-plt.xticks(np.arange(0, 20, 1.0))
-filename='sentence-level-estimates-average.csv'
+# plt.hold(True)
+# plt.xticks(np.arange(0, 20, 1.0))
+def func(x,a,b1,b2):
+	x1,x2=x
+	return (a*np.exp(b1*x1+b2*x2))
+
+filename='entity-level-estimates-average.csv'
 data=pd.read_csv(filename,sep =',', index_col=False)
+x_data=[]
+y_data=[]
 for i in range(20):
 	x_val=list(range(i,20))
-	y_val=data[str(i)].tolist()
+	x_val_transformed=[j-i for j in x_val]
+	x_tuple_list=[(i,j) for j in x_val]
+	x_data.extend(x_tuple_list)
+	y_val=data[str(i)].tolist()[i:]
+	y_data.extend(y_val)
 	#print(len(x_val),len(y_val[i:]))
-	plt.plot(x_val,y_val[i:],label=str(i))
+	y_val_norm=[(y_val[0]-i)/y_val[0] for i in y_val]
+	#plt.plot(x_val,y_val_norm,label=str(i))
+	# plt.plot(x_val_transformed,y_val_norm,label=str(i))
+coeff=curve_fit(func, x_data,y_data)
 
-# plt.plot([19], [9], linestyle='--', marker='o', label='entry-batch 19',c='blue')
-# plt.plot([18,19], [10,8], linestyle='--', marker='o', label='batch 18',c='green')
-# plt.plot([17,18,19], [10,8,7], linestyle='--', marker='o', label='batch 17',c='red')
-# plt.plot([16,17,18,19], [12,8,6,6], linestyle='-', marker='o', label='batch 16',c='blue')
-# plt.plot([15,16,17,18,19], [11,11,11,11,11], linestyle='-', marker='o', label='batch 15',c='green')
-# plt.plot([14,15,16,17,18,19], [12,11,10,10,10,10], linestyle='-', marker='o', label='batch 14',c='red')
-# plt.plot([13,14,15,16,17,18,19], [11,9,10,10,9,9,9], linestyle=':', marker='o', label='batch 13',c='blue')
-# plt.plot([12,13,14,15,16,17,18,19], [16,16,13,11,12,12,12,12], linestyle=':', marker='o', label='batch 12',c='green')
-# plt.plot([11,12,13,14,15,16,17,18,19], [13,11,10,12,11,9,8,8,8], linestyle=':', marker='o', label='batch 11',c='red')
-# plt.plot([10,11,12,13,14,15,16,17,18,19], [9,8,8,8,8,8,8,8,8,8], linestyle='-.', marker='o', label='batch 10',c='blue')
-# plt.plot([9,10,11,12,13,14,15,16,17,18,19], [11,8,7,7,7,7,7,7,7,7,7], linestyle='-.', marker='o', label='batch 9',c='green')
-# plt.plot([8,9,10,11,12,13,14,15,16,17,18,19], [13,10,9,9,10,10,9,8,8,8,8,8], linestyle='-.', marker='o', label='batch 8',c='red')
-# plt.plot([7,8,9,10,11,12,13,14,15,16,17,18,19], [19,18,16,16,16,15,15,15,15,15,15,15,16], linestyle='--', marker='o', label='batch 7',c='cyan')
-# plt.plot([6,7,8,9,10,11,12,13,14,15,16,17,18,19], [15,14,12,12,12,11,11,11,11,11,11,11,11,11], linestyle='--', marker='o', label='batch 6',c='magenta')
-# plt.plot([5,6,7,8,9,10,11,12,13,14,15,16,17,18,19], [18,16,12,12,10,10,10,10,10,10,10,10,9,9,9], linestyle='--', marker='o', label='batch 5',c='black')
-# plt.plot([4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19], [14,12,12,12,12,12,12,12,12,12,11,10,10,10,10,10], linestyle=':', marker='o', label='batch 4',c='cyan')
-# plt.plot([3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19], [11,8,7,6,5,5,5,6,6,6,6,6,6,6,6,6,5], linestyle=':', marker='o', label='batch 3',c='magenta')
-# plt.plot([2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19], [15,13,13,12,11,12,9,9,9,10,10,10,9,9,9,8,8,8], linestyle=':', marker='o', label='batch 2',c='black')
-# plt.plot([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19], [20,17,17,15,13,13,13,14,13,13,13,13,13,13,13,12,12,12,12], linestyle='-', marker='o', label='batch 1',c='cyan')
-# plt.plot([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19], [27,24,22,19,19,19,19,18,18,18,18,18,18,18,18,18,16,16,16,16], linestyle='-', marker='o', label='batch 0',c='magenta')
 
-plt.title("Propagation of Ambiguous Candidates through batches")
-plt.ylabel('# of ambiguous candidates')
-plt.xlabel('Current Batch')
-plt.legend()
-plt.show()
+#plt.title("Propagation of Ambiguous Candidates through batches")
+#plt.ylabel('# of ambiguous candidates remaining')
+#plt.xlabel('Current Batch')
+
+# plt.title("Propagation of Ambiguous Candidates labeling through batches")
+# plt.ylabel('# of ambiguous candidates labelled')
+# plt.xlabel('Batches since entry')
+
+# plt.legend()
+# plt.show()
 #----------------------------------plot code ends---------------------------------------------
 # extenstion='.csv'
 # sentence='sentence-level-estimates-'
