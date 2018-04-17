@@ -507,6 +507,7 @@ class EntityResolver ():
         else:
             ambiguous_turned_good=[]
             ambiguous_turned_bad=[]
+            ambiguous_remaining_ambiguous=[]
 
             # for cand in (ambiguous_turned_good):
             #     row=candidate_featureBase_DF[candidate_featureBase_DF.candidate==cand]
@@ -532,7 +533,7 @@ class EntityResolver ():
 
 
         #['probability'],['a,g,b']
-        return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,(ambiguous_turned_good+ambiguous_turned_bad)
+        return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,(ambiguous_turned_good+ambiguous_turned_bad+ambiguous_remaining_ambiguous)
 
 
         #flush out completed tweets

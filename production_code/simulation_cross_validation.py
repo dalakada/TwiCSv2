@@ -201,46 +201,53 @@ for reintroduction_threshold in reintroduction_threshold_array:
              early_exaggeration=4.0, n_iter=5000,
                     min_grad_norm=0, init='pca', method='exact', verbose=1)
         else:
-            tsne = TSNE(n_components=2, perplexity=40,  learning_rate=100,
+            tsne = TSNE(n_components=2, perplexity=45,  learning_rate=100,
              early_exaggeration=4.0, n_iter=5000,
                     min_grad_norm=0, init='random', method='exact', verbose=1)
 
-        transformed = tsne.fit_transform(x)
-        # print(len(transformed),len(y))
+        for j in range(5):
 
-        plt.figure()
-        plt.scatter(transformed[y=='g'][:, 0], transformed[y=='g'][:, 1], label='Entity', c='lightsalmon')
-        # # # for i in range(len(transformed[y=='g'])):
-        # # #     #print(i)
-        # # #     plt.annotate(str(i), (transformed[y=='g'][i:(i+1),0],transformed[y=='g'][i:(i+1),1]))
+            transformed = tsne.fit_transform(x)
+            # print(len(transformed),len(y))
 
-        # # # #print(transformed[y==2])
-        plt.scatter(transformed[y=='a'][:, 0], transformed[y=='a'][:, 1], label='Ambiguous', c='cyan')
-        # # for i in transformed[y=='a']:
-        # #   print(transformed.index(i))
-        #   #plt.annotate(str(i+(len(transformed[y=='a']))), (transformed[y=='a'][i:(i+1),0],transformed[y=='a'][i:(i+1),1]))
+            plt.figure()
+            plt.scatter(transformed[y=='g'][:, 0], transformed[y=='g'][:, 1], label='Entity', c='lightsalmon')
+            # # # for i in range(len(transformed[y=='g'])):
+            # # #     #print(i)
+            # # #     plt.annotate(str(i), (transformed[y=='g'][i:(i+1),0],transformed[y=='g'][i:(i+1),1]))
 
-        plt.scatter(transformed[y=='b'][:, 0], transformed[y=='b'][:, 1], label='Non-Entity', c='lightgreen')
-        # # # for i in range(len(transformed[y=='b'])):
-        # # #   #print(i)
-        # # #   plt.annotate(str(i+(len(transformed[y=='b']))), (transformed[y=='b'][i:(i+1),0],transformed[y=='b'][i:(i+1),1]))
+            # # # #print(transformed[y==2])
+            plt.scatter(transformed[y=='a'][:, 0], transformed[y=='a'][:, 1], label='Ambiguous', c='cyan')
+            # # for i in transformed[y=='a']:
+            # #   print(transformed.index(i))
+            #   #plt.annotate(str(i+(len(transformed[y=='a']))), (transformed[y=='a'][i:(i+1),0],transformed[y=='a'][i:(i+1),1]))
 
-        if(g>0):
-            candidates_for_annotation=candidate_records[(candidate_records['candidate'].isin(candidates_to_annotate))&(candidate_records['status']!='a')].candidate.tolist()
+            plt.scatter(transformed[y=='b'][:, 0], transformed[y=='b'][:, 1], label='Non-Entity', c='lightgreen')
+            # # # for i in range(len(transformed[y=='b'])):
+            # # #   #print(i)
+            # # #   plt.annotate(str(i+(len(transformed[y=='b']))), (transformed[y=='b'][i:(i+1),0],transformed[y=='b'][i:(i+1),1]))
+
+            if(g>0):
+                # candidates_for_annotation=candidate_records[(candidate_records['candidate'].isin(candidates_to_annotate))&(candidate_records['status']!='a')].candidate.tolist()
+                candidates_for_annotation=candidate_records[(candidate_records['candidate'].isin(candidates_to_annotate))].candidate.tolist()
+            else:
+                candidates_for_annotation=ambiguous_candidates
+
             for candidate in candidates_for_annotation:
                 # if((candidate_records[candidate])['status']=='g'):
                 a_index=candidate_records.index[(candidate_records['candidate']==candidate)][0]
                 plt.annotate(candidate, (transformed[a_index:(a_index+1),0],transformed[a_index:(a_index+1),1]), fontsize='xx-small', weight= 'bold')
-        #     #print(a_index)
+            #     #print(a_index)
 
-        plt.xlabel('Transformed X-axis')
-        plt.ylabel('Transformed Y-axis')
-        plt.legend()
 
-        plt.title("t-SNE plot of Entity Candidates for "+input_name+" ("+str(g+1)+")")
+            plt.xlabel('Transformed X-axis')
+            plt.ylabel('Transformed Y-axis')
+            plt.legend()
 
-        plt.savefig('tsne_'+input_name+'_'+str(g)+'.png', dpi = 600)
-        plt.show()
+            plt.title("t-SNE plot of Entity Candidates for "+input_name+" (iteration "+str(g+1)+")")
+
+            # plt.savefig('tsne_'+input_name+'_'+str(g)+'.png', dpi = 600)
+            plt.show()
 
         ambiguous_candidates=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
 
