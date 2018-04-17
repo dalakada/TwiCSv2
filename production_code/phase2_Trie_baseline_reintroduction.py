@@ -41,12 +41,13 @@ string.punctuation=string.punctuation+'…‘’'
 class EntityResolver ():
 
 
-    def executor(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,raw_tweets_for_others):
+    def executor(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold,raw_tweets_for_others):
+    # def executor(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold,raw_tweets_for_others)
 
 
         # SET CB
-        print(phase2stopwordList)
-        candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold)
+        # print(phase2stopwordList)
+        candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,candidates_to_annotate=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold)
         
         candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
 
@@ -55,7 +56,7 @@ class EntityResolver ():
             candidate_featureBase_DF,
             phase2_candidates_holder,correction_flag)
 
-        untrashed_tweets.to_csv("phase2output.csv", sep=',', encoding='utf-8')
+        # untrashed_tweets.to_csv("phase2output.csv", sep=',', encoding='utf-8')
 
 
 
@@ -113,6 +114,7 @@ class EntityResolver ():
 
         #self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
         #self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
+        return candidates_to_annotate
 
 
 
@@ -287,12 +289,13 @@ class EntityResolver ():
         zscore_array1=stats.zscore(mert1)
 
         candidate_featureBase_DF['Z_ScoreUnweighted']=zscore_array1
-        print(set(candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==10].Z_ScoreUnweighted.tolist()))
+        z_score_threshold=candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==3].Z_ScoreUnweighted.tolist()[0]
+        print(z_score_threshold)
         #candidate_featureBase_DF.to_csv("cf_new_with_z_score.csv", sep=',', encoding='utf-8')
 
         #multi-word infrequent candidates ---> to be used for recall correction
         infrequent_candidates=candidate_featureBase_DF[(candidate_featureBase_DF['Z_ScoreUnweighted'] < z_score_threshold) & (candidate_featureBase_DF.length>1)].candidate.tolist()
-        candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] > z_score_threshold]
+        candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] >= z_score_threshold]
 
 
 
@@ -354,7 +357,7 @@ class EntityResolver ():
           sketch_vector[5]+=normalized_non_discriminative
           candidate_count+=1
         sketch_vector=list(map(lambda elem: elem/candidate_count, sketch_vector))
-        print("aggregated sketch:", sketch_vector)
+        # print("aggregated sketch:", sketch_vector)
         return sketch_vector
 
     def get_cosine_distance(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch):
@@ -459,8 +462,8 @@ class EntityResolver ():
                 #     cosine_distance_dict[candidate].index(min(cosine_distance_dict[candidate]))-self.ambiguous_candidate_distanceDict_prev[candidate].index(min(self.ambiguous_candidate_distanceDict_prev[candidate])),
                 #     displacement)
 
-            for candidate in cosine_distance_dict_wAmb.keys():
-                print(candidate,cosine_distance_dict_wAmb[candidate])
+            # for candidate in cosine_distance_dict_wAmb.keys():
+            #     print(candidate,cosine_distance_dict_wAmb[candidate])
 
             #tweet candidates for Reintroduction
             reintroduced_tweets=self.get_reintroduced_tweets()
@@ -484,6 +487,9 @@ class EntityResolver ():
         entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]
         non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
         ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
+
+        print(len(ambiguous_candidate_records))
+
         self.entity_sketch= self.get_aggregate_sketch(entity_candidate_records)
         self.non_entity_sketch=self.get_aggregate_sketch(non_entity_candidate_records)
         self.ambiguous_entity_sketch=self.get_aggregate_sketch(ambiguous_candidate_records)
@@ -498,6 +504,10 @@ class EntityResolver ():
             print(ambiguous_turned_good)
             print(ambiguous_turned_bad)
             print(ambiguous_remaining_ambiguous)
+        else:
+            ambiguous_turned_good=[]
+            ambiguous_turned_bad=[]
+
             # for cand in (ambiguous_turned_good):
             #     row=candidate_featureBase_DF[candidate_featureBase_DF.candidate==cand]
             #     candidate_synvec=[(row['normalized_cap'].values.tolist()),(row['normalized_capnormalized_substring-cap'].values.tolist()),(row['normalized_s-o-sCap'].values.tolist()),(row['normalized_all-cap'].values.tolist()),(row['normalized_non-cap'].values.tolist()),(row['normalized_non-discriminative'].values.tolist())]
@@ -522,7 +532,7 @@ class EntityResolver ():
 
 
         #['probability'],['a,g,b']
-        return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag
+        return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,(ambiguous_turned_good+ambiguous_turned_bad)
 
 
         #flush out completed tweets
@@ -835,8 +845,8 @@ class EntityResolver ():
 
         #candidate_featureBase_DF['status'] = candidate_featureBase_DF['probability'].apply(lambda x: set(x).issubset(good_candidates))
         candidate_featureBase_DF['status']='ne'
-        candidate_featureBase_DF['status'][candidate_featureBase_DF['probability']>=0.75]='g'
-        candidate_featureBase_DF['status'][(candidate_featureBase_DF['probability'] > 0.4) & (candidate_featureBase_DF['probability'] < 0.75)] = 'a'
+        candidate_featureBase_DF['status'][candidate_featureBase_DF['probability']>=0.8]='g'
+        candidate_featureBase_DF['status'][(candidate_featureBase_DF['probability'] > 0.4) & (candidate_featureBase_DF['probability'] < 0.8)] = 'a'
         candidate_featureBase_DF['status'][candidate_featureBase_DF['probability']<=0.4]='b'
 
         return candidate_featureBase_DF
@@ -1377,8 +1387,8 @@ class EntityResolver ():
             feature_list[0]=self.counter
             feature_list[1]=len(normalized_candidate.split())
         feature_to_update=self.check_feature_update(candidate_tuple,non_discriminative_flag)
-        if(normalized_candidate=="not even hitler"):
-            print(candidateText,feature_to_update)
+        # if(normalized_candidate=="not even hitler"):
+        #     print(candidateText,feature_to_update)
         feature_list[feature_to_update]+=1
         feature_list[8]+=1
         self.CandidateBase_dict[normalized_candidate]=feature_list

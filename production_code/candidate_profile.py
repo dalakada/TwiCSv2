@@ -19,7 +19,7 @@ from pandas.tools.plotting import parallel_coordinates
 ambiguous_synvec_agg=[0.3107914277,0.2406605708,0.0971315279,0.0478697633,0.1069009451,0.1966457653]
 #non_entity_synvec_agg=[0.1042614218,0.0083554817,0.0556537306,0.0464007013,0.6816091473,0.1037195173]
 
-candidate_records=pd.read_csv("candidate_base_new_analysis.csv",sep =',')
+candidate_records=pd.read_csv("candidate_base_new_analysis_20K.csv",sep =',')
 
 #-----------------------------------------------------Correlation Coefficients w Scatter Plots-----------------------------------------------------------
 # temp_candidate_records=candidate_records[(candidate_records['normalized_cap']>0)]
@@ -230,7 +230,7 @@ x=candidate_records[['normalized_length','normalized_cap','normalized_capnormali
 #ALTERNATE FUNCTION CONFIGS-- #early_exaggeration=4.0
 
 # For 3K set
-# tsne = TSNE(n_components=2, perplexity=40,  learning_rate=200, 
+# tsne = TSNE(n_components=2, perplexity=40,  learning_rate=100, #n_iter=1000,
 #             min_grad_norm=0, init='random', method='exact', verbose=1)
 
 # For 20K set
@@ -239,12 +239,16 @@ tsne = TSNE(n_components=2, perplexity=50,  learning_rate=100,
 	n_iter=5000,
             min_grad_norm=0, init='random', method='exact', verbose=1)
 
+
+# tsne = TSNE(n_components=2, perplexity=40,  learning_rate=100, #n_iter=1000,
+#             min_grad_norm=0, init='random', method='exact', verbose=1)
+
 transformed = tsne.fit_transform(x)
 #print((transformed[y]))
 plt.scatter(transformed[y==1][:, 0], transformed[y==1][:, 1], label='Entity', c='red')
-for i in range(len(transformed[y==1])):
-	#print(i)
-	plt.annotate(str(i), (transformed[y==1][i:(i+1),0],transformed[y==1][i:(i+1),1]))
+# for i in range(len(transformed[y==1])):
+# 	#print(i)
+# 	plt.annotate(str(i), (transformed[y==1][i:(i+1),0],transformed[y==1][i:(i+1),1]))
 
 # #print(transformed[y==2])
 plt.scatter(transformed[y==2][:, 0], transformed[y==2][:, 1], label='Ambiguous', c='blue')

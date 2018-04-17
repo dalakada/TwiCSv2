@@ -1,8 +1,10 @@
 
 #import SatadishaModule as phase1
 import SatadishaModule_final_trie as phase1
-#import phase2_Trie as phase2
-import phase2_Trie_reintroduction as phase2
+
+import phase2_Trie_baseline_reintroduction as phase2
+# import phase2_Trie_reintroduction as phase2
+
 import datetime
 from threading import Thread
 import random
@@ -42,16 +44,22 @@ total_time=0
 # Phase2 = phase2.EntityResolver()
 
 #input names: 3K; deduplicated--> politics; malcolm; 1M
-#tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',')
-input_name="ericTrump"
+input_name="D1"
+tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',')
+
+# input_name="D2"
 #tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
-#tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
-tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
-tweets_unpartitoned=tweets_unpartitoned[:200000:]
+# tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
+
+# /Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+# tweets_unpartitoned=tweets_unpartitoned[:500:]
 
 print("***",len(tweets_unpartitoned))
 print('Tweets are in memory...')
-batch_size=10000
+# batch_size=10000
+batch_size=1000
+
 # batch_size=len(tweets_unpartitoned)
 
 # Z_scores=[-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
@@ -92,8 +100,8 @@ batch_size=10000
 # for iter in range(10):
 #     print('run: ',str(iter))
 
-# tweets = shuffle(tweets_unpartitoned)
-tweets=tweets_unpartitoned
+tweets = shuffle(tweets_unpartitoned)
+# tweets=tweets_unpartitoned
 z_score=-0.1119
 entity_level_arr=[[-1]*20]*20
 mention_level_arr=[[-1]*20]*20
@@ -111,6 +119,7 @@ count=0
 reintroduction_threshold_array=[0.0]
 iter=0
 print('run: ',str(iter))
+candidates_to_annotate=[]
 for reintroduction_threshold in reintroduction_threshold_array:
 
     for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
@@ -151,10 +160,12 @@ for reintroduction_threshold in reintroduction_threshold_array:
         tweets_been_processed=tweets_been_processed+len(tweet_base)
         tweets_been_processed_list.append(tweets_been_processed)
         #reintroduction_threshold=0.2
-        phase2TweetBase=Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
-        entity_level_arr=Phase2.entity_level_arr
-        mention_level_arr=Phase2.mention_level_arr
-        sentence_level_arr=Phase2.sentence_level_arr
+        candidates_to_annotate_in_iter=Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
+        candidates_to_annotate+=candidates_to_annotate_in_iter
+        # entity_level_arr=Phase2.entity_level_arr
+        # mention_level_arr=Phase2.mention_level_arr
+        # sentence_level_arr=Phase2.sentence_level_arr
+
         #print('::',len(phase2TweetBase))
         accuracy_list=Phase2.finish()
         time_out=time.time()
@@ -165,61 +176,73 @@ for reintroduction_threshold in reintroduction_threshold_array:
         print(g,' ','Consumed')
         print("**********************************************************")
 
-column_headers=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19']
-#Taking propagation estimates
-entity_dataframe=pd.DataFrame(entity_level_arr, columns=column_headers)
-entity_dataframe.to_csv('entity-level-estimates-'+str(iter)+'.csv')
-mention_dataframe=pd.DataFrame(mention_level_arr, columns=column_headers)
-mention_dataframe.to_csv('mention-level-estimates-'+str(iter)+'.csv')
+#-----------------------------------------------------This part is for propagation estimates-------------------------------
+# column_headers=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19']
+# #Taking propagation estimates
+# entity_dataframe=pd.DataFrame(entity_level_arr, columns=column_headers)
+# entity_dataframe.to_csv('entity-level-estimates-'+str(iter)+'.csv')
+# mention_dataframe=pd.DataFrame(mention_level_arr, columns=column_headers)
+# mention_dataframe.to_csv('mention-level-estimates-'+str(iter)+'.csv')
 # incomplete_sentence_dataframe=pd.DataFrame(sentence_level_arr, columns=column_headers)
 # incomplete_sentence_dataframe.to_csv('sentence-level-estimates-'+str(iter)+'.csv')
 
-        # candidate_records=pd.read_csv("candidate_base_new.csv",sep =',')
-        # if (g==0):
-        #     ambiguous_candidates=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
-        #     #sprint(ambiguous_candidates)
-        # y=candidate_records['status']
-        # candidate_records['normalized_length']=candidate_records['length']/(candidate_records['length'].max())
-        # x=candidate_records[['normalized_length','normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
+        candidate_records=pd.read_csv("candidate_base_new.csv",sep =',')
+        if (g==0):
+            ambiguous_candidates=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
+            # ambiguous_candidates=candidate_records[(candidate_records['probability']<0.75)&(candidate_records['probability']>0.7)].candidate.tolist()
+            print(ambiguous_candidates)
+        print("+++>",len(ambiguous_candidates))
+        y=candidate_records['status']
+        candidate_records['normalized_length']=candidate_records['length']/(candidate_records['length'].max())
+        x=candidate_records[['normalized_length','normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
 
-        # tsne = TSNE(n_components=2, perplexity=50,  learning_rate=200,
-        #  early_exaggeration=4.0, 
-        # n_iter=5000,
-        #         min_grad_norm=0, init='random', method='exact', verbose=1)
+        if(g<1):
+            tsne = TSNE(n_components=2, perplexity=25,  learning_rate=50,
+             early_exaggeration=4.0, n_iter=5000,
+                    min_grad_norm=0, init='pca', method='exact', verbose=1)
+        else:
+            tsne = TSNE(n_components=2, perplexity=40,  learning_rate=100,
+             early_exaggeration=4.0, n_iter=5000,
+                    min_grad_norm=0, init='random', method='exact', verbose=1)
 
-        # transformed = tsne.fit_transform(x)
+        transformed = tsne.fit_transform(x)
         # print(len(transformed),len(y))
 
-        # plt.figure()
-        # plt.scatter(transformed[y=='g'][:, 0], transformed[y=='g'][:, 1], label='Entity', c='red')
+        plt.figure()
+        plt.scatter(transformed[y=='g'][:, 0], transformed[y=='g'][:, 1], label='Entity', c='lightsalmon')
         # # # for i in range(len(transformed[y=='g'])):
         # # #     #print(i)
         # # #     plt.annotate(str(i), (transformed[y=='g'][i:(i+1),0],transformed[y=='g'][i:(i+1),1]))
 
         # # # #print(transformed[y==2])
-        # plt.scatter(transformed[y=='a'][:, 0], transformed[y=='a'][:, 1], label='Ambiguous', c='blue')
+        plt.scatter(transformed[y=='a'][:, 0], transformed[y=='a'][:, 1], label='Ambiguous', c='cyan')
         # # for i in transformed[y=='a']:
         # #   print(transformed.index(i))
         #   #plt.annotate(str(i+(len(transformed[y=='a']))), (transformed[y=='a'][i:(i+1),0],transformed[y=='a'][i:(i+1),1]))
 
-        # plt.scatter(transformed[y=='b'][:, 0], transformed[y=='b'][:, 1], label='Non-Entity', c='lightgreen')
+        plt.scatter(transformed[y=='b'][:, 0], transformed[y=='b'][:, 1], label='Non-Entity', c='lightgreen')
         # # # for i in range(len(transformed[y=='b'])):
         # # #   #print(i)
         # # #   plt.annotate(str(i+(len(transformed[y=='b']))), (transformed[y=='b'][i:(i+1),0],transformed[y=='b'][i:(i+1),1]))
 
-        # for candidate in ambiguous_candidates:
-        #     a_index=candidate_records.index[(candidate_records['candidate']==candidate)][0]
-        #     plt.annotate(candidate, (transformed[a_index:(a_index+1),0],transformed[a_index:(a_index+1),1]), fontsize='xx-small')
+        if(g>0):
+            candidates_for_annotation=candidate_records[(candidate_records['candidate'].isin(candidates_to_annotate))&(candidate_records['status']!='a')].candidate.tolist()
+            for candidate in candidates_for_annotation:
+                # if((candidate_records[candidate])['status']=='g'):
+                a_index=candidate_records.index[(candidate_records['candidate']==candidate)][0]
+                plt.annotate(candidate, (transformed[a_index:(a_index+1),0],transformed[a_index:(a_index+1),1]), fontsize='xx-small', weight= 'bold')
         #     #print(a_index)
 
-        # plt.xlabel('Transformed X-axis')
-        # plt.ylabel('Transformed Y-axis')
-        # plt.legend()
+        plt.xlabel('Transformed X-axis')
+        plt.ylabel('Transformed Y-axis')
+        plt.legend()
 
-        # plt.title("t-SNE plot of Entity Candidates for "+input_name+" ("+str(g)+")")
+        plt.title("t-SNE plot of Entity Candidates for "+input_name+" ("+str(g+1)+")")
 
-        # plt.savefig('tsne_'+input_name+'_'+str(g)+'.png', dpi = 600)
-        # plt.show()
+        plt.savefig('tsne_'+input_name+'_'+str(g)+'.png', dpi = 600)
+        plt.show()
+
+        ambiguous_candidates=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
 
 
 

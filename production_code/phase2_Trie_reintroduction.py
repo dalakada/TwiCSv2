@@ -470,7 +470,13 @@ class EntityResolver ():
         euclidean_distance_dict_sorted= OrderedDict(sorted(euclidean_distance_dict.items(), key=lambda x: x[1], reverse=True))
         return euclidean_distance_dict_sorted
 
-   
+    def get_reintroduced_tweets(self,cosine_distance_dict):
+        #no preferential selection
+        # print("incomplete tweets in batch: ",len(self.incomplete_tweets))
+        # # for i in range(self.counter):
+        # #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
+        return self.incomplete_tweets
+
     def get_reintroduced_tweets(self,cosine_distance_dict):
         #no preferential selection
         print("incomplete tweets in batch: ",len(self.incomplete_tweets))
