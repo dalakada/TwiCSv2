@@ -10,5 +10,7 @@ python3 simulation_cross_validation.py
 ```
 ### 1.2 Experiments
 Experiments are way to assess our performance and effectiveness in order to compare to other systems.
-
-
+Usually each experiment has same driver naming for simplicity.
+```
+python3 simulation_cross_validation.py
+```
