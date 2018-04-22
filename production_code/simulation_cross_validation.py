@@ -27,6 +27,7 @@ from scipy import spatial
 # from sklearn.decomposition import PCA as sklearnPCA
 # from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.manifold import TSNE
+import adjustText
 # from pandas.tools.plotting import parallel_coordinates
 
 warnings.filterwarnings("ignore")
@@ -185,8 +186,10 @@ for reintroduction_threshold in reintroduction_threshold_array:
 # mention_dataframe.to_csv('mention-level-estimates-'+str(iter)+'.csv')
 # incomplete_sentence_dataframe=pd.DataFrame(sentence_level_arr, columns=column_headers)
 # incomplete_sentence_dataframe.to_csv('sentence-level-estimates-'+str(iter)+'.csv')
-
+    
         candidate_records=pd.read_csv("candidate_base_new.csv",sep =',')
+        bad_conversions=['republican','republicans','dad']
+        
         if (g==0):
             ambiguous_candidates=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
             # ambiguous_candidates=candidate_records[(candidate_records['probability']<0.75)&(candidate_records['probability']>0.7)].candidate.tolist()
@@ -197,15 +200,17 @@ for reintroduction_threshold in reintroduction_threshold_array:
         x=candidate_records[['normalized_length','normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
 
         if(g<1):
-            tsne = TSNE(n_components=2, perplexity=25,  learning_rate=50,
+            tsne = TSNE(n_components=2, perplexity=28,  learning_rate=50,
              early_exaggeration=4.0, n_iter=5000,
                     min_grad_norm=0, init='pca', method='exact', verbose=1)
         else:
-            tsne = TSNE(n_components=2, perplexity=45,  learning_rate=100,
+            tsne = TSNE(n_components=2, perplexity=38,  learning_rate=100,
              early_exaggeration=4.0, n_iter=5000,
                     min_grad_norm=0, init='random', method='exact', verbose=1)
 
         for j in range(5):
+
+            # s=2
 
             transformed = tsne.fit_transform(x)
             # print(len(transformed),len(y))
@@ -233,20 +238,38 @@ for reintroduction_threshold in reintroduction_threshold_array:
             else:
                 candidates_for_annotation=ambiguous_candidates
 
-            for candidate in candidates_for_annotation:
+            # labels=candidate_records[(candidate_records['candidate'].isin(candidates_for_annotation))].status.tolist()
+            
+            candidates_for_annotation = [x for x in candidates_for_annotation if x not in bad_conversions]
+            # s=s+2
+            texts=[]
+            for i in range(len(candidates_for_annotation)):
                 # if((candidate_records[candidate])['status']=='g'):
+                candidate=candidates_for_annotation[i]
+                # if(labels[i]=='g'):
+                #     # label='Entity'
+                #     c='lightsalmon'
+                # elif(labels[i]=='a'):
+                #     # label='Ambiguous'
+                #     c='cyan'
+                # else:
+                #     # label='Non-Entity'
+                #     c='lightgreen'
                 a_index=candidate_records.index[(candidate_records['candidate']==candidate)][0]
-                plt.annotate(candidate, (transformed[a_index:(a_index+1),0],transformed[a_index:(a_index+1),1]), fontsize='xx-small', weight= 'bold')
+                # plt.plot(transformed[a_index:(a_index+1),0],transformed[a_index:(a_index+1),1])
+                texts.append(plt.text(transformed[a_index:(a_index+1),0],transformed[a_index:(a_index+1),1], candidate, fontsize='xx-small', weight= 'bold'))
+                # texts.append(plt.annotate(candidate, (transformed[a_index:(a_index+1),0],transformed[a_index:(a_index+1),1]), fontsize='xx-small', weight= 'bold'))
             #     #print(a_index)
+                
 
-
+            adjustText.adjust_text(texts, force_points=0.2, force_text=0.2, expand_points=(1,1), expand_text=(1,1),arrowprops=dict(arrowstyle="-|>", color='black', lw=0.5))
             plt.xlabel('Transformed X-axis')
             plt.ylabel('Transformed Y-axis')
-            plt.legend()
+            plt.legend(fontsize = 'x-small')
 
             plt.title("t-SNE plot of Entity Candidates for "+input_name+" (iteration "+str(g+1)+")")
 
-            # plt.savefig('tsne_'+input_name+'_'+str(g)+'.png', dpi = 600)
+            plt.savefig('tsne_'+input_name+'_'+str(g)+'.png', dpi = 600)
             plt.show()
 
         ambiguous_candidates=candidate_records[(candidate_records['status']=='a')].candidate.tolist()
