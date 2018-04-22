@@ -12,7 +12,21 @@ python3 simulation_cross_validation.py
 Experiments are way to assess our performance and effectiveness in order to compare to other systems.
 * Usually each experiment has same driver naming for simplicity.
 * Some experiments have multiple drivers for different setting.
-* In order to find all the drivers for the experiment simply look for the naming pattern of simulation_variation 
+* In order to find all the drivers for the experiment simply look for the naming pattern of simulation_{VARIATION}	 
 ```
 python3 simulation_cross_validation.py
 ```
+
+## 2.Structure of the System
+We will examine the different phases of system in order to fully understand the system's output. 
+### Terminology:
+Before we dive into details here are some special meaning words and their corresponding meanings.
+* Candidate: Possible named entities which our system detects. 
+* TweetBase: A table data structure where we keep tweets, their corresponding candidates.
+* CandidateBase: A table data structure where we keep our candidates and their corresponding occurences in the TweetBase. 
+### 2.1 PHASE 1
+* Input: Tweets (from in file system)
+* Output: TweetBase, CandidateBase
+* Phase 1 is where we extract name entities from incoming tweets based on usage of capital letters.
+* There is no statistical modelling in order to determine named entities from Tweets in this phase.
+* Phase 1 is modelled under the name of SatadishaModule_final_trie.py in experiments and production code.
