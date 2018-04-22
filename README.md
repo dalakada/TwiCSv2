@@ -8,3 +8,7 @@ Production code is great way to navigate the system. Simply run the simulator wh
 ```
 python3 simulation_cross_validation.py
 ```
+### 1.2 Experiments
+Experiments are way to assess our performance and effectiveness in order to compare to other systems.
+
+
