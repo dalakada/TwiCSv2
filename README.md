@@ -10,7 +10,9 @@ python3 simulation_cross_validation.py
 ```
 ### 1.2 Experiments
 Experiments are way to assess our performance and effectiveness in order to compare to other systems.
-Usually each experiment has same driver naming for simplicity.
+* Usually each experiment has same driver naming for simplicity.
+* Some experiments have multiple drivers for different setting.
+* In order to find all the drivers for the experiment simply look for the naming pattern of simulation_variation 
 ```
 python3 simulation_cross_validation.py
 ```
