@@ -21,6 +21,9 @@ import re
 import pickle
 from scipy import spatial
 
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_samples, silhouette_score
+
 cachedStopWords = stopwords.words("english")
 tempList=["i","and","or","other","another","across","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","meanwhile","always"]
 for item in tempList:
@@ -383,6 +386,7 @@ class EntityResolver ():
     #MULTIPLE SKETCHES CLUSTERING
     def get_multiple_aggregate_sketches(self, candidate_featureBase):
         sketch_vectors=[]
+        candidate_count_arr=[]
         x=candidate_records[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
 
         #insert code for silhouette plot here
@@ -392,6 +396,24 @@ class EntityResolver ():
         cluster_labels = clusterer.fit_predict(x)
         silhouette_avg = silhouette_score(X, cluster_labels)
         print("For n_clusters =", n_clusters, "The average silhouette_score is :", silhouette_avg)
+
+        for i in range(n_clusters):
+            sketch_vectors[i]=[0.0,0.0,0.0,0.0,0.0,0.0]
+            candidate_count_arr[i]=0
+
+        for index, row in candidate_featureBase.iterrows():
+            sketch_vectors[cluster_labels[index]][0]+= row['normalized_cap']
+            sketch_vectors[cluster_labels[index]][1]+= row['normalized_capnormalized_substring-cap']
+            sketch_vectors[cluster_labels[index]][2]+= row['normalized_s-o-sCap']
+            sketch_vectors[cluster_labels[index]][3]+= row['normalized_all-cap']
+            sketch_vectors[cluster_labels[index]][4]+= row['normalized_non-cap']
+            sketch_vectors[cluster_labels[index]][5]+= row['normalized_non-discriminative']
+            candidate_count_arr[cluster_labels[index]]+=1
+
+        for i in range(n_clusters):
+            sketch_vectors[i]=list(map(lambda elem: elem/candidate_count_arr[i], sketch_vectors[i]))
+
+        return sketch_vectors
 
 
     #SINGLE SKETCH CLUSTERING--- COSINE 
