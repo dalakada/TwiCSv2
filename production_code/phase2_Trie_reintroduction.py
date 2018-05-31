@@ -22,7 +22,7 @@ import pickle
 from scipy import spatial
 
 cachedStopWords = stopwords.words("english")
-tempList=["i","and","or","other","another","across","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always"]
+tempList=["i","and","or","other","another","across","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","meanwhile","always"]
 for item in tempList:
     if item not in cachedStopWords:
         cachedStopWords.append(item)
@@ -357,7 +357,7 @@ class EntityResolver ():
             flag2= True
         return (flag1|flag2)
 
-
+    #SINGLE SKETCH CLUSTERING
     def get_aggregate_sketch(self,candidate_featureBase):
         candidate_count=0
         sketch_vector=[0.0,0.0,0.0,0.0,0.0,0.0]
@@ -379,6 +379,23 @@ class EntityResolver ():
         #print("aggregated sketch:", sketch_vector)
         return sketch_vector
 
+
+    #MULTIPLE SKETCHES CLUSTERING
+    def get_multiple_aggregate_sketches(self, candidate_featureBase):
+        sketch_vectors=[]
+        x=candidate_records[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
+
+        #insert code for silhouette plot here
+
+        #considering 2 sub clusters for now, can change this into dynamic selection
+        clusterer = KMeans(n_clusters=2, random_state=10)
+        cluster_labels = clusterer.fit_predict(x)
+        silhouette_avg = silhouette_score(X, cluster_labels)
+        print("For n_clusters =", n_clusters, "The average silhouette_score is :", silhouette_avg)
+
+
+    #SINGLE SKETCH CLUSTERING--- COSINE 
+
     #single entity/non-entity sketch; minimal cosine distance
     def get_cosine_distance(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch,reintroduction_threshold):
         cosine_distance_dict={}
@@ -396,8 +413,8 @@ class EntityResolver ():
           cosine_distance_dict[row['candidate']]=min(candidate_distance_array)
 
         cosine_distance_dict_sorted= OrderedDict(sorted(cosine_distance_dict.items(), key=lambda x: x[1]))
-        cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value < reintroduction_threshold }
-        return cosine_distance_dict_sorted_final
+        # cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value < reintroduction_threshold }
+        return cosine_distance_dict_sorted
 
     #single ambiguous sketch; maximal cosine distance
     def get_cosine_distance_1(self, ambiguous_candidate_records,ambiguous_entity_sketch,reintroduction_threshold):
@@ -436,6 +453,8 @@ class EntityResolver ():
         combined_score_sorted_final= { key:value for key, value in combined_score_dict_sorted.items() if value < reintroduction_threshold }
         return combined_score_sorted_final
 
+
+     #SINGLE SKETCH CLUSTERING--- EUCLIDEAN 
     #single entity/non-entity sketch; maximal euclidean distance
     def get_euclidean_distance(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch,reintroduction_threshold):
         euclidean_distance_dict={}
@@ -507,14 +526,18 @@ class EntityResolver ():
         candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted= self.extract(TweetBase,CTrie,phase2stopwordList,0)
         phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
         df_holder.extend(df_holder_extracted)
+        ambiguous_candidates_in_batch_w_Count=dict((x,self.ambiguous_candidates_in_batch.count(x)) for x in set(self.ambiguous_candidates_in_batch))
+        # print(ambiguous_candidates_in_batch_w_Count)
         self.ambiguous_candidates_in_batch=list(set(self.ambiguous_candidates_in_batch))
         #print(len(self.ambiguous_candidates_in_batch))
         cosine_distance_dict_wAmb={}
+        candidates_to_reintroduce=[]
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
             
             ambiguous_candidate_inBatch_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates_in_batch)]
             #print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_inBatch_records))
             cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
+            candidates_to_reintroduce=list(cosine_distance_dict.keys())
             # cosine_distance_dict_wAmb=self.get_cosine_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch,reintroduction_threshold)
             #comebined_score_dict=self.get_combined_score(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,self.ambiguous_entity_sketch,reintroduction_threshold)
             #print(len(comebined_score_dict))
@@ -567,22 +590,24 @@ class EntityResolver ():
         #     print("good to amb: ",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))]))
         #     print("bad to amb: ",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.bad_candidates)&(candidate_featureBase_DF["status"]=="a"))]))
         # #         print("amb to amb: ",len(candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)&(candidate_featureBase_DF["status"]=="a")&(candidate_featureBase_DF['batch']==i))]))
-        new_to_amb=candidate_featureBase_DF[((candidate_featureBase_DF["batch"]==self.counter)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
-        good_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
-        bad_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.bad_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
-        infreq_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.all_infrequent_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
-        self.ambiguous_candidates_transition_dict[self.counter]=[]
-        #print(len(new_to_amb),len(infreq_to_amb),len(self.ambiguous_candidates_transition_dict[self.counter]))
-        # for i in range(self.counter):
-        #     print("==>",str(i), len([x for x in self.ambiguous_candidates_transition_dict[self.counter] if x in self.ambiguous_candidates_transition_dict[i]]))
-        for item in (new_to_amb+good_to_amb+bad_to_amb+infreq_to_amb):
-            flag=True
-            for i in range(self.counter):
-                if item in (self.ambiguous_candidates_transition_dict[i]):
-                    flag=False
-                    break
-            if(flag):
-                self.ambiguous_candidates_transition_dict[self.counter].append(item)
+       
+        # new_to_amb=candidate_featureBase_DF[((candidate_featureBase_DF["batch"]==self.counter)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
+        # good_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
+        # bad_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.bad_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
+        # infreq_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.all_infrequent_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
+        # self.ambiguous_candidates_transition_dict[self.counter]=[]
+        
+        # #print(len(new_to_amb),len(infreq_to_amb),len(self.ambiguous_candidates_transition_dict[self.counter]))
+        # # for i in range(self.counter):
+        # #     print("==>",str(i), len([x for x in self.ambiguous_candidates_transition_dict[self.counter] if x in self.ambiguous_candidates_transition_dict[i]]))
+        # for item in (new_to_amb+good_to_amb+bad_to_amb+infreq_to_amb):
+        #     flag=True
+        #     for i in range(self.counter):
+        #         if item in (self.ambiguous_candidates_transition_dict[i]):
+        #             flag=False
+        #             break
+        #     if(flag):
+        #         self.ambiguous_candidates_transition_dict[self.counter].append(item)
 
 
         self.good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
@@ -595,9 +620,16 @@ class EntityResolver ():
         ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
         # print('columns: ',ambiguous_candidate_records.columns)
 
+
+        #single sketches per category
         self.entity_sketch= self.get_aggregate_sketch(entity_candidate_records)
         self.non_entity_sketch=self.get_aggregate_sketch(non_entity_candidate_records)
         self.ambiguous_entity_sketch=self.get_aggregate_sketch(ambiguous_candidate_records)
+
+        #multiple sketches per category
+        self.entity_sketches= self.get_multiple_aggregate_sketches(entity_candidate_records)
+        self.non_entity_sketches= self.get_multiple_aggregate_sketches(non_entity_candidate_records)
+        self.ambiguous_entity_sketches=self.get_multiple_aggregate_sketches(ambiguous_candidate_records)
         
         # #need to calculate cosine distance of all ambiguous candidates at the end of the batch to get displacement in next batch... do not use cutoff
         # self.ambiguous_candidate_distanceDict_prev=self.get_all_cosine_distance(ambiguous_candidate_records,self.entity_sketch,self.non_entity_sketch)
@@ -610,25 +642,25 @@ class EntityResolver ():
         print("infrequent: ",len(self.all_infrequent_candidates),all_infrequent['cumulative'].sum())
 
         #taking entity level and mention level ambiguous candidate propagation estimates here
-        entity_arr=[-1]*20
-        mention_arr=[-1]*20
-        for i in range(self.counter+1):
-            #lst+=ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])].candidate.tolist()
+        # entity_arr=[-1]*20
+        # mention_arr=[-1]*20
+        # for i in range(self.counter+1):
+        #     #lst+=ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])].candidate.tolist()
 
-            entity_estimate= len(ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])])
-            entity_arr[i]=entity_estimate
-            # self.entity_level_arr.append(copy.deepcopy(arr))  
-            mention_estimate= ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])]['cumulative'].sum()-self.ambiguous_candidate_records_old[self.ambiguous_candidate_records_old['candidate'].isin(ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])].candidate.tolist())]['cumulative'].sum()
-            mention_arr[i]=mention_estimate
+        #     entity_estimate= len(ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])])
+        #     entity_arr[i]=entity_estimate
+        #     # self.entity_level_arr.append(copy.deepcopy(arr))  
+        #     mention_estimate= ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])]['cumulative'].sum()-self.ambiguous_candidate_records_old[self.ambiguous_candidate_records_old['candidate'].isin(ambiguous_candidate_records[ambiguous_candidate_records['candidate'].isin(self.ambiguous_candidates_transition_dict[i])].candidate.tolist())]['cumulative'].sum()
+        #     mention_arr[i]=mention_estimate
 
-            print(self.counter,str(i)+':',entity_estimate,mention_estimate)
-            #print(self.entity_level_arr[i])
-        #print(self.entity_level_arr)
-        self.entity_level_arr.append(copy.deepcopy(entity_arr))
-        self.mention_level_arr.append(copy.deepcopy(mention_arr))
+        #     print(self.counter,str(i)+':',entity_estimate,mention_estimate)
+        #     #print(self.entity_level_arr[i])
+        # #print(self.entity_level_arr)
+        # self.entity_level_arr.append(copy.deepcopy(entity_arr))
+        # self.mention_level_arr.append(copy.deepcopy(mention_arr))
         #------------------------------------------------------------------------------
 
-        self.ambiguous_candidate_records_old=ambiguous_candidate_records
+        # self.ambiguous_candidate_records_old=ambiguous_candidate_records
 
         #print(ambiguous_candidate_records[~ ambiguous_candidate_records['candidate'].isin(lst)])
         #     print(str(i)+':',len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==i)&(candidate_featureBase_DF['status']=="a")]))
@@ -636,14 +668,52 @@ class EntityResolver ():
             # print(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==i)&(candidate_featureBase_DF['status']=="a")])
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
 
-        # if(self.counter>0):
-        #     ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
-        #     ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
-        #     ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
-        #     print(len(ambiguous_turned_good))
-        #     print(len(ambiguous_turned_bad))
-        #     print(len(ambiguous_remaining_ambiguous))
-            
+        if(self.counter>0):
+            ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
+            ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
+            ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
+            converted_candidate_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_turned_good+ambiguous_turned_bad)]
+
+            #number of candidates from batch i going into the batch
+            # grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
+            # for key, item in grouped_df:
+            #     new_mention_count=0
+            #     grouped_df_key= grouped_df.get_group(key)
+            #     for candidate in grouped_df_key.candidate.tolist():
+            #         new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
+            #     print (key,len(grouped_df_key),new_mention_count)
+                # print(grouped_df_key)
+
+            # print(converted_candidate_records.groupby('batch').size())
+
+            #checking position of candidates that do get disambiguated in the reintroduction ranked list
+            # print(converted_candidate_records.groupby('batch').size())
+            converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
+            for key, item in converted_candidates_grouped_df:
+                print('batch: ',key)
+                # new_mention_count=0
+                converted_candidates_grouped_df_key= converted_candidates_grouped_df.get_group(key)
+                for candidate in converted_candidates_grouped_df_key.candidate.tolist():
+                    # row=converted_candidates_grouped_df_key[converted_candidates_grouped_df_key['candidate']==candidate]
+                    row_index=converted_candidates_grouped_df_key.index[converted_candidates_grouped_df_key['candidate']==candidate].tolist()[0]
+                    row=converted_candidates_grouped_df_key.loc[[row_index]]
+                    candidate_synvec=[float(row['normalized_cap']),
+                              float(row['normalized_capnormalized_substring-cap']),
+                              float(row['normalized_s-o-sCap']),
+                              float(row['normalized_all-cap']),
+                              float(row['normalized_non-cap']),
+                              float(row['normalized_non-discriminative'])]
+                    print(candidate, candidates_to_reintroduce.index(candidate),candidate_synvec)
+                    # new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
+
+                # print (key,len(grouped_df_key),new_mention_count)
+                # print(grouped_df_key)
+                print('+====================================+')
+
+
+            print('ambiguous_turned_good:', len(ambiguous_turned_good))
+            print('ambiguous_turned_bad:', len(ambiguous_turned_bad))
+            print('ambiguous_remaining_ambiguous:', len(ambiguous_remaining_ambiguous))
             # #testing what happens without reintroduction
             # CandidateBase_dict_prev=self.CandidateBase_dict
             

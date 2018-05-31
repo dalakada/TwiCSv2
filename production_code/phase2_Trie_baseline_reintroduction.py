@@ -533,7 +533,7 @@ class EntityResolver ():
 
 
         #['probability'],['a,g,b']
-        return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,(ambiguous_turned_good+ambiguous_turned_bad+ambiguous_remaining_ambiguous)
+        return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,(ambiguous_turned_good+ambiguous_turned_bad+self.ambiguous_candidates)
 
 
         #flush out completed tweets
