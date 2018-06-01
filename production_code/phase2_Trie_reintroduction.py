@@ -384,24 +384,28 @@ class EntityResolver ():
 
 
     #MULTIPLE SKETCHES CLUSTERING
-    def get_multiple_aggregate_sketches(self, candidate_featureBase):
+    def get_multiple_aggregate_sketches(self, function_call_label, candidate_featureBase):
         sketch_vectors=[]
         candidate_count_arr=[]
-        x=candidate_records[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
-
+        x=candidate_featureBase[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
+        print(function_call_label)
+        
         #insert code for silhouette plot here
 
         #considering 2 sub clusters for now, can change this into dynamic selection
-        clusterer = KMeans(n_clusters=2, random_state=10)
+        n_clusters=2
+        clusterer = KMeans(n_clusters, random_state=10)
         cluster_labels = clusterer.fit_predict(x)
-        silhouette_avg = silhouette_score(X, cluster_labels)
+        silhouette_avg = silhouette_score(x, cluster_labels)
         print("For n_clusters =", n_clusters, "The average silhouette_score is :", silhouette_avg)
 
         for i in range(n_clusters):
-            sketch_vectors[i]=[0.0,0.0,0.0,0.0,0.0,0.0]
-            candidate_count_arr[i]=0
+            sketch_vectors.append([0.0,0.0,0.0,0.0,0.0,0.0])
+            candidate_count_arr.append(0)
 
-        for index, row in candidate_featureBase.iterrows():
+        index=0
+        for row_index, row in candidate_featureBase.iterrows():
+            # print(index,cluster_labels[index])
             sketch_vectors[cluster_labels[index]][0]+= row['normalized_cap']
             sketch_vectors[cluster_labels[index]][1]+= row['normalized_capnormalized_substring-cap']
             sketch_vectors[cluster_labels[index]][2]+= row['normalized_s-o-sCap']
@@ -409,10 +413,12 @@ class EntityResolver ():
             sketch_vectors[cluster_labels[index]][4]+= row['normalized_non-cap']
             sketch_vectors[cluster_labels[index]][5]+= row['normalized_non-discriminative']
             candidate_count_arr[cluster_labels[index]]+=1
+            index+=1
+
 
         for i in range(n_clusters):
             sketch_vectors[i]=list(map(lambda elem: elem/candidate_count_arr[i], sketch_vectors[i]))
-
+            print(sketch_vectors[i])
         return sketch_vectors
 
 
@@ -649,9 +655,9 @@ class EntityResolver ():
         self.ambiguous_entity_sketch=self.get_aggregate_sketch(ambiguous_candidate_records)
 
         #multiple sketches per category
-        self.entity_sketches= self.get_multiple_aggregate_sketches(entity_candidate_records)
-        self.non_entity_sketches= self.get_multiple_aggregate_sketches(non_entity_candidate_records)
-        self.ambiguous_entity_sketches=self.get_multiple_aggregate_sketches(ambiguous_candidate_records)
+        self.entity_sketches= self.get_multiple_aggregate_sketches("For entities: ",entity_candidate_records)
+        self.non_entity_sketches= self.get_multiple_aggregate_sketches("For non-entities: ",non_entity_candidate_records)
+        self.ambiguous_entity_sketches=self.get_multiple_aggregate_sketches("For ambiguous: ",ambiguous_candidate_records)
         
         # #need to calculate cosine distance of all ambiguous candidates at the end of the batch to get displacement in next batch... do not use cutoff
         # self.ambiguous_candidate_distanceDict_prev=self.get_all_cosine_distance(ambiguous_candidate_records,self.entity_sketch,self.non_entity_sketch)
