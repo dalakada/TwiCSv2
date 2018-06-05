@@ -141,6 +141,8 @@ class EntityResolver ():
         self.entity_level_arr=[]
         self.mention_level_arr=[]
         self.sentence_level_arr=[]
+        self.decay_factor=2**(-1/2)
+        self.decay_base_staggering=2
         self.my_classifier= svm.SVM1('training.csv')
 
 
@@ -388,7 +390,7 @@ class EntityResolver ():
         sketch_vectors=[]
         candidate_count_arr=[]
         x=candidate_featureBase[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
-        print(function_call_label)
+        # print(function_call_label)
 
         #insert code for silhouette plot here
 
@@ -404,7 +406,7 @@ class EntityResolver ():
         # silhouette_avg = silhouette_score(x, cluster_labels, metric='cosine')  #with metric= cosine
         sketch_vectors = clusterer.cluster_centers_
 
-        print("For n_clusters =", n_clusters, "The average silhouette_score is :", silhouette_avg)
+        # print("For n_clusters =", n_clusters, "The average silhouette_score is :", silhouette_avg)
 
         # for i in range(n_clusters):
         #     sketch_vectors.append([0.0,0.0,0.0,0.0,0.0,0.0])
@@ -445,6 +447,7 @@ class EntityResolver ():
     #single entity/non-entity sketch; minimal cosine distance
     def get_cosine_distance(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch,reintroduction_threshold):
         cosine_distance_dict={}
+        cosine_similarity_dict={}
         for index, row in ambiguous_candidate_records.iterrows():
           candidate_synvec=[(row['cap']/row['cumulative']),
                               (row['substring-cap']/row['cumulative']),
@@ -457,10 +460,12 @@ class EntityResolver ():
           candidate_distance_array=[cosine_distance_ent,cosine_distance_non_ent]
           #cosine_distance_array.append(candidate_distance_array)
           cosine_distance_dict[row['candidate']]=min(candidate_distance_array)
+          cosine_similarity_dict[row['candidate']]=1-min(candidate_distance_array)
 
         cosine_distance_dict_sorted= OrderedDict(sorted(cosine_distance_dict.items(), key=lambda x: x[1]))
+        cosine_similarity_dict_sorted= OrderedDict(sorted(cosine_similarity_dict.items(), key=lambda x: x[1], reverse=True))
         # cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value < reintroduction_threshold }
-        return cosine_distance_dict_sorted
+        return cosine_similarity_dict_sorted
 
     #single ambiguous sketch; maximal cosine distance
     def get_cosine_distance_1(self, ambiguous_candidate_records,ambiguous_entity_sketch,reintroduction_threshold):
@@ -502,9 +507,10 @@ class EntityResolver ():
 
     #MULTIPLE SKETCH CLUSTERING--- COSINE
 
-    #multiple entity/non-entity sketches; minimal cosine distance
+    #multiple entity/non-entity sketches; minimal cosine distance, maximal similarity
     def get_cosine_distance_multi_sketch(self, ambiguous_candidate_records,entity_sketches,non_entity_sketches,reintroduction_threshold):
         cosine_distance_dict={}
+        cosine_similarity_dict={}
         for index, row in ambiguous_candidate_records.iterrows():
           candidate_synvec=[(row['cap']/row['cumulative']),
                               (row['substring-cap']/row['cumulative']),
@@ -518,14 +524,17 @@ class EntityResolver ():
           candidate_distance_array=[cosine_distance_ent,cosine_distance_non_ent]
           #cosine_distance_array.append(candidate_distance_array)
           cosine_distance_dict[row['candidate']]=min(candidate_distance_array)
+          cosine_similarity_dict[row['candidate']]=1-min(candidate_distance_array)
 
         cosine_distance_dict_sorted= OrderedDict(sorted(cosine_distance_dict.items(), key=lambda x: x[1]))
+        cosine_similarity_dict_sorted= OrderedDict(sorted(cosine_similarity_dict.items(), key=lambda x: x[1], reverse=True))
         # cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value < reintroduction_threshold }
-        return cosine_distance_dict_sorted
+        return cosine_similarity_dict_sorted
 
     #multiple entity/non-entity sketches; minimal euclidean distance
     def get_euclidean_distance_multi_sketch(self, ambiguous_candidate_records,entity_sketches,non_entity_sketches,reintroduction_threshold):
         euclidean_distance_dict={}
+        euclidean_similarity_dict={}
         for index, row in ambiguous_candidate_records.iterrows():
           candidate_synvec=[(row['cap']/row['cumulative']),
                               (row['substring-cap']/row['cumulative']),
@@ -539,10 +548,12 @@ class EntityResolver ():
           candidate_distance_array=[euclidean_distance_ent,euclidean_distance_non_ent]
           #euclidean_distance_array.append(candidate_distance_array)
           euclidean_distance_dict[row['candidate']]=min(candidate_distance_array)
+          euclidean_similarity_dict[row['candidate']]=1-min(candidate_distance_array)
 
         euclidean_distance_dict_sorted= OrderedDict(sorted(euclidean_distance_dict.items(), key=lambda x: x[1]))
+        euclidean_similarity_dict_sorted= OrderedDict(sorted(euclidean_similarity_dict.items(), key=lambda x: x[1], reverse=True))
         # euclidean_distance_dict_sorted_final= { key:value for key, value in euclidean_distance_dict_sorted.items() if value < reintroduction_threshold }
-        return euclidean_distance_dict_sorted
+        return euclidean_similarity_dict_sorted
 
 
 
@@ -605,6 +616,51 @@ class EntityResolver ():
         # #print((len(not_reintroduced)==len(self.not_reintroduced)),(len(reintroduced_tweets)+len(self.not_reintroduced)==len(self.incomplete_tweets)))
         # return reintroduced_tweets
         
+    #NOTE: with simple eviction
+    def frequencies_w_decay(self,ambiguous_candidates_in_batch_w_Count,candidate_featureBase_DF):
+        dict_to_return={}
+        for candidate in ambiguous_candidates_in_batch_w_Count.keys():
+            frequency_w_decay=-99
+            old_value=0
+            if(candidate in self.ambiguous_candidates_reintroduction_dict):
+                old_value=self.ambiguous_candidates_reintroduction_dict[candidate][1]
+                first_reported_reintroduction= self.ambiguous_candidates_reintroduction_dict[candidate][0]
+                frequency_w_decay= self.ambiguous_candidates_reintroduction_dict[candidate][1]+ (self.decay_factor**(self.counter-first_reported_reintroduction))*(ambiguous_candidates_in_batch_w_Count[candidate])
+                # frequency_w_decay= (self.decay_factor**(self.counter-first_reported_reintroduction))*(ambiguous_candidates_in_batch_w_Count[candidate])
+            else:
+                frequency_w_decay=int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate].cumulative)
+                # frequency_w_decay=ambiguous_candidates_in_batch_w_Count[candidate]
+                first_reported_reintroduction=self.counter
+            print(candidate,first_reported_reintroduction,ambiguous_candidates_in_batch_w_Count[candidate],old_value,frequency_w_decay)
+            self.ambiguous_candidates_reintroduction_dict[candidate]=(first_reported_reintroduction, frequency_w_decay)
+            dict_to_return[candidate]=frequency_w_decay
+        return dict_to_return
+
+
+    #NOTE: distances mean similarities here!!
+    def get_ranking_score(self,ambiguous_candidates_in_batch_freq_w_decay, cosine_distance_dict,cosine_distance_dict_multi_sketch,euclidean_distance_dict_multi_sketch):
+        
+        
+        combined_sketching_similarity_dict={}
+        combined_sketching_w_decay={}
+
+        # print("checking for same lengths: ",len(ambiguous_candidates_in_batch_freq_w_decay),len(list(cosine_distance_dict.keys())),len(list(cosine_distance_dict_multi_sketch.keys())),len(list(euclidean_distance_dict_multi_sketch.keys())))
+        for candidate in ambiguous_candidates_in_batch_freq_w_decay.keys():
+            relative_rank_1= (list(cosine_distance_dict.keys())).index(candidate)
+            relative_rank_2= (list(cosine_distance_dict_multi_sketch.keys())).index(candidate)
+            relative_rank_3= (list(euclidean_distance_dict_multi_sketch.keys())).index(candidate)
+
+            #just based on sketching, combining ranks not similarities:
+            combined_sketching_similarity_dict[candidate]=min(relative_rank_1,relative_rank_2,relative_rank_3)
+
+            #combining sketching based rank induced similarity with freq_w_decay:
+            rank_induced_similarity=1-(min(relative_rank_1,relative_rank_2,relative_rank_3)/len(ambiguous_candidates_in_batch_freq_w_decay))
+            combined_sketching_w_decay[candidate]= ambiguous_candidates_in_batch_freq_w_decay[candidate]*rank_induced_similarity
+
+        combined_sketching_w_decay_sorted= OrderedDict(sorted(combined_sketching_w_decay.items(), key=lambda x: x[1], reverse=True))
+
+        return combined_sketching_w_decay_sorted
+
 
     def set_cb(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold):
 
@@ -624,9 +680,18 @@ class EntityResolver ():
         #print(len(self.ambiguous_candidates_in_batch))
         cosine_distance_dict_wAmb={}
         candidates_to_reintroduce=[]
+        candidates_to_reintroduce_multi_sketch=[]
+        candidates_to_reintroduce_multi_sketch_euclidean=[]
+        candidates_to_reintroduce_w_ranking=[]
+        ambiguous_candidates_in_batch_freq_w_decay=[]
+
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
             
             ambiguous_candidate_inBatch_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates_in_batch)]
+            
+            ambiguous_candidates_in_batch_freq_w_decay=self.frequencies_w_decay(ambiguous_candidates_in_batch_w_Count,candidate_featureBase_DF)
+            # for candidate in ambiguous_candidates_in_batch_freq_w_decay.keys():
+            #     print(candidate, ambiguous_candidates_in_batch_freq_w_decay[candidate], self.ambiguous_candidates_reintroduction_dict[candidate] ,int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate].cumulative))
             #print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_inBatch_records))
 
             #with single sketch-- cosine
@@ -640,6 +705,11 @@ class EntityResolver ():
             #with multiple sketches-- euclidean
             euclidean_distance_dict_multi_sketch=self.get_euclidean_distance_multi_sketch(ambiguous_candidate_inBatch_records,self.entity_sketches_euclidean,self.non_entity_sketches_euclidean,reintroduction_threshold)
             candidates_to_reintroduce_multi_sketch_euclidean=list(euclidean_distance_dict_multi_sketch.keys())
+
+            #with alternative ranking
+            ranking_score_dict=self.get_ranking_score(ambiguous_candidates_in_batch_freq_w_decay, cosine_distance_dict,cosine_distance_dict_multi_sketch,euclidean_distance_dict_multi_sketch)
+            ##----comment out next line and use the dict directly when combining just based on ranks!!!!----
+            candidates_to_reintroduce_w_ranking=list(ranking_score_dict.keys())
 
             # cosine_distance_dict_wAmb=self.get_cosine_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch,reintroduction_threshold)
             #comebined_score_dict=self.get_combined_score(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,self.ambiguous_entity_sketch,reintroduction_threshold)
@@ -781,6 +851,7 @@ class EntityResolver ():
             ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
             ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
             converted_candidate_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_turned_good+ambiguous_turned_bad)]
+            self.baseline_effectiveness+=len(converted_candidate_records)
 
             #number of candidates from batch i going into the batch
             # grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
@@ -798,7 +869,8 @@ class EntityResolver ():
             # print(converted_candidate_records.groupby('batch').size())
             converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
             for key, item in converted_candidates_grouped_df:
-                print('batch: ',key)
+
+                # print('batch: ',key)
                 # new_mention_count=0
                 converted_candidates_grouped_df_key= converted_candidates_grouped_df.get_group(key)
                 for candidate in converted_candidates_grouped_df_key.candidate.tolist():
@@ -813,19 +885,38 @@ class EntityResolver ():
                               float(row['non-discriminative'])]
                     label=str(row['status'])
                     # print(candidate, candidates_to_reintroduce.index(candidate),candidate_synvec)
-                    print(candidate, candidates_to_reintroduce.index(candidate), candidates_to_reintroduce_multi_sketch.index(candidate), candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
-                    if(candidates_to_reintroduce_multi_sketch.index(candidate)>10):
-                        print(candidate_synvec,label)
+                    # print(candidate, candidates_to_reintroduce.index(candidate), candidates_to_reintroduce_multi_sketch.index(candidate), candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
+                    # if(candidates_to_reintroduce_multi_sketch.index(candidate)>10):
+                    #     print(candidate_synvec,label)
+                    min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
+                    # print(candidate,min_rank,candidates_to_reintroduce_w_ranking.index(candidate))
+
+                    if(candidates_to_reintroduce.index(candidate)<15):
+                        self.ranking_effectiveness+=1
+
+                    #---------when just combining sketch-based ranks
+                    # if(ranking_score_dict[candidate]<15): 
+                    #     self.ranking_effectiveness_combined+=1
+
+                    if(candidates_to_reintroduce_w_ranking.index(candidate)<15):
+                        self.ranking_effectiveness_alternate+=1
+
                     # new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
 
                 # print (key,len(grouped_df_key),new_mention_count)
                 # print(grouped_df_key)
-                print('+====================================+')
+                # print('+====================================+')
 
 
-            print('ambiguous_turned_good:', len(ambiguous_turned_good))
-            print('ambiguous_turned_bad:', len(ambiguous_turned_bad))
-            print('ambiguous_remaining_ambiguous:', len(ambiguous_remaining_ambiguous))
+            print('+====================================+')
+            # print('ambiguous_turned_good:', len(ambiguous_turned_good))
+            # print('ambiguous_turned_bad:', len(ambiguous_turned_bad))
+            # print('ambiguous_remaining_ambiguous:', len(ambiguous_remaining_ambiguous))
+            print('ranking effectiveness: ', (self.ranking_effectiveness/self.baseline_effectiveness))
+            # print('combined ranking effectiveness: ', (self.ranking_effectiveness_combined/self.baseline_effectiveness))
+            print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
+
+
             # #testing what happens without reintroduction
             # CandidateBase_dict_prev=self.CandidateBase_dict
             
@@ -1754,6 +1845,16 @@ class EntityResolver ():
             self.entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.non_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.ambiguous_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
+
+            #checking how good is the ranking
+            self.ranking_effectiveness=0
+            self.ranking_effectiveness_combined=0
+            self.ranking_effectiveness_alternate=0
+            self.baseline_effectiveness=0
+
+            #frequency_w_decay related information
+            self.ambiguous_candidates_reintroduction_dict={}
+
             self.aggregator_incomplete_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             #self.data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
