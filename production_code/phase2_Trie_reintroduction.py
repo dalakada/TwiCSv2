@@ -144,6 +144,7 @@ class EntityResolver ():
         self.decay_factor=2**(-1/2)
         self.decay_base_staggering=2
         self.my_classifier= svm.SVM1('training.csv')
+
         self.top_k_effectiveness_arr_single_sketch=[]
         self.top_k_effectiveness_arr_multi_sketch_cosine=[]
         self.top_k_effectiveness_arr_multi_sketch_euclidean=[]
@@ -871,6 +872,11 @@ class EntityResolver ():
 
             #checking position of candidates that do get disambiguated in the reintroduction ranked list
             # print(converted_candidate_records.groupby('batch').size())
+            arr1=[0,0,0,0,0]
+            arr2=[[0,0,0,0,0]
+            arr3=[0,0,0,0,0]
+            arr4=[0,0,0,0,0]
+            # arr5=[]
             converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
             for key, item in converted_candidates_grouped_df:
 
@@ -895,22 +901,28 @@ class EntityResolver ():
                     min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
                     print(candidate,min_rank,ranking_score_dict[candidate])
 
-
-                    if(candidates_to_reintroduce.index(candidate)<15):
-                        self.ranking_effectiveness_single_sketch+=1
+                    for k in range(10,35,5):
 
 
-                    if(candidates_to_reintroduce_multi_sketch.index(candidate)<15):
-                        self.ranking_effectiveness_multi_sketch_cosine+=1
+                        if(candidates_to_reintroduce.index(candidate)<k):
+                            # self.ranking_effectiveness_single_sketch+=1
+                            arr1[k]+=1
 
 
-                    if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<15):
-                        self.ranking_effectiveness_multi_sketch_euclidean+=1
+                        if(candidates_to_reintroduce_multi_sketch.index(candidate)<k):
+                            # self.ranking_effectiveness_multi_sketch_cosine+=1
+                            arr2[k]+=1
 
 
-                    #---------when just combining sketch-based ranks
-                    if(ranking_score_dict[candidate]<15): 
-                        self.ranking_effectiveness_combined+=1
+                        if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
+                            # self.ranking_effectiveness_multi_sketch_euclidean+=1
+                            arr3[k]+=1
+
+
+                        #---------when just combining sketch-based ranks
+                        if(ranking_score_dict[candidate]<k): 
+                            # self.ranking_effectiveness_combined+=1
+                            arr4[k]+=1
 
 
 
@@ -928,11 +940,23 @@ class EntityResolver ():
             # print('ambiguous_turned_good:', len(ambiguous_turned_good))
             # print('ambiguous_turned_bad:', len(ambiguous_turned_bad))
             # print('ambiguous_remaining_ambiguous:', len(ambiguous_remaining_ambiguous))
-            print('ranking effectiveness single sketch: ', (self.ranking_effectiveness_single_sketch/self.baseline_effectiveness))
-            print('ranking effectiveness multi sketch cosine: ', (self.ranking_effectiveness_multi_sketch_cosine/self.baseline_effectiveness))
-            print('ranking effectiveness multi sketch euclidean: ', (self.ranking_effectiveness_multi_sketch_euclidean/self.baseline_effectiveness))
-            print('combined ranking effectiveness: ', (self.ranking_effectiveness_combined/self.baseline_effectiveness))
+
+            # print('ranking effectiveness single sketch: ', (self.ranking_effectiveness_single_sketch/self.baseline_effectiveness))
+            # print('ranking effectiveness multi sketch cosine: ', (self.ranking_effectiveness_multi_sketch_cosine/self.baseline_effectiveness))
+            # print('ranking effectiveness multi sketch euclidean: ', (self.ranking_effectiveness_multi_sketch_euclidean/self.baseline_effectiveness))
+            # print('combined ranking effectiveness: ', (self.ranking_effectiveness_combined/self.baseline_effectiveness))
             # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
+            arr1=[elem/self.baseline_effectiveness for elem in arr1]
+            self.top_k_effectiveness_arr_single_sketch.append(arr1)
+
+            arr2=[elem/self.baseline_effectiveness for elem in arr2]
+            self.top_k_effectiveness_arr_multi_sketch_cosine.append(arr2)
+
+            arr3=[elem/self.baseline_effectiveness for elem in arr3]
+            self.top_k_effectiveness_arr_multi_sketch_euclidean.append(arr3)
+
+            arr4=[elem/self.baseline_effectiveness for elem in arr4]
+            self.top_k_effectiveness_arr_multi_sketch_combined.append(arr4)
 
 
             # #testing what happens without reintroduction
