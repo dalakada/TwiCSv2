@@ -959,6 +959,13 @@ class EntityResolver ():
             self.top_k_effectiveness_arr_multi_sketch_combined.append(arr4)
 
 
+            print('ranking effectiveness single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
+            print('ranking effectiveness multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
+            print('ranking effectiveness multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean))
+            print('combined ranking effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined))
+            # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
+
+
             # #testing what happens without reintroduction
             # CandidateBase_dict_prev=self.CandidateBase_dict
             
