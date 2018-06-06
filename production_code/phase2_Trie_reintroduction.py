@@ -913,6 +913,7 @@ class EntityResolver ():
                         self.ranking_effectiveness_combined+=1
 
 
+
                     # if(candidates_to_reintroduce_w_ranking.index(candidate)<15):
                     #     self.ranking_effectiveness_alternate+=1
 
