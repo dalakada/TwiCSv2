@@ -144,6 +144,10 @@ class EntityResolver ():
         self.decay_factor=2**(-1/2)
         self.decay_base_staggering=2
         self.my_classifier= svm.SVM1('training.csv')
+        self.top_k_effectiveness_arr_single_sketch=[]
+        self.top_k_effectiveness_arr_multi_sketch_cosine=[]
+        self.top_k_effectiveness_arr_multi_sketch_euclidean=[]
+        self.top_k_effectiveness_arr_multi_sketch_combined=[]
 
 
     def calculate_tp_fp_f1_generic(self,raw_tweets_for_others,state_of_art):
@@ -631,7 +635,7 @@ class EntityResolver ():
                 frequency_w_decay=int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate].cumulative)
                 # frequency_w_decay=ambiguous_candidates_in_batch_w_Count[candidate]
                 first_reported_reintroduction=self.counter
-            print(candidate,first_reported_reintroduction,ambiguous_candidates_in_batch_w_Count[candidate],old_value,frequency_w_decay)
+            # print(candidate,first_reported_reintroduction,ambiguous_candidates_in_batch_w_Count[candidate],old_value,frequency_w_decay)
             self.ambiguous_candidates_reintroduction_dict[candidate]=(first_reported_reintroduction, frequency_w_decay)
             dict_to_return[candidate]=frequency_w_decay
         return dict_to_return
@@ -659,7 +663,7 @@ class EntityResolver ():
 
         combined_sketching_w_decay_sorted= OrderedDict(sorted(combined_sketching_w_decay.items(), key=lambda x: x[1], reverse=True))
 
-        return combined_sketching_w_decay_sorted
+        return combined_sketching_similarity_dict   #returning the combined sketching variant ranks now
 
 
     def set_cb(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold):
@@ -709,7 +713,7 @@ class EntityResolver ():
             #with alternative ranking
             ranking_score_dict=self.get_ranking_score(ambiguous_candidates_in_batch_freq_w_decay, cosine_distance_dict,cosine_distance_dict_multi_sketch,euclidean_distance_dict_multi_sketch)
             ##----comment out next line and use the dict directly when combining just based on ranks!!!!----
-            candidates_to_reintroduce_w_ranking=list(ranking_score_dict.keys())
+            # candidates_to_reintroduce_w_ranking=list(ranking_score_dict.keys())
 
             # cosine_distance_dict_wAmb=self.get_cosine_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch,reintroduction_threshold)
             #comebined_score_dict=self.get_combined_score(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,self.ambiguous_entity_sketch,reintroduction_threshold)
@@ -889,17 +893,28 @@ class EntityResolver ():
                     # if(candidates_to_reintroduce_multi_sketch.index(candidate)>10):
                     #     print(candidate_synvec,label)
                     min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
-                    # print(candidate,min_rank,candidates_to_reintroduce_w_ranking.index(candidate))
+                    print(candidate,min_rank,ranking_score_dict[candidate])
+
 
                     if(candidates_to_reintroduce.index(candidate)<15):
-                        self.ranking_effectiveness+=1
+                        self.ranking_effectiveness_single_sketch+=1
+
+
+                    if(candidates_to_reintroduce_multi_sketch.index(candidate)<15):
+                        self.ranking_effectiveness_multi_sketch_cosine+=1
+
+
+                    if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<15):
+                        self.ranking_effectiveness_multi_sketch_euclidean+=1
+
 
                     #---------when just combining sketch-based ranks
-                    # if(ranking_score_dict[candidate]<15): 
-                    #     self.ranking_effectiveness_combined+=1
+                    if(ranking_score_dict[candidate]<15): 
+                        self.ranking_effectiveness_combined+=1
 
-                    if(candidates_to_reintroduce_w_ranking.index(candidate)<15):
-                        self.ranking_effectiveness_alternate+=1
+
+                    # if(candidates_to_reintroduce_w_ranking.index(candidate)<15):
+                    #     self.ranking_effectiveness_alternate+=1
 
                     # new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
 
@@ -912,9 +927,11 @@ class EntityResolver ():
             # print('ambiguous_turned_good:', len(ambiguous_turned_good))
             # print('ambiguous_turned_bad:', len(ambiguous_turned_bad))
             # print('ambiguous_remaining_ambiguous:', len(ambiguous_remaining_ambiguous))
-            print('ranking effectiveness: ', (self.ranking_effectiveness/self.baseline_effectiveness))
-            # print('combined ranking effectiveness: ', (self.ranking_effectiveness_combined/self.baseline_effectiveness))
-            print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
+            print('ranking effectiveness single sketch: ', (self.ranking_effectiveness_single_sketch/self.baseline_effectiveness))
+            print('ranking effectiveness multi sketch cosine: ', (self.ranking_effectiveness_multi_sketch_cosine/self.baseline_effectiveness))
+            print('ranking effectiveness multi sketch euclidean: ', (self.ranking_effectiveness_multi_sketch_euclidean/self.baseline_effectiveness))
+            print('combined ranking effectiveness: ', (self.ranking_effectiveness_combined/self.baseline_effectiveness))
+            # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
 
 
             # #testing what happens without reintroduction
@@ -1848,6 +1865,9 @@ class EntityResolver ():
 
             #checking how good is the ranking
             self.ranking_effectiveness=0
+            self.ranking_effectiveness_single_sketch=0
+            self.ranking_effectiveness_multi_sketch_cosine=0
+            self.ranking_effectiveness_multi_sketch_euclidean=0
             self.ranking_effectiveness_combined=0
             self.ranking_effectiveness_alternate=0
             self.baseline_effectiveness=0

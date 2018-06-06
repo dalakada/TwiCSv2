@@ -1,0 +1,152 @@
+
+ranking effectiveness single sketch=[ 1.0, 0.8333333333333334, 0.8571428571428571, 0.76, 0.7586206896551724, 0.7222222222222222, 0.7441860465116279, 0.7169811320754716, 0.6885245901639344, 0.6818181818181818, 0.6619718309859155, 0.64, 0.6363636363636364, 0.6219512195121951, 0.5714285714285714, 0.5670103092783505, 0.5943396226415094, 0.6, 0.5948275862068966]
+ranking effectiveness multi sketch cosine=[ 1.0, 0.8333333333333334, 0.7857142857142857, 0.68, 0.6896551724137931, 0.6111111111111112, 0.627906976744186, 0.5849056603773585, 0.5573770491803278, 0.5151515151515151, 0.5070422535211268, 0.5066666666666667, 0.5064935064935064, 0.4878048780487805, 0.4725274725274725, 0.4742268041237113, 0.5188679245283019, 0.5272727272727272, 0.5258620689655172]
+ranking effectiveness multi sketch euclidean=[ 1.0, 0.8333333333333334, 0.7857142857142857, 0.68, 0.6551724137931034, 0.5555555555555556, 0.5813953488372093, 0.5471698113207547, 0.5245901639344263, 0.48484848484848486, 0.4788732394366197, 0.48, 0.4935064935064935, 0.4878048780487805, 0.4725274725274725, 0.4845360824742268, 0.5283018867924528, 0.5454545454545454, 0.5431034482758621]
+combined ranking effectiveness=[ 1.0, 0.8333333333333334, 0.8571428571428571, 0.8, 0.8275862068965517, 0.7777777777777778, 0.7906976744186046, 0.7735849056603774, 0.7704918032786885, 0.7575757575757576, 0.7605633802816901, 0.76, 0.7662337662337663, 0.7560975609756098, 0.7252747252747253, 0.7216494845360825, 0.7452830188679245, 0.7545454545454545, 0.75]
+27050 4382 0
+11.678309917449951 41.61523461341858
+1   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.8333333333333334
+ranking effectiveness multi sketch cosine:  0.8333333333333334
+ranking effectiveness multi sketch euclidean:  0.8333333333333334
+combined ranking effectiveness:  0.8333333333333334
+42837 6097 0
+13.307163000106812 66.36509561538696
+2   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.8571428571428571
+ranking effectiveness multi sketch cosine:  0.7857142857142857
+ranking effectiveness multi sketch euclidean:  0.7857142857142857
+combined ranking effectiveness:  0.8571428571428571
+59888 7449 0
+15.123635053634644 92.69174575805664
+3   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.76
+ranking effectiveness multi sketch cosine:  0.68
+ranking effectiveness multi sketch euclidean:  0.68
+combined ranking effectiveness:  0.8
+75585 8567 0
+16.34284210205078 120.22461795806885
+4   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.7586206896551724
+ranking effectiveness multi sketch cosine:  0.6896551724137931
+ranking effectiveness multi sketch euclidean:  0.6551724137931034
+combined ranking effectiveness:  0.8275862068965517
+91139 10309 0
+17.38916516304016 148.94246816635132
+5   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.7222222222222222
+ranking effectiveness multi sketch cosine:  0.6111111111111112
+ranking effectiveness multi sketch euclidean:  0.5555555555555556
+combined ranking effectiveness:  0.7777777777777778
+107851 10969 0
+19.03062415122986 179.23764538764954
+6   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.7441860465116279
+ranking effectiveness multi sketch cosine:  0.627906976744186
+ranking effectiveness multi sketch euclidean:  0.5813953488372093
+combined ranking effectiveness:  0.7906976744186046
+123684 12350 0
+20.12759780883789 210.3409972190857
+7   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.7169811320754716
+ranking effectiveness multi sketch cosine:  0.5849056603773585
+ranking effectiveness multi sketch euclidean:  0.5471698113207547
+combined ranking effectiveness:  0.7735849056603774
+141108 13064 0
+21.82787299156189 243.593501329422
+8   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.6885245901639344
+ranking effectiveness multi sketch cosine:  0.5573770491803278
+ranking effectiveness multi sketch euclidean:  0.5245901639344263
+combined ranking effectiveness:  0.7704918032786885
+159412 13988 0
+23.720731019973755 279.1485183238983
+9   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.6818181818181818
+ranking effectiveness multi sketch cosine:  0.5151515151515151
+ranking effectiveness multi sketch euclidean:  0.48484848484848486
+combined ranking effectiveness:  0.7575757575757576
+177224 15281 0
+25.207884073257446 316.39122128486633
+10   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.6619718309859155
+ranking effectiveness multi sketch cosine:  0.5070422535211268
+ranking effectiveness multi sketch euclidean:  0.4788732394366197
+combined ranking effectiveness:  0.7605633802816901
+194991 16411 0
+26.064918041229248 354.37636041641235
+11   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.64
+ranking effectiveness multi sketch cosine:  0.5066666666666667
+ranking effectiveness multi sketch euclidean:  0.48
+combined ranking effectiveness:  0.76
+211998 17958 0
+27.400480031967163 393.62428641319275
+12   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.6363636363636364
+ranking effectiveness multi sketch cosine:  0.5064935064935064
+ranking effectiveness multi sketch euclidean:  0.4935064935064935
+combined ranking effectiveness:  0.7662337662337663
+229157 19181 0
+28.461419105529785 433.5235345363617
+13   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.6219512195121951
+ranking effectiveness multi sketch cosine:  0.4878048780487805
+ranking effectiveness multi sketch euclidean:  0.4878048780487805
+combined ranking effectiveness:  0.7560975609756098
+245194 20648 0
+33.426846981048584 478.5383665561676
+14   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.5714285714285714
+ranking effectiveness multi sketch cosine:  0.4725274725274725
+ranking effectiveness multi sketch euclidean:  0.4725274725274725
+combined ranking effectiveness:  0.7252747252747253
+261110 21855 0
+32.76558303833008 523.6719715595245
+15   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.5670103092783505
+ranking effectiveness multi sketch cosine:  0.4742268041237113
+ranking effectiveness multi sketch euclidean:  0.4845360824742268
+combined ranking effectiveness:  0.7216494845360825
+274293 23665 0
+31.850786924362183 564.8318974971771
+16   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.5943396226415094
+ranking effectiveness multi sketch cosine:  0.5188679245283019
+ranking effectiveness multi sketch euclidean:  0.5283018867924528
+combined ranking effectiveness:  0.7452830188679245
+290292 24217 0
+34.60620617866516 609.4568667411804
+17   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.6
+ranking effectiveness multi sketch cosine:  0.5272727272727272
+ranking effectiveness multi sketch euclidean:  0.5454545454545454
+combined ranking effectiveness:  0.7545454545454545
+306727 26037 0
+36.068007946014404 655.4925715923309
+18   Consumed
+**********************************************************
+ranking effectiveness single sketch:  0.5948275862068966
+ranking effectiveness multi sketch cosine:  0.5258620689655172
+ranking effectiveness multi sketch euclidean:  0.5431034482758621
+combined ranking effectiveness:  0.75
+322874 27610 0
+38.050793170928955 703.033784866333
+19   Consumed
