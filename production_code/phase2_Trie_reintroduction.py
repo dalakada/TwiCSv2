@@ -145,6 +145,11 @@ class EntityResolver ():
         self.decay_base_staggering=2
         self.my_classifier= svm.SVM1('training.csv')
 
+        self.arr1=[0,0,0,0,0] #cumulative estimates till batch single sketch
+        self.arr2=[0,0,0,0,0] #cumulative estimates till batch multi sketch cosine
+        self.arr3=[0,0,0,0,0] #cumulative estimates till batch multi sketch euclidean
+        self.arr4=[0,0,0,0,0] #cumulative estimates till batch combined sketches
+
         self.top_k_effectiveness_arr_single_sketch=[]
         self.top_k_effectiveness_arr_multi_sketch_cosine=[]
         self.top_k_effectiveness_arr_multi_sketch_euclidean=[]
@@ -872,10 +877,7 @@ class EntityResolver ():
 
             #checking position of candidates that do get disambiguated in the reintroduction ranked list
             # print(converted_candidate_records.groupby('batch').size())
-            arr1=[0,0,0,0,0]
-            arr2=[[0,0,0,0,0]
-            arr3=[0,0,0,0,0]
-            arr4=[0,0,0,0,0]
+            
             # arr5=[]
             converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
             for key, item in converted_candidates_grouped_df:
@@ -903,26 +905,28 @@ class EntityResolver ():
 
                     for k in range(10,35,5):
 
+                        i=int((k-10)/5)
+
 
                         if(candidates_to_reintroduce.index(candidate)<k):
                             # self.ranking_effectiveness_single_sketch+=1
-                            arr1[k]+=1
+                            self.arr1[i]+=1
 
 
                         if(candidates_to_reintroduce_multi_sketch.index(candidate)<k):
                             # self.ranking_effectiveness_multi_sketch_cosine+=1
-                            arr2[k]+=1
+                            self.arr2[i]+=1
 
 
                         if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
                             # self.ranking_effectiveness_multi_sketch_euclidean+=1
-                            arr3[k]+=1
+                            self.arr3[i]+=1
 
 
                         #---------when just combining sketch-based ranks
                         if(ranking_score_dict[candidate]<k): 
                             # self.ranking_effectiveness_combined+=1
-                            arr4[k]+=1
+                            self.arr4[i]+=1
 
 
 
@@ -935,7 +939,7 @@ class EntityResolver ():
                 # print(grouped_df_key)
                 # print('+====================================+')
 
-
+            print(self.arr1,self.arr2,self.arr3,self.arr4)
             print('+====================================+')
             # print('ambiguous_turned_good:', len(ambiguous_turned_good))
             # print('ambiguous_turned_bad:', len(ambiguous_turned_bad))
@@ -946,16 +950,16 @@ class EntityResolver ():
             # print('ranking effectiveness multi sketch euclidean: ', (self.ranking_effectiveness_multi_sketch_euclidean/self.baseline_effectiveness))
             # print('combined ranking effectiveness: ', (self.ranking_effectiveness_combined/self.baseline_effectiveness))
             # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
-            arr1=[elem/self.baseline_effectiveness for elem in arr1]
+            arr1=[elem/self.baseline_effectiveness for elem in self.arr1]
             self.top_k_effectiveness_arr_single_sketch.append(arr1)
 
-            arr2=[elem/self.baseline_effectiveness for elem in arr2]
+            arr2=[elem/self.baseline_effectiveness for elem in self.arr2]
             self.top_k_effectiveness_arr_multi_sketch_cosine.append(arr2)
 
-            arr3=[elem/self.baseline_effectiveness for elem in arr3]
+            arr3=[elem/self.baseline_effectiveness for elem in self.arr3]
             self.top_k_effectiveness_arr_multi_sketch_euclidean.append(arr3)
 
-            arr4=[elem/self.baseline_effectiveness for elem in arr4]
+            arr4=[elem/self.baseline_effectiveness for elem in self.arr4]
             self.top_k_effectiveness_arr_multi_sketch_combined.append(arr4)
 
 
