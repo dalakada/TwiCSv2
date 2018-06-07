@@ -36,7 +36,7 @@ plt.scatter(batches,combined_ranking_effectiveness,label='multiple sketching tec
 plt.title("Ranking Function Effectiveness")
 plt.ylabel('ranking fucntion top-15 effectiveness')
 plt.xlabel('Current Batch')
-lgd=plt.legend(bbox_to_anchor=(1.05, 1), loc=9)
+lgd=plt.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 4}, borderaxespad=0.)
 
 plt.savefig('effectiveness-sketching.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
 plt.show()
