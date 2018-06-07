@@ -18,6 +18,8 @@ batches= range(1,20)
 # for i in range(10,30,5):
 # 	print(i)
 
+#adding comment for pseudo push
+
 
 print(len(ranking_effectiveness_single_sketch),len(ranking_effectiveness_multi_sketch_cosine),len(ranking_effectiveness_multi_sketch_euclidean),len(combined_ranking_effectiveness))
 
