@@ -57,10 +57,10 @@ for array_index in range(0,19):
 	plt.plot(k_values,array_to_plot,label='batch '+str(array_index+1))
 plt.ylabel('ranking function top-k effectiveness')
 plt.xlabel('k-value')
-plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+lgd=plt.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 4}, borderaxespad=0.)
 
 plt.title('Ranking Function top-k effectiveness with single entity/non-entity sketches')
-plt.savefig('top-k-with-single-entity-non-entity-sketches.png', dpi = 900)
+plt.savefig('top-k-with-single-entity-non-entity-sketches.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
 plt.show()
 
 
@@ -73,10 +73,10 @@ for array_index in range(0,19):
 	plt.plot(k_values,array_to_plot,label='batch '+str(array_index+1))
 plt.ylabel('ranking function top-k effectiveness')
 plt.xlabel('k-value')
-plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+lgd=plt.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 4}, borderaxespad=0.)
 
 plt.title('Ranking Function top-k effectiveness with multiple entity/non-entity sketches (cosine)')
-plt.savefig('top-k-multiple-entity-non-entity-sketches-cosine.png', dpi = 900)
+plt.savefig('top-k-multiple-entity-non-entity-sketches-cosine.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
 plt.show()
 
 
@@ -89,10 +89,10 @@ for array_index in range(0,19):
 	plt.plot(k_values,array_to_plot,label='batch '+str(array_index+1))
 plt.ylabel('ranking function top-k effectiveness')
 plt.xlabel('k-value')
-plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+lgd=plt.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 4}, borderaxespad=0.)
 
 plt.title('Ranking Function top-k effectiveness with multiple entity/non-entity sketches (euclidean)')
-plt.savefig('top-k-multiple-entity-non-entity-sketches-euclidean.png', dpi = 900)
+plt.savefig('top-k-multiple-entity-non-entity-sketches-euclidean.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
 plt.show()
 
 
@@ -105,10 +105,10 @@ for array_index in range(0,19):
 	plt.plot(k_values,array_to_plot,label='batch '+str(array_index+1))
 plt.ylabel('ranking function top-k effectiveness')
 plt.xlabel('k-value')
-plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+lgd=plt.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 4}, borderaxespad=0.)
 
 plt.title('Ranking Function top-k effectiveness with a combination of sketches')
-plt.savefig('top-k-combined-sketching.png', dpi = 900)
+plt.savefig('top-k-combined-sketching.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
 plt.show()
 
 
