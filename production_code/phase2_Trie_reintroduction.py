@@ -145,15 +145,30 @@ class EntityResolver ():
         self.decay_base_staggering=2
         self.my_classifier= svm.SVM1('training.csv')
 
+        #entity non-entity top k estimates
         self.arr1=[0,0,0,0,0] #cumulative estimates till batch single sketch
         self.arr2=[0,0,0,0,0] #cumulative estimates till batch multi sketch cosine
         self.arr3=[0,0,0,0,0] #cumulative estimates till batch multi sketch euclidean
         self.arr4=[0,0,0,0,0] #cumulative estimates till batch combined sketches
 
+        #ambiguous sketches top k estimates
+        self.arr5=[0,0,0,0,0] #cumulative estimates till batch single sketch
+        self.arr6=[0,0,0,0,0] #cumulative estimates till batch multi sketch cosine
+        self.arr7=[0,0,0,0,0] #cumulative estimates till batch multi sketch euclidean
+        self.arr8=[0,0,0,0,0] #cumulative estimates till batch combined sketches
+
+        #all combination top k estimates
+        self.arr9=[0,0,0,0,0]
+
         self.top_k_effectiveness_arr_single_sketch=[]
         self.top_k_effectiveness_arr_multi_sketch_cosine=[]
         self.top_k_effectiveness_arr_multi_sketch_euclidean=[]
         self.top_k_effectiveness_arr_multi_sketch_combined=[]
+        self.top_k_effectiveness_arr_single_sketch_amb=[]
+        self.top_k_effectiveness_arr_multi_sketch_cosine_amb=[]
+        self.top_k_effectiveness_arr_multi_sketch_euclidean_amb=[]
+        self.top_k_effectiveness_arr_multi_sketch_combined_amb=[]
+        self.top_k_effectiveness_arr_all_sketch_combined=[]
 
 
     def calculate_tp_fp_f1_generic(self,raw_tweets_for_others,state_of_art):
@@ -778,7 +793,7 @@ class EntityResolver ():
 
             #with multiple sketches for ambiguous class-- cosine
             cosine_distance_dict_wAmb=self.get_cosine_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch,reintroduction_threshold)
-            candidates_to_reintroduce_wAmb=list(cosine_distance_dict.keys())
+            candidates_to_reintroduce_wAmb=list(cosine_distance_dict_wAmb.keys())
 
             #with multiple sketches for  ambiguous class-- euclidean
             cosine_distance_dict_multi_sketch_wAmb=self.get_cosine_distance_multi_sketch_wAmb(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketches,reintroduction_threshold)
@@ -974,9 +989,12 @@ class EntityResolver ():
                     print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
 
                     for k in range(10,35,5):
+                    # for k in [15]:
 
                         i=int((k-10)/5)
+                        # i=0
 
+                        # entity/non-entity sketches
 
                         if(candidates_to_reintroduce.index(candidate)<k):
                             # self.ranking_effectiveness_single_sketch+=1
@@ -998,6 +1016,26 @@ class EntityResolver ():
                             # self.ranking_effectiveness_combined+=1
                             self.arr4[i]+=1
 
+                        #ambiguous sketches
+
+                        if(candidates_to_reintroduce_wAmb.index(candidate)<k):
+                            self.arr5[i]+=1
+
+                        if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<k):
+                            self.arr6[i]+=1
+
+                        if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<k):
+                            self.arr7[i]+=1
+
+                        if(ranking_score_dict_wAmb[candidate]<k):
+                            self.arr8[i]+=1
+
+
+                        #combining all possible sketches
+
+                        if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<k):
+                            self.arr9[i]+=1
+
 
 
                     # if(candidates_to_reintroduce_w_ranking.index(candidate)<15):
@@ -1009,7 +1047,7 @@ class EntityResolver ():
                 # print(grouped_df_key)
                 # print('+====================================+')
 
-            print(self.arr1,self.arr2,self.arr3,self.arr4)
+            print(self.arr1,self.arr2,self.arr3,self.arr4,self.arr5,self.arr6,self.arr7,self.arr8,self.arr9)
             print('+====================================+')
             # print('ambiguous_turned_good:', len(ambiguous_turned_good))
             # print('ambiguous_turned_bad:', len(ambiguous_turned_bad))
@@ -1032,11 +1070,33 @@ class EntityResolver ():
             arr4=[elem/self.baseline_effectiveness for elem in self.arr4]
             self.top_k_effectiveness_arr_multi_sketch_combined.append(arr4)
 
+            arr5=[elem/self.baseline_effectiveness for elem in self.arr5]
+            self.top_k_effectiveness_arr_single_sketch_amb.append(arr5)
 
-            print('ranking effectiveness single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
-            print('ranking effectiveness multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
-            print('ranking effectiveness multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean))
-            print('combined ranking effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined))
+            arr6=[elem/self.baseline_effectiveness for elem in self.arr6]
+            self.top_k_effectiveness_arr_multi_sketch_cosine_amb.append(arr6)
+
+            arr7=[elem/self.baseline_effectiveness for elem in self.arr7]
+            self.top_k_effectiveness_arr_multi_sketch_euclidean_amb.append(arr7)
+
+            arr8=[elem/self.baseline_effectiveness for elem in self.arr8]
+            self.top_k_effectiveness_arr_multi_sketch_combined_amb.append(arr8)
+
+            arr9=[elem/self.baseline_effectiveness for elem in self.arr9]
+            self.top_k_effectiveness_arr_all_sketch_combined.append(arr9)
+
+
+            print('ranking effectiveness ent/non-ent single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
+            print('ranking effectiveness ent/non-ent multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
+            print('ranking effectiveness ent/non-ent multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean))
+            print('combined ranking ent/non-ent  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined))
+
+            print('ranking effectiveness ambiguous single sketch: ', (self.top_k_effectiveness_arr_single_sketch_amb))
+            print('ranking effectiveness ambiguous multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine_amb))
+            print('ranking effectiveness ambiguous multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean_amb))
+            print('combined ranking ambiguous  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined_amb))
+
+            print('combined ranking all sketches effectiveness: ', (self.top_k_effectiveness_arr_all_sketch_combined))
             # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
 
 
@@ -1082,6 +1142,31 @@ class EntityResolver ():
             #     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             # #print(self.good_candidates, self.ambiguous_candidates_in_batch)
 
+        if(self.counter==19):
+            arr=[]
+            for inner_arr in self.top_k_effectiveness_arr_single_sketch_amb:
+                arr.append(inner_arr[1])
+            print('single sketch amb: ', arr)
+
+            arr=[]
+            for inner_arr in self.top_k_effectiveness_arr_multi_sketch_cosine_amb:
+                arr.append(inner_arr[1])
+            print('multi sketch cosine amb: ', arr)
+
+            arr=[]
+            for inner_arr in self.top_k_effectiveness_arr_multi_sketch_euclidean_amb:
+                arr.append(inner_arr[1])
+            print('multi sketch euclidean amb: ', arr)
+
+            arr=[]
+            for inner_arr in self.top_k_effectiveness_arr_multi_sketch_combined_amb:
+                arr.append(inner_arr[1])
+            print('smulti sketch combined amb: ', arr)
+
+            arr=[]
+            for inner_arr in self.top_k_effectiveness_arr_all_sketch_combined:
+                arr.append(inner_arr[1])
+            print('all sketch combined amb: ', arr)
 
         #['probability'],['a,g,b']
         return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag

@@ -53,10 +53,11 @@ total_time=0
 # tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
 
 # /Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv #---- for my Mac
-# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
+tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
 
-# /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+# # /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+
 tweets_unpartitoned=tweets_unpartitoned[:200000:]
 
 print("***",len(tweets_unpartitoned))
