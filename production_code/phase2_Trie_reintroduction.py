@@ -480,6 +480,7 @@ class EntityResolver ():
     #single ambiguous sketch; maximal cosine distance
     def get_cosine_distance_1(self, ambiguous_candidate_records,ambiguous_entity_sketch,reintroduction_threshold):
         cosine_distance_dict={}
+        cosine_similarity_dict={}
         for index, row in ambiguous_candidate_records.iterrows():
           candidate_synvec=[(row['cap']/row['cumulative']),
                               (row['substring-cap']/row['cumulative']),
@@ -490,9 +491,12 @@ class EntityResolver ():
           cosine_distance_amb=spatial.distance.cosine(candidate_synvec, ambiguous_entity_sketch)
           candidate_distance_array=cosine_distance_amb #not an array; just single value
           cosine_distance_dict[row['candidate']]=candidate_distance_array
+          cosine_similarity_dict[row['candidate']]=1-candidate_distance_array
+
         cosine_distance_dict_sorted= OrderedDict(sorted(cosine_distance_dict.items(), key=lambda x: x[1], reverse=True))
-        cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value > reintroduction_threshold }
-        return cosine_distance_dict_sorted_final
+        cosine_similarity_dict_sorted= OrderedDict(sorted(cosine_similarity_dict.items(), key=lambda x: x[1]))
+        # cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value > reintroduction_threshold }
+        return cosine_distance_dict_sorted
 
     def get_combined_score(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch,ambiguous_entity_sketch,reintroduction_threshold):
         combined_score_dict={}
@@ -541,6 +545,33 @@ class EntityResolver ():
         # cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value < reintroduction_threshold }
         return cosine_similarity_dict_sorted
 
+    #multiple ambiguous sketches; maximal cosine distance, minimal similarity
+    def get_cosine_distance_multi_sketch_wAmb(self, ambiguous_candidate_records,ambiguous_entity_sketches,reintroduction_threshold):
+        cosine_distance_dict={}
+        cosine_similarity_dict={}
+        for index, row in ambiguous_candidate_records.iterrows():
+          candidate_synvec=[(row['cap']/row['cumulative']),
+                              (row['substring-cap']/row['cumulative']),
+                              (row['s-o-sCap']/row['cumulative']),
+                              (row['all-cap']/row['cumulative']),
+                              (row['non-cap']/row['cumulative']),
+                              (row['non-discriminative']/row['cumulative'])]
+
+          cosine_distance_amb= max(list(map(lambda elem: spatial.distance.cosine(candidate_synvec, elem), ambiguous_entity_sketches)))
+          
+          #cosine_distance_array.append(candidate_distance_array)
+          cosine_distance_dict[row['candidate']]=cosine_distance_amb
+          cosine_similarity_dict[row['candidate']]=1-cosine_distance_amb
+
+        cosine_distance_dict_sorted= OrderedDict(sorted(cosine_distance_dict.items(), key=lambda x: x[1], reverse=True))
+        cosine_similarity_dict_sorted= OrderedDict(sorted(cosine_similarity_dict.items(), key=lambda x: x[1]))
+        # cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value < reintroduction_threshold }
+        return cosine_similarity_dict_sorted
+
+
+
+    #MULTIPLE SKETCH CLUSTERING--- EUCLIDEAN
+
     #multiple entity/non-entity sketches; minimal euclidean distance
     def get_euclidean_distance_multi_sketch(self, ambiguous_candidate_records,entity_sketches,non_entity_sketches,reintroduction_threshold):
         euclidean_distance_dict={}
@@ -562,6 +593,30 @@ class EntityResolver ():
 
         euclidean_distance_dict_sorted= OrderedDict(sorted(euclidean_distance_dict.items(), key=lambda x: x[1]))
         euclidean_similarity_dict_sorted= OrderedDict(sorted(euclidean_similarity_dict.items(), key=lambda x: x[1], reverse=True))
+        # euclidean_distance_dict_sorted_final= { key:value for key, value in euclidean_distance_dict_sorted.items() if value < reintroduction_threshold }
+        return euclidean_similarity_dict_sorted
+
+
+    #multiple ambiguous sketches; maximal euclidean distance, minimal similarity
+    def get_euclidean_distance_multi_sketch_wAmb(self, ambiguous_candidate_records,ambiguous_entity_sketches,reintroduction_threshold):
+        euclidean_distance_dict={}
+        euclidean_similarity_dict={}
+        for index, row in ambiguous_candidate_records.iterrows():
+          candidate_synvec=[(row['cap']/row['cumulative']),
+                              (row['substring-cap']/row['cumulative']),
+                              (row['s-o-sCap']/row['cumulative']),
+                              (row['all-cap']/row['cumulative']),
+                              (row['non-cap']/row['cumulative']),
+                              (row['non-discriminative']/row['cumulative'])]
+
+          euclidean_distance_amb= max(list(map(lambda elem: spatial.distance.euclidean(candidate_synvec, elem), ambiguous_entity_sketches)))
+          
+          #euclidean_distance_array.append(candidate_distance_array)
+          euclidean_distance_dict[row['candidate']]=euclidean_distance_amb
+          euclidean_similarity_dict[row['candidate']]=1-euclidean_distance_amb
+
+        euclidean_distance_dict_sorted= OrderedDict(sorted(euclidean_distance_dict.items(), key=lambda x: x[1], reverse=True))
+        euclidean_similarity_dict_sorted= OrderedDict(sorted(euclidean_similarity_dict.items(), key=lambda x: x[1]))
         # euclidean_distance_dict_sorted_final= { key:value for key, value in euclidean_distance_dict_sorted.items() if value < reintroduction_threshold }
         return euclidean_similarity_dict_sorted
 
@@ -704,15 +759,15 @@ class EntityResolver ():
             #     print(candidate, ambiguous_candidates_in_batch_freq_w_decay[candidate], self.ambiguous_candidates_reintroduction_dict[candidate] ,int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate].cumulative))
             #print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_inBatch_records))
 
-            #with single sketch-- cosine
+            #with single sketch for entity/non-entity class-- cosine
             cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
             candidates_to_reintroduce=list(cosine_distance_dict.keys())
 
-            #with multiple sketches-- cosine
+            #with multiple sketches for entity/non-entity class-- cosine
             cosine_distance_dict_multi_sketch=self.get_cosine_distance_multi_sketch(ambiguous_candidate_inBatch_records,self.entity_sketches,self.non_entity_sketches,reintroduction_threshold)
             candidates_to_reintroduce_multi_sketch=list(cosine_distance_dict_multi_sketch.keys())
 
-            #with multiple sketches-- euclidean
+            #with multiple sketches for entity/non-entity class-- euclidean
             euclidean_distance_dict_multi_sketch=self.get_euclidean_distance_multi_sketch(ambiguous_candidate_inBatch_records,self.entity_sketches_euclidean,self.non_entity_sketches_euclidean,reintroduction_threshold)
             candidates_to_reintroduce_multi_sketch_euclidean=list(euclidean_distance_dict_multi_sketch.keys())
 
@@ -721,7 +776,21 @@ class EntityResolver ():
             ##----comment out next line and use the dict directly when combining just based on ranks!!!!----
             # candidates_to_reintroduce_w_ranking=list(ranking_score_dict.keys())
 
-            # cosine_distance_dict_wAmb=self.get_cosine_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch,reintroduction_threshold)
+            #with multiple sketches for ambiguous class-- cosine
+            cosine_distance_dict_wAmb=self.get_cosine_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch,reintroduction_threshold)
+            candidates_to_reintroduce_wAmb=list(cosine_distance_dict.keys())
+
+            #with multiple sketches for  ambiguous class-- euclidean
+            cosine_distance_dict_multi_sketch_wAmb=self.get_cosine_distance_multi_sketch_wAmb(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketches,reintroduction_threshold)
+            candidates_to_reintroduce_multi_sketch_wAmb=list(cosine_distance_dict_multi_sketch_wAmb.keys())
+
+            #with multiple sketches for ambiguous class-- euclidean
+            euclidean_distance_dict_multi_sketch_wAmb=self.get_euclidean_distance_multi_sketch_wAmb(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketches_euclidean,reintroduction_threshold)
+            candidates_to_reintroduce_multi_sketch_euclidean_wAmb=list(euclidean_distance_dict_multi_sketch_wAmb.keys())
+
+            #with alternative ranking
+            ranking_score_dict_wAmb=self.get_ranking_score(ambiguous_candidates_in_batch_freq_w_decay, cosine_distance_dict_wAmb,cosine_distance_dict_multi_sketch_wAmb,euclidean_distance_dict_multi_sketch_wAmb)
+
             #comebined_score_dict=self.get_combined_score(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,self.ambiguous_entity_sketch,reintroduction_threshold)
             #print(len(comebined_score_dict))
             #print(len(self.ambiguous_candidates_in_batch),len(cosine_distance_dict))
@@ -901,7 +970,8 @@ class EntityResolver ():
                     # if(candidates_to_reintroduce_multi_sketch.index(candidate)>10):
                     #     print(candidate_synvec,label)
                     min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
-                    print(candidate,min_rank,ranking_score_dict[candidate])
+                    min_rank_wAmb=min(candidates_to_reintroduce_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate))
+                    print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
 
                     for k in range(10,35,5):
 
