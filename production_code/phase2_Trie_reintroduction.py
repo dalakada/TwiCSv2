@@ -988,7 +988,11 @@ class EntityResolver ():
                     min_rank_wAmb=min(candidates_to_reintroduce_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate))
                     print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
 
+                    #absolute top-k
                     for k in range(10,35,5):
+                        
+                    #for top-k percentage instead of absolute top k: 
+                    real_k= k/100*(self.ambiguous_candidates_in_batch)
                     # for k in [15]:
 
                         i=int((k-10)/5)
