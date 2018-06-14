@@ -1163,27 +1163,27 @@ class EntityResolver ():
             arr=[]
             for inner_arr in self.top_k_effectiveness_arr_single_sketch:
                 arr.append(inner_arr[1])
-            print('top-15: single sketch amb: ', arr)
+            print('top-15: single sketch : ', arr)
 
             arr=[]
             for inner_arr in self.top_k_effectiveness_arr_multi_sketch_cosine:
                 arr.append(inner_arr[1])
-            print('top-15: multi sketch cosine amb: ', arr)
+            print('top-15: multi sketch cosine : ', arr)
 
             arr=[]
             for inner_arr in self.top_k_effectiveness_arr_multi_sketch_euclidean:
                 arr.append(inner_arr[1])
-            print('top-15: multi sketch euclidean amb: ', arr)
+            print('top-15: multi sketch euclidean : ', arr)
 
             arr=[]
             for inner_arr in self.top_k_effectiveness_arr_multi_sketch_combined:
                 arr.append(inner_arr[1])
-            print('top-15: multi sketch combined amb: ', arr)
+            print('top-15: multi sketch combined : ', arr)
 
             # arr=[]
             # for inner_arr in self.top_k_effectiveness_arr_all_sketch_combined:
             #     arr.append(inner_arr[1])
-            # print('top-15: all sketch combined amb: ', arr)
+            # print('top-15: all sketch combined : ', arr)
 
         #['probability'],['a,g,b']
         return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag
