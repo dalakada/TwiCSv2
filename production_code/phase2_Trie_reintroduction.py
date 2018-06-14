@@ -989,55 +989,68 @@ class EntityResolver ():
                     print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
 
                     #absolute top-k
-                    for k in range(10,35,5):
+                    # for k in range(10,35,5):
+                    for k in range(20,45,5):
                         
-                    #for top-k percentage instead of absolute top k: 
-                    real_k= k/100*(self.ambiguous_candidates_in_batch)
+                        #for top-k percentage instead of absolute top k: 
+                        real_k= int(k/100*(len(self.ambiguous_candidates_in_batch)))
+                        # print(k,real_k)
                     # for k in [15]:
 
-                        i=int((k-10)/5)
+                        # i=int((k-10)/5)
+                        i=int((k-20)/5)
+                        # print(i)
                         # i=0
 
                         # entity/non-entity sketches
 
-                        if(candidates_to_reintroduce.index(candidate)<k):
+                        # if(candidates_to_reintroduce.index(candidate)<k):
+                        if(candidates_to_reintroduce.index(candidate)<real_k):
                             # self.ranking_effectiveness_single_sketch+=1
                             self.arr1[i]+=1
 
 
-                        if(candidates_to_reintroduce_multi_sketch.index(candidate)<k):
+                        # if(candidates_to_reintroduce_multi_sketch.index(candidate)<k):
+                        if(candidates_to_reintroduce_multi_sketch.index(candidate)<real_k):
                             # self.ranking_effectiveness_multi_sketch_cosine+=1
                             self.arr2[i]+=1
 
 
-                        if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
+                        # if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
+                        if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<real_k):
                             # self.ranking_effectiveness_multi_sketch_euclidean+=1
                             self.arr3[i]+=1
 
 
                         #---------when just combining sketch-based ranks
-                        if(ranking_score_dict[candidate]<k): 
+                        # if(ranking_score_dict[candidate]<k): 
+                        if(ranking_score_dict[candidate]<real_k):
                             # self.ranking_effectiveness_combined+=1
                             self.arr4[i]+=1
 
                         #ambiguous sketches
 
-                        if(candidates_to_reintroduce_wAmb.index(candidate)<k):
+                        # if(candidates_to_reintroduce_wAmb.index(candidate)<k):
+                        if(candidates_to_reintroduce_wAmb.index(candidate)<real_k):
                             self.arr5[i]+=1
 
-                        if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<k):
+                        # if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<k):
+                        if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<real_k):
                             self.arr6[i]+=1
 
-                        if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<k):
+                        # if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<k):
+                        if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<real_k):
                             self.arr7[i]+=1
 
-                        if(ranking_score_dict_wAmb[candidate]<k):
+                        # if(ranking_score_dict_wAmb[candidate]<k):
+                        if(ranking_score_dict_wAmb[candidate]<real_k):
                             self.arr8[i]+=1
 
 
                         #combining all possible sketches
 
-                        if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<k):
+                        # if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<k):
+                        if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<real_k):
                             self.arr9[i]+=1
 
 
@@ -1148,29 +1161,29 @@ class EntityResolver ():
 
         if(self.counter==19):
             arr=[]
-            for inner_arr in self.top_k_effectiveness_arr_single_sketch_amb:
+            for inner_arr in self.top_k_effectiveness_arr_single_sketch:
                 arr.append(inner_arr[1])
-            print('single sketch amb: ', arr)
+            print('top-15: single sketch amb: ', arr)
 
             arr=[]
-            for inner_arr in self.top_k_effectiveness_arr_multi_sketch_cosine_amb:
+            for inner_arr in self.top_k_effectiveness_arr_multi_sketch_cosine:
                 arr.append(inner_arr[1])
-            print('multi sketch cosine amb: ', arr)
+            print('top-15: multi sketch cosine amb: ', arr)
 
             arr=[]
-            for inner_arr in self.top_k_effectiveness_arr_multi_sketch_euclidean_amb:
+            for inner_arr in self.top_k_effectiveness_arr_multi_sketch_euclidean:
                 arr.append(inner_arr[1])
-            print('multi sketch euclidean amb: ', arr)
+            print('top-15: multi sketch euclidean amb: ', arr)
 
             arr=[]
-            for inner_arr in self.top_k_effectiveness_arr_multi_sketch_combined_amb:
+            for inner_arr in self.top_k_effectiveness_arr_multi_sketch_combined:
                 arr.append(inner_arr[1])
-            print('smulti sketch combined amb: ', arr)
+            print('top-15: multi sketch combined amb: ', arr)
 
-            arr=[]
-            for inner_arr in self.top_k_effectiveness_arr_all_sketch_combined:
-                arr.append(inner_arr[1])
-            print('all sketch combined amb: ', arr)
+            # arr=[]
+            # for inner_arr in self.top_k_effectiveness_arr_all_sketch_combined:
+            #     arr.append(inner_arr[1])
+            # print('top-15: all sketch combined amb: ', arr)
 
         #['probability'],['a,g,b']
         return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag
