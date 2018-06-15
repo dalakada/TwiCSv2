@@ -170,6 +170,8 @@ class EntityResolver ():
         self.top_k_effectiveness_arr_multi_sketch_combined_amb=[]
         self.top_k_effectiveness_arr_all_sketch_combined=[]
 
+        self.batch_specific_reintroduction_tuple_dict={} #key is a tuple of (x-percent of candidates from batch i, current_batch-batch i), value is y% of candidates from batch i converted
+
 
     def calculate_tp_fp_f1_generic(self,raw_tweets_for_others,state_of_art):
 
@@ -777,12 +779,7 @@ class EntityResolver ():
             #     print(candidate, ambiguous_candidates_in_batch_freq_w_decay[candidate], self.ambiguous_candidates_reintroduction_dict[candidate] ,int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate].cumulative))
             #print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_inBatch_records))
 
-            #checking percentage of candidates from previous batch i in the new tweets of the current batch
-            ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
-            for key, item in ambiguous_candidate_inBatch_grouped_df:
-                ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
-                ambiguous_candidate_grouped_df= ambiguous_candidate_records_before_classification_grouped_df.get_group(key) #no of candidates remaining ambiguous from batch i
-                print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key),len(ambiguous_candidate_grouped_df))
+           
 
             #with single sketch for entity/non-entity class-- cosine
             cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
@@ -974,12 +971,27 @@ class EntityResolver ():
             # print(converted_candidate_records.groupby('batch').size())
             
             # arr5=[]
+
+             #checking percentage of candidates from previous batch i in the new tweets of the current batch
+            ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
+            for key, item in ambiguous_candidate_inBatch_grouped_df:
+                ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
+                ambiguous_candidate_grouped_df= ambiguous_candidate_records_before_classification_grouped_df.get_group(key) #no of candidates remaining ambiguous from batch i
+                print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key),len(ambiguous_candidate_grouped_df))
+                self.batch_specific_reintroduction_tuple_dict[(self.counter,key)]=(len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
+
             converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
             for key, item in converted_candidates_grouped_df:
 
                 # print('batch: ',key)
                 # new_mention_count=0
                 converted_candidates_grouped_df_key= converted_candidates_grouped_df.get_group(key)
+                value_tuple=self.batch_specific_reintroduction_tuple_dict[(self.counter,key)]
+                value_tuple[2]=len(converted_candidates_grouped_df_key)
+                print(self.counter,key,value_tuple)
+                self.batch_specific_reintroduction_tuple_dict[(self.counter,key)]=value_tuple
+
+
                 for candidate in converted_candidates_grouped_df_key.candidate.tolist():
                     # row=converted_candidates_grouped_df_key[converted_candidates_grouped_df_key['candidate']==candidate]
                     row_index=converted_candidates_grouped_df_key.index[converted_candidates_grouped_df_key['candidate']==candidate].tolist()[0]
