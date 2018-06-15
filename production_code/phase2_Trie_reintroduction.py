@@ -774,6 +774,12 @@ class EntityResolver ():
             #     print(candidate, ambiguous_candidates_in_batch_freq_w_decay[candidate], self.ambiguous_candidates_reintroduction_dict[candidate] ,int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate].cumulative))
             #print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_inBatch_records))
 
+            #checking percentage of candidates from previous batch i in the new tweets of the current batch
+            ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
+            for key, item in ambiguous_candidate_inBatch_grouped_df:
+                ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key)
+                print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key))
+
             #with single sketch for entity/non-entity class-- cosine
             cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
             candidates_to_reintroduce=list(cosine_distance_dict.keys())
@@ -947,15 +953,16 @@ class EntityResolver ():
             converted_candidate_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_turned_good+ambiguous_turned_bad)]
             self.baseline_effectiveness+=len(converted_candidate_records)
 
-            #number of candidates from batch i going into the batch
-            # grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
-            # for key, item in grouped_df:
+            # # number of candidates from batch i going into the batch
+            # ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
+            # for key, item in ambiguous_candidate_inBatch_grouped_df:
             #     new_mention_count=0
-            #     grouped_df_key= grouped_df.get_group(key)
-            #     for candidate in grouped_df_key.candidate.tolist():
+            #     ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key)
+            #     print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key))
+            #     for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist():
             #         new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
-            #     print (key,len(grouped_df_key),new_mention_count)
-                # print(grouped_df_key)
+            #     print (key,len(ambiguous_candidate_inBatch_grouped_df_key),new_mention_count)
+            #     print(ambiguous_candidate_inBatch_grouped_df_key)
 
             # print(converted_candidate_records.groupby('batch').size())
 
