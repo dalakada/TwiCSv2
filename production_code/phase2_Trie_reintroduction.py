@@ -755,6 +755,9 @@ class EntityResolver ():
         phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
         df_holder.extend(df_holder_extracted)
         ambiguous_candidates_in_batch_w_Count=dict((x,self.ambiguous_candidates_in_batch.count(x)) for x in set(self.ambiguous_candidates_in_batch))
+
+        ambiguous_candidate_records_before_classification=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
+        ambiguous_candidate_records_before_classification_grouped_df= ambiguous_candidate_records_before_classification.groupby('batch')
         # print(ambiguous_candidates_in_batch_w_Count)
         self.ambiguous_candidates_in_batch=list(set(self.ambiguous_candidates_in_batch))
         #print(len(self.ambiguous_candidates_in_batch))
@@ -777,8 +780,9 @@ class EntityResolver ():
             #checking percentage of candidates from previous batch i in the new tweets of the current batch
             ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
             for key, item in ambiguous_candidate_inBatch_grouped_df:
-                ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key)
-                print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key))
+                ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
+                ambiguous_candidate_grouped_df= ambiguous_candidate_records_before_classification_grouped_df.get_group(key) #no of candidates remaining ambiguous from batch i
+                print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key),len(ambiguous_candidate_grouped_df))
 
             #with single sketch for entity/non-entity class-- cosine
             cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
