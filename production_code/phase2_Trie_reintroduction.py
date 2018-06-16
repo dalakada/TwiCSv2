@@ -977,7 +977,7 @@ class EntityResolver ():
             for key, item in ambiguous_candidate_inBatch_grouped_df:
                 ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
                 ambiguous_candidate_grouped_df= ambiguous_candidate_records_before_classification_grouped_df.get_group(key) #no of candidates remaining ambiguous from batch i
-                print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key),len(ambiguous_candidate_grouped_df))
+                # print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key),len(ambiguous_candidate_grouped_df))
                 self.batch_specific_reintroduction_tuple_dict[(self.counter,key)]=(len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
 
             converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
@@ -986,9 +986,10 @@ class EntityResolver ():
                 # print('batch: ',key)
                 # new_mention_count=0
                 converted_candidates_grouped_df_key= converted_candidates_grouped_df.get_group(key)
-                value_tuple=self.batch_specific_reintroduction_tuple_dict[(self.counter,key)]
-                value_tuple[2]=len(converted_candidates_grouped_df_key)
-                print(self.counter,key,value_tuple)
+                value_list=list(self.batch_specific_reintroduction_tuple_dict[(self.counter,key)])
+                value_list[2]=len(converted_candidates_grouped_df_key)
+                value_tuple=tuple(value_list)
+                # print(self.counter,key,value_tuple)
                 self.batch_specific_reintroduction_tuple_dict[(self.counter,key)]=value_tuple
 
 
@@ -1009,7 +1010,7 @@ class EntityResolver ():
                     #     print(candidate_synvec,label)
                     min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
                     min_rank_wAmb=min(candidates_to_reintroduce_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate))
-                    print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
+                    # print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
 
                     #absolute top-k
                     # for k in range(10,35,5):
@@ -1183,30 +1184,35 @@ class EntityResolver ():
             # #print(self.good_candidates, self.ambiguous_candidates_in_batch)
 
         if(self.counter==19):
-            arr=[]
-            for inner_arr in self.top_k_effectiveness_arr_single_sketch:
-                arr.append(inner_arr[1])
-            print('top-15: single sketch : ', arr)
+            # arr=[]
+            # for inner_arr in self.top_k_effectiveness_arr_single_sketch:
+            #     arr.append(inner_arr[1])
+            # print('top-15: single sketch : ', arr)
 
-            arr=[]
-            for inner_arr in self.top_k_effectiveness_arr_multi_sketch_cosine:
-                arr.append(inner_arr[1])
-            print('top-15: multi sketch cosine : ', arr)
+            # arr=[]
+            # for inner_arr in self.top_k_effectiveness_arr_multi_sketch_cosine:
+            #     arr.append(inner_arr[1])
+            # print('top-15: multi sketch cosine : ', arr)
 
-            arr=[]
-            for inner_arr in self.top_k_effectiveness_arr_multi_sketch_euclidean:
-                arr.append(inner_arr[1])
-            print('top-15: multi sketch euclidean : ', arr)
+            # arr=[]
+            # for inner_arr in self.top_k_effectiveness_arr_multi_sketch_euclidean:
+            #     arr.append(inner_arr[1])
+            # print('top-15: multi sketch euclidean : ', arr)
 
-            arr=[]
-            for inner_arr in self.top_k_effectiveness_arr_multi_sketch_combined:
-                arr.append(inner_arr[1])
-            print('top-15: multi sketch combined : ', arr)
+            # arr=[]
+            # for inner_arr in self.top_k_effectiveness_arr_multi_sketch_combined:
+            #     arr.append(inner_arr[1])
+            # print('top-15: multi sketch combined : ', arr)
 
             # arr=[]
             # for inner_arr in self.top_k_effectiveness_arr_all_sketch_combined:
             #     arr.append(inner_arr[1])
             # print('top-15: all sketch combined : ', arr)
+
+            print('The batch specific reintroduction training tuples:')
+            for key in self.batch_specific_reintroduction_tuple_dict.keys():
+                print(key,':',self.batch_specific_reintroduction_tuple_dict[key],',')
+
 
         #['probability'],['a,g,b']
         return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag
