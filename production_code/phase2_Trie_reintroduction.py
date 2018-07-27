@@ -5,7 +5,7 @@ import NE_candidate_module as ne
 from nltk.tokenize import sent_tokenize, word_tokenize
 import string
 import copy
-import numpy
+import numpy as np
 import math
 from itertools import groupby
 from operator import itemgetter
@@ -21,6 +21,8 @@ import re
 import pickle
 from scipy import spatial
 
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn import linear_model
 from sklearn.cluster import KMeans, MeanShift
 from sklearn.metrics import silhouette_samples, silhouette_score
 
@@ -169,6 +171,9 @@ class EntityResolver ():
         self.top_k_effectiveness_arr_multi_sketch_euclidean_amb=[]
         self.top_k_effectiveness_arr_multi_sketch_combined_amb=[]
         self.top_k_effectiveness_arr_all_sketch_combined=[]
+
+        # self.batch_specific_reintroduction_effectiveness= [0,0,0,0,0,0,0,0,0]
+        self.batch_specific_reintroduction_effectiveness=0
 
         self.batch_specific_reintroduction_tuple_dict={} #key is a tuple of (x-percent of candidates from batch i, current_batch-batch i), value is y% of candidates from batch i converted
 
@@ -744,6 +749,37 @@ class EntityResolver ():
         return combined_sketching_similarity_dict   #returning the combined sketching variant ranks now
 
 
+    def fit_and_predict(self, entry_batch, tuple_list,tuple_to_append):
+        tuple_list= [list(tup) for tup in tuple_list]
+        X_values= np.array([[float((elem_list[0]-entry_batch)/self.counter),float(elem_list[2]/elem_list[1])] for elem_list in tuple_list])
+        Y_values= np.array([float(elem_list[3]/elem_list[1]) for elem_list in tuple_list])
+        test_point_tuple= list(tuple_to_append)
+        predict_x=[[float((test_point_tuple[0]-entry_batch)/self.counter),float(test_point_tuple[2]/test_point_tuple[1])]]
+
+        # deg_of_poly = 1
+        # poly = PolynomialFeatures(degree=deg_of_poly)
+        # X_ = poly.fit_transform(X_values)
+
+        # Fit linear model
+        clf = linear_model.LinearRegression()
+        # clf.fit(X_, Y_values)
+        # predict_x_ = poly.fit_transform(predict_x)
+        # predict_y = clf.predict(predict_x_)
+
+        clf.fit(X_values, Y_values)
+        predict_y = clf.predict(predict_x)
+
+        if(predict_y<0):
+            predict_y =0
+
+        print(entry_batch,':',tuple_list)
+        print(tuple_to_append)
+        ret_value= math.ceil(predict_y*test_point_tuple[1])
+        print('predicted value:', predict_y, ret_value)
+
+        return ret_value
+
+
     def set_cb(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold):
 
         #input new_tweets, z_score, Updated candidatebase of phase1
@@ -974,23 +1010,51 @@ class EntityResolver ():
 
              #checking percentage of candidates from previous batch i in the new tweets of the current batch
             ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
+            # internal_batch_level_dict={}
             for key, item in ambiguous_candidate_inBatch_grouped_df:
+                # predicted_k_value=-1
                 ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
                 ambiguous_candidate_grouped_df= ambiguous_candidate_records_before_classification_grouped_df.get_group(key) #no of candidates remaining ambiguous from batch i
                 # print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key),len(ambiguous_candidate_grouped_df))
-                self.batch_specific_reintroduction_tuple_dict[(self.counter,key)]=(len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
+                # internal_batch_level_dict[key]=(len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
+                if(key in self.batch_specific_reintroduction_tuple_dict.keys()):
+                    tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
+                    if((self.counter-key)>9):
+                        tuple_list=self.batch_specific_reintroduction_tuple_dict[key]
+                        predicted_k_value= self.fit_and_predict(key,tuple_list[0:10],tuple_to_append)
+                        tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),predicted_k_value)
+                    # else:
+                    self.batch_specific_reintroduction_tuple_dict[key].append(tuple_to_append)
+                else:
+                    self.batch_specific_reintroduction_tuple_dict[key]=[(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)]
+
+                # self.batch_specific_reintroduction_tuple_dict[(self.counter,key)]=(len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
 
             converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
+
             for key, item in converted_candidates_grouped_df:
 
-                # print('batch: ',key)
+                print('batch: ',key)
                 # new_mention_count=0
+                batch_specific_k_value=-1
                 converted_candidates_grouped_df_key= converted_candidates_grouped_df.get_group(key)
-                value_list=list(self.batch_specific_reintroduction_tuple_dict[(self.counter,key)])
-                value_list[2]=len(converted_candidates_grouped_df_key)
-                value_tuple=tuple(value_list)
-                # print(self.counter,key,value_tuple)
-                self.batch_specific_reintroduction_tuple_dict[(self.counter,key)]=value_tuple
+                value_list=list(self.batch_specific_reintroduction_tuple_dict[key][-1])
+                if((self.counter-key)>9):
+                    batch_specific_k_value= value_list[3]
+                    # print('batch_specific_k_value: ',batch_specific_k_value)
+                    # val_list=self.batch_specific_reintroduction_tuple_dict[key][:-1]
+                    # self.batch_specific_reintroduction_tuple_dict[key]=val_list
+                # value_list=list(internal_batch_level_dict[key])
+                else:
+                    rank_list=[ min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in converted_candidates_grouped_df_key.candidate.tolist()]
+                    
+                    # value_list[3]=len(converted_candidates_grouped_df_key) 
+                    ## alternative argument
+                    value_list[3]= max(rank_list)
+
+                    value_tuple=tuple(value_list)
+                    # print(self.counter,key,value_tuple)
+                    self.batch_specific_reintroduction_tuple_dict[key][-1]=value_tuple
 
 
                 for candidate in converted_candidates_grouped_df_key.candidate.tolist():
@@ -1012,7 +1076,16 @@ class EntityResolver ():
                     min_rank_wAmb=min(candidates_to_reintroduce_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate))
                     # print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
 
-                    #absolute top-k
+
+                    if((self.counter-key)>9):
+                        print('batch_specific_k_value: ',batch_specific_k_value,len(converted_candidates_grouped_df_key))
+                        if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<batch_specific_k_value):
+                            self.batch_specific_reintroduction_effectiveness+=1
+                    else:
+                        self.batch_specific_reintroduction_effectiveness+=1 #for first six batches since entry, reintroduce like baseline
+
+                    print(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]),self.batch_specific_reintroduction_effectiveness,self.baseline_effectiveness)
+                    # # absolute top-k
                     # for k in range(10,35,5):
                     for k in range(20,45,5):
                         
@@ -1089,7 +1162,10 @@ class EntityResolver ():
                 # print('+====================================+')
 
             print(self.arr1,self.arr2,self.arr3,self.arr4,self.arr5,self.arr6,self.arr7,self.arr8,self.arr9)
+            # self.batch_specific_reintroduction_tuple_dict[self.counter]=internal_batch_level_dict
             print('+====================================+')
+
+
             # print('ambiguous_turned_good:', len(ambiguous_turned_good))
             # print('ambiguous_turned_bad:', len(ambiguous_turned_bad))
             # print('ambiguous_remaining_ambiguous:', len(ambiguous_remaining_ambiguous))
@@ -1126,6 +1202,8 @@ class EntityResolver ():
             arr9=[elem/self.baseline_effectiveness for elem in self.arr9]
             self.top_k_effectiveness_arr_all_sketch_combined.append(arr9)
 
+
+            print('reintroduction effectiveness with batch specific top-k ',(self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
 
             print('ranking effectiveness ent/non-ent single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
             print('ranking effectiveness ent/non-ent multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
@@ -1211,7 +1289,7 @@ class EntityResolver ():
 
             print('The batch specific reintroduction training tuples:')
             for key in self.batch_specific_reintroduction_tuple_dict.keys():
-                print(key,':',self.batch_specific_reintroduction_tuple_dict[key],',')
+                print(key,':',self.batch_specific_reintroduction_tuple_dict[key])
 
 
         #['probability'],['a,g,b']
