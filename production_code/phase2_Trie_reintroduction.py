@@ -1049,15 +1049,21 @@ class EntityResolver ():
                     # self.batch_specific_reintroduction_tuple_dict[key]=val_list
                 # value_list=list(internal_batch_level_dict[key])
                 else:
-                    rank_list=[ min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in converted_candidates_grouped_df_key.candidate.tolist()]
-                    # rank_dict={ candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df.candidate.tolist()}
+                    # rank_list=[ min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in converted_candidates_grouped_df_key.candidate.tolist()]
+
+                    rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
                     rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
+                    ranked_list=[1 if candidate in converted_candidates_grouped_df_key.candidate.tolist() else 0 for candidate in rank_dict_ordered.keys()]
+                    count=len(ranked_list)
+                    # print("ranked list:", ranked_list, count)
+                    while (ranked_list[count-1]!=1):
+                        count-=1
+                    
                     # value_list[3]=len(converted_candidates_grouped_df_key) 
                     ## alternative argument
-                    value_list[3]= max(rank_list)
-
+                    value_list[3]= count
                     value_tuple=tuple(value_list)
-                    # print(self.counter,key,value_tuple)
+                    print('tuple being added: ',self.counter,key,len(converted_candidates_grouped_df_key),value_tuple)
                     self.batch_specific_reintroduction_tuple_dict[key][-1]=value_tuple
 
 
