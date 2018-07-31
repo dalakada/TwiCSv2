@@ -752,7 +752,8 @@ class EntityResolver ():
     def fit_and_predict(self, entry_batch, tuple_list,tuple_to_append):
         tuple_list= [list(tup) for tup in tuple_list]
         X_values= np.array([[float((elem_list[0]-entry_batch)/self.counter),float(elem_list[2]/elem_list[1])] for elem_list in tuple_list])
-        Y_values= np.array([float(elem_list[3]/elem_list[1]) for elem_list in tuple_list])
+        Y_values= np.array([float(elem_list[3]/elem_list[2]) for elem_list in tuple_list])
+
         test_point_tuple= list(tuple_to_append)
         predict_x=[[float((test_point_tuple[0]-entry_batch)/self.counter),float(test_point_tuple[2]/test_point_tuple[1])]]
 
@@ -774,7 +775,7 @@ class EntityResolver ():
 
         print(entry_batch,':',tuple_list)
         print(tuple_to_append)
-        ret_value= math.ceil(predict_y*test_point_tuple[1])
+        ret_value= math.ceil(predict_y*test_point_tuple[2])
         print('predicted value:', predict_y, ret_value)
 
         return ret_value
@@ -1008,8 +1009,9 @@ class EntityResolver ():
             
             # arr5=[]
 
-             #checking percentage of candidates from previous batch i in the new tweets of the current batch
+            #checking percentage of candidates from previous batch i in the new tweets of the current batch
             ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
+            # batch_specific_rank_dict={}
             # internal_batch_level_dict={}
             for key, item in ambiguous_candidate_inBatch_grouped_df:
                 # predicted_k_value=-1
@@ -1034,10 +1036,11 @@ class EntityResolver ():
 
             for key, item in converted_candidates_grouped_df:
 
-                print('batch: ',key)
+                print('=>batch: ',key)
                 # new_mention_count=0
                 batch_specific_k_value=-1
-                converted_candidates_grouped_df_key= converted_candidates_grouped_df.get_group(key)
+                ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
+                converted_candidates_grouped_df_key= converted_candidates_grouped_df.get_group(key) #no of candidates from batch i converted in current batch
                 value_list=list(self.batch_specific_reintroduction_tuple_dict[key][-1])
                 if((self.counter-key)>9):
                     batch_specific_k_value= value_list[3]
@@ -1047,7 +1050,8 @@ class EntityResolver ():
                 # value_list=list(internal_batch_level_dict[key])
                 else:
                     rank_list=[ min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in converted_candidates_grouped_df_key.candidate.tolist()]
-                    
+                    # rank_dict={ candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df.candidate.tolist()}
+                    rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
                     # value_list[3]=len(converted_candidates_grouped_df_key) 
                     ## alternative argument
                     value_list[3]= max(rank_list)
@@ -1084,7 +1088,7 @@ class EntityResolver ():
                     else:
                         self.batch_specific_reintroduction_effectiveness+=1 #for first six batches since entry, reintroduce like baseline
 
-                    print(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]),self.batch_specific_reintroduction_effectiveness,self.baseline_effectiveness)
+                    print('=>',min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]),self.batch_specific_reintroduction_effectiveness,self.baseline_effectiveness)
                     # # absolute top-k
                     # for k in range(10,35,5):
                     for k in range(20,45,5):
