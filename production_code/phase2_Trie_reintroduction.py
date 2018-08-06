@@ -679,29 +679,29 @@ class EntityResolver ():
         euclidean_distance_dict_sorted= OrderedDict(sorted(euclidean_distance_dict.items(), key=lambda x: x[1], reverse=True))
         return euclidean_distance_dict_sorted
 
-    def get_reintroduced_tweets(self,cosine_distance_dict):
-        #no preferential selection
-        # print("incomplete tweets in batch: ",len(self.incomplete_tweets))
-        # # for i in range(self.counter):
-        # #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
-        return self.incomplete_tweets
+    # def get_reintroduced_tweets(self,candidates_to_reintroduce):
+    #     #no preferential selection
+    #     # print("incomplete tweets in batch: ",len(self.incomplete_tweets))
+    #     # # for i in range(self.counter):
+    #     # #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
+    #     return self.incomplete_tweets
 
-    def get_reintroduced_tweets(self,cosine_distance_dict):
+    def get_reintroduced_tweets(self,candidates_to_reintroduce):
         #no preferential selection
         print("incomplete tweets in batch: ",len(self.incomplete_tweets))
         # for i in range(self.counter):
         #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
-        return self.incomplete_tweets
+        # return self.incomplete_tweets
         
-        # # get union of tweet-set of selected candidates 
-        # #print(self.incomplete_tweets[any(x in list(cosine_distance_dict.keys()) for x in self.incomplete_tweets['ambiguous_candidates'])])
-        # reintroduced_tweets=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in list(cosine_distance_dict.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
-        # #not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in list(cosine_distance_dict.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
-        # self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets.index)]
-        # # print(len(self.incomplete_tweets))
-        # print("=>",len(reintroduced_tweets),len(self.not_reintroduced))
-        # #print((len(not_reintroduced)==len(self.not_reintroduced)),(len(reintroduced_tweets)+len(self.not_reintroduced)==len(self.incomplete_tweets)))
-        # return reintroduced_tweets
+        # get union of tweet-set of selected candidates 
+        #print(self.incomplete_tweets[any(x in list(cosine_distance_dict.keys()) for x in self.incomplete_tweets['ambiguous_candidates'])])
+        reintroduced_tweets=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in candidates_to_reintroduce for x in row['ambiguous_candidates']) ,axis=1)]
+        #not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in list(cosine_distance_dict.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
+        self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets.index)]
+        # print(len(self.incomplete_tweets))
+        print("=>",len(reintroduced_tweets),len(self.not_reintroduced))
+        #print((len(not_reintroduced)==len(self.not_reintroduced)),(len(reintroduced_tweets)+len(self.not_reintroduced)==len(self.incomplete_tweets)))
+        return reintroduced_tweets
         
     #NOTE: with simple eviction
     def frequencies_w_decay(self,ambiguous_candidates_in_batch_w_Count,candidate_featureBase_DF):
@@ -1101,6 +1101,8 @@ class EntityResolver ():
                         
                         #for top-k percentage instead of absolute top k: 
                         real_k= int(k/100*(len(self.ambiguous_candidates_in_batch)))
+                        # #for absolute top k:
+                        # real_k=k 
                         # print(k,real_k)
                     # for k in [15]:
 
