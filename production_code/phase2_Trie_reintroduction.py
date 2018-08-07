@@ -162,6 +162,7 @@ class EntityResolver ():
         #all combination top k estimates
         self.arr9=[0,0,0,0,0]
 
+        #for reintroduction
         self.top_k_effectiveness_arr_single_sketch=[]
         self.top_k_effectiveness_arr_multi_sketch_cosine=[]
         self.top_k_effectiveness_arr_multi_sketch_euclidean=[]
@@ -171,6 +172,17 @@ class EntityResolver ():
         self.top_k_effectiveness_arr_multi_sketch_euclidean_amb=[]
         self.top_k_effectiveness_arr_multi_sketch_combined_amb=[]
         self.top_k_effectiveness_arr_all_sketch_combined=[]
+
+        #for eviction
+        self.bottom_m_effectiveness_arr_single_sketch=[]
+        self.bottom_m_effectiveness_arr_multi_sketch_cosine=[]
+        self.bottom_m_effectiveness_arr_multi_sketch_euclidean=[]
+        self.bottom_m_effectiveness_arr_multi_sketch_combined=[]
+        self.bottom_m_effectiveness_arr_single_sketch_amb=[]
+        self.bottom_m_effectiveness_arr_multi_sketch_cosine_amb=[]
+        self.bottom_m_effectiveness_arr_multi_sketch_euclidean_amb=[]
+        self.bottom_m_effectiveness_arr_multi_sketch_combined_amb=[]
+        self.bottom_m_effectiveness_arr_all_sketch_combined=[]
 
         # self.batch_specific_reintroduction_effectiveness= [0,0,0,0,0,0,0,0,0]
         self.batch_specific_reintroduction_effectiveness=0
@@ -799,6 +811,7 @@ class EntityResolver ():
         ambiguous_candidate_records_before_classification_grouped_df= ambiguous_candidate_records_before_classification.groupby('batch')
         # print(ambiguous_candidates_in_batch_w_Count)
         self.ambiguous_candidates_in_batch=list(set(self.ambiguous_candidates_in_batch))
+
         #print(len(self.ambiguous_candidates_in_batch))
         cosine_distance_dict_wAmb={}
         candidates_to_reintroduce=[]
@@ -984,6 +997,10 @@ class EntityResolver ():
             # print(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==i)&(candidate_featureBase_DF['status']=="a")])
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
 
+        if(self.counter>1):
+            all_ambiguous_remaining_ambiguous = candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates) & candidate_featureBase_DF['batch']<self.counter]
+            print('print length of all_ambiguous_remaining_ambiguous', len(all_ambiguous_remaining_ambiguous))
+
         if(self.counter>0):
             ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
             ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
@@ -1168,6 +1185,8 @@ class EntityResolver ():
                     #     self.ranking_effectiveness_alternate+=1
 
                     # new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
+
+
 
                 # print (key,len(grouped_df_key),new_mention_count)
                 # print(grouped_df_key)
