@@ -162,6 +162,22 @@ class EntityResolver ():
         #all combination top k estimates
         self.arr9=[0,0,0,0,0]
 
+
+        #entity non-entity bottom m estimates
+        self.arr1_eviction=[0,0,0] #cumulative estimates till batch single sketch
+        self.arr2_eviction=[0,0,0] #cumulative estimates till batch multi sketch cosine
+        self.arr3_eviction=[0,0,0] #cumulative estimates till batch multi sketch euclidean
+        self.arr4_eviction=[0,0,0] #cumulative estimates till batch combined sketches
+
+        #ambiguous sketches bottom m estimates
+        self.arr5_eviction=[0,0,0] #cumulative estimates till batch single sketch
+        self.arr6_eviction=[0,0,0] #cumulative estimates till batch multi sketch cosine
+        self.arr7_eviction=[0,0,0] #cumulative estimates till batch multi sketch euclidean
+        self.arr8_eviction=[0,0,0] #cumulative estimates till batch combined sketches
+
+        #all combination bottom m estimates
+        self.arr9_eviction=[0,0,0]
+
         #for reintroduction
         self.top_k_effectiveness_arr_single_sketch=[]
         self.top_k_effectiveness_arr_multi_sketch_cosine=[]
@@ -752,11 +768,11 @@ class EntityResolver ():
             #just based on sketching, combining ranks not similarities:
             combined_sketching_similarity_dict[candidate]=min(relative_rank_1,relative_rank_2,relative_rank_3)
 
-            #combining sketching based rank induced similarity with freq_w_decay:
-            rank_induced_similarity=1-(min(relative_rank_1,relative_rank_2,relative_rank_3)/len(ambiguous_candidates_in_batch_freq_w_decay))
-            combined_sketching_w_decay[candidate]= ambiguous_candidates_in_batch_freq_w_decay[candidate]*rank_induced_similarity
+        #     #combining sketching based rank induced similarity with freq_w_decay:
+        #     rank_induced_similarity=1-(min(relative_rank_1,relative_rank_2,relative_rank_3)/len(ambiguous_candidates_in_batch_freq_w_decay))
+        #     combined_sketching_w_decay[candidate]= ambiguous_candidates_in_batch_freq_w_decay[candidate]*rank_induced_similarity
 
-        combined_sketching_w_decay_sorted= OrderedDict(sorted(combined_sketching_w_decay.items(), key=lambda x: x[1], reverse=True))
+        # combined_sketching_w_decay_sorted= OrderedDict(sorted(combined_sketching_w_decay.items(), key=lambda x: x[1], reverse=True))
 
         return combined_sketching_similarity_dict   #returning the combined sketching variant ranks now
 
@@ -834,6 +850,8 @@ class EntityResolver ():
             #with single sketch for entity/non-entity class-- cosine
             cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
             candidates_to_reintroduce=list(cosine_distance_dict.keys())
+            cosine_distance_dict_eviction=self.get_cosine_distance(ambiguous_candidate_records_before_classification,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
+            candidates_to_reintroduce_eviction=list(cosine_distance_dict_eviction.keys())
 
             #with multiple sketches for entity/non-entity class-- cosine
             cosine_distance_dict_multi_sketch=self.get_cosine_distance_multi_sketch(ambiguous_candidate_inBatch_records,self.entity_sketches,self.non_entity_sketches,reintroduction_threshold)
@@ -998,8 +1016,76 @@ class EntityResolver ():
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
 
         if(self.counter>1):
-            all_ambiguous_remaining_ambiguous = candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates) & candidate_featureBase_DF['batch']<self.counter]
-            print('print length of all_ambiguous_remaining_ambiguous', len(all_ambiguous_remaining_ambiguous))
+            all_ambiguous_remaining_ambiguous = candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (candidate_featureBase_DF['batch']<self.counter)].candidate.tolist()
+            # new_ambiguous_candidates = candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (candidate_featureBase_DF['batch']==self.counter)].candidate.tolist()
+            # print('print length of all_ambiguous_remaining_ambiguous', len(all_ambiguous_remaining_ambiguous), len(new_ambiguous_candidates))
+            self.arr1_eviction=[0,0,0]
+            for m in range(10,25,5):
+                        
+                # #for top-k percentage instead of absolute top k: 
+                # real_m= int(m/100*(len(self.ambiguous_candidates_in_batch)))
+
+                #for absolute top m:
+                real_m=m 
+
+                # print(m,real_m)
+                j=int((m-10)/5)
+
+                # entity/non-entity sketches
+                qualifying_candidates= [candidate for candidate in candidates_to_reintroduce_eviction if candidate in all_ambiguous_remaining_ambiguous]
+                for candidate in qualifying_candidates:
+                    if(candidates_to_reintroduce_eviction.index(candidate)>=(len(candidates_to_reintroduce_eviction)-real_m)):
+                        # self.ranking_effectiveness_single_sketch+=1
+                        self.arr1_eviction[j]+=1
+
+
+                # # if(candidates_to_reintroduce_multi_sketch.index(candidate)<k):
+                # if(candidates_to_reintroduce_multi_sketch.index(candidate)<real_k):
+                #     # self.ranking_effectiveness_multi_sketch_cosine+=1
+                #     self.arr2[i]+=1
+
+
+                # # if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
+                # if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<real_k):
+                #     # self.ranking_effectiveness_multi_sketch_euclidean+=1
+                #     self.arr3[i]+=1
+
+
+                # #---------when just combining sketch-based ranks
+                # # if(ranking_score_dict[candidate]<k): 
+                # if(ranking_score_dict[candidate]<real_k):
+                #     # self.ranking_effectiveness_combined+=1
+                #     self.arr4[i]+=1
+
+                # #ambiguous sketches
+
+                # # if(candidates_to_reintroduce_wAmb.index(candidate)<k):
+                # if(candidates_to_reintroduce_wAmb.index(candidate)<real_k):
+                #     self.arr5[i]+=1
+
+                # # if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<k):
+                # if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<real_k):
+                #     self.arr6[i]+=1
+
+                # # if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<k):
+                # if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<real_k):
+                #     self.arr7[i]+=1
+
+                # # if(ranking_score_dict_wAmb[candidate]<k):
+                # if(ranking_score_dict_wAmb[candidate]<real_k):
+                #     self.arr8[i]+=1
+
+
+                # #combining all possible sketches
+
+                # # if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<k):
+                # if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<real_k):
+                #     self.arr9[i]+=1
+
+            arr1_eviction=[elem/len(candidates_to_reintroduce_eviction) for elem in self.arr1_eviction]
+            self.bottom_m_effectiveness_arr_single_sketch.append(arr1_eviction)
+            print('eviction ranking effectiveness ent/non-ent single sketch: ', (self.bottom_m_effectiveness_arr_single_sketch))
+
 
         if(self.counter>0):
             ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
@@ -1236,17 +1322,17 @@ class EntityResolver ():
 
             print('reintroduction effectiveness with batch specific top-k ',(self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
 
-            print('ranking effectiveness ent/non-ent single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
-            print('ranking effectiveness ent/non-ent multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
-            print('ranking effectiveness ent/non-ent multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean))
-            print('combined ranking ent/non-ent  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined))
+            print('reintroduction ranking effectiveness ent/non-ent single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
+            print('reintroduction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
+            print('reintroduction ranking effectiveness ent/non-ent multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean))
+            print('reintroduction combined ranking ent/non-ent  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined))
 
-            print('ranking effectiveness ambiguous single sketch: ', (self.top_k_effectiveness_arr_single_sketch_amb))
-            print('ranking effectiveness ambiguous multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine_amb))
-            print('ranking effectiveness ambiguous multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean_amb))
-            print('combined ranking ambiguous  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined_amb))
+            print('reintroduction ranking effectiveness ambiguous single sketch: ', (self.top_k_effectiveness_arr_single_sketch_amb))
+            print('reintroduction ranking effectiveness ambiguous multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine_amb))
+            print('reintroduction ranking effectiveness ambiguous multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean_amb))
+            print('reintroduction combined ranking ambiguous  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined_amb))
 
-            print('combined ranking all sketches effectiveness: ', (self.top_k_effectiveness_arr_all_sketch_combined))
+            print('reintroduction combined ranking all sketches effectiveness: ', (self.top_k_effectiveness_arr_all_sketch_combined))
             # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
 
 
