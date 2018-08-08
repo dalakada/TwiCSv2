@@ -856,6 +856,8 @@ class EntityResolver ():
             #with multiple sketches for entity/non-entity class-- cosine
             cosine_distance_dict_multi_sketch=self.get_cosine_distance_multi_sketch(ambiguous_candidate_inBatch_records,self.entity_sketches,self.non_entity_sketches,reintroduction_threshold)
             candidates_to_reintroduce_multi_sketch=list(cosine_distance_dict_multi_sketch.keys())
+            cosine_distance_dict_multi_sketch_eviction=self.get_cosine_distance_multi_sketch(ambiguous_candidate_records_before_classification,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
+            candidates_to_reintroduce_multi_sketch_eviction=list(cosine_distance_dict_multi_sketch_eviction.keys())
 
             #with multiple sketches for entity/non-entity class-- euclidean
             euclidean_distance_dict_multi_sketch=self.get_euclidean_distance_multi_sketch(ambiguous_candidate_inBatch_records,self.entity_sketches_euclidean,self.non_entity_sketches_euclidean,reintroduction_threshold)
@@ -1020,6 +1022,7 @@ class EntityResolver ():
             # new_ambiguous_candidates = candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (candidate_featureBase_DF['batch']==self.counter)].candidate.tolist()
             # print('print length of all_ambiguous_remaining_ambiguous', len(all_ambiguous_remaining_ambiguous), len(new_ambiguous_candidates))
             self.arr1_eviction=[0,0,0]
+            self.arr2_eviction=[0,0,0]
             for m in range(10,25,5):
                         
                 # #for top-k percentage instead of absolute top k: 
@@ -1039,10 +1042,11 @@ class EntityResolver ():
                         self.arr1_eviction[j]+=1
 
 
-                # # if(candidates_to_reintroduce_multi_sketch.index(candidate)<k):
-                # if(candidates_to_reintroduce_multi_sketch.index(candidate)<real_k):
-                #     # self.ranking_effectiveness_multi_sketch_cosine+=1
-                #     self.arr2[i]+=1
+                qualifying_candidates= [candidate for candidate in candidates_to_reintroduce_multi_sketch_eviction if candidate in all_ambiguous_remaining_ambiguous]
+                for candidate in qualifying_candidates:
+                    if(candidates_to_reintroduce_multi_sketch_eviction.index(candidate)>=(len(candidates_to_reintroduce_multi_sketch_eviction)-real_m)):
+                        # self.ranking_effectiveness_single_sketch+=1
+                        self.arr2_eviction[j]+=1
 
 
                 # # if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
@@ -1085,6 +1089,10 @@ class EntityResolver ():
             arr1_eviction=[elem/len(candidates_to_reintroduce_eviction) for elem in self.arr1_eviction]
             self.bottom_m_effectiveness_arr_single_sketch.append(arr1_eviction)
             print('eviction ranking effectiveness ent/non-ent single sketch: ', (self.bottom_m_effectiveness_arr_single_sketch))
+
+            arr2_eviction=[elem/len(candidates_to_reintroduce_multi_sketch_eviction) for elem in self.arr2_eviction]
+            self.bottom_m_effectiveness_arr_multi_sketch_cosine.append(arr2_eviction)
+            print('eviction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.bottom_m_effectiveness_arr_multi_sketch_cosine))
 
 
         if(self.counter>0):
