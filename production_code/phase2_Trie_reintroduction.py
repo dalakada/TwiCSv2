@@ -856,32 +856,43 @@ class EntityResolver ():
             #with multiple sketches for entity/non-entity class-- cosine
             cosine_distance_dict_multi_sketch=self.get_cosine_distance_multi_sketch(ambiguous_candidate_inBatch_records,self.entity_sketches,self.non_entity_sketches,reintroduction_threshold)
             candidates_to_reintroduce_multi_sketch=list(cosine_distance_dict_multi_sketch.keys())
-            cosine_distance_dict_multi_sketch_eviction=self.get_cosine_distance_multi_sketch(ambiguous_candidate_records_before_classification,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
+            cosine_distance_dict_multi_sketch_eviction=self.get_cosine_distance_multi_sketch(ambiguous_candidate_records_before_classification,self.entity_sketches,self.non_entity_sketches,reintroduction_threshold)
             candidates_to_reintroduce_multi_sketch_eviction=list(cosine_distance_dict_multi_sketch_eviction.keys())
 
             #with multiple sketches for entity/non-entity class-- euclidean
             euclidean_distance_dict_multi_sketch=self.get_euclidean_distance_multi_sketch(ambiguous_candidate_inBatch_records,self.entity_sketches_euclidean,self.non_entity_sketches_euclidean,reintroduction_threshold)
             candidates_to_reintroduce_multi_sketch_euclidean=list(euclidean_distance_dict_multi_sketch.keys())
+            euclidean_distance_dict_multi_sketch_eviction=self.get_euclidean_distance_multi_sketch(ambiguous_candidate_records_before_classification,self.entity_sketches_euclidean,self.non_entity_sketches_euclidean,reintroduction_threshold)
+            candidates_to_reintroduce_multi_sketch_euclidean_eviction=list(euclidean_distance_dict_multi_sketch_eviction.keys())
 
             #with alternative ranking
-            ranking_score_dict=self.get_ranking_score(ambiguous_candidates_in_batch_freq_w_decay, cosine_distance_dict,cosine_distance_dict_multi_sketch,euclidean_distance_dict_multi_sketch)
+            ranking_score_dict= self.get_ranking_score(ambiguous_candidates_in_batch_freq_w_decay, cosine_distance_dict,cosine_distance_dict_multi_sketch,euclidean_distance_dict_multi_sketch)
+            ranking_score_dict_eviction= self.get_ranking_score(ambiguous_candidates_in_batch_freq_w_decay, cosine_distance_dict_eviction,cosine_distance_dict_multi_sketch_eviction,euclidean_distance_dict_multi_sketch_eviction)
             ##----comment out next line and use the dict directly when combining just based on ranks!!!!----
             # candidates_to_reintroduce_w_ranking=list(ranking_score_dict.keys())
 
             #with multiple sketches for ambiguous class-- cosine
             cosine_distance_dict_wAmb=self.get_cosine_distance_1(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketch,reintroduction_threshold)
             candidates_to_reintroduce_wAmb=list(cosine_distance_dict_wAmb.keys())
+            cosine_distance_dict_wAmb_eviction=self.get_cosine_distance_1(ambiguous_candidate_records_before_classification,self.ambiguous_entity_sketch,reintroduction_threshold)
+            candidates_to_reintroduce_wAmb_eviction=list(cosine_distance_dict_wAmb_eviction.keys())
 
             #with multiple sketches for  ambiguous class-- euclidean
             cosine_distance_dict_multi_sketch_wAmb=self.get_cosine_distance_multi_sketch_wAmb(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketches,reintroduction_threshold)
             candidates_to_reintroduce_multi_sketch_wAmb=list(cosine_distance_dict_multi_sketch_wAmb.keys())
+            cosine_distance_dict_multi_sketch_wAmb_eviction=self.get_cosine_distance_multi_sketch_wAmb(ambiguous_candidate_records_before_classification,self.ambiguous_entity_sketches,reintroduction_threshold)
+            candidates_to_reintroduce_multi_sketch_wAmb_eviction=list(cosine_distance_dict_multi_sketch_wAmb_eviction.keys())
+
 
             #with multiple sketches for ambiguous class-- euclidean
             euclidean_distance_dict_multi_sketch_wAmb=self.get_euclidean_distance_multi_sketch_wAmb(ambiguous_candidate_inBatch_records,self.ambiguous_entity_sketches_euclidean,reintroduction_threshold)
             candidates_to_reintroduce_multi_sketch_euclidean_wAmb=list(euclidean_distance_dict_multi_sketch_wAmb.keys())
+            euclidean_distance_dict_multi_sketch_wAmb_eviction=self.get_euclidean_distance_multi_sketch_wAmb(ambiguous_candidate_records_before_classification,self.ambiguous_entity_sketches_euclidean,reintroduction_threshold)
+            candidates_to_reintroduce_multi_sketch_euclidean_wAmb_eviction=list(euclidean_distance_dict_multi_sketch_wAmb_eviction.keys())
 
             #with alternative ranking
             ranking_score_dict_wAmb=self.get_ranking_score(ambiguous_candidates_in_batch_freq_w_decay, cosine_distance_dict_wAmb,cosine_distance_dict_multi_sketch_wAmb,euclidean_distance_dict_multi_sketch_wAmb)
+            ranking_score_dict_wAmb_eviction= self.get_ranking_score(ambiguous_candidates_in_batch_freq_w_decay, cosine_distance_dict_wAmb_eviction, cosine_distance_dict_multi_sketch_wAmb_eviction, euclidean_distance_dict_multi_sketch_wAmb_eviction)
 
             #comebined_score_dict=self.get_combined_score(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,self.ambiguous_entity_sketch,reintroduction_threshold)
             #print(len(comebined_score_dict))
@@ -1023,6 +1034,14 @@ class EntityResolver ():
             # print('print length of all_ambiguous_remaining_ambiguous', len(all_ambiguous_remaining_ambiguous), len(new_ambiguous_candidates))
             self.arr1_eviction=[0,0,0]
             self.arr2_eviction=[0,0,0]
+            self.arr3_eviction=[0,0,0]
+            self.arr4_eviction=[0,0,0]
+            self.arr5_eviction=[0,0,0]
+            self.arr6_eviction=[0,0,0]
+            self.arr7_eviction=[0,0,0]
+            self.arr8_eviction=[0,0,0]
+            self.arr9_eviction=[0,0,0]
+
             for m in range(10,25,5):
                         
                 # #for top-k percentage instead of absolute top k: 
@@ -1049,50 +1068,91 @@ class EntityResolver ():
                         self.arr2_eviction[j]+=1
 
 
-                # # if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
-                # if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<real_k):
-                #     # self.ranking_effectiveness_multi_sketch_euclidean+=1
-                #     self.arr3[i]+=1
+                qualifying_candidates= [candidate for candidate in candidates_to_reintroduce_multi_sketch_euclidean_eviction if candidate in all_ambiguous_remaining_ambiguous]
+                for candidate in qualifying_candidates:
+                    if(candidates_to_reintroduce_multi_sketch_euclidean_eviction.index(candidate)>=(len(candidates_to_reintroduce_multi_sketch_euclidean_eviction)-real_m)):
+                        # self.ranking_effectiveness_single_sketch+=1
+                        self.arr3_eviction[j]+=1
 
 
                 # #---------when just combining sketch-based ranks
-                # # if(ranking_score_dict[candidate]<k): 
-                # if(ranking_score_dict[candidate]<real_k):
-                #     # self.ranking_effectiveness_combined+=1
-                #     self.arr4[i]+=1
+                qualifying_candidates= [candidate for candidate in ranking_score_dict_eviction.keys() if candidate in all_ambiguous_remaining_ambiguous]
+                for candidate in qualifying_candidates:
+                    if(ranking_score_dict_eviction[candidate]>=(len(ranking_score_dict_eviction.keys())-real_m)):
+                        # self.ranking_effectiveness_single_sketch+=1
+                        self.arr4_eviction[j]+=1
 
                 # #ambiguous sketches
+                qualifying_candidates= [candidate for candidate in candidates_to_reintroduce_wAmb_eviction if candidate in all_ambiguous_remaining_ambiguous]
+                for candidate in qualifying_candidates:
+                    if(candidates_to_reintroduce_wAmb_eviction.index(candidate)>=(len(candidates_to_reintroduce_wAmb_eviction)-real_m)):
+                        # self.ranking_effectiveness_single_sketch+=1
+                        self.arr5_eviction[j]+=1
 
-                # # if(candidates_to_reintroduce_wAmb.index(candidate)<k):
-                # if(candidates_to_reintroduce_wAmb.index(candidate)<real_k):
-                #     self.arr5[i]+=1
+                qualifying_candidates= [candidate for candidate in candidates_to_reintroduce_multi_sketch_wAmb_eviction if candidate in all_ambiguous_remaining_ambiguous]
+                for candidate in qualifying_candidates:
+                    if(candidates_to_reintroduce_multi_sketch_wAmb_eviction.index(candidate)>=(len(candidates_to_reintroduce_multi_sketch_wAmb_eviction)-real_m)):
+                        # self.ranking_effectiveness_single_sketch+=1
+                        self.arr6_eviction[j]+=1
 
-                # # if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<k):
-                # if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<real_k):
-                #     self.arr6[i]+=1
+                qualifying_candidates= [candidate for candidate in candidates_to_reintroduce_multi_sketch_euclidean_wAmb_eviction if candidate in all_ambiguous_remaining_ambiguous]
+                for candidate in qualifying_candidates:
+                    if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb_eviction.index(candidate)>=(len(candidates_to_reintroduce_multi_sketch_euclidean_wAmb_eviction)-real_m)):
+                        # self.ranking_effectiveness_single_sketch+=1
+                        self.arr7_eviction[j]+=1
 
-                # # if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<k):
-                # if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<real_k):
-                #     self.arr7[i]+=1
-
-                # # if(ranking_score_dict_wAmb[candidate]<k):
-                # if(ranking_score_dict_wAmb[candidate]<real_k):
-                #     self.arr8[i]+=1
+                qualifying_candidates= [candidate for candidate in ranking_score_dict_wAmb_eviction.keys() if candidate in all_ambiguous_remaining_ambiguous]
+                for candidate in qualifying_candidates:
+                    if(ranking_score_dict_wAmb_eviction[candidate]>=(len(ranking_score_dict_wAmb_eviction.keys())-real_m)):
+                        # self.ranking_effectiveness_single_sketch+=1
+                        self.arr8_eviction[j]+=1
 
 
                 # #combining all possible sketches
+                qualifying_candidates= [candidate for candidate in ranking_score_dict_wAmb_eviction.keys() if candidate in all_ambiguous_remaining_ambiguous]
+                for candidate in qualifying_candidates:
+                    if(min(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate])>=(len(ranking_score_dict_wAmb_eviction.keys())-real_m)):
+                        # self.ranking_effectiveness_single_sketch+=1
+                        self.arr9_eviction[j]+=1
 
-                # # if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<k):
-                # if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<real_k):
-                #     self.arr9[i]+=1
 
-            arr1_eviction=[elem/len(candidates_to_reintroduce_eviction) for elem in self.arr1_eviction]
+            print(self.arr1_eviction,self.arr2_eviction,self.arr3_eviction,self.arr4_eviction,self.arr5_eviction,self.arr6_eviction,self.arr7_eviction,self.arr8_eviction,self.arr9_eviction)
+            
+            arr1_eviction=[elem/((self.arr1_eviction.index(elem)*5)+10) for elem in self.arr1_eviction]
             self.bottom_m_effectiveness_arr_single_sketch.append(arr1_eviction)
             print('eviction ranking effectiveness ent/non-ent single sketch: ', (self.bottom_m_effectiveness_arr_single_sketch))
 
-            arr2_eviction=[elem/len(candidates_to_reintroduce_multi_sketch_eviction) for elem in self.arr2_eviction]
+            arr2_eviction=[elem/((self.arr2_eviction.index(elem)*5)+10) for elem in self.arr2_eviction]
             self.bottom_m_effectiveness_arr_multi_sketch_cosine.append(arr2_eviction)
             print('eviction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.bottom_m_effectiveness_arr_multi_sketch_cosine))
+
+            arr3_eviction=[elem/((self.arr3_eviction.index(elem)*5)+10) for elem in self.arr3_eviction]
+            self.bottom_m_effectiveness_arr_multi_sketch_euclidean.append(arr3_eviction)
+            print('eviction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.bottom_m_effectiveness_arr_multi_sketch_euclidean))
+
+            arr4_eviction=[elem/((self.arr4_eviction.index(elem)*5)+10) for elem in self.arr4_eviction]
+            self.bottom_m_effectiveness_arr_multi_sketch_combined.append(arr4_eviction)
+            print('eviction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.bottom_m_effectiveness_arr_multi_sketch_combined))
+
+            arr5_eviction=[elem/((self.arr5_eviction.index(elem)*5)+10) for elem in self.arr5_eviction]
+            self.bottom_m_effectiveness_arr_single_sketch_amb.append(arr5_eviction)
+            print('eviction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.bottom_m_effectiveness_arr_single_sketch_amb))
+
+            arr6_eviction=[elem/((self.arr6_eviction.index(elem)*5)+10) for elem in self.arr6_eviction]
+            self.bottom_m_effectiveness_arr_multi_sketch_cosine_amb.append(arr6_eviction)
+            print('eviction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.bottom_m_effectiveness_arr_multi_sketch_cosine_amb))
+
+            arr7_eviction=[elem/((self.arr7_eviction.index(elem)*5)+10) for elem in self.arr7_eviction]
+            self.bottom_m_effectiveness_arr_multi_sketch_euclidean_amb.append(arr7_eviction)
+            print('eviction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.bottom_m_effectiveness_arr_multi_sketch_euclidean_amb))
+
+            arr8_eviction=[elem/((self.arr8_eviction.index(elem)*5)+10) for elem in self.arr8_eviction]
+            self.bottom_m_effectiveness_arr_multi_sketch_combined_amb.append(arr8_eviction)
+            print('eviction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.bottom_m_effectiveness_arr_multi_sketch_combined_amb))
+
+            arr9_eviction=[elem/((self.arr9_eviction.index(elem)*5)+10) for elem in self.arr9_eviction]
+            self.bottom_m_effectiveness_arr_all_sketch_combined.append(arr9_eviction)
+            print('eviction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.bottom_m_effectiveness_arr_all_sketch_combined))
 
 
         if(self.counter>0):
