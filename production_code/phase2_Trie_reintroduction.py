@@ -164,19 +164,19 @@ class EntityResolver ():
 
 
         #entity non-entity bottom m estimates
-        self.arr1_eviction=[0,0,0] #cumulative estimates till batch single sketch
-        self.arr2_eviction=[0,0,0] #cumulative estimates till batch multi sketch cosine
-        self.arr3_eviction=[0,0,0] #cumulative estimates till batch multi sketch euclidean
-        self.arr4_eviction=[0,0,0] #cumulative estimates till batch combined sketches
+        self.arr1_eviction=[0,0,0,0,0,0,0] #cumulative estimates till batch single sketch
+        self.arr2_eviction=[0,0,0,0,0,0,0] #cumulative estimates till batch multi sketch cosine
+        self.arr3_eviction=[0,0,0,0,0,0,0] #cumulative estimates till batch multi sketch euclidean
+        self.arr4_eviction=[0,0,0,0,0,0,0] #cumulative estimates till batch combined sketches
 
         #ambiguous sketches bottom m estimates
-        self.arr5_eviction=[0,0,0] #cumulative estimates till batch single sketch
-        self.arr6_eviction=[0,0,0] #cumulative estimates till batch multi sketch cosine
-        self.arr7_eviction=[0,0,0] #cumulative estimates till batch multi sketch euclidean
-        self.arr8_eviction=[0,0,0] #cumulative estimates till batch combined sketches
+        self.arr5_eviction=[0,0,0,0,0,0,0] #cumulative estimates till batch single sketch
+        self.arr6_eviction=[0,0,0,0,0,0,0] #cumulative estimates till batch multi sketch cosine
+        self.arr7_eviction=[0,0,0,0,0,0,0] #cumulative estimates till batch multi sketch euclidean
+        self.arr8_eviction=[0,0,0,0,0,0,0] #cumulative estimates till batch combined sketches
 
         #all combination bottom m estimates
-        self.arr9_eviction=[0,0,0]
+        self.arr9_eviction=[0,0,0,0,0,0,0]
 
         #for reintroduction
         self.top_k_effectiveness_arr_single_sketch=[]
@@ -853,7 +853,7 @@ class EntityResolver ():
     def fit_and_predict_eviction(self, entry_batch, tuple_list,tuple_to_append):
         tuple_list= [list(tup) for tup in tuple_list]
         X_values= np.array([[float((elem_list[0]-entry_batch)/self.counter),float(elem_list[2]/elem_list[1])] for elem_list in tuple_list])
-        Y_values= np.array([float(elem_list[3]/elem_list[2]) for elem_list in tuple_list])
+        Y_values= np.array([float(elem_list[3]/elem_list[1]) for elem_list in tuple_list])
 
         test_point_tuple= list(tuple_to_append)
         predict_x=[[float((test_point_tuple[0]-entry_batch)/self.counter),float(test_point_tuple[2]/test_point_tuple[1])]]
@@ -876,7 +876,7 @@ class EntityResolver ():
 
         print(entry_batch,':',tuple_list)
         print(tuple_to_append)
-        ret_value= math.ceil(predict_y*test_point_tuple[2])
+        ret_value= math.ceil(predict_y*test_point_tuple[1])
         print('predicted value for eviction:', predict_y, ret_value)
 
         return ret_value
@@ -1107,17 +1107,17 @@ class EntityResolver ():
 
         if(self.counter>1):
 
-            self.arr1_eviction=[0,0,0]
-            self.arr2_eviction=[0,0,0]
-            self.arr3_eviction=[0,0,0]
-            self.arr4_eviction=[0,0,0]
-            self.arr5_eviction=[0,0,0]
-            self.arr6_eviction=[0,0,0]
-            self.arr7_eviction=[0,0,0]
-            self.arr8_eviction=[0,0,0]
-            self.arr9_eviction=[0,0,0]
+            self.arr1_eviction=[0,0,0,0,0,0,0]
+            self.arr2_eviction=[0,0,0,0,0,0,0]
+            self.arr3_eviction=[0,0,0,0,0,0,0]
+            self.arr4_eviction=[0,0,0,0,0,0,0]
+            self.arr5_eviction=[0,0,0,0,0,0,0]
+            self.arr6_eviction=[0,0,0,0,0,0,0]
+            self.arr7_eviction=[0,0,0,0,0,0,0]
+            self.arr8_eviction=[0,0,0,0,0,0,0]
+            self.arr9_eviction=[0,0,0,0,0,0,0]
 
-            for m in range(10,25,5):
+            for m in range(10,45,5):
                         
                 # #for top-k percentage instead of absolute top k: 
                 # real_m= int(m/100*(len(self.ambiguous_candidates_in_batch)))
@@ -1494,7 +1494,8 @@ class EntityResolver ():
             for candidate in qualifying_candidates:
                 candidate_batch=candidate_featureBase_DF[(candidate_featureBase_DF['candidate']==candidate)].batch.tolist()[0]
                 if((self.counter-candidate_batch)>9):
-                    batch_specific_k_value_eviction=list(self.batch_specific_eviction_tuple_dict[key][-1])[3]
+                    batch_specific_k_value_eviction=list(self.batch_specific_eviction_tuple_dict[candidate_batch][-1])[3]
+                    # print('batch_specific_k_value_eviction: ', batch_specific_k_value_eviction)
                     if(max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate])>=(len(ranking_score_dict_wAmb_eviction.keys())-batch_specific_k_value_eviction)):
                         # self.ranking_effectiveness_single_sketch+=1
                         self.batch_specific_eviction_effectiveness+=1
