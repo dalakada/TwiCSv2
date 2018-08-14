@@ -827,21 +827,27 @@ class EntityResolver ():
         test_point_tuple= list(tuple_to_append)
         predict_x=[[float((test_point_tuple[0]-entry_batch)/self.counter),float(test_point_tuple[2]/test_point_tuple[1])]]
 
-        # deg_of_poly = 1
-        # poly = PolynomialFeatures(degree=deg_of_poly)
-        # X_ = poly.fit_transform(X_values)
-
-        # Fit linear model
+        deg_of_poly = 1
+        poly = PolynomialFeatures(degree=deg_of_poly)
+        X_ = poly.fit_transform(X_values)
         clf = linear_model.LinearRegression()
-        # clf.fit(X_, Y_values)
-        # predict_x_ = poly.fit_transform(predict_x)
-        # predict_y = clf.predict(predict_x_)
+        clf.fit(X_, Y_values)
+        predict_x_ = poly.fit_transform(predict_x)
+        predict_y = clf.predict(predict_x_)
 
-        clf.fit(X_values, Y_values)
-        predict_y = clf.predict(predict_x)
+        # #Simply Fit lInear model
+        # clf = linear_model.LinearRegression()
+        # clf.fit(X_values, Y_values)
+        # predict_y = clf.predict(predict_x)
+
+        # #Using numpy pplyfit
+        # np_poly=np.polyfit(X_values, Y_values, 1)
+        # predict_y = np.polyval(np_poly,np.array(predict_x))
 
         if(predict_y<0):
             predict_y =0
+        if(predict_y>1):
+            predict_y =1
 
         print(entry_batch,':',tuple_list)
         print(tuple_to_append)
@@ -1337,6 +1343,11 @@ class EntityResolver ():
                 value_list=list(self.batch_specific_reintroduction_tuple_dict[key][-1])
                 value_list_eviction=list(self.batch_specific_eviction_tuple_dict[key][-1])
 
+                rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
+                rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
+
+                rank_dict_ordered_list=list(rank_dict_ordered.keys())
+
                 if((self.counter-key)>9):
                     batch_specific_k_value= value_list[3]
                     # batch_specific_k_value_eviction= value_list_eviction[3]
@@ -1347,8 +1358,8 @@ class EntityResolver ():
                 else:
                     # rank_list=[ min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in converted_candidates_grouped_df_key.candidate.tolist()]
 
-                    rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
-                    rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
+                    # rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
+                    # rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
                     ranked_list=[1 if candidate in converted_candidates_grouped_df_key.candidate.tolist() else 0 for candidate in rank_dict_ordered.keys()]
                     count=len(ranked_list)
                     print("ranked list:", ranked_list, count)
@@ -1362,7 +1373,7 @@ class EntityResolver ():
                     self.batch_specific_reintroduction_tuple_dict[key][-1]=value_tuple
 
 
-                    rank_dict={candidate: min(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in ambiguous_candidate_records_before_classification_grouped_df_key.candidate.tolist()}
+                    rank_dict={candidate: max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in ambiguous_candidate_records_before_classification_grouped_df_key.candidate.tolist()}
                     rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
                     ranked_list=[1 if candidate in converted_candidates_grouped_df_key.candidate.tolist() else 0 for candidate in rank_dict_ordered.keys()]
                     count=len(ranked_list)
@@ -1390,14 +1401,14 @@ class EntityResolver ():
                     # print(candidate, candidates_to_reintroduce.index(candidate), candidates_to_reintroduce_multi_sketch.index(candidate), candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
                     # if(candidates_to_reintroduce_multi_sketch.index(candidate)>10):
                     #     print(candidate_synvec,label)
-                    min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
-                    min_rank_wAmb=min(candidates_to_reintroduce_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate))
+                    # min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
+                    # min_rank_wAmb=min(candidates_to_reintroduce_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate))
                     # print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
 
 
                     if((self.counter-key)>9):
                         print('batch_specific_k_value: ',batch_specific_k_value,len(converted_candidates_grouped_df_key))
-                        if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<batch_specific_k_value):
+                        if(rank_dict_ordered_list.index(candidate)<batch_specific_k_value):
                             self.batch_specific_reintroduction_effectiveness+=1
                     else:
                         self.batch_specific_reintroduction_effectiveness+=1 #for first six batches since entry, reintroduce like baseline
@@ -1489,17 +1500,30 @@ class EntityResolver ():
 
             
             self.batch_specific_eviction_effectiveness=0
+            # rank_dict={candidate: min(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in ambiguous_candidate_records_before_classification_grouped_df_key.candidate.tolist()}
+            # rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
             qualifying_candidates= [candidate for candidate in ranking_score_dict_wAmb_eviction.keys() if candidate in all_ambiguous_remaining_ambiguous]
+            qualifying_candidate_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(qualifying_candidates)]
+            qualifying_candidate_records_grouped_df= qualifying_candidate_records.groupby('batch')
             actual_no_candidates_qualifying_eviction=0
-            for candidate in qualifying_candidates:
-                candidate_batch=candidate_featureBase_DF[(candidate_featureBase_DF['candidate']==candidate)].batch.tolist()[0]
-                if((self.counter-candidate_batch)>9):
-                    batch_specific_k_value_eviction=list(self.batch_specific_eviction_tuple_dict[candidate_batch][-1])[3]
-                    # print('batch_specific_k_value_eviction: ', batch_specific_k_value_eviction)
-                    if(max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate])>=(len(ranking_score_dict_wAmb_eviction.keys())-batch_specific_k_value_eviction)):
-                        # self.ranking_effectiveness_single_sketch+=1
-                        self.batch_specific_eviction_effectiveness+=1
-                    actual_no_candidates_qualifying_eviction+=1
+
+
+            for key, item in qualifying_candidate_records_grouped_df:
+                qualifying_candidate_records_grouped_df_key= qualifying_candidate_records_grouped_df.get_group(key)
+                ambiguous_candidate_records_before_classification_grouped_df_key= ambiguous_candidate_records_before_classification_grouped_df.get_group(key)
+                rank_dict={candidate: max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in ambiguous_candidate_records_before_classification_grouped_df_key.candidate.tolist()}
+                rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
+                rank_dict_ordered_list=list(rank_dict_ordered.keys())
+
+                for candidate in qualifying_candidate_records_grouped_df_key.candidate.tolist():
+                    candidate_batch=key
+                    if((self.counter-candidate_batch)>9):
+                        batch_specific_k_value_eviction=list(self.batch_specific_eviction_tuple_dict[candidate_batch][-1])[3]
+                        # print('batch_specific_k_value_eviction: ', batch_specific_k_value_eviction)
+                        if(rank_dict_ordered_list.index(candidate)>=(len(ranking_score_dict_wAmb_eviction.keys())-batch_specific_k_value_eviction)):
+                            # self.ranking_effectiveness_single_sketch+=1
+                            self.batch_specific_eviction_effectiveness+=1
+                        actual_no_candidates_qualifying_eviction+=1
 
             if(actual_no_candidates_qualifying_eviction!=0):
                 print('eviction effectiveness with batch specific bottom m value: ',(self.batch_specific_eviction_effectiveness/actual_no_candidates_qualifying_eviction))
