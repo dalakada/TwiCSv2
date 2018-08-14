@@ -1192,8 +1192,11 @@ class EntityResolver ():
 
                 # #combining all possible sketches
                 qualifying_candidates= [candidate for candidate in ranking_score_dict_wAmb_eviction.keys() if candidate in all_ambiguous_remaining_ambiguous]
+                rank_dict={candidate: max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in list(ranking_score_dict_eviction.keys())}
+                rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
+                rank_dict_ordered_list=list(rank_dict_ordered.keys())
                 for candidate in qualifying_candidates:
-                    if(min(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate])>=(len(ranking_score_dict_wAmb_eviction.keys())-real_m)):
+                    if(rank_dict_ordered_list.index(candidate)>=(len(ranking_score_dict_wAmb_eviction.keys())-real_m)):
                         # self.ranking_effectiveness_single_sketch+=1
                         self.arr9_eviction[j]+=1
 
