@@ -224,6 +224,8 @@ class EntityResolver ():
         self.batch_specific_reintroduction_tuple_dict={} 
         self.batch_specific_eviction_tuple_dict={}
 
+        self.batchwise_reintroduction_eviction_estimates={}
+
 
     def calculate_tp_fp_f1_generic(self,raw_tweets_for_others,state_of_art):
 
@@ -914,6 +916,7 @@ class EntityResolver ():
         candidates_to_reintroduce_multi_sketch_euclidean=[]
         candidates_to_reintroduce_w_ranking=[]
         ambiguous_candidates_in_batch_freq_w_decay=[]
+        self.batchwise_reintroduction_eviction_estimates[self.counter]=[]
 
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
             
