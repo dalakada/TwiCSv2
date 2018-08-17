@@ -916,7 +916,7 @@ class EntityResolver ():
         candidates_to_reintroduce_multi_sketch_euclidean=[]
         candidates_to_reintroduce_w_ranking=[]
         ambiguous_candidates_in_batch_freq_w_decay=[]
-        self.batchwise_reintroduction_eviction_estimates[self.counter]=[]
+        self.batchwise_reintroduction_eviction_estimates[self.counter]=[(0,0)*10]
 
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
             
@@ -1366,6 +1366,8 @@ class EntityResolver ():
 
                 rank_dict_ordered_list=list(rank_dict_ordered.keys())
 
+                top_k_reintroduction_value=0
+
                 if((self.counter-key)>9):
                     batch_specific_k_value= value_list[3]
                     # batch_specific_k_value_eviction= value_list_eviction[3]
@@ -1498,6 +1500,10 @@ class EntityResolver ():
                         # if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<k):
                         if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<real_k):
                             self.arr9[i]+=1
+                            if(k==30):
+                                top_k_reintroduction_value+=1
+
+
 
 
 
