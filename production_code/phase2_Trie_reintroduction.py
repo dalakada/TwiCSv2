@@ -1503,14 +1503,15 @@ class EntityResolver ():
                             if(k==30):
                                 top_k_reintroduction_value+=1
 
-
-
-
-
                     # if(candidates_to_reintroduce_w_ranking.index(candidate)<15):
                     #     self.ranking_effectiveness_alternate+=1
 
                     # new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
+
+                tuple_to_edit=self.batchwise_reintroduction_eviction_estimates[key][self.counter-key]
+                tuple_to_edit[0]=top_k_reintroduction_value
+                print("tuple_to_edit: ", tuple_to_edit)
+                self.batchwise_reintroduction_eviction_estimates[key][self.counter-key]=tuple_to_edit
 
 
 
