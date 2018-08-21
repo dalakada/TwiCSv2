@@ -1512,7 +1512,7 @@ class EntityResolver ():
                 if((self.counter-key-1)<10):
                     list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
                     tuple_to_edit=list_of_lists[self.counter-key-1]
-                    tuple_to_edit[0]=top_k_reintroduction_value
+                    tuple_to_edit[0]=top_k_reintroduction_value/len(ambiguous_candidate_inBatch_grouped_df_key)
                     print("tuple_to_edit: ",self.batchwise_reintroduction_eviction_estimates[key][self.counter-key-1], tuple_to_edit)
                     list_of_lists[self.counter-key-1]=tuple_to_edit
                     self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
