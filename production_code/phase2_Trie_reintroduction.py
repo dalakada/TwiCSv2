@@ -916,7 +916,8 @@ class EntityResolver ():
         candidates_to_reintroduce_multi_sketch_euclidean=[]
         candidates_to_reintroduce_w_ranking=[]
         ambiguous_candidates_in_batch_freq_w_decay=[]
-        self.batchwise_reintroduction_eviction_estimates[self.counter]=[(0,0)*10]
+        self.batchwise_reintroduction_eviction_estimates[self.counter]=[[0] * 2 for i in range(10)]
+        print(self.batchwise_reintroduction_eviction_estimates[self.counter])
 
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
             
@@ -1508,17 +1509,21 @@ class EntityResolver ():
 
                     # new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
 
-                tuple_to_edit=self.batchwise_reintroduction_eviction_estimates[key][self.counter-key]
-                tuple_to_edit[0]=top_k_reintroduction_value
-                print("tuple_to_edit: ", tuple_to_edit)
-                self.batchwise_reintroduction_eviction_estimates[key][self.counter-key]=tuple_to_edit
-
+                if((self.counter-key-1)<10):
+                    list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
+                    tuple_to_edit=list_of_lists[self.counter-key-1]
+                    tuple_to_edit[0]=top_k_reintroduction_value
+                    print("tuple_to_edit: ",self.batchwise_reintroduction_eviction_estimates[key][self.counter-key-1], tuple_to_edit)
+                    list_of_lists[self.counter-key-1]=tuple_to_edit
+                    self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
+                    # print(self.batchwise_reintroduction_eviction_estimates[key])
 
 
                 # print (key,len(grouped_df_key),new_mention_count)
                 # print(grouped_df_key)
                 # print('+====================================+')
 
+            print(self.batchwise_reintroduction_eviction_estimates)
             # print(self.arr1,self.arr2,self.arr3,self.arr4,self.arr5,self.arr6,self.arr7,self.arr8,self.arr9)
             # self.batch_specific_reintroduction_tuple_dict[self.counter]=internal_batch_level_dict
             print('+====================================+')
@@ -2767,73 +2772,6 @@ class EntityResolver ():
         print("*****************************************STANFORD ENDSSSSSSSS***********************")
 
         return (self.accuracy_vals_stanford,self.accuracy_vals_opencalai,self.accuracy_vals_ritter)
-
-
-##################UNCOMMENT THIS WHEN YOU'RE DONE // STARTS
-
-        # candidate_featureBase_DF = candidate_featureBase_DF.set_index('candidate')
-
-        # candidate_with_label_holder=[]
-        # one_level=[]
-        # for sentence_level_candidates in phase2_candidates_holder:
-        #     one_level.clear()
-        #     for candidate in sentence_level_candidates:
-        #         if candidate in candidate_featureBase_DF.index:
-        #             label=candidate_featureBase_DF.get_value(candidate,'status')
-        #             one_level.append((candidate,label))
-        #         else:
-        #             one_level.append((candidate,"na"))
-
-
-        #     candidate_with_label_holder.append(copy.deepcopy(one_level))
-
-        # print(len(data_frame_holder),len(candidate_with_label_holder))
-
-        # data_frame_holder["candidates_with_label"]=candidate_with_label_holder
-
-
-############################ UNCOMMENT THIS WHEN YOU DONE FINISH
-
-
-
-       # print(data_frame_holder["2nd Iteration Candidates"][data_frame_holder.tweetID=='2'].tolist())
-        # list1=data_frame_holder["candidates_with_label"][data_frame_holder.tweetID=='2'].tolist()
-  
-        # list3=[]
-        # #print(list1)
-        # for i in list1:
-        #     for a in i:
-        #        # print(a)
-        #         list3.append(a)
-
-
-
-
-
-
-
-
-        # tweetID_holder=data_frame_holder.tweetID.astype(int) 
-
-        # # row_level_candidates=[]
-        # # tweet_level_candidates=[]
-        # # for i in range(int(tweetID_holder.max())+1):
-        # #     list1=data_frame_holder["candidates_with_label"][data_frame_holder.tweetID==str(i)].tolist()
-
-        #     row_level_candidates.clear()
-        #     for j in list1:
-        #         for a in j:
-        #            # print(a)
-        #             if(a[1]=="g"):
-        #                 row_level_candidates.append(a[0])
-
-        #     tweet_level_candidates.append(copy.deepcopy(row_level_candidates))
-
-
-
-        # for i in tweet_level_candidates:
-        #     print(i)
-
 
 
 
