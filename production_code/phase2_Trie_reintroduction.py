@@ -1365,6 +1365,11 @@ class EntityResolver ():
                 rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
                 rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
 
+                real_cutoff= int(30/100*(len(self.ambiguous_candidates_in_batch)))
+                rank_dict_ordered_cutoff=[candidate for candidate in rank_dict_ordered.keys() if rank_dict_ordered[candidate]< real_cutoff]
+
+
+                #this is batch-specific ranking only to be used for batch-specific reintroduction
                 rank_dict_ordered_list=list(rank_dict_ordered.keys())
 
                 top_k_reintroduction_value=0
@@ -1512,7 +1517,8 @@ class EntityResolver ():
                 if((self.counter-key-1)<10):
                     list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
                     tuple_to_edit=list_of_lists[self.counter-key-1]
-                    tuple_to_edit[0]=top_k_reintroduction_value/len(ambiguous_candidate_inBatch_grouped_df_key)
+                    #to record the reintroduction precision for this batch
+                    tuple_to_edit[0]=top_k_reintroduction_value/len(rank_dict_ordered_cutoff)
                     print("tuple_to_edit: ",self.batchwise_reintroduction_eviction_estimates[key][self.counter-key-1], tuple_to_edit)
                     list_of_lists[self.counter-key-1]=tuple_to_edit
                     self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
