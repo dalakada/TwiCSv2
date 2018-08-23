@@ -1546,30 +1546,39 @@ class EntityResolver ():
                     estimate_numerical_list= self.batchwise_reintroduction_eviction_estimates[key]
                     cumulative_estimate_list=[]
 
-                    estimate_numerator_precision=0
-                    estimate_denominator_precision=0
+                    # estimate_numerator_precision=0
+                    # estimate_denominator_precision=0
 
-                    estimate_numerator_recall=0
-                    estimate_denominator_recall=0
+                    # estimate_numerator_recall=0
+                    # estimate_denominator_recall=0
+
+                    estimate_reintroduced=0
+                    estimate_reintroduced_and_converted=0
 
                     for element in estimate_numerical_list:
                         cumulative_estimate_batch_level=[]
 
-                        precision_numerical_estimate_list=element[0]
-                        estimate_numerator_precision+=precision_numerical_estimate_list[0]
-                        estimate_denominator_precision+=precision_numerical_estimate_list[1]
-                        if(estimate_denominator_precision>0):
-                            cumulative_estimate_batch_level.append(estimate_numerator_precision/estimate_denominator_precision)
-                        else:
-                            cumulative_estimate_batch_level.append(0)
+                        # precision_numerical_estimate_list=element[0]
+                        # estimate_numerator_precision+=precision_numerical_estimate_list[0]
+                        # estimate_denominator_precision+=precision_numerical_estimate_list[1]
+                        # if(estimate_denominator_precision>0):
+                        #     cumulative_estimate_batch_level.append(estimate_numerator_precision/estimate_denominator_precision)
+                        # else:
+                        #     cumulative_estimate_batch_level.append(0)
 
-                        recall_numerical_estimate_list=element[1]
-                        estimate_numerator_recall+=recall_numerical_estimate_list[0]
-                        estimate_denominator_recall+=recall_numerical_estimate_list[1]
-                        if(estimate_denominator_recall>0):
-                            cumulative_estimate_batch_level.append(estimate_numerator_recall/estimate_denominator_recall)
-                        else:
-                            cumulative_estimate_batch_level.append(0)
+                        numerical_estimate_list=element[0]
+                        estimate_reintroduced+=numerical_estimate_list[1]
+                        cumulative_estimate_batch_level.append(estimate_reintroduced)
+                        estimate_reintroduced_and_converted+=numerical_estimate_list[0]
+                        cumulative_estimate_batch_level.append(estimate_reintroduced_and_converted)
+
+                        # recall_numerical_estimate_list=element[1]
+                        # estimate_numerator_recall+=recall_numerical_estimate_list[0]
+                        # estimate_denominator_recall+=recall_numerical_estimate_list[1]
+                        # if(estimate_denominator_recall>0):
+                        #     cumulative_estimate_batch_level.append(estimate_numerator_recall/estimate_denominator_recall)
+                        # else:
+                        #     cumulative_estimate_batch_level.append(0)
 
                         cumulative_estimate_list.append(cumulative_estimate_batch_level)
 
