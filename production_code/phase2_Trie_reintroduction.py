@@ -916,7 +916,7 @@ class EntityResolver ():
         candidates_to_reintroduce_multi_sketch_euclidean=[]
         candidates_to_reintroduce_w_ranking=[]
         ambiguous_candidates_in_batch_freq_w_decay=[]
-        self.batchwise_reintroduction_eviction_estimates[self.counter]=[[0] * 4 for i in range(10)]
+        self.batchwise_reintroduction_eviction_estimates[self.counter]=[[[0,0] for j in range(2)] for i in range(10)]
         print(self.batchwise_reintroduction_eviction_estimates[self.counter])
 
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
@@ -1528,8 +1528,8 @@ class EntityResolver ():
                     tuple_to_edit=list_of_lists[self.counter-key-1]
                     #to record the reintroduction precision for this batch
                     if key in rank_dict_reintroduction_candidates_cutoff_records_grouped_df.groups.keys():
-                        tuple_to_edit[0]=top_k_reintroduction_value/len(rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key)
-                    tuple_to_edit[1]=top_k_reintroduction_value/len(converted_candidates_grouped_df_key)
+                        tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key)]
+                    tuple_to_edit[1]=[top_k_reintroduction_value,len(converted_candidates_grouped_df_key)]
                     print("tuple_to_edit: ",self.batchwise_reintroduction_eviction_estimates[key][self.counter-key-1], tuple_to_edit)
                     list_of_lists[self.counter-key-1]=tuple_to_edit
                     self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
@@ -1539,8 +1539,41 @@ class EntityResolver ():
                 # print (key,len(grouped_df_key),new_mention_count)
                 # print(grouped_df_key)
                 # print('+====================================+')
+            # print(self.batchwise_reintroduction_eviction_estimates)
+            if(self.counter==19):
+                print('print batchwise reintroduction estimates:')
+                for key in self.batchwise_reintroduction_eviction_estimates.keys():
+                    estimate_numerical_list= self.batchwise_reintroduction_eviction_estimates[key]
+                    cumulative_estimate_list=[]
 
-            print(self.batchwise_reintroduction_eviction_estimates)
+                    estimate_numerator_precision=0
+                    estimate_denominator_precision=0
+
+                    estimate_numerator_recall=0
+                    estimate_denominator_recall=0
+
+                    for element in estimate_numerical_list:
+                        cumulative_estimate_batch_level=[]
+
+                        precision_numerical_estimate_list=element[0]
+                        estimate_numerator_precision+=precision_numerical_estimate_list[0]
+                        estimate_denominator_precision+=precision_numerical_estimate_list[1]
+                        if(estimate_denominator_precision>0):
+                            cumulative_estimate_batch_level.append(estimate_numerator_precision/estimate_denominator_precision)
+                        else:
+                            cumulative_estimate_batch_level.append(0)
+
+                        recall_numerical_estimate_list=element[1]
+                        estimate_numerator_recall+=recall_numerical_estimate_list[0]
+                        estimate_denominator_recall+=recall_numerical_estimate_list[1]
+                        if(estimate_denominator_recall>0):
+                            cumulative_estimate_batch_level.append(estimate_numerator_recall/estimate_denominator_recall)
+                        else:
+                            cumulative_estimate_batch_level.append(0)
+
+                        cumulative_estimate_list.append(cumulative_estimate_batch_level)
+
+                    print(key,' : ', cumulative_estimate_list)
             # print(self.arr1,self.arr2,self.arr3,self.arr4,self.arr5,self.arr6,self.arr7,self.arr8,self.arr9)
             # self.batch_specific_reintroduction_tuple_dict[self.counter]=internal_batch_level_dict
             print('+====================================+')
