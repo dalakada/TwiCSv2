@@ -26,6 +26,8 @@ from sklearn import linear_model
 from sklearn.cluster import KMeans, MeanShift
 from sklearn.metrics import silhouette_samples, silhouette_score
 
+import matplotlib.pyplot as plt
+
 cachedStopWords = stopwords.words("english")
 tempList=["i","and","or","other","another","across","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","meanwhile","always"]
 for item in tempList:
@@ -917,18 +919,15 @@ class EntityResolver ():
         candidates_to_reintroduce_w_ranking=[]
         ambiguous_candidates_in_batch_freq_w_decay=[]
         self.batchwise_reintroduction_eviction_estimates[self.counter]=[[[0,0] for j in range(2)] for i in range(10)]
-        print(self.batchwise_reintroduction_eviction_estimates[self.counter])
+        # print(self.batchwise_reintroduction_eviction_estimates[self.counter])
 
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
             
             ambiguous_candidate_inBatch_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates_in_batch)]
             
+            #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!not used
             ambiguous_candidates_in_batch_freq_w_decay=self.frequencies_w_decay(ambiguous_candidates_in_batch_w_Count,candidate_featureBase_DF)
-            # for candidate in ambiguous_candidates_in_batch_freq_w_decay.keys():
-            #     print(candidate, ambiguous_candidates_in_batch_freq_w_decay[candidate], self.ambiguous_candidates_reintroduction_dict[candidate] ,int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate].cumulative))
-            #print(len(self.ambiguous_candidates_in_batch),len(ambiguous_candidate_inBatch_records))
-
-           
+                       
 
             #with single sketch for entity/non-entity class-- cosine
             cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
@@ -1346,6 +1345,7 @@ class EntityResolver ():
                 # self.batch_specific_reintroduction_tuple_dict[(self.counter,key)]=(len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
 
 
+            #get the list of top-k percent reintroduced candidates
             rank_dict_reintroduction_candidates={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in self.ambiguous_candidates_in_batch}
             rank_dict_ordered_reintroduction_candidates=OrderedDict(sorted(rank_dict_reintroduction_candidates.items(), key=lambda x: x[1]))
             rank_dict_ordered_list_reintroduction_candidates=list(rank_dict_ordered_reintroduction_candidates.keys())
@@ -1353,6 +1353,8 @@ class EntityResolver ():
             rank_dict_ordered_list_reintroduction_candidates_cutoff=rank_dict_ordered_list_reintroduction_candidates[0:real_cutoff]
             rank_dict_reintroduction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_reintroduction_candidates_cutoff)]
             rank_dict_reintroduction_candidates_cutoff_records_grouped_df= rank_dict_reintroduction_candidates_cutoff_records.groupby('batch')
+
+            #get the list of bottom m percent evicted candidates here
 
             converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
 
@@ -1542,47 +1544,56 @@ class EntityResolver ():
             # print(self.batchwise_reintroduction_eviction_estimates)
             if(self.counter==19):
                 print('print batchwise reintroduction estimates:')
+                # fig = plt.figure()
+                fig, axes = plt.subplots(nrows=1, ncols=1)
+                # axes = fig.add_axes([1,0,19, 140])
+                axes.set_xticks(np.arange(1, 20, 1))
+                axes.set_yticks(np.arange(0, 150, 10))
+                
                 for key in self.batchwise_reintroduction_eviction_estimates.keys():
-                    estimate_numerical_list= self.batchwise_reintroduction_eviction_estimates[key]
-                    cumulative_estimate_list=[]
+                    
+                    if(key<10):
+                        batch_index=1
+                        estimate_numerical_list= self.batchwise_reintroduction_eviction_estimates[key]
+                        cumulative_estimate_list=[]
 
-                    # estimate_numerator_precision=0
-                    # estimate_denominator_precision=0
+                        estimate_reintroduced=0
+                        estimate_reintroduced_list=[]
 
-                    # estimate_numerator_recall=0
-                    # estimate_denominator_recall=0
+                        estimate_reintroduced_and_converted=0
+                        estimate_reintroduced_and_converted_list=[]
 
-                    estimate_reintroduced=0
-                    estimate_reintroduced_and_converted=0
+                        batch_list=[]
 
-                    for element in estimate_numerical_list:
-                        cumulative_estimate_batch_level=[]
+                        for element in estimate_numerical_list:
+                            cumulative_estimate_batch_level=[]
+                        
+                            numerical_estimate_list=element[0]
 
-                        # precision_numerical_estimate_list=element[0]
-                        # estimate_numerator_precision+=precision_numerical_estimate_list[0]
-                        # estimate_denominator_precision+=precision_numerical_estimate_list[1]
-                        # if(estimate_denominator_precision>0):
-                        #     cumulative_estimate_batch_level.append(estimate_numerator_precision/estimate_denominator_precision)
-                        # else:
-                        #     cumulative_estimate_batch_level.append(0)
+                            estimate_reintroduced+=numerical_estimate_list[1]
+                            estimate_reintroduced_list.append(estimate_reintroduced)
+                            cumulative_estimate_batch_level.append(estimate_reintroduced)
 
-                        numerical_estimate_list=element[0]
-                        estimate_reintroduced+=numerical_estimate_list[1]
-                        cumulative_estimate_batch_level.append(estimate_reintroduced)
-                        estimate_reintroduced_and_converted+=numerical_estimate_list[0]
-                        cumulative_estimate_batch_level.append(estimate_reintroduced_and_converted)
+                            estimate_reintroduced_and_converted+=numerical_estimate_list[0]
+                            estimate_reintroduced_and_converted_list.append(estimate_reintroduced_and_converted)
+                            cumulative_estimate_batch_level.append(estimate_reintroduced_and_converted)
 
-                        # recall_numerical_estimate_list=element[1]
-                        # estimate_numerator_recall+=recall_numerical_estimate_list[0]
-                        # estimate_denominator_recall+=recall_numerical_estimate_list[1]
-                        # if(estimate_denominator_recall>0):
-                        #     cumulative_estimate_batch_level.append(estimate_numerator_recall/estimate_denominator_recall)
-                        # else:
-                        #     cumulative_estimate_batch_level.append(0)
+                            batch_list.append((key+batch_index))
 
-                        cumulative_estimate_list.append(cumulative_estimate_batch_level)
+                            cumulative_estimate_list.append(cumulative_estimate_batch_level)
+                            batch_index+=1
 
-                    print(key,' : ', cumulative_estimate_list)
+                        print(key,' : ', cumulative_estimate_list)
+                        axes.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
+                        axes.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv batch-'+str(key))
+                axes.invert_yaxis()
+                axes.set_ylabel('# of ambiguous candidates')
+                axes.set_xlabel('batch-value')
+                lgd=axes.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 8}, borderaxespad=0.)
+                axes.set_title('Batch level candidate reintroduction and disambiguation estimates')
+                # plt.savefig('reintroduction-converted-estimates.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
+                plt.show()
+
             # print(self.arr1,self.arr2,self.arr3,self.arr4,self.arr5,self.arr6,self.arr7,self.arr8,self.arr9)
             # self.batch_specific_reintroduction_tuple_dict[self.counter]=internal_batch_level_dict
             print('+====================================+')
@@ -2597,9 +2608,10 @@ class EntityResolver ():
         if(normalized_candidate in self.CandidateBase_dict.keys()):
             feature_list=self.CandidateBase_dict[normalized_candidate]
         else:
-            feature_list=[0]*9
+            feature_list=[0]*10
             feature_list[0]=self.counter
             feature_list[1]=len(normalized_candidate.split())
+            feature_list[-1]=0
         feature_to_update=self.check_feature_update(candidate_tuple,non_discriminative_flag)
         # if(normalized_candidate=="not even hitler"):
         #     print(candidateText,feature_to_update)
@@ -2647,7 +2659,7 @@ class EntityResolver ():
             self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             #self.data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
             self.raw_tweets_for_others=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
-            self.ambiguous_candidate_records_old=pd.DataFrame([],columns=['candidate', 'batch', 'length', 'cap', 'substring-cap', 's-o-sCap','all-cap', 'non-cap', 'non-discriminative', 'cumulative','Z_ScoreUnweighted', 'normalized_cap','normalized_capnormalized_substring-cap', 'normalized_s-o-sCap','normalized_all-cap', 'normalized_non-cap', 'normalized_non-discriminative', 'probability', 'status'])
+            self.ambiguous_candidate_records_old=pd.DataFrame([],columns=['candidate', 'batch', 'length', 'cap', 'substring-cap', 's-o-sCap','all-cap', 'non-cap', 'non-discriminative', 'cumulative', 'eviction-flag','Z_ScoreUnweighted', 'normalized_cap','normalized_capnormalized_substring-cap', 'normalized_s-o-sCap','normalized_all-cap', 'normalized_non-cap', 'normalized_non-discriminative', 'probability', 'status'])
             self.accuracy_tuples_prev_batch=[]
             self.accuracy_vals=[]
             
@@ -2801,7 +2813,7 @@ class EntityResolver ():
 
 
         #convert the CandidateFeatureBase from a dictionary to dataframe---> CandidateFeatureBaseDF
-        candidateBaseHeaders=['candidate', 'batch', 'length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative']
+        candidateBaseHeaders=['candidate', 'batch', 'length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','eviction-flag']
         candidate_featureBase_DF=pd.DataFrame.from_dict(self.CandidateBase_dict, orient='index')
         candidate_featureBase_DF.columns=candidateBaseHeaders[1:]
         candidate_featureBase_DF.index.name=candidateBaseHeaders[0]
