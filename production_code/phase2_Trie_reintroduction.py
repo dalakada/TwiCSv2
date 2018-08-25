@@ -904,6 +904,14 @@ class EntityResolver ():
         candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted= self.extract(TweetBase,CTrie,phase2stopwordList,0)
         phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
         df_holder.extend(df_holder_extracted)
+
+        # evicted_candidates=candidate_featureBase_DF[candidate_featureBase_DF['evictionFlag']==1].candidate.tolist()
+        # print('evicted candidates: ',evicted_candidates)
+
+        # for candidate in self.ambiguous_candidates_in_batch:
+        #     if(int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate]['evictionFlag'])==0):
+        #         print(candidate)
+        self.ambiguous_candidates_in_batch= [candidate for candidate in self.ambiguous_candidates_in_batch if (int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate]['evictionFlag'])==0)]
         ambiguous_candidates_in_batch_w_Count=dict((x,self.ambiguous_candidates_in_batch.count(x)) for x in set(self.ambiguous_candidates_in_batch))
 
         ambiguous_candidate_records_before_classification=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
@@ -2659,7 +2667,7 @@ class EntityResolver ():
             self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             #self.data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
             self.raw_tweets_for_others=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
-            self.ambiguous_candidate_records_old=pd.DataFrame([],columns=['candidate', 'batch', 'length', 'cap', 'substring-cap', 's-o-sCap','all-cap', 'non-cap', 'non-discriminative', 'cumulative', 'eviction-flag','Z_ScoreUnweighted', 'normalized_cap','normalized_capnormalized_substring-cap', 'normalized_s-o-sCap','normalized_all-cap', 'normalized_non-cap', 'normalized_non-discriminative', 'probability', 'status'])
+            self.ambiguous_candidate_records_old=pd.DataFrame([],columns=['candidate', 'batch', 'length', 'cap', 'substring-cap', 's-o-sCap','all-cap', 'non-cap', 'non-discriminative', 'cumulative', 'evictionFlag','Z_ScoreUnweighted', 'normalized_cap','normalized_capnormalized_substring-cap', 'normalized_s-o-sCap','normalized_all-cap', 'normalized_non-cap', 'normalized_non-discriminative', 'probability', 'status'])
             self.accuracy_tuples_prev_batch=[]
             self.accuracy_vals=[]
             
@@ -2813,7 +2821,7 @@ class EntityResolver ():
 
 
         #convert the CandidateFeatureBase from a dictionary to dataframe---> CandidateFeatureBaseDF
-        candidateBaseHeaders=['candidate', 'batch', 'length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','eviction-flag']
+        candidateBaseHeaders=['candidate', 'batch', 'length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','evictionFlag']
         candidate_featureBase_DF=pd.DataFrame.from_dict(self.CandidateBase_dict, orient='index')
         candidate_featureBase_DF.columns=candidateBaseHeaders[1:]
         candidate_featureBase_DF.index.name=candidateBaseHeaders[0]
