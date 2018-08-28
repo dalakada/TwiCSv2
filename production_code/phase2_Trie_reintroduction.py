@@ -1571,9 +1571,11 @@ class EntityResolver ():
                 print('print batchwise reintroduction estimates:')
                 # fig = plt.figure()
                 fig, axes = plt.subplots(nrows=1, ncols=1)
+                axes2 = axes.twinx()
                 # axes = fig.add_axes([1,0,19, 140])
                 axes.set_xticks(np.arange(1, 20, 1))
                 axes.set_yticks(np.arange(0, 150, 10))
+                axes2.set_yticks(np.arange(0, 75, 10))
                 
                 for key in self.batchwise_reintroduction_eviction_estimates.keys():
                     
@@ -1619,8 +1621,10 @@ class EntityResolver ():
                         print(key,' : ', cumulative_estimate_list)
                         axes.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
                         axes.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv batch-'+str(key))
+                        axes2.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
                 axes.invert_yaxis()
                 axes.set_ylabel('# of ambiguous candidates')
+                axes2.set_ylabel('# of ambiguous candidates')
                 axes.set_xlabel('batch-value')
                 lgd=axes.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 8}, borderaxespad=0.)
                 axes.set_title('Batch level candidate reintroduction and disambiguation estimates')
