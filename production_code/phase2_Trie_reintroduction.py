@@ -914,7 +914,9 @@ class EntityResolver ():
         self.ambiguous_candidates_in_batch= [candidate for candidate in self.ambiguous_candidates_in_batch if (int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate]['evictionFlag'])==0)]
         ambiguous_candidates_in_batch_w_Count=dict((x,self.ambiguous_candidates_in_batch.count(x)) for x in set(self.ambiguous_candidates_in_batch))
 
-        ambiguous_candidate_records_before_classification=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
+        
+        ambiguous_candidate_records_before_classification=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates))&(candidate_featureBase_DF['evictionFlag']==0)]
+        print('printing here: ',len(candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]),len(ambiguous_candidate_records_before_classification))
         ambiguous_candidate_records_before_classification_grouped_df= ambiguous_candidate_records_before_classification.groupby('batch')
         # print(ambiguous_candidates_in_batch_w_Count)
         self.ambiguous_candidates_in_batch=list(set(self.ambiguous_candidates_in_batch))
@@ -926,7 +928,7 @@ class EntityResolver ():
         candidates_to_reintroduce_multi_sketch_euclidean=[]
         candidates_to_reintroduce_w_ranking=[]
         ambiguous_candidates_in_batch_freq_w_decay=[]
-        self.batchwise_reintroduction_eviction_estimates[self.counter]=[[[0,0] for j in range(2)] for i in range(10)]
+        self.batchwise_reintroduction_eviction_estimates[self.counter]=[[[0,0] for j in range(3)] for i in range(10)]
         # print(self.batchwise_reintroduction_eviction_estimates[self.counter])
 
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
@@ -1363,6 +1365,14 @@ class EntityResolver ():
             rank_dict_reintroduction_candidates_cutoff_records_grouped_df= rank_dict_reintroduction_candidates_cutoff_records.groupby('batch')
 
             #get the list of bottom m percent evicted candidates here
+            rank_dict_eviction_candidates={candidate: max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in list(ranking_score_dict_eviction.keys())}
+            rank_dict_ordered_eviction_candidates=OrderedDict(sorted(rank_dict_eviction_candidates.items(), key=lambda x: x[1]))
+            rank_dict_ordered_list_eviction_candidates=list(rank_dict_ordered_eviction_candidates.keys())
+            real_eviction_cutoff= int(40/100*(len(ambiguous_candidate_records_before_classification)))
+            rank_dict_ordered_list_eviction_candidates_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-real_eviction_cutoff):]
+            candidate_featureBase_DF['evictionFlag'][candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]=1
+            rank_dict_eviction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]
+            rank_dict_eviction_candidates_cutoff_records_grouped_df= rank_dict_eviction_candidates_cutoff_records.groupby('batch')
 
             converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
 
@@ -1379,6 +1389,9 @@ class EntityResolver ():
 
                 if key in rank_dict_reintroduction_candidates_cutoff_records_grouped_df.groups.keys():
                     rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key = rank_dict_reintroduction_candidates_cutoff_records_grouped_df.get_group(key)
+
+                if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
+                    rank_dict_eviction_candidates_cutoff_records_grouped_df_key = rank_dict_eviction_candidates_cutoff_records_grouped_df.get_group(key)
 
                 value_list=list(self.batch_specific_reintroduction_tuple_dict[key][-1])
                 value_list_eviction=list(self.batch_specific_eviction_tuple_dict[key][-1])
@@ -1540,6 +1553,10 @@ class EntityResolver ():
                     if key in rank_dict_reintroduction_candidates_cutoff_records_grouped_df.groups.keys():
                         tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key)]
                     tuple_to_edit[1]=[top_k_reintroduction_value,len(converted_candidates_grouped_df_key)]
+
+                    if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
+                        tuple_to_edit[2]=[0,len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)]
+
                     print("tuple_to_edit: ",self.batchwise_reintroduction_eviction_estimates[key][self.counter-key-1], tuple_to_edit)
                     list_of_lists[self.counter-key-1]=tuple_to_edit
                     self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
@@ -1571,12 +1588,16 @@ class EntityResolver ():
                         estimate_reintroduced_and_converted=0
                         estimate_reintroduced_and_converted_list=[]
 
+                        estimate_evicted=0
+                        estimate_evicted_list=[]
+
                         batch_list=[]
 
                         for element in estimate_numerical_list:
                             cumulative_estimate_batch_level=[]
                         
                             numerical_estimate_list=element[0]
+                            numerical_estimate_list_eviction=element[2]
 
                             estimate_reintroduced+=numerical_estimate_list[1]
                             estimate_reintroduced_list.append(estimate_reintroduced)
@@ -1585,6 +1606,10 @@ class EntityResolver ():
                             estimate_reintroduced_and_converted+=numerical_estimate_list[0]
                             estimate_reintroduced_and_converted_list.append(estimate_reintroduced_and_converted)
                             cumulative_estimate_batch_level.append(estimate_reintroduced_and_converted)
+
+                            estimate_evicted+=numerical_estimate_list_eviction[1]
+                            estimate_evicted_list.append(estimate_evicted)
+                            cumulative_estimate_batch_level.append(estimate_evicted)
 
                             batch_list.append((key+batch_index))
 
