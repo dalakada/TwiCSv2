@@ -1570,16 +1570,23 @@ class EntityResolver ():
             if(self.counter==19):
                 print('print batchwise reintroduction estimates:')
                 # fig = plt.figure()
-                fig, axes = plt.subplots(nrows=1, ncols=1)
-                axes2 = axes.twinx()
-                # axes = fig.add_axes([1,0,19, 140])
-                axes.set_xticks(np.arange(1, 20, 1))
-                axes.set_yticks(np.arange(0, 150, 10))
-                axes2.set_yticks(np.arange(0, 75, 10))
+                # fig, axes = plt.subplots(nrows=1, ncols=1)
+                # axes2 = axes.twinx()
+                # # axes = fig.add_axes([1,0,19, 140])
+                # axes.set_xticks(np.arange(1, 20, 1))
+                # axes.set_yticks(np.arange(0, 75, 10))
+                # axes2.set_yticks(np.arange(0, 75, 10))
                 
                 for key in self.batchwise_reintroduction_eviction_estimates.keys():
                     
                     if(key<10):
+                        fig, axes = plt.subplots(nrows=1, ncols=1)
+                        axes2 = axes.twinx()
+                        # axes = fig.add_axes([1,0,19, 140])
+                        axes.set_xticks(np.arange(1, 20, 1))
+                        axes.set_yticks(np.arange(80, -10, 10))
+                        axes2.set_yticks(np.arange(-10, 80, 10))
+
                         batch_index=1
                         estimate_numerical_list= self.batchwise_reintroduction_eviction_estimates[key]
                         cumulative_estimate_list=[]
@@ -1622,14 +1629,20 @@ class EntityResolver ():
                         axes.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
                         axes.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv batch-'+str(key))
                         axes2.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
-                axes.invert_yaxis()
-                axes.set_ylabel('# of ambiguous candidates')
-                axes2.set_ylabel('# of ambiguous candidates')
-                axes.set_xlabel('batch-value')
-                lgd=axes.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 8}, borderaxespad=0.)
-                axes.set_title('Batch level candidate reintroduction and disambiguation estimates')
-                # plt.savefig('reintroduction-converted-estimates.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
-                plt.show()
+
+
+                        # axes.invert_yaxis()
+                        axes.set_ylim(80, -10)
+                        axes2.set_ylim(-10, 80)
+                        
+
+                        axes.set_ylabel('# of ambiguous candidates')
+                        axes2.set_ylabel('# of ambiguous candidates')
+                        axes.set_xlabel('batch-value')
+                        lgd=axes.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 8}, borderaxespad=0.)
+                        axes.set_title('Batch level candidate reintroduction and disambiguation estimates')
+                        # plt.savefig('reintroduction-converted-estimates.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
+                        plt.show()
 
             # print(self.arr1,self.arr2,self.arr3,self.arr4,self.arr5,self.arr6,self.arr7,self.arr8,self.arr9)
             # self.batch_specific_reintroduction_tuple_dict[self.counter]=internal_batch_level_dict
