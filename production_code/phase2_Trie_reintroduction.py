@@ -905,8 +905,8 @@ class EntityResolver ():
         phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
         df_holder.extend(df_holder_extracted)
 
-        # evicted_candidates=candidate_featureBase_DF[candidate_featureBase_DF['evictionFlag']==1].candidate.tolist()
-        # print('evicted candidates: ',evicted_candidates)
+        evicted_candidates=candidate_featureBase_DF[candidate_featureBase_DF['evictionFlag']==1].candidate.tolist()
+        print('evicted candidates: ',evicted_candidates)
 
         # for candidate in self.ambiguous_candidates_in_batch:
         #     if(int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate]['evictionFlag'])==0):
@@ -914,7 +914,7 @@ class EntityResolver ():
         self.ambiguous_candidates_in_batch= [candidate for candidate in self.ambiguous_candidates_in_batch if (int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate]['evictionFlag'])==0)]
         ambiguous_candidates_in_batch_w_Count=dict((x,self.ambiguous_candidates_in_batch.count(x)) for x in set(self.ambiguous_candidates_in_batch))
 
-        
+        converted_candidate_list=self.good_candidates+self.bad_candidates
         ambiguous_candidate_records_before_classification=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates))&(candidate_featureBase_DF['evictionFlag']==0)]
         print('printing here: ',len(candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]),len(ambiguous_candidate_records_before_classification))
         ambiguous_candidate_records_before_classification_grouped_df= ambiguous_candidate_records_before_classification.groupby('batch')
@@ -1065,7 +1065,11 @@ class EntityResolver ():
         entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]
         non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
         ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
+
         # print('columns: ',ambiguous_candidate_records.columns)
+        ambiguous_candidate_records_grouped_df= ambiguous_candidate_records.groupby('batch')
+        for key, item in ambiguous_candidate_records_grouped_df:
+            print('=>batch: ',key, len(ambiguous_candidate_records_grouped_df.get_group(key)))
 
 
         #single sketches per category
@@ -1217,12 +1221,12 @@ class EntityResolver ():
                         self.arr9_eviction[j]+=1
 
 
-            print(self.arr1_eviction,self.arr2_eviction,self.arr3_eviction,self.arr4_eviction,self.arr5_eviction,self.arr6_eviction,self.arr7_eviction,self.arr8_eviction,self.arr9_eviction)
+            # print(self.arr1_eviction,self.arr2_eviction,self.arr3_eviction,self.arr4_eviction,self.arr5_eviction,self.arr6_eviction,self.arr7_eviction,self.arr8_eviction,self.arr9_eviction)
 
             # arr1_eviction=[elem/((self.arr1_eviction.index(elem)*5)+10) for elem in self.arr1_eviction]
             arr1_eviction=[elem/(denominator_array[self.arr1_eviction.index(elem)]) for elem in self.arr1_eviction]
             self.bottom_m_precision_arr_single_sketch.append(arr1_eviction)
-            print('eviction ranking precision ent/non-ent single sketch: ', (self.bottom_m_precision_arr_single_sketch))
+            # print('eviction ranking precision ent/non-ent single sketch: ', (self.bottom_m_precision_arr_single_sketch))
             # arr1_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr1_eviction]
             # self.bottom_m_recall_arr_single_sketch.append(arr1_eviction)
             # print('eviction ranking recall ent/non-ent single sketch: ', (self.bottom_m_recall_arr_single_sketch))
@@ -1230,7 +1234,7 @@ class EntityResolver ():
             # arr2_eviction=[elem/((self.arr2_eviction.index(elem)*5)+10) for elem in self.arr2_eviction]
             arr2_eviction=[elem/(denominator_array[self.arr2_eviction.index(elem)]) for elem in self.arr2_eviction]
             self.bottom_m_precision_arr_multi_sketch_cosine.append(arr2_eviction)
-            print('eviction ranking precision ent/non-ent multi sketch cosine: ', (self.bottom_m_precision_arr_multi_sketch_cosine))
+            # print('eviction ranking precision ent/non-ent multi sketch cosine: ', (self.bottom_m_precision_arr_multi_sketch_cosine))
             # arr2_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr2_eviction]
             # self.bottom_m_recall_arr_multi_sketch_cosine.append(arr2_eviction)
             # print('eviction ranking recall ent/non-ent multi sketch cosine: ', (self.bottom_m_recall_arr_multi_sketch_cosine))
@@ -1238,7 +1242,7 @@ class EntityResolver ():
             # arr3_eviction=[elem/((self.arr3_eviction.index(elem)*5)+10) for elem in self.arr3_eviction]
             arr3_eviction=[elem/(denominator_array[self.arr3_eviction.index(elem)]) for elem in self.arr3_eviction]
             self.bottom_m_precision_arr_multi_sketch_euclidean.append(arr3_eviction)
-            print('eviction ranking precision ent/non-ent multi sketch euclidean: ', (self.bottom_m_precision_arr_multi_sketch_euclidean))
+            # print('eviction ranking precision ent/non-ent multi sketch euclidean: ', (self.bottom_m_precision_arr_multi_sketch_euclidean))
             # arr3_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr3_eviction]
             # self.bottom_m_recall_arr_multi_sketch_euclidean.append(arr3_eviction)
             # print('eviction ranking recall ent/non-ent multi sketch euclidean: ', (self.bottom_m_recall_arr_multi_sketch_euclidean))
@@ -1246,7 +1250,7 @@ class EntityResolver ():
             # arr4_eviction=[elem/((self.arr4_eviction.index(elem)*5)+10) for elem in self.arr4_eviction]
             arr4_eviction=[elem/(denominator_array[self.arr4_eviction.index(elem)]) for elem in self.arr4_eviction]
             self.bottom_m_precision_arr_multi_sketch_combined.append(arr4_eviction)
-            print('eviction ranking precision ent/non-ent multi sketch combined: ', (self.bottom_m_precision_arr_multi_sketch_combined))
+            # print('eviction ranking precision ent/non-ent multi sketch combined: ', (self.bottom_m_precision_arr_multi_sketch_combined))
             # arr4_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr4_eviction]
             # self.bottom_m_recall_arr_multi_sketch_combined.append(arr4_eviction)
             # print('eviction ranking recall ent/non-ent multi sketch combined: ', (self.bottom_m_recall_arr_multi_sketch_combined))
@@ -1254,7 +1258,7 @@ class EntityResolver ():
             # arr5_eviction=[elem/((self.arr5_eviction.index(elem)*5)+10) for elem in self.arr5_eviction]
             arr5_eviction=[elem/(denominator_array[self.arr5_eviction.index(elem)]) for elem in self.arr5_eviction]
             self.bottom_m_precision_arr_single_sketch_amb.append(arr5_eviction)
-            print('eviction ranking precision ambiguous single sketch: ', (self.bottom_m_precision_arr_single_sketch_amb))
+            # print('eviction ranking precision ambiguous single sketch: ', (self.bottom_m_precision_arr_single_sketch_amb))
             # arr5_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr5_eviction]
             # self.bottom_m_recall_arr_single_sketch_amb.append(arr5_eviction)
             # print('eviction ranking recall ambiguous single sketch: ', (self.bottom_m_recall_arr_single_sketch_amb))
@@ -1262,7 +1266,7 @@ class EntityResolver ():
             # arr6_eviction=[elem/((self.arr6_eviction.index(elem)*5)+10) for elem in self.arr6_eviction]
             arr6_eviction=[elem/(denominator_array[self.arr6_eviction.index(elem)]) for elem in self.arr6_eviction]
             self.bottom_m_precision_arr_multi_sketch_cosine_amb.append(arr6_eviction)
-            print('eviction ranking precision ambiguous multi sketch cosine: ', (self.bottom_m_precision_arr_multi_sketch_cosine_amb))
+            # print('eviction ranking precision ambiguous multi sketch cosine: ', (self.bottom_m_precision_arr_multi_sketch_cosine_amb))
             # arr6_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr6_eviction]
             # self.bottom_m_recall_arr_multi_sketch_cosine_amb.append(arr6_eviction)
             # print('eviction ranking recall ambiguous multi sketch cosine: ', (self.bottom_m_recall_arr_multi_sketch_cosine_amb))
@@ -1270,7 +1274,7 @@ class EntityResolver ():
             # arr7_eviction=[elem/((self.arr7_eviction.index(elem)*5)+10) for elem in self.arr7_eviction]
             arr7_eviction=[elem/(denominator_array[self.arr7_eviction.index(elem)]) for elem in self.arr7_eviction]
             self.bottom_m_precision_arr_multi_sketch_euclidean_amb.append(arr7_eviction)
-            print('eviction ranking precision ambiguous multi sketch euclidean: ', (self.bottom_m_precision_arr_multi_sketch_euclidean_amb))
+            # print('eviction ranking precision ambiguous multi sketch euclidean: ', (self.bottom_m_precision_arr_multi_sketch_euclidean_amb))
             # arr7_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr7_eviction]
             # self.bottom_m_recall_arr_multi_sketch_euclidean_amb.append(arr7_eviction)
             # print('eviction ranking recall ambiguous multi sketch euclidean: ', (self.bottom_m_recall_arr_multi_sketch_euclidean_amb))
@@ -1278,7 +1282,7 @@ class EntityResolver ():
             # arr8_eviction=[elem/((self.arr8_eviction.index(elem)*5)+10) for elem in self.arr8_eviction]
             arr8_eviction=[elem/(denominator_array[self.arr8_eviction.index(elem)]) for elem in self.arr8_eviction]
             self.bottom_m_precision_arr_multi_sketch_combined_amb.append(arr8_eviction)
-            print('eviction ranking precision ambiguous multi sketch combined: ', (self.bottom_m_precision_arr_multi_sketch_combined_amb))
+            # print('eviction ranking precision ambiguous multi sketch combined: ', (self.bottom_m_precision_arr_multi_sketch_combined_amb))
             # arr8_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr8_eviction]
             # self.bottom_m_recall_arr_multi_sketch_combined_amb.append(arr8_eviction)
             # print('eviction ranking recall ambiguous multi sketch combined: ', (self.bottom_m_recall_arr_multi_sketch_combined_amb))
@@ -1286,7 +1290,7 @@ class EntityResolver ():
             # arr9_eviction=[elem/((self.arr9_eviction.index(elem)*5)+10) for elem in self.arr9_eviction]
             arr9_eviction=[elem/(denominator_array[self.arr9_eviction.index(elem)]) for elem in self.arr9_eviction]
             self.bottom_m_precision_arr_all_sketch_combined.append(arr9_eviction)
-            print('eviction ranking precision all sketch combined: ', (self.bottom_m_precision_arr_all_sketch_combined))
+            # print('eviction ranking precision all sketch combined: ', (self.bottom_m_precision_arr_all_sketch_combined))
             # arr9_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr9_eviction]
             # self.bottom_m_recall_arr_all_sketch_combined.append(arr9_eviction)
             # print('eviction ranking recall all sketch combined: ', (self.bottom_m_recall_arr_all_sketch_combined))
@@ -1470,7 +1474,7 @@ class EntityResolver ():
                     else:
                         self.batch_specific_reintroduction_effectiveness+=1 #for first six batches since entry, reintroduce like baseline
 
-                    print('=>',min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]),self.batch_specific_reintroduction_effectiveness,self.baseline_effectiveness)
+                    # print('=>',min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]),self.batch_specific_reintroduction_effectiveness,self.baseline_effectiveness)
                     # # absolute top-k
                     # for k in range(10,35,5):
                     for k in range(20,45,5):
@@ -1717,19 +1721,19 @@ class EntityResolver ():
             self.top_k_effectiveness_arr_all_sketch_combined.append(arr9)
 
 
-            print('reintroduction effectiveness with batch specific top-k ',(self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
+            # print('reintroduction effectiveness with batch specific top-k ',(self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
 
-            print('reintroduction ranking effectiveness ent/non-ent single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
-            print('reintroduction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
-            print('reintroduction ranking effectiveness ent/non-ent multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean))
-            print('reintroduction combined ranking ent/non-ent  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined))
+            # print('reintroduction ranking effectiveness ent/non-ent single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
+            # print('reintroduction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
+            # print('reintroduction ranking effectiveness ent/non-ent multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean))
+            # print('reintroduction combined ranking ent/non-ent  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined))
 
-            print('reintroduction ranking effectiveness ambiguous single sketch: ', (self.top_k_effectiveness_arr_single_sketch_amb))
-            print('reintroduction ranking effectiveness ambiguous multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine_amb))
-            print('reintroduction ranking effectiveness ambiguous multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean_amb))
-            print('reintroduction combined ranking ambiguous  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined_amb))
+            # print('reintroduction ranking effectiveness ambiguous single sketch: ', (self.top_k_effectiveness_arr_single_sketch_amb))
+            # print('reintroduction ranking effectiveness ambiguous multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine_amb))
+            # print('reintroduction ranking effectiveness ambiguous multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean_amb))
+            # print('reintroduction combined ranking ambiguous  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined_amb))
 
-            print('reintroduction combined ranking all sketches effectiveness: ', (self.top_k_effectiveness_arr_all_sketch_combined))
+            # print('reintroduction combined ranking all sketches effectiveness: ', (self.top_k_effectiveness_arr_all_sketch_combined))
             # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
 
 
@@ -2687,6 +2691,7 @@ class EntityResolver ():
             self.good_candidates=[]
             self.bad_candidates=[]
             self.ambiguous_candidates=[]
+            self.evicted_candidates=[]
             self.ambiguous_candidates_transition_dict={}
             self.all_infrequent_candidates=[]
             self.entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]

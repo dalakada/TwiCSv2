@@ -58,7 +58,7 @@ total_time=0
 # /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
 tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 
-tweets_unpartitoned=tweets_unpartitoned[200000:400000:]
+tweets_unpartitoned=tweets_unpartitoned[400000:600000:]
 
 print("***",len(tweets_unpartitoned))
 print('Tweets are in memory...')
