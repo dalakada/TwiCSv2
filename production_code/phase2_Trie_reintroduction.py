@@ -915,6 +915,7 @@ class EntityResolver ():
         ambiguous_candidates_in_batch_w_Count=dict((x,self.ambiguous_candidates_in_batch.count(x)) for x in set(self.ambiguous_candidates_in_batch))
 
         converted_candidate_list=self.good_candidates+self.bad_candidates
+        infrequent_candidate_list=self.all_infrequent_candidates
 
         ambiguous_candidate_records_before_classification=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates))&(candidate_featureBase_DF['evictionFlag']==0)]
         print('printing here: ',len(candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]),len(ambiguous_candidate_records_before_classification))
@@ -1072,8 +1073,9 @@ class EntityResolver ():
         for key, item in ambiguous_candidate_records_grouped_df:
 
             ambiguous_candidate_records_grouped_df_key= ambiguous_candidate_records_grouped_df.get_group(key)
-            converted_to_ambiguous=[candidate if candidate in converted_candidate_list for candidate in ambiguous_candidate_records_grouped_df_key.candidate.tolist()]
-            print('=>batch: ',key, len(ambiguous_candidate_records_grouped_df_key), len(converted_to_ambiguous))
+            converted_to_ambiguous=[candidate for candidate in ambiguous_candidate_records_grouped_df_key.candidate.tolist() if candidate in converted_candidate_list]
+            infrequent_to_ambiguous=[candidate for candidate in ambiguous_candidate_records_grouped_df_key.candidate.tolist() if candidate in infrequent_candidate_list]
+            print('=>batch: ',key, len(ambiguous_candidate_records_grouped_df_key), len(converted_to_ambiguous), len(infrequent_to_ambiguous))
 
 
         #single sketches per category
