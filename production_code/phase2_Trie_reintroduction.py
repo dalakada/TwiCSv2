@@ -1089,6 +1089,8 @@ class EntityResolver ():
 
             if(((self.counter-key)>0)&((self.counter-key)<10)):
                 list_to_edit=self.all_estimates[key][(self.counter-key)]
+                list_to_edit[5]= len(ambiguous_candidate_records_grouped_df_key)
+                list_to_edit[3]= len(infrequent_to_ambiguous)
 
 
 
