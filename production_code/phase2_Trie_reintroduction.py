@@ -227,6 +227,7 @@ class EntityResolver ():
         self.batch_specific_eviction_tuple_dict={}
 
         self.batchwise_reintroduction_eviction_estimates={}
+        self.all_estimates={}
 
 
     def calculate_tp_fp_f1_generic(self,raw_tweets_for_others,state_of_art):
@@ -905,19 +906,19 @@ class EntityResolver ():
         phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
         df_holder.extend(df_holder_extracted)
 
-        evicted_candidates=candidate_featureBase_DF[candidate_featureBase_DF['evictionFlag']==1].candidate.tolist()
-        print('evicted candidates: ',evicted_candidates)
+        # evicted_candidates=candidate_featureBase_DF[candidate_featureBase_DF['evictionFlag']==1].candidate.tolist()
+        # print('evicted candidates: ',len(self.evicted_candidates))
 
         # for candidate in self.ambiguous_candidates_in_batch:
         #     if(int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate]['evictionFlag'])==0):
         #         print(candidate)
-        self.ambiguous_candidates_in_batch= [candidate for candidate in self.ambiguous_candidates_in_batch if (int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate]['evictionFlag'])==0)]
+        self.ambiguous_candidates_in_batch= [candidate for candidate in self.ambiguous_candidates_in_batch if (candidate not in self.evicted_candidates)]
         ambiguous_candidates_in_batch_w_Count=dict((x,self.ambiguous_candidates_in_batch.count(x)) for x in set(self.ambiguous_candidates_in_batch))
 
         converted_candidate_list=self.good_candidates+self.bad_candidates
         infrequent_candidate_list=self.all_infrequent_candidates
 
-        ambiguous_candidate_records_before_classification=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates))&(candidate_featureBase_DF['evictionFlag']==0)]
+        ambiguous_candidate_records_before_classification=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (not(candidate_featureBase_DF['candidate'].isin(self.evicted_candidates)))]
         print('printing here: ',len(candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]),len(ambiguous_candidate_records_before_classification))
         ambiguous_candidate_records_before_classification_grouped_df= ambiguous_candidate_records_before_classification.groupby('batch')
         # print(ambiguous_candidates_in_batch_w_Count)
@@ -931,6 +932,7 @@ class EntityResolver ():
         candidates_to_reintroduce_w_ranking=[]
         ambiguous_candidates_in_batch_freq_w_decay=[]
         self.batchwise_reintroduction_eviction_estimates[self.counter]=[[[0,0] for j in range(3)] for i in range(10)]
+        self.all_estimates[self.counter]=[[0,0,0,0,0,0,0] for i in range(10)]
         # print(self.batchwise_reintroduction_eviction_estimates[self.counter])
 
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
@@ -1068,14 +1070,26 @@ class EntityResolver ():
         non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
         ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
 
+        converted_candidate_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_turned_good+ambiguous_turned_bad)]
+        converted_candidate_records_grouped_df= converted_candidate_records.groupby('batch')
+        for key, item in converted_candidate_records_grouped_df:
+            converted_candidate_records_grouped_df_key= converted_candidate_records_grouped_df.get_group(key)
+            if(((self.counter-key)>0)&((self.counter-key)<10)):
+                list_to_edit=self.all_estimates[key][(self.counter-key)]
+                list_to_edit[0]=len(converted_candidate_records_grouped_df_key)
+                self.all_estimates[key][(self.counter-key)]=list_to_edit
+
         # print('columns: ',ambiguous_candidate_records.columns)
         ambiguous_candidate_records_grouped_df= ambiguous_candidate_records.groupby('batch')
         for key, item in ambiguous_candidate_records_grouped_df:
-
             ambiguous_candidate_records_grouped_df_key= ambiguous_candidate_records_grouped_df.get_group(key)
             converted_to_ambiguous=[candidate for candidate in ambiguous_candidate_records_grouped_df_key.candidate.tolist() if candidate in converted_candidate_list]
             infrequent_to_ambiguous=[candidate for candidate in ambiguous_candidate_records_grouped_df_key.candidate.tolist() if candidate in infrequent_candidate_list]
             print('=>batch: ',key, len(ambiguous_candidate_records_grouped_df_key), len(converted_to_ambiguous), len(infrequent_to_ambiguous))
+
+            if(((self.counter-key)>0)&((self.counter-key)<10)):
+                list_to_edit=self.all_estimates[key][(self.counter-key)]
+
 
 
         #single sketches per category
@@ -1306,7 +1320,7 @@ class EntityResolver ():
             ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
             ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
             ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
-            converted_candidate_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_turned_good+ambiguous_turned_bad)]
+            
             self.baseline_effectiveness+=len(converted_candidate_records)
 
             # # number of candidates from batch i going into the batch
@@ -1380,7 +1394,9 @@ class EntityResolver ():
             rank_dict_ordered_list_eviction_candidates=list(rank_dict_ordered_eviction_candidates.keys())
             real_eviction_cutoff= int(40/100*(len(ambiguous_candidate_records_before_classification)))
             rank_dict_ordered_list_eviction_candidates_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-real_eviction_cutoff):]
-            candidate_featureBase_DF['evictionFlag'][candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]=1
+            # candidate_featureBase_DF['evictionFlag'][candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]=1
+            self.evicted_candidates.extend(rank_dict_ordered_list_eviction_candidates_cutoff)
+
             rank_dict_eviction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]
             rank_dict_eviction_candidates_cutoff_records_grouped_df= rank_dict_eviction_candidates_cutoff_records.groupby('batch')
 
