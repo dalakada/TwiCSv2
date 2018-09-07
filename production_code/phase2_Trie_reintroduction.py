@@ -1074,7 +1074,8 @@ class EntityResolver ():
         entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]
         non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
         ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
-        infrequent_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.all_infrequent_candidates)]
+        # infrequent_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.all_infrequent_candidates)]
+        infrequent_candidate_records=all_infrequent
         converted_candidate_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_turned_good+ambiguous_turned_bad)]
 
         converted_candidate_records_grouped_df= converted_candidate_records.groupby('batch')
@@ -1082,6 +1083,7 @@ class EntityResolver ():
             converted_candidate_records_grouped_df_key= converted_candidate_records_grouped_df.get_group(key)
             if(((self.counter-key)>0)&((self.counter-key)<10)):
                 list_to_edit=self.all_estimates[key][(self.counter-key)]
+                print('checking here:', key,len(converted_candidate_records_grouped_df_key))
                 list_to_edit[0]=len(converted_candidate_records_grouped_df_key)
                 self.all_estimates[key][(self.counter-key)]=list_to_edit
 
@@ -1094,16 +1096,20 @@ class EntityResolver ():
             print('=>batch: ',key, len(ambiguous_candidate_records_grouped_df_key), len(converted_to_ambiguous), len(infrequent_to_ambiguous))
 
             if(((self.counter-key)>0)&((self.counter-key)<10)):
+                print('checking here:', key,len(converted_candidate_records_grouped_df_key), len(infrequent_to_ambiguous))
                 list_to_edit=self.all_estimates[key][(self.counter-key)]
                 list_to_edit[5]= len(ambiguous_candidate_records_grouped_df_key)
                 list_to_edit[3]= len(infrequent_to_ambiguous)
+                self.all_estimates[key][(self.counter-key)]=list_to_edit
 
 
+        print('# of infrequent candidates: ',len(all_infrequent), len(infrequent_candidate_records))
         infrequent_candidate_records_grouped_df= infrequent_candidate_records.groupby('batch')
         for key, item in infrequent_candidate_records_grouped_df:
             infrequent_candidate_records_grouped_df_key= infrequent_candidate_records_grouped_df.get_group(key)
             if(((self.counter-key)>0)&((self.counter-key)<10)):
                 list_to_edit=self.all_estimates[key][(self.counter-key)]
+                print('checking here:', key,len(infrequent_candidate_records_grouped_df_key))
                 list_to_edit[6]=len(infrequent_candidate_records_grouped_df_key)
                 self.all_estimates[key][(self.counter-key)]=list_to_edit
 
@@ -1637,7 +1643,7 @@ class EntityResolver ():
                 # print('+====================================+')
             # print(self.batchwise_reintroduction_eviction_estimates)
             if(self.counter==19):
-                print('print batchwise reintroduction estimates:')
+                
                 # fig = plt.figure()
                 # fig, axes = plt.subplots(nrows=1, ncols=1)
                 # axes2 = axes.twinx()
@@ -1645,7 +1651,16 @@ class EntityResolver ():
                 # axes.set_xticks(np.arange(1, 20, 1))
                 # axes.set_yticks(np.arange(0, 75, 10))
                 # axes2.set_yticks(np.arange(0, 75, 10))
-                
+                print('print batchwise all estimates:')
+                for key in self.all_estimates.keys():
+                    if(key<10):
+                        print(key,'---------------------------')
+                        batch_index=1
+                        for estimate_list in self.all_estimates[key]:
+                            print((key+batch_index), estimate_list)
+                            batch_index+=1
+
+                print('print batchwise reintroduction estimates:')
                 for key in self.batchwise_reintroduction_eviction_estimates.keys():
                     
                     if(key<10):
