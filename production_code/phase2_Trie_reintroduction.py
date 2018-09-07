@@ -907,7 +907,7 @@ class EntityResolver ():
         df_holder.extend(df_holder_extracted)
 
         # evicted_candidates=candidate_featureBase_DF[candidate_featureBase_DF['evictionFlag']==1].candidate.tolist()
-        # print('evicted candidates: ',len(self.evicted_candidates))
+        print('evicted candidates: ',len(self.evicted_candidates))
 
         # for candidate in self.ambiguous_candidates_in_batch:
         #     if(int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate]['evictionFlag'])==0):
@@ -918,7 +918,9 @@ class EntityResolver ():
         converted_candidate_list=self.good_candidates+self.bad_candidates
         infrequent_candidate_list=self.all_infrequent_candidates
 
-        ambiguous_candidate_records_before_classification=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (not(candidate_featureBase_DF['candidate'].isin(self.evicted_candidates)))]
+        ambiguous_candidate_list_before_classification=[candidate for candidate in self.ambiguous_candidates if (candidate not in self.evicted_candidates)]
+        ambiguous_candidate_records_before_classification=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(ambiguous_candidate_list_before_classification))]
+        print('printing here: ',len(self.ambiguous_candidates),len(self.evicted_candidates),len(ambiguous_candidate_list_before_classification))
         print('printing here: ',len(candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]),len(ambiguous_candidate_records_before_classification))
         ambiguous_candidate_records_before_classification_grouped_df= ambiguous_candidate_records_before_classification.groupby('batch')
         # print(ambiguous_candidates_in_batch_w_Count)
@@ -1065,12 +1067,16 @@ class EntityResolver ():
         self.ambiguous_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"].candidate.tolist()
         self.bad_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"].candidate.tolist()
         self.all_infrequent_candidates=all_infrequent.candidate.tolist()
+
+        ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
+        ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
         
         entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]
         non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
         ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
-
+        infrequent_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.all_infrequent_candidates)]
         converted_candidate_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_turned_good+ambiguous_turned_bad)]
+
         converted_candidate_records_grouped_df= converted_candidate_records.groupby('batch')
         for key, item in converted_candidate_records_grouped_df:
             converted_candidate_records_grouped_df_key= converted_candidate_records_grouped_df.get_group(key)
@@ -1092,6 +1098,14 @@ class EntityResolver ():
                 list_to_edit[5]= len(ambiguous_candidate_records_grouped_df_key)
                 list_to_edit[3]= len(infrequent_to_ambiguous)
 
+
+        infrequent_candidate_records_grouped_df= infrequent_candidate_records.groupby('batch')
+        for key, item in infrequent_candidate_records_grouped_df:
+            infrequent_candidate_records_grouped_df_key= infrequent_candidate_records_grouped_df.get_group(key)
+            if(((self.counter-key)>0)&((self.counter-key)<10)):
+                list_to_edit=self.all_estimates[key][(self.counter-key)]
+                list_to_edit[6]=len(infrequent_candidate_records_grouped_df_key)
+                self.all_estimates[key][(self.counter-key)]=list_to_edit
 
 
         #single sketches per category
@@ -1149,6 +1163,15 @@ class EntityResolver ():
         all_ambiguous_remaining_ambiguous = candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (candidate_featureBase_DF['candidate'].isin(ambiguous_candidate_records_before_classification.candidate.tolist()))].candidate.tolist()
         # new_ambiguous_candidates = candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (candidate_featureBase_DF['batch']==self.counter)].candidate.tolist()
         print('print length of all_ambiguous_remaining_ambiguous', len(all_ambiguous_remaining_ambiguous))
+
+        all_ambiguous_remaining_ambiguous_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(all_ambiguous_remaining_ambiguous)]
+        all_ambiguous_remaining_ambiguous_records_grouped_df= all_ambiguous_remaining_ambiguous_records.groupby('batch')
+        for key, item in all_ambiguous_remaining_ambiguous_records_grouped_df:
+            all_ambiguous_remaining_ambiguous_records_grouped_df_key= all_ambiguous_remaining_ambiguous_records_grouped_df.get_group(key)
+            if(((self.counter-key)>0)&((self.counter-key)<10)):
+                list_to_edit=self.all_estimates[key][(self.counter-key)]
+                list_to_edit[2]=len(all_ambiguous_remaining_ambiguous_records_grouped_df_key)
+                self.all_estimates[key][(self.counter-key)]=list_to_edit
 
         if(self.counter>1):
 
@@ -1390,6 +1413,15 @@ class EntityResolver ():
             rank_dict_reintroduction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_reintroduction_candidates_cutoff)]
             rank_dict_reintroduction_candidates_cutoff_records_grouped_df= rank_dict_reintroduction_candidates_cutoff_records.groupby('batch')
 
+
+            for key, item in rank_dict_reintroduction_candidates_cutoff_records_grouped_df:
+                rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key= rank_dict_reintroduction_candidates_cutoff_records_grouped_df.get_group(key)
+                if(((self.counter-key)>0)&((self.counter-key)<10)):
+                    list_to_edit=self.all_estimates[key][(self.counter-key)]
+                    list_to_edit[1]=len(rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key)
+                    self.all_estimates[key][(self.counter-key)]=list_to_edit
+
+
             #get the list of bottom m percent evicted candidates here
             rank_dict_eviction_candidates={candidate: max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in list(ranking_score_dict_eviction.keys())}
             rank_dict_ordered_eviction_candidates=OrderedDict(sorted(rank_dict_eviction_candidates.items(), key=lambda x: x[1]))
@@ -1402,8 +1434,16 @@ class EntityResolver ():
             rank_dict_eviction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]
             rank_dict_eviction_candidates_cutoff_records_grouped_df= rank_dict_eviction_candidates_cutoff_records.groupby('batch')
 
-            converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
+            for key, item in rank_dict_eviction_candidates_cutoff_records_grouped_df:
+                rank_dict_eviction_candidates_cutoff_records_grouped_df_key= rank_dict_eviction_candidates_cutoff_records_grouped_df.get_group(key)
+                if(((self.counter-key)>0)&((self.counter-key)<10)):
+                    list_to_edit=self.all_estimates[key][(self.counter-key)]
+                    list_to_edit[4]=len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)
+                    self.all_estimates[key][(self.counter-key)]=list_to_edit
 
+
+
+            converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
             for key, item in converted_candidates_grouped_df:
 
                 print('=>batch: ',key)
