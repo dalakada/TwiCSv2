@@ -1081,11 +1081,11 @@ class EntityResolver ():
         converted_candidate_records_grouped_df= converted_candidate_records.groupby('batch')
         for key, item in converted_candidate_records_grouped_df:
             converted_candidate_records_grouped_df_key= converted_candidate_records_grouped_df.get_group(key)
-            if(((self.counter-key)>0)&((self.counter-key)<10)):
-                list_to_edit=self.all_estimates[key][(self.counter-key)]
-                print('checking here:', key,len(converted_candidate_records_grouped_df_key))
+            if(((self.counter-key)>0)&((self.counter-key)<=10)):
+                list_to_edit=self.all_estimates[key][(self.counter-key)-1]
+                # print('checking here:', key,len(converted_candidate_records_grouped_df_key))
                 list_to_edit[0]=len(converted_candidate_records_grouped_df_key)
-                self.all_estimates[key][(self.counter-key)]=list_to_edit
+                self.all_estimates[key][(self.counter-key)-1]=list_to_edit
 
         # print('columns: ',ambiguous_candidate_records.columns)
         ambiguous_candidate_records_grouped_df= ambiguous_candidate_records.groupby('batch')
@@ -1095,23 +1095,23 @@ class EntityResolver ():
             infrequent_to_ambiguous=[candidate for candidate in ambiguous_candidate_records_grouped_df_key.candidate.tolist() if candidate in infrequent_candidate_list]
             print('=>batch: ',key, len(ambiguous_candidate_records_grouped_df_key), len(converted_to_ambiguous), len(infrequent_to_ambiguous))
 
-            if(((self.counter-key)>0)&((self.counter-key)<10)):
-                print('checking here:', key,len(converted_candidate_records_grouped_df_key), len(infrequent_to_ambiguous))
-                list_to_edit=self.all_estimates[key][(self.counter-key)]
+            if(((self.counter-key)>0)&((self.counter-key)<=10)):
+                # print('checking here:', key,len(ambiguous_candidate_records_grouped_df_key), len(infrequent_to_ambiguous))
+                list_to_edit=self.all_estimates[key][(self.counter-key)-1]
                 list_to_edit[5]= len(ambiguous_candidate_records_grouped_df_key)
                 list_to_edit[3]= len(infrequent_to_ambiguous)
-                self.all_estimates[key][(self.counter-key)]=list_to_edit
+                self.all_estimates[key][(self.counter-key)-1]=list_to_edit
 
 
         print('# of infrequent candidates: ',len(all_infrequent), len(infrequent_candidate_records))
         infrequent_candidate_records_grouped_df= infrequent_candidate_records.groupby('batch')
         for key, item in infrequent_candidate_records_grouped_df:
             infrequent_candidate_records_grouped_df_key= infrequent_candidate_records_grouped_df.get_group(key)
-            if(((self.counter-key)>0)&((self.counter-key)<10)):
-                list_to_edit=self.all_estimates[key][(self.counter-key)]
-                print('checking here:', key,len(infrequent_candidate_records_grouped_df_key))
+            if(((self.counter-key)>0)&((self.counter-key)<=10)):
+                list_to_edit=self.all_estimates[key][(self.counter-key)-1]
+                # print('checking here:', key,len(infrequent_candidate_records_grouped_df_key))
                 list_to_edit[6]=len(infrequent_candidate_records_grouped_df_key)
-                self.all_estimates[key][(self.counter-key)]=list_to_edit
+                self.all_estimates[key][(self.counter-key)-1]=list_to_edit
 
 
         #single sketches per category
@@ -1174,10 +1174,10 @@ class EntityResolver ():
         all_ambiguous_remaining_ambiguous_records_grouped_df= all_ambiguous_remaining_ambiguous_records.groupby('batch')
         for key, item in all_ambiguous_remaining_ambiguous_records_grouped_df:
             all_ambiguous_remaining_ambiguous_records_grouped_df_key= all_ambiguous_remaining_ambiguous_records_grouped_df.get_group(key)
-            if(((self.counter-key)>0)&((self.counter-key)<10)):
-                list_to_edit=self.all_estimates[key][(self.counter-key)]
+            if(((self.counter-key)>0)&((self.counter-key)<=10)):
+                list_to_edit=self.all_estimates[key][(self.counter-key)-1]
                 list_to_edit[2]=len(all_ambiguous_remaining_ambiguous_records_grouped_df_key)
-                self.all_estimates[key][(self.counter-key)]=list_to_edit
+                self.all_estimates[key][(self.counter-key)-1]=list_to_edit
 
         if(self.counter>1):
 
@@ -1422,10 +1422,10 @@ class EntityResolver ():
 
             for key, item in rank_dict_reintroduction_candidates_cutoff_records_grouped_df:
                 rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key= rank_dict_reintroduction_candidates_cutoff_records_grouped_df.get_group(key)
-                if(((self.counter-key)>0)&((self.counter-key)<10)):
-                    list_to_edit=self.all_estimates[key][(self.counter-key)]
+                if(((self.counter-key)>0)&((self.counter-key)<=10)):
+                    list_to_edit=self.all_estimates[key][(self.counter-key)-1]
                     list_to_edit[1]=len(rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key)
-                    self.all_estimates[key][(self.counter-key)]=list_to_edit
+                    self.all_estimates[key][(self.counter-key)-1]=list_to_edit
 
 
             #get the list of bottom m percent evicted candidates here
@@ -1442,10 +1442,10 @@ class EntityResolver ():
 
             for key, item in rank_dict_eviction_candidates_cutoff_records_grouped_df:
                 rank_dict_eviction_candidates_cutoff_records_grouped_df_key= rank_dict_eviction_candidates_cutoff_records_grouped_df.get_group(key)
-                if(((self.counter-key)>0)&((self.counter-key)<10)):
-                    list_to_edit=self.all_estimates[key][(self.counter-key)]
+                if(((self.counter-key)>0)&((self.counter-key)<=10)):
+                    list_to_edit=self.all_estimates[key][(self.counter-key)-1]
                     list_to_edit[4]=len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)
-                    self.all_estimates[key][(self.counter-key)]=list_to_edit
+                    self.all_estimates[key][(self.counter-key)-1]=list_to_edit
 
 
 
@@ -1620,7 +1620,7 @@ class EntityResolver ():
 
                     # new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
 
-                if((self.counter-key-1)<10):
+                if((self.counter-key-1)<=10):
                     list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
                     tuple_to_edit=list_of_lists[self.counter-key-1]
                     #to record the reintroduction precision for this batch
