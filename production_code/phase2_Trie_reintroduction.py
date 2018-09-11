@@ -1420,6 +1420,9 @@ class EntityResolver ():
             rank_dict_reintroduction_candidates_cutoff_records_grouped_df= rank_dict_reintroduction_candidates_cutoff_records.groupby('batch')
 
 
+            converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
+
+
             for key, item in rank_dict_reintroduction_candidates_cutoff_records_grouped_df:
                 rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key= rank_dict_reintroduction_candidates_cutoff_records_grouped_df.get_group(key)
                 if(((self.counter-key)>0)&((self.counter-key)<=10)):
@@ -1447,9 +1450,7 @@ class EntityResolver ():
                     list_to_edit[4]=len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)
                     self.all_estimates[key][(self.counter-key)-1]=list_to_edit
 
-
-
-            converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
+            
             for key, item in converted_candidates_grouped_df:
 
                 print('=>batch: ',key)
