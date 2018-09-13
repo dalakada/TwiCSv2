@@ -1444,11 +1444,18 @@ class EntityResolver ():
             rank_dict_ordered_list_eviction_candidates=list(rank_dict_ordered_eviction_candidates.keys())
             real_eviction_cutoff= int(40/100*(len(ambiguous_candidate_records_before_classification)))
             rank_dict_ordered_list_eviction_candidates_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-real_eviction_cutoff):]
+
+            not_evicted_candidates=[candidate for candidate in rank_dict_ordered_list_eviction_candidates if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
             # candidate_featureBase_DF['evictionFlag'][candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]=1
             self.evicted_candidates.extend(rank_dict_ordered_list_eviction_candidates_cutoff)
 
             rank_dict_eviction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]
             rank_dict_eviction_candidates_cutoff_records_grouped_df= rank_dict_eviction_candidates_cutoff_records.groupby('batch')
+
+            ambiguous_candidates_in_batch_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
+            ambiguous_candidates_not_in_batch_post_eviction = [candidate for candidate in ambiguous_candidates_not_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
+
+            print('tallying here: ', len(not_evicted_candidates), len(ambiguous_candidates_in_batch_post_eviction), len(ambiguous_candidates_not_in_batch_post_eviction))
 
             for key, item in rank_dict_eviction_candidates_cutoff_records_grouped_df:
                 rank_dict_eviction_candidates_cutoff_records_grouped_df_key= rank_dict_eviction_candidates_cutoff_records_grouped_df.get_group(key)
