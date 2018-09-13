@@ -1635,7 +1635,8 @@ class EntityResolver ():
 
                     # new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
 
-                if((self.counter-key-1)<=10):
+                if((self.counter-key)<=10):
+                    print('error check: ',key)
                     list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
                     tuple_to_edit=list_of_lists[self.counter-key-1]
                     #to record the reintroduction precision for this batch
