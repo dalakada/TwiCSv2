@@ -854,10 +854,10 @@ class EntityResolver ():
         if(predict_y>1):
             predict_y =1
 
-        print(entry_batch,':',tuple_list)
-        print(tuple_to_append)
+        # print(entry_batch,':',tuple_list)
+        # print(tuple_to_append)
         ret_value= math.ceil(predict_y*test_point_tuple[2])
-        print('predicted value for reintroduction:', predict_y, ret_value)
+        # print('predicted value for reintroduction:', predict_y, ret_value)
 
         return ret_value
 
@@ -885,10 +885,10 @@ class EntityResolver ():
         if(predict_y<0):
             predict_y =0
 
-        print(entry_batch,':',tuple_list)
-        print(tuple_to_append)
+        # print(entry_batch,':',tuple_list)
+        # print(tuple_to_append)
         ret_value= math.ceil(predict_y*test_point_tuple[1])
-        print('predicted value for eviction:', predict_y, ret_value)
+        # print('predicted value for eviction:', predict_y, ret_value)
 
         return ret_value
 
@@ -907,7 +907,7 @@ class EntityResolver ():
         df_holder.extend(df_holder_extracted)
 
         # evicted_candidates=candidate_featureBase_DF[candidate_featureBase_DF['evictionFlag']==1].candidate.tolist()
-        print('evicted candidates: ',len(self.evicted_candidates))
+        # print('evicted candidates: ',len(self.evicted_candidates))
 
         # for candidate in self.ambiguous_candidates_in_batch:
         #     if(int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate]['evictionFlag'])==0):
@@ -922,6 +922,8 @@ class EntityResolver ():
         ambiguous_candidate_records_before_classification=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(ambiguous_candidate_list_before_classification))]
         # print('printing here: ',len(self.ambiguous_candidates),len(self.evicted_candidates),len(ambiguous_candidate_list_before_classification))
         
+        print('starting estimate of ambiguous candidate: ',len(ambiguous_candidate_list_before_classification))
+
         ambiguous_candidate_records_before_classification_grouped_df= ambiguous_candidate_records_before_classification.groupby('batch')
         # print(ambiguous_candidates_in_batch_w_Count)
         self.ambiguous_candidates_in_batch=list(set(self.ambiguous_candidates_in_batch))
@@ -1457,6 +1459,24 @@ class EntityResolver ():
 
             print('tallying here: ', len(not_evicted_candidates), len(ambiguous_candidates_in_batch_post_eviction), len(ambiguous_candidates_not_in_batch_post_eviction))
 
+            #review this block
+            rank_dict_reintroduction_candidates_post_eviction={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidates_in_batch_post_eviction}
+            rank_dict_ordered_reintroduction_candidates_post_eviction=OrderedDict(sorted(rank_dict_reintroduction_candidates_post_eviction.items(), key=lambda x: x[1]))
+            rank_dict_ordered_list_reintroduction_candidates_post_eviction=list(rank_dict_ordered_reintroduction_candidates_post_eviction.keys())
+            real_cutoff= int(40/100*(len(ambiguous_candidates_in_batch_post_eviction)))
+            rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction=rank_dict_ordered_list_reintroduction_candidates_post_eviction[0:real_cutoff]
+
+            not_reintroduced= rank_dict_ordered_list_reintroduction_candidates_post_eviction[real_cutoff:]
+
+            # reintroduced_to_converted=[candidate for candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction if (candidate in self.good_candidates+self.bad_candidates)]
+            reintroduced_to_ambiguous = [candidate for candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction if (candidate in self.ambiguous_candidates)]
+
+            infrequent_to_ambiguous= [candidate for candidate in infrequent_candidate_list if (candidate in self.ambiguous_candidates)]
+
+            converted_to_ambiguous= [candidate for candidate in converted_candidate_list if (candidate in self.ambiguous_candidates)]
+
+            new_ambiguous_candidates= candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (candidate_featureBase_DF['batch']==self.counter)].candidate.tolist()
+
             for key, item in rank_dict_eviction_candidates_cutoff_records_grouped_df:
                 rank_dict_eviction_candidates_cutoff_records_grouped_df_key= rank_dict_eviction_candidates_cutoff_records_grouped_df.get_group(key)
                 if(((self.counter-key)>0)&((self.counter-key)<=10)):
@@ -1464,7 +1484,9 @@ class EntityResolver ():
                     list_to_edit[4]=len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)
                     self.all_estimates[key][(self.counter-key)-1]=list_to_edit
 
-            
+            print('final numbers: ', len(not_reintroduced), len(reintroduced_to_ambiguous), len(infrequent_to_ambiguous), len(converted_to_ambiguous), len(ambiguous_candidates_not_in_batch_post_eviction), len(new_ambiguous_candidates))
+            print('final tally: ', (len(not_reintroduced)+len(reintroduced_to_ambiguous)+len(infrequent_to_ambiguous)+len(converted_to_ambiguous)+len(ambiguous_candidates_not_in_batch_post_eviction)+ len(new_ambiguous_candidates)))
+
             for key, item in converted_candidates_grouped_df:
 
                 # print('=>batch: ',key)
@@ -1553,7 +1575,7 @@ class EntityResolver ():
 
 
                     if((self.counter-key)>9):
-                        print('batch_specific_k_value: ',batch_specific_k_value,len(converted_candidates_grouped_df_key))
+                        # print('batch_specific_k_value: ',batch_specific_k_value,len(converted_candidates_grouped_df_key))
                         if(rank_dict_ordered_list.index(candidate)<batch_specific_k_value):
                             self.batch_specific_reintroduction_effectiveness+=1
                     else:
@@ -1667,16 +1689,17 @@ class EntityResolver ():
                 # axes.set_xticks(np.arange(1, 20, 1))
                 # axes.set_yticks(np.arange(0, 75, 10))
                 # axes2.set_yticks(np.arange(0, 75, 10))
-                print('print batchwise all estimates:')
-                for key in self.all_estimates.keys():
-                    if(key<10):
-                        print(key,'---------------------------')
-                        batch_index=1
-                        for estimate_list in self.all_estimates[key]:
-                            print((key+batch_index), estimate_list)
-                            batch_index+=1
 
-                print('print batchwise reintroduction estimates:')
+                # print('print batchwise all estimates:')
+                # for key in self.all_estimates.keys():
+                #     if(key<10):
+                #         print(key,'---------------------------')
+                #         batch_index=1
+                #         for estimate_list in self.all_estimates[key]:
+                #             print((key+batch_index), estimate_list)
+                #             batch_index+=1
+
+                # print('print batchwise reintroduction estimates:')
                 for key in self.batchwise_reintroduction_eviction_estimates.keys():
                     
                     if(key<10):
@@ -1729,24 +1752,24 @@ class EntityResolver ():
                             batch_index+=1
 
 
-                        print(key,candidates_from_batch, ambiguous_candidates_from_batch, '---------------->>>')
+                        # print(key,candidates_from_batch, ambiguous_candidates_from_batch, '---------------->>>')
 
-                        print(estimate_reintroduced_list)
+                        # print(estimate_reintroduced_list)
                         estimate_reintroduced_list=[float(element/candidates_from_batch) for element in estimate_reintroduced_list]
-                        print(estimate_reintroduced_list)
-                        print('===============')
+                        # print(estimate_reintroduced_list)
+                        # print('===============')
                         # axes.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
 
-                        print(estimate_reintroduced_and_converted_list)
+                        # print(estimate_reintroduced_and_converted_list)
                         estimate_reintroduced_and_converted_list=[float(element/candidates_from_batch) for element in estimate_reintroduced_and_converted_list]
-                        print(estimate_reintroduced_and_converted_list)
-                        print('===============')
+                        # print(estimate_reintroduced_and_converted_list)
+                        # print('===============')
                         # axes.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv batch-'+str(key))
 
-                        print(estimate_evicted_list)
+                        # print(estimate_evicted_list)
                         estimate_evicted_list=[float(element/candidates_from_batch) for element in estimate_evicted_list]
-                        print(estimate_evicted_list)
-                        print('===============')
+                        # print(estimate_evicted_list)
+                        # print('===============')
                         # axes2.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
 
 
@@ -1765,7 +1788,7 @@ class EntityResolver ():
 
             # print(self.arr1,self.arr2,self.arr3,self.arr4,self.arr5,self.arr6,self.arr7,self.arr8,self.arr9)
             # self.batch_specific_reintroduction_tuple_dict[self.counter]=internal_batch_level_dict
-            print('+====================================+')
+            # print('+====================================+')
 
             
             self.batch_specific_eviction_effectiveness=0
