@@ -229,7 +229,7 @@ class EntityResolver ():
         self.batchwise_reintroduction_eviction_estimates={}
         self.all_estimates={}
 
-        self.just_checking={}
+        # self.just_checking={}
 
 
     def calculate_tp_fp_f1_generic(self,raw_tweets_for_others,state_of_art):
@@ -926,19 +926,19 @@ class EntityResolver ():
         
         print('starting estimate of ambiguous candidate: ',len(ambiguous_candidate_list_before_classification))
 
-        over_estimate=[candidate for candidate in self.just_checking.keys() if (candidate not in ambiguous_candidate_list_before_classification)]
-        # over_estimate_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(over_estimate)]
-        print('just checking')
-        for candidate in over_estimate:
-            print(candidate, self.just_checking[candidate],end=' ')
-            if(candidate in self.good_candidates):
-                print('good')
-            if(candidate in self.bad_candidates):
-                print('bad')
-            if(candidate in self.ambiguous_candidates):
-                print('ambiguous',(candidate in self.evicted_candidates))
-            if(candidate in self.all_infrequent_candidates):
-                print('infrequent')
+        # over_estimate=[candidate for candidate in self.just_checking.keys() if (candidate not in ambiguous_candidate_list_before_classification)]
+        # # over_estimate_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(over_estimate)]
+        # print('just checking')
+        # for candidate in over_estimate:
+        #     print(candidate, self.just_checking[candidate],end=' ')
+        #     if(candidate in self.good_candidates):
+        #         print('good')
+        #     if(candidate in self.bad_candidates):
+        #         print('bad')
+        #     if(candidate in self.ambiguous_candidates):
+        #         print('ambiguous',(candidate in self.evicted_candidates))
+        #     if(candidate in self.all_infrequent_candidates):
+        #         print('infrequent')
 
 
         ambiguous_candidate_records_before_classification_grouped_df= ambiguous_candidate_records_before_classification.groupby('batch')
@@ -1190,7 +1190,7 @@ class EntityResolver ():
 
         all_ambiguous_remaining_ambiguous = candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (candidate_featureBase_DF['candidate'].isin(ambiguous_candidate_records_before_classification.candidate.tolist()))].candidate.tolist()
         # new_ambiguous_candidates = candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (candidate_featureBase_DF['batch']==self.counter)].candidate.tolist()
-        print('print length of all_ambiguous_remaining_ambiguous', len(all_ambiguous_remaining_ambiguous))
+        # print('print length of all_ambiguous_remaining_ambiguous', len(all_ambiguous_remaining_ambiguous))
 
         all_ambiguous_remaining_ambiguous_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(all_ambiguous_remaining_ambiguous)]
         all_ambiguous_remaining_ambiguous_records_grouped_df= all_ambiguous_remaining_ambiguous_records.groupby('batch')
@@ -1226,7 +1226,7 @@ class EntityResolver ():
 
                 j=int((m-10)/5)
 
-                print(j,real_m)
+                # print(j,real_m)
 
                 # entity/non-entity sketches
                 qualifying_candidates= [candidate for candidate in candidates_to_reintroduce_eviction if candidate in all_ambiguous_remaining_ambiguous]
@@ -1484,13 +1484,14 @@ class EntityResolver ():
             rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction=rank_dict_ordered_list_reintroduction_candidates_post_eviction[0:real_cutoff]
 
             not_reintroduced= rank_dict_ordered_list_reintroduction_candidates_post_eviction[real_cutoff:]
-
+            not_reintroduced= [candidate for candidate in not_reintroduced if (candidate in self.ambiguous_candidates)]
+            print('reintroduced: ',(len(rank_dict_ordered_list_reintroduction_candidates_post_eviction)-len(not_reintroduced)),'not reintroduced: ', len(not_reintroduced))
             # reintroduced_to_converted=[candidate for candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction if (candidate in self.good_candidates+self.bad_candidates)]
             reintroduced_to_ambiguous = [candidate for candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction if (candidate in self.ambiguous_candidates)]
 
             infrequent_to_ambiguous= [candidate for candidate in infrequent_candidate_list if (candidate in self.ambiguous_candidates)]
 
-            converted_to_ambiguous= [candidate for candidate in converted_candidate_list if (candidate in self.ambiguous_candidates)]
+            converted_to_ambiguous= [candidate for candidate in converted_candidate_list if ((candidate in self.ambiguous_candidates)&(candidate not in self.evicted_candidates))]
 
             new_ambiguous_candidates= candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (candidate_featureBase_DF['batch']==self.counter)].candidate.tolist()
 
@@ -1501,24 +1502,34 @@ class EntityResolver ():
                     list_to_edit[4]=len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)
                     self.all_estimates[key][(self.counter-key)-1]=list_to_edit
 
-            self.just_checking={}
-            for candidate in not_reintroduced+reintroduced_to_ambiguous+infrequent_to_ambiguous+converted_to_ambiguous+ambiguous_candidates_not_in_batch_post_eviction+new_ambiguous_candidates:
-                if candidate in not_reintroduced:
-                    self.just_checking[candidate]='not_reintroduced'
-                if candidate in reintroduced_to_ambiguous:
-                    self.just_checking[candidate]='reintroduced_to_ambiguous'
-                if candidate in infrequent_to_ambiguous:
-                    self.just_checking[candidate]='infrequent_to_ambiguous'
-                if candidate in converted_to_ambiguous:
-                    self.just_checking[candidate]='converted_to_ambiguous'
-                if candidate in ambiguous_candidates_not_in_batch_post_eviction:
-                    self.just_checking[candidate]='ambiguous_candidates_not_in_batch_post_eviction'
-                if candidate in new_ambiguous_candidates:
-                    self.just_checking[candidate]='new_ambiguous_candidates'
+            # self.just_checking={}
+            # for candidate in not_reintroduced+reintroduced_to_ambiguous+infrequent_to_ambiguous+converted_to_ambiguous+ambiguous_candidates_not_in_batch_post_eviction+new_ambiguous_candidates:
+            #     if candidate in not_reintroduced:
+            #         self.just_checking[candidate]='not_reintroduced'
+            #     if candidate in reintroduced_to_ambiguous:
+            #         self.just_checking[candidate]='reintroduced_to_ambiguous'
+            #     if candidate in infrequent_to_ambiguous:
+            #         self.just_checking[candidate]='infrequent_to_ambiguous'
+            #     if candidate in converted_to_ambiguous:
+            #         self.just_checking[candidate]='converted_to_ambiguous'
+            #     if candidate in ambiguous_candidates_not_in_batch_post_eviction:
+            #         self.just_checking[candidate]='ambiguous_candidates_not_in_batch_post_eviction'
+            #     if candidate in new_ambiguous_candidates:
+            #         self.just_checking[candidate]='new_ambiguous_candidates'
 
 
-            print('final numbers: ', len(not_reintroduced), len(reintroduced_to_ambiguous), len(infrequent_to_ambiguous), len(converted_to_ambiguous), len(ambiguous_candidates_not_in_batch_post_eviction), len(new_ambiguous_candidates))
-            print('final tally: ', (len(not_reintroduced)+len(reintroduced_to_ambiguous)+len(infrequent_to_ambiguous)+len(converted_to_ambiguous)+len(ambiguous_candidates_not_in_batch_post_eviction)+ len(new_ambiguous_candidates)))
+            # print('final estimates:','not_reintroduced', 'reintroduced_to_ambiguous', 'infrequent_to_ambiguous', 'converted_to_ambiguous', 'ambiguous_candidates_not_in_batch_post_eviction', 'new_ambiguous_candidates')
+            print('')
+            print('final estimates: ')
+            print('not_reintroduced: ',len(not_reintroduced))
+            print('reintroduced_to_ambiguous: ',len(reintroduced_to_ambiguous)) 
+            print('infrequent_to_ambiguous: ',len(infrequent_to_ambiguous)) 
+            print('converted_to_ambiguous: ',len(converted_to_ambiguous)) 
+            print('ambiguous_candidates_not_in_batch_post_eviction: ',len(ambiguous_candidates_not_in_batch_post_eviction)) 
+            print('new_ambiguous_candidates: ',len(new_ambiguous_candidates))
+            print('')
+
+            print('ending estimate of ambiguous candidate: ', (len(not_reintroduced)+len(reintroduced_to_ambiguous)+len(infrequent_to_ambiguous)+len(converted_to_ambiguous)+len(ambiguous_candidates_not_in_batch_post_eviction)+ len(new_ambiguous_candidates)))
 
             for key, item in converted_candidates_grouped_df:
 
@@ -1691,7 +1702,7 @@ class EntityResolver ():
                     # new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
 
                 if((self.counter-key)<=10):
-                    print('error check: ',key)
+                    # print('error check: ',key)
                     list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
                     tuple_to_edit=list_of_lists[self.counter-key-1]
                     #to record the reintroduction precision for this batch

@@ -1,111 +1,649 @@
-   C, R, AA, IA, EV, TA, AllIf
-0 ---------------------------
-1 [8, 6, 23, 10, 12, 40, 1346]
-2 [2, 7, 27, 5, 11, 46, 1313]
-3 [3, 6, 21, 2, 8, 43, 1294]
-4 [2, 4, 14, 1, 7, 46, 1274]
-5 [1, 2, 13, 4, 3, 49, 1257]
-6 [1, 5, 16, 1, 5, 54, 1247]
-7 [3, 3, 15, 3, 4, 54, 1236]
-8 [2, 5, 16, 0, 4, 49, 1231]
-9 [3, 3, 9, 0, 0, 47, 1229]
-10 [0, 3, 10, 1, 1, 50, 1220]
-1 ---------------------------
-2 [2, 1, 1, 2, 1, 3, 412]
-3 [1, 2, 2, 2, 1, 4, 397]
-4 [1, 1, 2, 2, 0, 7, 385]
-5 [2, 3, 4, 0, 3, 6, 380]
-6 [0, 1, 3, 1, 1, 8, 372]
-7 [0, 2, 4, 0, 2, 10, 366]
-8 [0, 1, 4, 0, 1, 8, 360]
-9 [0, 1, 3, 1, 3, 9, 354]
-10 [1, 0, 0, 0, 0, 6, 347]
-11 [0, 0, 0, 1, 0, 7, 344]
-2 ---------------------------
-3 [1, 0, 2, 1, 3, 3, 347]
-4 [0, 0, 1, 0, 0, 5, 337]
-5 [1, 0, 2, 3, 0, 8, 328]
-6 [0, 0, 6, 1, 4, 9, 319]
-7 [1, 1, 2, 0, 0, 8, 315]
-8 [0, 0, 3, 1, 1, 9, 311]
-9 [0, 0, 3, 0, 1, 9, 303]
-10 [0, 0, 2, 0, 0, 10, 300]
-11 [0, 0, 3, 1, 1, 12, 294]
-12 [0, 1, 4, 1, 1, 14, 289]
-3 ---------------------------
-4 [1, 1, 3, 5, 2, 8, 334]
-5 [1, 3, 5, 1, 4, 7, 319]
-6 [0, 1, 3, 3, 1, 10, 309]
-7 [0, 1, 5, 0, 2, 11, 304]
-8 [1, 1, 3, 1, 1, 10, 296]
-9 [0, 1, 3, 2, 1, 12, 289]
-10 [1, 2, 3, 0, 1, 10, 287]
-11 [0, 1, 2, 1, 0, 12, 285]
-12 [0, 1, 3, 0, 1, 13, 284]
-13 [0, 1, 3, 0, 0, 11, 280]
-4 ---------------------------
-5 [0, 0, 2, 0, 2, 2, 380]
-6 [0, 0, 0, 1, 0, 3, 371]
-7 [0, 0, 1, 0, 1, 4, 366]
-8 [0, 1, 1, 1, 1, 5, 360]
-9 [0, 0, 1, 1, 1, 6, 355]
-10 [0, 0, 1, 0, 1, 6, 347]
-11 [0, 0, 1, 2, 1, 8, 340]
-12 [0, 0, 2, 0, 2, 8, 335]
-13 [0, 0, 0, 0, 0, 10, 335]
-14 [1, 0, 1, 0, 2, 9, 333]
-5 ---------------------------
-6 [0, 0, 2, 1, 1, 3, 266]
-7 [1, 0, 1, 0, 1, 2, 262]
-8 [0, 0, 0, 0, 0, 3, 260]
-9 [0, 0, 1, 0, 1, 3, 256]
-10 [0, 0, 0, 0, 0, 3, 251]
-11 [0, 0, 0, 0, 0, 3, 246]
-12 [0, 0, 0, 0, 0, 3, 244]
-13 [0, 0, 0, 0, 0, 3, 242]
-14 [0, 0, 0, 1, 0, 4, 237]
-15 [1, 1, 0, 0, 0, 3, 236]
-6 ---------------------------
-7 [0, 2, 6, 3, 5, 9, 265]
-8 [0, 0, 4, 0, 3, 8, 259]
-9 [0, 0, 1, 0, 0, 8, 256]
-10 [1, 0, 0, 0, 0, 7, 251]
-11 [0, 0, 0, 0, 0, 8, 249]
-12 [0, 0, 1, 1, 1, 8, 246]
-13 [0, 0, 1, 0, 1, 8, 243]
-14 [0, 0, 0, 1, 0, 9, 238]
-15 [0, 0, 1, 0, 0, 9, 235]
-16 [0, 0, 1, 0, 0, 9, 232]
-7 ---------------------------
-8 [0, 2, 8, 1, 5, 9, 315]
-9 [0, 1, 4, 1, 2, 10, 308]
-10 [0, 2, 3, 1, 1, 12, 301]
-11 [2, 2, 2, 0, 1, 10, 300]
-12 [0, 1, 1, 2, 0, 12, 297]
-13 [1, 1, 2, 1, 1, 11, 294]
-14 [0, 1, 3, 0, 2, 11, 293]
-15 [0, 1, 1, 0, 0, 11, 289]
-16 [0, 1, 1, 0, 0, 11, 287]
-17 [0, 0, 1, 0, 0, 10, 286]
-8 ---------------------------
-9 [0, 0, 3, 1, 3, 4, 241]
-10 [1, 0, 0, 0, 0, 2, 238]
-11 [0, 0, 0, 0, 0, 2, 235]
-12 [0, 0, 0, 1, 0, 3, 234]
-13 [0, 0, 1, 0, 1, 3, 232]
-14 [0, 0, 0, 0, 0, 3, 227]
-15 [0, 0, 0, 0, 0, 3, 227]
-16 [0, 0, 0, 0, 0, 3, 226]
-17 [0, 0, 0, 1, 0, 4, 225]
-18 [0, 1, 1, 0, 1, 4, 224]
-9 ---------------------------
-10 [1, 1, 7, 0, 8, 7, 254]
-11 [0, 0, 0, 1, 0, 8, 248]
-12 [0, 0, 1, 1, 1, 11, 246]
-13 [1, 1, 2, 0, 2, 9, 244]
-14 [0, 0, 0, 0, 0, 10, 242]
-15 [0, 0, 1, 0, 1, 10, 241]
-16 [0, 0, 0, 1, 0, 11, 238]
-17 [0, 0, 1, 0, 0, 10, 237]
-18 [0, 0, 1, 0, 0, 11, 237]
-19 [0, 0, 2, 0, 1, 11, 235]
+*** 200000
+Tweets are in memory...
+hello
+run:  0
+Phase I extracting now
+7.259416580200195 7.259416580200195
+15376
+0   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  0
+printing here:  0 0 0
+ambiguous_candidates_in_batch:  0
+-0.0795411448380227
+reintroduction_threshold: 0.0
+good:  106 10941
+ambiguous:  31 31 1931
+bad:  217 15969
+infrequent:  1412 2775
+12483 2893 0
+6.995844841003418 14.255261421203613
+0   Consumed
+**********************************************************
+Phase I extracting now
+7.979819059371948 22.23508048057556
+16056
+1   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  31
+printing here:  31 16 15
+incomplete tweets in batch:  2893
+=> 679 2214
+ambiguous_candidates_in_batch:  16
+-0.1115740621737005
+reintroduction_threshold: 0.0
+good:  148 25056
+ambiguous:  44 44 2808
+bad:  321 44109
+infrequent:  1782 3593
+tallying here:  19 10 9
+reintroduced:  8 not reintroduced:  2
+
+final estimates: 
+not_reintroduced:  2
+reintroduced_to_ambiguous:  1
+infrequent_to_ambiguous:  10
+converted_to_ambiguous:  7
+ambiguous_candidates_not_in_batch_post_eviction:  9
+new_ambiguous_candidates:  3
+
+ending estimate of ambiguous candidate:  32
+no batch qualifies for batch specific eviction
+26755 2463 2214
+8.499532461166382 30.734612941741943
+1   Consumed
+**********************************************************
+Phase I extracting now
+8.287060737609863 39.02167367935181
+17502
+2   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  32
+printing here:  32 22 10
+incomplete tweets in batch:  4677
+=> 797 3880
+ambiguous_candidates_in_batch:  22
+-0.10882274441472027
+reintroduction_threshold: 0.0
+good:  183 39953
+ambiguous:  53 53 4377
+bad:  373 70443
+infrequent:  2094 4212
+tallying here:  20 12 8
+reintroduced:  5 not reintroduced:  7
+
+final estimates: 
+not_reintroduced:  7
+reintroduced_to_ambiguous:  2
+infrequent_to_ambiguous:  8
+converted_to_ambiguous:  3
+ambiguous_candidates_not_in_batch_post_eviction:  8
+new_ambiguous_candidates:  3
+
+ending estimate of ambiguous candidate:  31
+no batch qualifies for batch specific eviction
+42281 2773 3880
+9.245623588562012 48.26729726791382
+2   Consumed
+**********************************************************
+Phase I extracting now
+8.012221574783325 56.279518842697144
+18403
+3   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  31
+printing here:  31 22 9
+incomplete tweets in batch:  6653
+=> 1113 5540
+ambiguous_candidates_in_batch:  22
+-0.10394855220647485
+reintroduction_threshold: 0.0
+good:  208 55949
+ambiguous:  57 57 5400
+bad:  430 97439
+infrequent:  2400 4923
+tallying here:  19 11 8
+reintroduced:  6 not reintroduced:  5
+
+final estimates: 
+not_reintroduced:  5
+reintroduced_to_ambiguous:  1
+infrequent_to_ambiguous:  6
+converted_to_ambiguous:  3
+ambiguous_candidates_not_in_batch_post_eviction:  8
+new_ambiguous_candidates:  4
+
+ending estimate of ambiguous candidate:  27
+no batch qualifies for batch specific eviction
+58959 2838 5540
+10.007952451705933 66.28747129440308
+3   Consumed
+**********************************************************
+Phase I extracting now
+8.070741891860962 74.35821318626404
+16815
+4   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  27
+printing here:  27 19 8
+incomplete tweets in batch:  8378
+=> 574 7804
+ambiguous_candidates_in_batch:  19
+-0.10183737078855346
+reintroduction_threshold: 0.0
+good:  237 70949
+ambiguous:  70 70 8980
+bad:  496 125349
+infrequent:  2721 5571
+tallying here:  17 10 7
+reintroduced:  6 not reintroduced:  4
+
+final estimates: 
+not_reintroduced:  4
+reintroduced_to_ambiguous:  3
+infrequent_to_ambiguous:  8
+converted_to_ambiguous:  10
+ambiguous_candidates_not_in_batch_post_eviction:  7
+new_ambiguous_candidates:  2
+
+ending estimate of ambiguous candidate:  34
+no batch qualifies for batch specific eviction
+73956 2392 7804
+10.247578144073486 84.60579133033752
+4   Consumed
+**********************************************************
+Phase I extracting now
+8.1228768825531 92.72866821289062
+17296
+5   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  34
+printing here:  34 21 13
+incomplete tweets in batch:  10196
+=> 327 9869
+ambiguous_candidates_in_batch:  21
+-0.10065370750692788
+reintroduction_threshold: 0.0
+good:  265 86494
+ambiguous:  77 77 10605
+bad:  545 155399
+infrequent:  2943 6010
+tallying here:  21 10 11
+reintroduced:  6 not reintroduced:  4
+
+final estimates: 
+not_reintroduced:  4
+reintroduced_to_ambiguous:  4
+infrequent_to_ambiguous:  8
+converted_to_ambiguous:  5
+ambiguous_candidates_not_in_batch_post_eviction:  11
+new_ambiguous_candidates:  2
+
+ending estimate of ambiguous candidate:  34
+no batch qualifies for batch specific eviction
+89191 2388 9869
+10.498821258544922 103.22748947143555
+5   Consumed
+**********************************************************
+Phase I extracting now
+8.262086153030396 111.48957562446594
+17372
+6   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  34
+printing here:  34 21 13
+incomplete tweets in batch:  12257
+=> 307 11950
+ambiguous_candidates_in_batch:  21
+-0.0989395441727922
+reintroduction_threshold: 0.0
+good:  284 103082
+ambiguous:  98 98 12237
+bad:  600 184708
+infrequent:  3166 6602
+tallying here:  21 11 10
+reintroduced:  4 not reintroduced:  7
+
+final estimates: 
+not_reintroduced:  7
+reintroduced_to_ambiguous:  3
+infrequent_to_ambiguous:  8
+converted_to_ambiguous:  9
+ambiguous_candidates_not_in_batch_post_eviction:  10
+new_ambiguous_candidates:  6
+
+ending estimate of ambiguous candidate:  43
+no batch qualifies for batch specific eviction
+104622 2248 11950
+10.95327639579773 122.44285202026367
+6   Consumed
+**********************************************************
+Phase I extracting now
+8.271242380142212 130.71409440040588
+17214
+7   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  43
+printing here:  43 26 17
+incomplete tweets in batch:  14198
+=> 483 13715
+ambiguous_candidates_in_batch:  26
+-0.09615749231146194
+reintroduction_threshold: 0.0
+good:  315 120083
+ambiguous:  111 111 14276
+bad:  645 213622
+infrequent:  3441 7136
+tallying here:  26 13 13
+reintroduced:  7 not reintroduced:  6
+
+final estimates: 
+not_reintroduced:  6
+reintroduced_to_ambiguous:  3
+infrequent_to_ambiguous:  6
+converted_to_ambiguous:  7
+ambiguous_candidates_not_in_batch_post_eviction:  13
+new_ambiguous_candidates:  8
+
+ending estimate of ambiguous candidate:  43
+no batch qualifies for batch specific eviction
+119980 2339 13715
+11.514938354492188 142.22903275489807
+7   Consumed
+**********************************************************
+Phase I extracting now
+8.222149133682251 150.45118188858032
+18138
+8   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  43
+printing here:  43 28 15
+incomplete tweets in batch:  16054
+=> 417 15637
+ambiguous_candidates_in_batch:  28
+-0.09614214168420776
+reintroduction_threshold: 0.0
+good:  335 139408
+ambiguous:  106 106 14837
+bad:  695 244940
+infrequent:  3641 7574
+tallying here:  26 15 11
+reintroduced:  8 not reintroduced:  7
+
+final estimates: 
+not_reintroduced:  7
+reintroduced_to_ambiguous:  4
+infrequent_to_ambiguous:  4
+converted_to_ambiguous:  1
+ambiguous_candidates_not_in_batch_post_eviction:  11
+new_ambiguous_candidates:  3
+
+ending estimate of ambiguous candidate:  30
+no batch qualifies for batch specific eviction
+136218 2317 15637
+12.581575870513916 163.03275775909424
+8   Consumed
+**********************************************************
+Phase I extracting now
+8.520188331604004 171.55294609069824
+19228
+9   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  30
+printing here:  30 17 13
+incomplete tweets in batch:  17954
+=> 328 17626
+ambiguous_candidates_in_batch:  17
+-0.09494961513565155
+reintroduction_threshold: 0.0
+good:  356 157428
+ambiguous:  118 118 16868
+bad:  732 277375
+infrequent:  3857 8072
+tallying here:  18 8 10
+reintroduced:  5 not reintroduced:  3
+
+final estimates: 
+not_reintroduced:  3
+reintroduced_to_ambiguous:  2
+infrequent_to_ambiguous:  6
+converted_to_ambiguous:  1
+ambiguous_candidates_not_in_batch_post_eviction:  10
+new_ambiguous_candidates:  8
+
+ending estimate of ambiguous candidate:  30
+no batch qualifies for batch specific eviction
+153535 2239 17626
+13.421693801879883 184.97463989257812
+9   Consumed
+**********************************************************
+Phase I extracting now
+8.706295013427734 193.68093490600586
+19105
+10   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  30
+printing here:  30 19 11
+incomplete tweets in batch:  19865
+=> 179 19686
+ambiguous_candidates_in_batch:  19
+-0.0938750875490879
+reintroduction_threshold: 0.0
+good:  380 173935
+ambiguous:  119 119 19000
+bad:  798 312932
+infrequent:  4075 8513
+tallying here:  18 10 8
+reintroduced:  7 not reintroduced:  3
+
+final estimates: 
+not_reintroduced:  3
+reintroduced_to_ambiguous:  3
+infrequent_to_ambiguous:  2
+converted_to_ambiguous:  4
+ambiguous_candidates_not_in_batch_post_eviction:  8
+new_ambiguous_candidates:  5
+
+ending estimate of ambiguous candidate:  25
+eviction effectiveness with batch specific bottom m value:  0.0
+170879 1940 19686
+14.178699493408203 207.85963439941406
+10   Consumed
+**********************************************************
+Phase I extracting now
+8.775475978851318 216.63511037826538
+18897
+11   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  25
+printing here:  25 10 15
+incomplete tweets in batch:  21626
+=> 104 21522
+ambiguous_candidates_in_batch:  10
+-0.09353210042815323
+reintroduction_threshold: 0.0
+good:  397 189707
+ambiguous:  133 133 22988
+bad:  839 348520
+infrequent:  4282 8928
+tallying here:  15 6 9
+reintroduced:  3 not reintroduced:  3
+
+final estimates: 
+not_reintroduced:  3
+reintroduced_to_ambiguous:  1
+infrequent_to_ambiguous:  8
+converted_to_ambiguous:  5
+ambiguous_candidates_not_in_batch_post_eviction:  9
+new_ambiguous_candidates:  1
+
+ending estimate of ambiguous candidate:  27
+eviction effectiveness with batch specific bottom m value:  0.0
+187739 2141 21522
+14.662715196609497 231.29782557487488
+11   Consumed
+**********************************************************
+Phase I extracting now
+8.620572090148926 239.9183976650238
+18554
+12   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  27
+printing here:  27 10 17
+incomplete tweets in batch:  23663
+=> 486 23177
+ambiguous_candidates_in_batch:  10
+-0.09305558514132636
+reintroduction_threshold: 0.0
+good:  417 205232
+ambiguous:  149 149 26727
+bad:  879 383436
+infrequent:  4458 9275
+tallying here:  17 6 11
+reintroduced:  4 not reintroduced:  2
+
+final estimates: 
+not_reintroduced:  2
+reintroduced_to_ambiguous:  2
+infrequent_to_ambiguous:  8
+converted_to_ambiguous:  5
+ambiguous_candidates_not_in_batch_post_eviction:  11
+new_ambiguous_candidates:  4
+
+ending estimate of ambiguous candidate:  32
+eviction effectiveness with batch specific bottom m value:  0.0
+204193 2586 23177
+14.924369096755981 254.84276676177979
+12   Consumed
+**********************************************************
+Phase I extracting now
+8.60738730430603 263.4501540660858
+18382
+13   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  32
+printing here:  32 16 16
+incomplete tweets in batch:  25763
+=> 230 25533
+ambiguous_candidates_in_batch:  16
+-0.09289288421811155
+reintroduction_threshold: 0.0
+good:  432 220840
+ambiguous:  150 150 28880
+bad:  915 421260
+infrequent:  4634 9726
+tallying here:  20 10 10
+reintroduced:  6 not reintroduced:  4
+
+final estimates: 
+not_reintroduced:  4
+reintroduced_to_ambiguous:  4
+infrequent_to_ambiguous:  2
+converted_to_ambiguous:  5
+ambiguous_candidates_not_in_batch_post_eviction:  10
+new_ambiguous_candidates:  4
+
+ending estimate of ambiguous candidate:  29
+eviction effectiveness with batch specific bottom m value:  0.0
+220608 2197 25533
+15.276863098144531 278.72701716423035
+13   Consumed
+**********************************************************
+Phase I extracting now
+8.47151255607605 287.1985297203064
+17504
+14   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  29
+printing here:  29 18 11
+incomplete tweets in batch:  27730
+=> 289 27441
+ambiguous_candidates_in_batch:  18
+-0.09233045212620547
+reintroduction_threshold: 0.0
+good:  450 236452
+ambiguous:  164 164 32020
+bad:  938 457856
+infrequent:  4821 10033
+tallying here:  18 9 9
+reintroduced:  3 not reintroduced:  6
+
+final estimates: 
+not_reintroduced:  6
+reintroduced_to_ambiguous:  3
+infrequent_to_ambiguous:  6
+converted_to_ambiguous:  7
+ambiguous_candidates_not_in_batch_post_eviction:  9
+new_ambiguous_candidates:  1
+
+ending estimate of ambiguous candidate:  32
+eviction effectiveness with batch specific bottom m value:  0.0
+235860 2541 27441
+15.621727228164673 302.82025694847107
+14   Consumed
+**********************************************************
+Phase I extracting now
+8.292607545852661 311.11286449432373
+17123
+15   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  32
+printing here:  32 17 15
+incomplete tweets in batch:  29982
+=> 313 29669
+ambiguous_candidates_in_batch:  17
+-0.09177362782693946
+reintroduction_threshold: 0.0
+good:  471 252098
+ambiguous:  165 165 26366
+bad:  978 502780
+infrequent:  4989 10330
+tallying here:  20 9 11
+reintroduced:  5 not reintroduced:  4
+
+final estimates: 
+not_reintroduced:  4
+reintroduced_to_ambiguous:  3
+infrequent_to_ambiguous:  4
+converted_to_ambiguous:  3
+ambiguous_candidates_not_in_batch_post_eviction:  11
+new_ambiguous_candidates:  0
+
+ending estimate of ambiguous candidate:  25
+eviction effectiveness with batch specific bottom m value:  0.0
+251032 2264 29669
+15.880774736404419 326.99363923072815
+15   Consumed
+**********************************************************
+Phase I extracting now
+6.736988067626953 333.7306272983551
+14993
+16   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  25
+printing here:  25 9 16
+incomplete tweets in batch:  31933
+=> 265 31668
+ambiguous_candidates_in_batch:  9
+-0.09255936702186734
+reintroduction_threshold: 0.0
+good:  510 259516
+ambiguous:  177 177 27935
+bad:  1049 535783
+infrequent:  5338 10958
+tallying here:  15 6 9
+reintroduced:  2 not reintroduced:  4
+
+final estimates: 
+not_reintroduced:  4
+reintroduced_to_ambiguous:  2
+infrequent_to_ambiguous:  7
+converted_to_ambiguous:  2
+ambiguous_candidates_not_in_batch_post_eviction:  9
+new_ambiguous_candidates:  8
+
+ending estimate of ambiguous candidate:  32
+eviction effectiveness with batch specific bottom m value:  0.0
+263607 2683 31668
+15.210683822631836 348.94131112098694
+16   Consumed
+**********************************************************
+Phase I extracting now
+7.232547283172607 356.17385840415955
+16551
+17   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  32
+printing here:  32 14 18
+incomplete tweets in batch:  34351
+=> 1587 32764
+ambiguous_candidates_in_batch:  14
+-0.09477349619245849
+reintroduction_threshold: 0.0
+good:  530 268115
+ambiguous:  181 181 25704
+bad:  1089 574138
+infrequent:  5608 11551
+tallying here:  20 4 16
+reintroduced:  2 not reintroduced:  2
+
+final estimates: 
+not_reintroduced:  2
+reintroduced_to_ambiguous:  0
+infrequent_to_ambiguous:  8
+converted_to_ambiguous:  3
+ambiguous_candidates_not_in_batch_post_eviction:  16
+new_ambiguous_candidates:  4
+
+ending estimate of ambiguous candidate:  33
+eviction effectiveness with batch specific bottom m value:  0.0
+280482 1263 32764
+17.152194261550903 373.32605266571045
+17   Consumed
+**********************************************************
+Phase I extracting now
+7.245589017868042 380.5716416835785
+18255
+18   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  33
+printing here:  33 14 19
+incomplete tweets in batch:  34027
+=> 231 33796
+ambiguous_candidates_in_batch:  14
+-0.09722069089992975
+reintroduction_threshold: 0.0
+good:  569 272609
+ambiguous:  189 189 28892
+bad:  1113 610591
+infrequent:  5782 11906
+tallying here:  20 3 17
+reintroduced:  2 not reintroduced:  1
+
+final estimates: 
+not_reintroduced:  1
+reintroduced_to_ambiguous:  0
+infrequent_to_ambiguous:  4
+converted_to_ambiguous:  8
+ambiguous_candidates_not_in_batch_post_eviction:  17
+new_ambiguous_candidates:  3
+
+ending estimate of ambiguous candidate:  33
+eviction effectiveness with batch specific bottom m value:  0.0
+296571 2397 33796
+17.055888175964355 397.62752985954285
+18   Consumed
+**********************************************************
+Phase I extracting now
+6.822350740432739 404.4498805999756
+17720
+19   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  33
+printing here:  33 14 19
+incomplete tweets in batch:  36193
+=> 1714 34479
+ambiguous_candidates_in_batch:  14
+-0.09879513924651878
+reintroduction_threshold: 0.0
+good:  591 283207
+ambiguous:  195 195 26239
+bad:  1143 645640
+infrequent:  6030 12371
+tallying here:  20 4 16
+reintroduced:  3 not reintroduced:  1
+
+final estimates: 
+not_reintroduced:  1
+reintroduced_to_ambiguous:  0
+infrequent_to_ambiguous:  7
+converted_to_ambiguous:  2
+ambiguous_candidates_not_in_batch_post_eviction:  16
+new_ambiguous_candidates:  2
+
+ending estimate of ambiguous candidate:  28
+eviction effectiveness with batch specific bottom m value:  0.0
+313987 2018 34479
+18.15082335472107 422.60070395469666
+19   Consumed
+**********************************************************
