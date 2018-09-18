@@ -1482,6 +1482,8 @@ class EntityResolver ():
             rank_dict_ordered_list_reintroduction_candidates_post_eviction=list(rank_dict_ordered_reintroduction_candidates_post_eviction.keys())
             real_cutoff= int(40/100*(len(ambiguous_candidates_in_batch_post_eviction)))
             rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction=rank_dict_ordered_list_reintroduction_candidates_post_eviction[0:real_cutoff]
+            # rank_dict_reintroduction_candidates_cutoff_records_post_eviction=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction)]
+            # rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df= rank_dict_reintroduction_candidates_cutoff_records_post_eviction.groupby('batch')
 
             not_reintroduced= rank_dict_ordered_list_reintroduction_candidates_post_eviction[real_cutoff:]
             not_reintroduced= [candidate for candidate in not_reintroduced if (candidate in self.ambiguous_candidates)]
@@ -1796,24 +1798,24 @@ class EntityResolver ():
                             batch_index+=1
 
 
-                        # print(key,candidates_from_batch, ambiguous_candidates_from_batch, '---------------->>>')
+                        print(key,candidates_from_batch, ambiguous_candidates_from_batch, '---------------->>>')
 
-                        # print(estimate_reintroduced_list)
+                        print('estimate_reintroduced_list: ', estimate_reintroduced_list)
                         estimate_reintroduced_list=[float(element/candidates_from_batch) for element in estimate_reintroduced_list]
                         # print(estimate_reintroduced_list)
                         # print('===============')
                         # axes.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
 
-                        # print(estimate_reintroduced_and_converted_list)
+                        print('estimate_reintroduced_and_converted_list: ', estimate_reintroduced_and_converted_list)
                         estimate_reintroduced_and_converted_list=[float(element/candidates_from_batch) for element in estimate_reintroduced_and_converted_list]
                         # print(estimate_reintroduced_and_converted_list)
                         # print('===============')
                         # axes.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv batch-'+str(key))
 
-                        # print(estimate_evicted_list)
+                        print('estimate_evicted_list: ', estimate_evicted_list)
                         estimate_evicted_list=[float(element/candidates_from_batch) for element in estimate_evicted_list]
                         # print(estimate_evicted_list)
-                        # print('===============')
+                        print('===============')
                         # axes2.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
 
 
