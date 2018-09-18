@@ -1482,8 +1482,8 @@ class EntityResolver ():
             rank_dict_ordered_list_reintroduction_candidates_post_eviction=list(rank_dict_ordered_reintroduction_candidates_post_eviction.keys())
             real_cutoff= int(40/100*(len(ambiguous_candidates_in_batch_post_eviction)))
             rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction=rank_dict_ordered_list_reintroduction_candidates_post_eviction[0:real_cutoff]
-            # rank_dict_reintroduction_candidates_cutoff_records_post_eviction=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction)]
-            # rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df= rank_dict_reintroduction_candidates_cutoff_records_post_eviction.groupby('batch')
+            rank_dict_reintroduction_candidates_cutoff_records_post_eviction=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction)]
+            rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df= rank_dict_reintroduction_candidates_cutoff_records_post_eviction.groupby('batch')
 
             not_reintroduced= rank_dict_ordered_list_reintroduction_candidates_post_eviction[real_cutoff:]
             not_reintroduced= [candidate for candidate in not_reintroduced if (candidate in self.ambiguous_candidates)]
@@ -1546,6 +1546,12 @@ class EntityResolver ():
 
                 if key in rank_dict_reintroduction_candidates_cutoff_records_grouped_df.groups.keys():
                     rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key = rank_dict_reintroduction_candidates_cutoff_records_grouped_df.get_group(key)
+
+
+                #altered reintroduction estimates
+                for key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
+                    rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key=rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.get_group(key)
+
 
                 if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
                     rank_dict_eviction_candidates_cutoff_records_grouped_df_key = rank_dict_eviction_candidates_cutoff_records_grouped_df.get_group(key)
