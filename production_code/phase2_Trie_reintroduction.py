@@ -922,6 +922,7 @@ class EntityResolver ():
 
         ambiguous_candidate_list_before_classification=[candidate for candidate in self.ambiguous_candidates if (candidate not in self.evicted_candidates)]
         ambiguous_candidate_records_before_classification=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(ambiguous_candidate_list_before_classification))]
+
         # print('printing here: ',len(self.ambiguous_candidates),len(self.evicted_candidates),len(ambiguous_candidate_list_before_classification))
         
         print('starting estimate of ambiguous candidate: ',len(ambiguous_candidate_list_before_classification))
@@ -1468,6 +1469,8 @@ class EntityResolver ():
             # candidate_featureBase_DF['evictionFlag'][candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]=1
             self.evicted_candidates.extend(rank_dict_ordered_list_eviction_candidates_cutoff)
 
+            print('evicted: ', len(rank_dict_ordered_list_eviction_candidates_cutoff), len(self.evicted_candidates))
+
             rank_dict_eviction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]
             rank_dict_eviction_candidates_cutoff_records_grouped_df= rank_dict_eviction_candidates_cutoff_records.groupby('batch')
 
@@ -1486,8 +1489,9 @@ class EntityResolver ():
             rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df= rank_dict_reintroduction_candidates_cutoff_records_post_eviction.groupby('batch')
 
             not_reintroduced= rank_dict_ordered_list_reintroduction_candidates_post_eviction[real_cutoff:]
+            print('not_reintroduced: ',len(not_reintroduced))
             not_reintroduced= [candidate for candidate in not_reintroduced if (candidate in self.ambiguous_candidates)]
-            print('reintroduced: ',(len(rank_dict_ordered_list_reintroduction_candidates_post_eviction)-len(not_reintroduced)),'not reintroduced: ', len(not_reintroduced))
+            print('reintroduced: ',(len(rank_dict_ordered_list_reintroduction_candidates_post_eviction)-len(not_reintroduced)),len(rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction),'not reintroduced: ', len(not_reintroduced))
             # reintroduced_to_converted=[candidate for candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction if (candidate in self.good_candidates+self.bad_candidates)]
             reintroduced_to_ambiguous = [candidate for candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction if (candidate in self.ambiguous_candidates)]
 
@@ -1533,6 +1537,8 @@ class EntityResolver ():
 
             print('ending estimate of ambiguous candidate: ', (len(not_reintroduced)+len(reintroduced_to_ambiguous)+len(infrequent_to_ambiguous)+len(converted_to_ambiguous)+len(ambiguous_candidates_not_in_batch_post_eviction)+ len(new_ambiguous_candidates)))
 
+            print('comparing: ',ambiguous_candidate_records_before_classification_grouped_df.groups.keys(),rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys(), converted_candidates_grouped_df.groups.keys())
+
             for key, item in converted_candidates_grouped_df:
 
                 # print('=>batch: ',key)
@@ -1549,8 +1555,9 @@ class EntityResolver ():
 
 
                 #altered reintroduction estimates
-                for key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
+                if key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
                     rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key=rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.get_group(key)
+                    print('=>batch: ',key, len(rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key))
 
 
                 if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
@@ -1701,9 +1708,12 @@ class EntityResolver ():
                         if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<real_k):
                             self.arr9[i]+=1
 
-                        if((k==40)&(candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff)):
-                            top_k_reintroduction_value+=1
+                        # if((k==40)&(candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff)):
+                        #     top_k_reintroduction_value+=1
 
+                        if((k==40)&(candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction)):
+                            top_k_reintroduction_value+=1
+                        
                     # if(candidates_to_reintroduce_w_ranking.index(candidate)<15):
                     #     self.ranking_effectiveness_alternate+=1
 
@@ -1714,15 +1724,16 @@ class EntityResolver ():
                     list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
                     tuple_to_edit=list_of_lists[self.counter-key-1]
                     #to record the reintroduction precision for this batch
-                    if key in rank_dict_reintroduction_candidates_cutoff_records_grouped_df.groups.keys():
-                        tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key)]
+                    if key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
+                        # tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key)]
+                        tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key)]
                     tuple_to_edit[1]=[top_k_reintroduction_value,len(converted_candidates_grouped_df_key)]
 
                     if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
                         tuple_to_edit[2]=[0,len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)]
 
                     ambiguous_candidates_from_batch=len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==key)&(candidate_featureBase_DF.status=="a")])
-                    # print("tuple_to_edit: ",ambiguous_candidates_from_batch, tuple_to_edit)
+                    print('batch: ',key,'ambiguous_candidates_from_batch: ',ambiguous_candidates_from_batch,"tuple_to_edit: ",tuple_to_edit)
                     list_of_lists[self.counter-key-1]=tuple_to_edit
                     self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
                     # print(self.batchwise_reintroduction_eviction_estimates[key])
