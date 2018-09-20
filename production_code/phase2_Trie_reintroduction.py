@@ -1477,6 +1477,9 @@ class EntityResolver ():
             ambiguous_candidates_in_batch_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
             ambiguous_candidates_not_in_batch_post_eviction = [candidate for candidate in ambiguous_candidates_not_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
 
+            ambiguous_candidates_in_batch_post_eviction_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_candidates_in_batch_post_eviction)]
+            ambiguous_candidates_in_batch_post_eviction_grouped_df= ambiguous_candidates_in_batch_post_eviction_records.groupby('batch')
+
             print('tallying here: ', len(not_evicted_candidates), len(ambiguous_candidates_in_batch_post_eviction), len(ambiguous_candidates_not_in_batch_post_eviction))
 
             #review this block
@@ -1537,7 +1540,13 @@ class EntityResolver ():
 
             print('ending estimate of ambiguous candidate: ', (len(not_reintroduced)+len(reintroduced_to_ambiguous)+len(infrequent_to_ambiguous)+len(converted_to_ambiguous)+len(ambiguous_candidates_not_in_batch_post_eviction)+ len(new_ambiguous_candidates)))
 
-            print('comparing: ',ambiguous_candidate_records_before_classification_grouped_df.groups.keys(),rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys(), converted_candidates_grouped_df.groups.keys())
+            print('comparing: ')
+            print('ambiguous_candidate_records_before_classification: ',ambiguous_candidate_records_before_classification_grouped_df.groups.keys())
+            print('evicted: ', rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys())
+            print('ambiguous_candidate_inBatch :', ambiguous_candidate_inBatch_grouped_df.groups.keys())
+            print('ambiguous_candidates_in_batch_post_eviction :', ambiguous_candidates_in_batch_post_eviction_grouped_df.groups.keys())
+            print('ambiguous_candidates_reintroduced_post_eviction :', rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys())
+            print('converted_candidates_baseline:', converted_candidates_grouped_df.groups.keys())
 
             for key, item in converted_candidates_grouped_df:
 
