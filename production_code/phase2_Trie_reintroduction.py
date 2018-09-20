@@ -1548,6 +1548,26 @@ class EntityResolver ():
             print('ambiguous_candidates_reintroduced_post_eviction :', rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys())
             print('converted_candidates_baseline:', converted_candidates_grouped_df.groups.keys())
 
+            for key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
+
+                if((self.counter-key)<=10):
+                    # print('error check: ',key)
+                    list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
+                    tuple_to_edit=list_of_lists[self.counter-key-1]
+                    tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key)]
+                    list_of_lists[self.counter-key-1]=tuple_to_edit
+                    self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
+
+            for key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
+
+                if((self.counter-key)<=10):
+                    # print('error check: ',key)
+                    list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
+                    tuple_to_edit=list_of_lists[self.counter-key-1]
+                    tuple_to_edit[2]=[0,len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)]
+                    list_of_lists[self.counter-key-1]=tuple_to_edit
+                    self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
+
             for key, item in converted_candidates_grouped_df:
 
                 # print('=>batch: ',key)
@@ -1733,16 +1753,16 @@ class EntityResolver ():
                     list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
                     tuple_to_edit=list_of_lists[self.counter-key-1]
                     #to record the reintroduction precision for this batch
-                    if key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
+                    # if key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
                         # tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key)]
-                        tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key)]
+                        # tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key)]
                     tuple_to_edit[1]=[top_k_reintroduction_value,len(converted_candidates_grouped_df_key)]
 
-                    if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
-                        tuple_to_edit[2]=[0,len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)]
+                    # if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
+                        # tuple_to_edit[2]=[0,len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)]
 
-                    ambiguous_candidates_from_batch=len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==key)&(candidate_featureBase_DF.status=="a")])
-                    print('batch: ',key,'ambiguous_candidates_from_batch: ',ambiguous_candidates_from_batch,"tuple_to_edit: ",tuple_to_edit)
+                    # ambiguous_candidates_from_batch=len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==key)&(candidate_featureBase_DF.status=="a")])
+                    # print('batch: ',key,'ambiguous_candidates_from_batch: ',ambiguous_candidates_from_batch,"tuple_to_edit: ",tuple_to_edit)
                     list_of_lists[self.counter-key-1]=tuple_to_edit
                     self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
                     # print(self.batchwise_reintroduction_eviction_estimates[key])
