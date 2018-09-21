@@ -3,647 +3,894 @@ Tweets are in memory...
 hello
 run:  0
 Phase I extracting now
-7.259416580200195 7.259416580200195
+6.9227283000946045 6.9227283000946045
 15376
 0   Produced
 **********************************************************
 starting estimate of ambiguous candidate:  0
 printing here:  0 0 0
 ambiguous_candidates_in_batch:  0
--0.0795411448380227
+-0.07954114483802271
 reintroduction_threshold: 0.0
-good:  106 10941
-ambiguous:  31 31 1931
-bad:  217 15969
+good:  109 10988
+ambiguous:  32 32 2053
+bad:  213 15800
 infrequent:  1412 2775
-12483 2893 0
-6.995844841003418 14.255261421203613
+12366 3010 0
+6.705737829208374 13.628466129302979
 0   Consumed
 **********************************************************
 Phase I extracting now
-7.979819059371948 22.23508048057556
+7.4913489818573 21.11981511116028
 16056
 1   Produced
 **********************************************************
-starting estimate of ambiguous candidate:  31
-printing here:  31 16 15
-incomplete tweets in batch:  2893
-=> 679 2214
-ambiguous_candidates_in_batch:  16
--0.1115740621737005
+starting estimate of ambiguous candidate:  32
+printing here:  32 17 15
+incomplete tweets in batch:  3010
+=> 799 2211
+ambiguous_candidates_in_batch:  17
+-0.11190773010134088
 reintroduction_threshold: 0.0
-good:  148 25056
-ambiguous:  44 44 2808
-bad:  321 44109
-infrequent:  1782 3593
-tallying here:  19 10 9
-reintroduced:  8 not reintroduced:  2
+good:  150 25127
+ambiguous:  51 51 5772
+bad:  312 41248
+infrequent:  1782 3592
+evicted:  12 12
+tallying here:  20 11 9
+not_reintroduced:  7
+reintroduced:  7 4 not reintroduced:  4
 
 final estimates: 
-not_reintroduced:  2
-reintroduced_to_ambiguous:  1
+not_reintroduced:  4
+reintroduced_to_ambiguous:  2
 infrequent_to_ambiguous:  10
-converted_to_ambiguous:  7
+converted_to_ambiguous:  8
 ambiguous_candidates_not_in_batch_post_eviction:  9
-new_ambiguous_candidates:  3
+new_ambiguous_candidates:  6
 
-ending estimate of ambiguous candidate:  32
+ending estimate of ambiguous candidate:  39
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0])
+evicted:  dict_keys([0])
+ambiguous_candidate_inBatch : dict_keys([0])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0])
+converted_candidates_baseline: dict_keys([0])
+=>batch:  0 4
 no batch qualifies for batch specific eviction
-26755 2463 2214
-8.499532461166382 30.734612941741943
+26338 2883 2211
+8.082189083099365 29.202004194259644
 1   Consumed
 **********************************************************
 Phase I extracting now
-8.287060737609863 39.02167367935181
+7.757907152175903 36.95991134643555
 17502
 2   Produced
 **********************************************************
-starting estimate of ambiguous candidate:  32
-printing here:  32 22 10
-incomplete tweets in batch:  4677
-=> 797 3880
-ambiguous_candidates_in_batch:  22
--0.10882274441472027
+starting estimate of ambiguous candidate:  39
+printing here:  39 29 10
+incomplete tweets in batch:  5094
+=> 1518 3576
+ambiguous_candidates_in_batch:  29
+-0.1090460096201057
 reintroduction_threshold: 0.0
-good:  183 39953
-ambiguous:  53 53 4377
-bad:  373 70443
-infrequent:  2094 4212
-tallying here:  20 12 8
-reintroduced:  5 not reintroduced:  7
+good:  185 39980
+ambiguous:  58 58 9369
+bad:  366 65632
+infrequent:  2094 4211
+evicted:  15 27
+tallying here:  24 16 8
+not_reintroduced:  10
+reintroduced:  8 6 not reintroduced:  8
 
 final estimates: 
-not_reintroduced:  7
-reintroduced_to_ambiguous:  2
-infrequent_to_ambiguous:  8
-converted_to_ambiguous:  3
+not_reintroduced:  8
+reintroduced_to_ambiguous:  3
+infrequent_to_ambiguous:  7
+converted_to_ambiguous:  4
 ambiguous_candidates_not_in_batch_post_eviction:  8
 new_ambiguous_candidates:  3
 
-ending estimate of ambiguous candidate:  31
+ending estimate of ambiguous candidate:  33
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1])
+evicted:  dict_keys([0, 1])
+ambiguous_candidate_inBatch : dict_keys([0, 1])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 1])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 1])
+converted_candidates_baseline: dict_keys([0, 1])
+=>batch:  0 5
+=>batch:  1 1
 no batch qualifies for batch specific eviction
-42281 2773 3880
-9.245623588562012 48.26729726791382
+41518 3840 3576
+9.116146564483643 46.07605791091919
 2   Consumed
 **********************************************************
 Phase I extracting now
-8.012221574783325 56.279518842697144
+7.568565607070923 53.64462351799011
 18403
 3   Produced
 **********************************************************
-starting estimate of ambiguous candidate:  31
-printing here:  31 22 9
-incomplete tweets in batch:  6653
-=> 1113 5540
-ambiguous_candidates_in_batch:  22
--0.10394855220647485
+starting estimate of ambiguous candidate:  33
+printing here:  33 25 8
+incomplete tweets in batch:  7416
+=> 1804 5612
+ambiguous_candidates_in_batch:  25
+-0.10412758435625985
 reintroduction_threshold: 0.0
-good:  208 55949
-ambiguous:  57 57 5400
-bad:  430 97439
-infrequent:  2400 4923
-tallying here:  19 11 8
-reintroduced:  6 not reintroduced:  5
+good:  212 56049
+ambiguous:  60 60 10638
+bad:  425 92357
+infrequent:  2398 4912
+evicted:  13 40
+tallying here:  20 14 6
+not_reintroduced:  9
+reintroduced:  6 5 not reintroduced:  8
 
 final estimates: 
-not_reintroduced:  5
-reintroduced_to_ambiguous:  1
-infrequent_to_ambiguous:  6
-converted_to_ambiguous:  3
-ambiguous_candidates_not_in_batch_post_eviction:  8
+not_reintroduced:  8
+reintroduced_to_ambiguous:  2
+infrequent_to_ambiguous:  5
+converted_to_ambiguous:  1
+ambiguous_candidates_not_in_batch_post_eviction:  6
 new_ambiguous_candidates:  4
 
-ending estimate of ambiguous candidate:  27
+ending estimate of ambiguous candidate:  26
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2])
+evicted:  dict_keys([0, 1, 2])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 2])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 1, 2])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 1])
+converted_candidates_baseline: dict_keys([0, 1, 2])
+=>batch:  0 4
+=>batch:  1 1
 no batch qualifies for batch specific eviction
-58959 2838 5540
-10.007952451705933 66.28747129440308
+57935 3790 5612
+9.842620372772217 63.48724389076233
 3   Consumed
 **********************************************************
 Phase I extracting now
-8.070741891860962 74.35821318626404
+7.644754409790039 71.13199830055237
 16815
 4   Produced
 **********************************************************
-starting estimate of ambiguous candidate:  27
-printing here:  27 19 8
-incomplete tweets in batch:  8378
-=> 574 7804
-ambiguous_candidates_in_batch:  19
--0.10183737078855346
+starting estimate of ambiguous candidate:  26
+printing here:  26 20 6
+incomplete tweets in batch:  9402
+=> 1449 7953
+ambiguous_candidates_in_batch:  20
+-0.10199038327481032
 reintroduction_threshold: 0.0
-good:  237 70949
-ambiguous:  70 70 8980
-bad:  496 125349
-infrequent:  2721 5571
-tallying here:  17 10 7
-reintroduced:  6 not reintroduced:  4
+good:  244 71331
+ambiguous:  74 74 15346
+bad:  486 118886
+infrequent:  2720 5567
+evicted:  10 50
+tallying here:  16 10 6
+not_reintroduced:  6
+reintroduced:  5 4 not reintroduced:  5
 
 final estimates: 
-not_reintroduced:  4
-reintroduced_to_ambiguous:  3
-infrequent_to_ambiguous:  8
-converted_to_ambiguous:  10
-ambiguous_candidates_not_in_batch_post_eviction:  7
+not_reintroduced:  5
+reintroduced_to_ambiguous:  4
+infrequent_to_ambiguous:  7
+converted_to_ambiguous:  8
+ambiguous_candidates_not_in_batch_post_eviction:  6
 new_ambiguous_candidates:  2
 
-ending estimate of ambiguous candidate:  34
+ending estimate of ambiguous candidate:  32
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3])
+evicted:  dict_keys([0, 1, 3])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 3])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 1, 3])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 3])
+converted_candidates_baseline: dict_keys([0, 1, 3])
+=>batch:  0 3
+=>batch:  3 1
 no batch qualifies for batch specific eviction
-73956 2392 7804
-10.247578144073486 84.60579133033752
+72604 3595 7953
+10.076180219650269 81.20817852020264
 4   Consumed
 **********************************************************
 Phase I extracting now
-8.1228768825531 92.72866821289062
+7.672788619995117 88.88096714019775
 17296
 5   Produced
 **********************************************************
-starting estimate of ambiguous candidate:  34
-printing here:  34 21 13
-incomplete tweets in batch:  10196
-=> 327 9869
+starting estimate of ambiguous candidate:  32
+printing here:  32 21 11
+incomplete tweets in batch:  11548
+=> 1047 10501
 ambiguous_candidates_in_batch:  21
--0.10065370750692788
+-0.10079801352535189
 reintroduction_threshold: 0.0
-good:  265 86494
-ambiguous:  77 77 10605
-bad:  545 155399
-infrequent:  2943 6010
-tallying here:  21 10 11
-reintroduced:  6 not reintroduced:  4
+good:  271 87397
+ambiguous:  86 86 17749
+bad:  530 147676
+infrequent:  2943 6018
+evicted:  12 62
+tallying here:  20 12 8
+not_reintroduced:  8
+reintroduced:  5 4 not reintroduced:  7
 
 final estimates: 
-not_reintroduced:  4
+not_reintroduced:  7
 reintroduced_to_ambiguous:  4
-infrequent_to_ambiguous:  8
-converted_to_ambiguous:  5
-ambiguous_candidates_not_in_batch_post_eviction:  11
+infrequent_to_ambiguous:  9
+converted_to_ambiguous:  6
+ambiguous_candidates_not_in_batch_post_eviction:  8
 new_ambiguous_candidates:  2
 
-ending estimate of ambiguous candidate:  34
+ending estimate of ambiguous candidate:  36
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 4])
+evicted:  dict_keys([0, 1, 2, 3, 4])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 2, 3, 4])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 1, 3])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 1, 3])
+converted_candidates_baseline: dict_keys([0, 1, 2])
+=>batch:  0 2
+=>batch:  1 1
 no batch qualifies for batch specific eviction
-89191 2388 9869
-10.498821258544922 103.22748947143555
+87645 3302 10501
+10.332576513290405 99.21354365348816
 5   Consumed
 **********************************************************
 Phase I extracting now
-8.262086153030396 111.48957562446594
+7.776012182235718 106.98955583572388
 17372
 6   Produced
 **********************************************************
-starting estimate of ambiguous candidate:  34
-printing here:  34 21 13
-incomplete tweets in batch:  12257
-=> 307 11950
-ambiguous_candidates_in_batch:  21
--0.0989395441727922
+starting estimate of ambiguous candidate:  36
+printing here:  36 24 12
+incomplete tweets in batch:  13803
+=> 1266 12537
+ambiguous_candidates_in_batch:  24
+-0.09919108595341848
 reintroduction_threshold: 0.0
-good:  284 103082
-ambiguous:  98 98 12237
-bad:  600 184708
-infrequent:  3166 6602
-tallying here:  21 11 10
-reintroduced:  4 not reintroduced:  7
+good:  298 104452
+ambiguous:  97 97 19144
+bad:  588 177126
+infrequent:  3165 6606
+evicted:  14 76
+tallying here:  22 14 8
+not_reintroduced:  9
+reintroduced:  7 5 not reintroduced:  7
 
 final estimates: 
 not_reintroduced:  7
-reintroduced_to_ambiguous:  3
-infrequent_to_ambiguous:  8
-converted_to_ambiguous:  9
-ambiguous_candidates_not_in_batch_post_eviction:  10
-new_ambiguous_candidates:  6
+reintroduced_to_ambiguous:  5
+infrequent_to_ambiguous:  10
+converted_to_ambiguous:  2
+ambiguous_candidates_not_in_batch_post_eviction:  8
+new_ambiguous_candidates:  7
 
-ending estimate of ambiguous candidate:  43
+ending estimate of ambiguous candidate:  39
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 5])
+evicted:  dict_keys([0, 1, 2, 3, 5])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 2, 3, 5])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 1, 2, 3, 5])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 1, 3])
+converted_candidates_baseline: dict_keys([0, 1])
+=>batch:  0 3
+=>batch:  1 1
 no batch qualifies for batch specific eviction
-104622 2248 11950
-10.95327639579773 122.44285202026367
+103047 3236 12537
+11.145952939987183 118.13550877571106
 6   Consumed
 **********************************************************
 Phase I extracting now
-8.271242380142212 130.71409440040588
+7.7948338985443115 125.93034267425537
 17214
 7   Produced
 **********************************************************
-starting estimate of ambiguous candidate:  43
-printing here:  43 26 17
-incomplete tweets in batch:  14198
-=> 483 13715
-ambiguous_candidates_in_batch:  26
--0.09615749231146194
+starting estimate of ambiguous candidate:  39
+printing here:  39 24 15
+incomplete tweets in batch:  15773
+=> 1416 14357
+ambiguous_candidates_in_batch:  24
+-0.09638980476921252
 reintroduction_threshold: 0.0
-good:  315 120083
-ambiguous:  111 111 14276
-bad:  645 213622
-infrequent:  3441 7136
-tallying here:  26 13 13
-reintroduced:  7 not reintroduced:  6
+good:  329 121706
+ambiguous:  107 107 21650
+bad:  638 205422
+infrequent:  3438 7120
+evicted:  15 91
+tallying here:  24 12 12
+not_reintroduced:  8
+reintroduced:  6 4 not reintroduced:  6
 
 final estimates: 
 not_reintroduced:  6
-reintroduced_to_ambiguous:  3
-infrequent_to_ambiguous:  6
-converted_to_ambiguous:  7
-ambiguous_candidates_not_in_batch_post_eviction:  13
-new_ambiguous_candidates:  8
+reintroduced_to_ambiguous:  2
+infrequent_to_ambiguous:  7
+converted_to_ambiguous:  5
+ambiguous_candidates_not_in_batch_post_eviction:  12
+new_ambiguous_candidates:  7
 
-ending estimate of ambiguous candidate:  43
+ending estimate of ambiguous candidate:  39
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 4, 5, 6])
+evicted:  dict_keys([0, 1, 3, 4, 5, 6])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 2, 3, 4, 5, 6])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 2, 3, 5, 6])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 2, 3])
+converted_candidates_baseline: dict_keys([0, 1, 2])
+=>batch:  0 2
+=>batch:  2 1
 no batch qualifies for batch specific eviction
-119980 2339 13715
-11.514938354492188 142.22903275489807
+118426 3251 14357
+11.658375978469849 137.58871865272522
 7   Consumed
 **********************************************************
 Phase I extracting now
-8.222149133682251 150.45118188858032
+7.783799648284912 145.37251830101013
 18138
 8   Produced
 **********************************************************
-starting estimate of ambiguous candidate:  43
-printing here:  43 28 15
-incomplete tweets in batch:  16054
-=> 417 15637
-ambiguous_candidates_in_batch:  28
--0.09614214168420776
+starting estimate of ambiguous candidate:  39
+printing here:  39 27 12
+incomplete tweets in batch:  17608
+=> 1458 16150
+ambiguous_candidates_in_batch:  27
+-0.09641023669464703
 reintroduction_threshold: 0.0
-good:  335 139408
-ambiguous:  106 106 14837
-bad:  695 244940
-infrequent:  3641 7574
-tallying here:  26 15 11
-reintroduced:  8 not reintroduced:  7
+good:  344 139598
+ambiguous:  111 111 24735
+bad:  682 235891
+infrequent:  3640 7573
+evicted:  15 106
+tallying here:  24 15 9
+not_reintroduced:  9
+reintroduced:  8 6 not reintroduced:  7
 
 final estimates: 
 not_reintroduced:  7
 reintroduced_to_ambiguous:  4
-infrequent_to_ambiguous:  4
-converted_to_ambiguous:  1
-ambiguous_candidates_not_in_batch_post_eviction:  11
+infrequent_to_ambiguous:  5
+converted_to_ambiguous:  4
+ambiguous_candidates_not_in_batch_post_eviction:  9
 new_ambiguous_candidates:  3
 
-ending estimate of ambiguous candidate:  30
+ending estimate of ambiguous candidate:  32
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 5, 6, 7])
+evicted:  dict_keys([0, 3, 6, 7])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 3, 5, 6, 7])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 1, 3, 5, 6, 7])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 1, 3, 6, 7])
+converted_candidates_baseline: dict_keys([0, 1, 6])
+=>batch:  0 2
+=>batch:  1 1
+=>batch:  6 1
 no batch qualifies for batch specific eviction
-136218 2317 15637
-12.581575870513916 163.03275775909424
+134192 3830 16150
+12.38594937324524 157.75846767425537
 8   Consumed
 **********************************************************
 Phase I extracting now
-8.520188331604004 171.55294609069824
+8.036123275756836 165.7945909500122
 19228
 9   Produced
 **********************************************************
-starting estimate of ambiguous candidate:  30
-printing here:  30 17 13
-incomplete tweets in batch:  17954
-=> 328 17626
-ambiguous_candidates_in_batch:  17
--0.09494961513565155
+starting estimate of ambiguous candidate:  32
+printing here:  32 18 14
+incomplete tweets in batch:  19980
+=> 1843 18137
+ambiguous_candidates_in_batch:  18
+-0.09518954581147653
 reintroduction_threshold: 0.0
-good:  356 157428
-ambiguous:  118 118 16868
-bad:  732 277375
-infrequent:  3857 8072
-tallying here:  18 8 10
-reintroduced:  5 not reintroduced:  3
+good:  366 157908
+ambiguous:  122 122 27377
+bad:  719 267458
+infrequent:  3856 8073
+evicted:  12 118
+tallying here:  20 10 10
+not_reintroduced:  6
+reintroduced:  5 4 not reintroduced:  5
+
+final estimates: 
+not_reintroduced:  5
+reintroduced_to_ambiguous:  3
+infrequent_to_ambiguous:  4
+converted_to_ambiguous:  3
+ambiguous_candidates_not_in_batch_post_eviction:  10
+new_ambiguous_candidates:  9
+
+ending estimate of ambiguous candidate:  34
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 4, 5, 6, 7, 8])
+evicted:  dict_keys([0, 1, 2, 3, 4, 7, 8])
+ambiguous_candidate_inBatch : dict_keys([0, 2, 3, 4, 5, 7, 8])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 2, 3, 5, 7])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 3, 7])
+converted_candidates_baseline: dict_keys([0, 4, 7])
+=>batch:  0 2
+=>batch:  7 1
+no batch qualifies for batch specific eviction
+151212 4051 18137
+13.374301195144653 179.16889214515686
+9   Consumed
+**********************************************************
+Phase I extracting now
+8.150187730789185 187.31907987594604
+19105
+10   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  34
+printing here:  34 25 9
+incomplete tweets in batch:  22188
+=> 1551 20637
+ambiguous_candidates_in_batch:  25
+-0.09408681078753955
+reintroduction_threshold: 0.0
+good:  388 174463
+ambiguous:  131 131 30908
+bad:  778 301564
+infrequent:  4075 8525
+evicted:  13 131
+tallying here:  21 15 6
+not_reintroduced:  9
+reintroduced:  7 6 not reintroduced:  8
+
+final estimates: 
+not_reintroduced:  8
+reintroduced_to_ambiguous:  5
+infrequent_to_ambiguous:  3
+converted_to_ambiguous:  6
+ambiguous_candidates_not_in_batch_post_eviction:  6
+new_ambiguous_candidates:  5
+
+ending estimate of ambiguous candidate:  33
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 5, 6, 7, 8, 9])
+evicted:  dict_keys([0, 8, 3, 5, 9])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 2, 3, 5, 6, 7, 8, 9])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 1, 2, 3, 5, 6, 7, 9])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 1, 3, 9])
+converted_candidates_baseline: dict_keys([0, 1])
+=>batch:  0 2
+=>batch:  1 1
+eviction effectiveness with batch specific bottom m value:  0.0
+168061 3807 20637
+14.146721839904785 201.46580171585083
+10   Consumed
+**********************************************************
+Phase I extracting now
+8.8037691116333 210.26957082748413
+18897
+11   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  33
+printing here:  33 19 14
+incomplete tweets in batch:  24444
+=> 1815 22629
+ambiguous_candidates_in_batch:  19
+-0.09376030678910562
+reintroduction_threshold: 0.0
+good:  409 191431
+ambiguous:  137 137 33203
+bad:  823 337872
+infrequent:  4282 8936
+evicted:  13 144
+tallying here:  20 11 9
+not_reintroduced:  7
+reintroduced:  6 4 not reintroduced:  5
+
+final estimates: 
+not_reintroduced:  5
+reintroduced_to_ambiguous:  3
+infrequent_to_ambiguous:  9
+converted_to_ambiguous:  3
+ambiguous_candidates_not_in_batch_post_eviction:  9
+new_ambiguous_candidates:  1
+
+ending estimate of ambiguous candidate:  30
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 4, 5, 6, 7, 9, 10])
+evicted:  dict_keys([0, 2, 5, 7, 9, 10])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 3, 4, 5, 6, 7, 9, 10])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 1, 3, 4, 6, 7, 10])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 1, 3, 7])
+converted_candidates_baseline: dict_keys([3, 7])
+=>batch:  3 1
+=>batch:  7 1
+eviction effectiveness with batch specific bottom m value:  0.0
+184942 3831 22629
+15.838109970092773 226.1076807975769
+11   Consumed
+**********************************************************
+Phase I extracting now
+8.691516399383545 234.79919719696045
+18554
+12   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  30
+printing here:  30 13 17
+incomplete tweets in batch:  26460
+=> 1253 25207
+ambiguous_candidates_in_batch:  13
+-0.09326152657065362
+reintroduction_threshold: 0.0
+good:  430 206266
+ambiguous:  149 149 36882
+bad:  866 373540
+infrequent:  4458 9283
+evicted:  12 156
+tallying here:  18 9 9
+not_reintroduced:  6
+reintroduced:  5 3 not reintroduced:  4
+
+final estimates: 
+not_reintroduced:  4
+reintroduced_to_ambiguous:  3
+infrequent_to_ambiguous:  9
+converted_to_ambiguous:  6
+ambiguous_candidates_not_in_batch_post_eviction:  9
+new_ambiguous_candidates:  4
+
+ending estimate of ambiguous candidate:  35
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 4, 6, 7, 9, 10, 11])
+evicted:  dict_keys([0, 1, 3, 4, 9, 10])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 2, 3, 4, 6, 7, 9, 10, 11])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 1, 2, 3, 6, 7, 9, 11])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 3, 11])
+converted_candidates_baseline: dict_keys([0, 2, 10])
+=>batch:  0 1
+eviction effectiveness with batch specific bottom m value:  0.0
+201457 3292 25207
+15.732940435409546 250.53213763237
+12   Consumed
+**********************************************************
+Phase I extracting now
+8.621122360229492 259.1532599925995
+18382
+13   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  35
+printing here:  35 17 18
+incomplete tweets in batch:  28499
+=> 1328 27171
+ambiguous_candidates_in_batch:  17
+-0.0930810683642048
+reintroduction_threshold: 0.0
+good:  445 221165
+ambiguous:  161 161 43469
+bad:  892 407651
+infrequent:  4633 9726
+evicted:  14 170
+tallying here:  21 10 11
+not_reintroduced:  6
+reintroduced:  4 4 not reintroduced:  6
+
+final estimates: 
+not_reintroduced:  6
+reintroduced_to_ambiguous:  4
+infrequent_to_ambiguous:  3
+converted_to_ambiguous:  3
+ambiguous_candidates_not_in_batch_post_eviction:  11
+new_ambiguous_candidates:  5
+
+ending estimate of ambiguous candidate:  32
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12])
+evicted:  dict_keys([0, 1, 2, 6, 7, 8, 9, 12])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 2, 3, 6, 7, 9, 10, 11, 12])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 1, 3, 6, 7, 9, 10, 11, 12])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 3, 11, 12])
+converted_candidates_baseline: dict_keys([7])
+eviction effectiveness with batch specific bottom m value:  0.0
+217425 3742 27171
+16.306441068649292 275.4597010612488
+13   Consumed
+**********************************************************
+Phase I extracting now
+8.539424180984497 283.9991252422333
+17504
+14   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  32
+printing here:  32 22 10
+incomplete tweets in batch:  30913
+=> 1581 29332
+ambiguous_candidates_in_batch:  22
+-0.09250256654723972
+reintroduction_threshold: 0.0
+good:  467 236807
+ambiguous:  168 168 47618
+bad:  918 443210
+infrequent:  4820 10031
+evicted:  12 182
+tallying here:  20 13 7
+not_reintroduced:  8
+reintroduced:  6 5 not reintroduced:  7
+
+final estimates: 
+not_reintroduced:  7
+reintroduced_to_ambiguous:  5
+infrequent_to_ambiguous:  5
+converted_to_ambiguous:  6
+ambiguous_candidates_not_in_batch_post_eviction:  7
+new_ambiguous_candidates:  1
+
+ending estimate of ambiguous candidate:  31
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 4, 6, 7, 9, 10, 11, 12, 13])
+evicted:  dict_keys([0, 3, 4, 7, 10, 13])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 2, 3, 4, 6, 7, 9, 10, 11, 12, 13])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 1, 2, 3, 6, 7, 9, 10, 11, 12, 13])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 2, 3, 12, 6])
+converted_candidates_baseline: dict_keys([0, 4, 7])
+=>batch:  0 1
+eviction effectiveness with batch specific bottom m value:  0.0
+232509 4001 29332
+16.88761329650879 300.88673853874207
+14   Consumed
+**********************************************************
+Phase I extracting now
+8.380371332168579 309.26710987091064
+17123
+15   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  31
+printing here:  31 15 16
+incomplete tweets in batch:  33333
+=> 1499 31834
+ambiguous_candidates_in_batch:  15
+-0.0919408010975417
+reintroduction_threshold: 0.0
+good:  486 252411
+ambiguous:  176 176 50958
+bad:  952 479242
+infrequent:  4989 10336
+evicted:  12 194
+tallying here:  19 8 11
+not_reintroduced:  5
+reintroduced:  4 3 not reintroduced:  4
+
+final estimates: 
+not_reintroduced:  4
+reintroduced_to_ambiguous:  3
+infrequent_to_ambiguous:  5
+converted_to_ambiguous:  6
+ambiguous_candidates_not_in_batch_post_eviction:  11
+new_ambiguous_candidates:  0
+
+ending estimate of ambiguous candidate:  29
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 6, 7, 9, 10, 11, 12, 13, 14])
+evicted:  dict_keys([0, 2, 3, 6, 12, 14])
+ambiguous_candidate_inBatch : dict_keys([0, 2, 3, 6, 9, 10, 11, 12, 13, 14])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 3, 6, 9, 10, 11, 12, 13])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([0, 3, 12])
+converted_candidates_baseline: dict_keys([3, 6])
+=>batch:  3 1
+eviction effectiveness with batch specific bottom m value:  0.0
+247361 3770 31834
+17.025169134140015 326.29227900505066
+15   Consumed
+**********************************************************
+Phase I extracting now
+6.793409824371338 333.085688829422
+14993
+16   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  29
+printing here:  29 11 18
+incomplete tweets in batch:  35604
+=> 1528 34076
+ambiguous_candidates_in_batch:  11
+-0.09272072593558685
+reintroduction_threshold: 0.0
+good:  528 261162
+ambiguous:  185 185 51435
+bad:  1024 512017
+infrequent:  5337 10963
+evicted:  11 205
+tallying here:  18 5 13
+not_reintroduced:  3
+reintroduced:  2 2 not reintroduced:  3
 
 final estimates: 
 not_reintroduced:  3
 reintroduced_to_ambiguous:  2
 infrequent_to_ambiguous:  6
-converted_to_ambiguous:  1
-ambiguous_candidates_not_in_batch_post_eviction:  10
-new_ambiguous_candidates:  8
-
-ending estimate of ambiguous candidate:  30
-no batch qualifies for batch specific eviction
-153535 2239 17626
-13.421693801879883 184.97463989257812
-9   Consumed
-**********************************************************
-Phase I extracting now
-8.706295013427734 193.68093490600586
-19105
-10   Produced
-**********************************************************
-starting estimate of ambiguous candidate:  30
-printing here:  30 19 11
-incomplete tweets in batch:  19865
-=> 179 19686
-ambiguous_candidates_in_batch:  19
--0.0938750875490879
-reintroduction_threshold: 0.0
-good:  380 173935
-ambiguous:  119 119 19000
-bad:  798 312932
-infrequent:  4075 8513
-tallying here:  18 10 8
-reintroduced:  7 not reintroduced:  3
-
-final estimates: 
-not_reintroduced:  3
-reintroduced_to_ambiguous:  3
-infrequent_to_ambiguous:  2
-converted_to_ambiguous:  4
-ambiguous_candidates_not_in_batch_post_eviction:  8
+converted_to_ambiguous:  2
+ambiguous_candidates_not_in_batch_post_eviction:  13
 new_ambiguous_candidates:  5
 
-ending estimate of ambiguous candidate:  25
+ending estimate of ambiguous candidate:  31
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 4, 7, 9, 10, 11, 12, 13, 14])
+evicted:  dict_keys([0, 3, 4, 11, 13, 14])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 3, 4, 9, 11, 12, 13])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([3, 1, 11, 12, 9])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([3, 12])
+converted_candidates_baseline: dict_keys([4])
 eviction effectiveness with batch specific bottom m value:  0.0
-170879 1940 19686
-14.178699493408203 207.85963439941406
-10   Consumed
+261111 2771 34076
+16.43060803413391 349.5162968635559
+16   Consumed
 **********************************************************
 Phase I extracting now
-8.775475978851318 216.63511037826538
-18897
-11   Produced
+7.277858257293701 356.7941551208496
+16551
+17   Produced
 **********************************************************
-starting estimate of ambiguous candidate:  25
-printing here:  25 10 15
-incomplete tweets in batch:  21626
-=> 104 21522
-ambiguous_candidates_in_batch:  10
--0.09353210042815323
+starting estimate of ambiguous candidate:  31
+printing here:  31 11 20
+incomplete tweets in batch:  36847
+=> 265 36582
+ambiguous_candidates_in_batch:  11
+-0.09481809097538571
 reintroduction_threshold: 0.0
-good:  397 189707
-ambiguous:  133 133 22988
-bad:  839 348520
-infrequent:  4282 8928
-tallying here:  15 6 9
-reintroduced:  3 not reintroduced:  3
+good:  546 268494
+ambiguous:  200 200 53442
+bad:  1055 546345
+infrequent:  5607 11548
+evicted:  12 217
+tallying here:  19 4 15
+not_reintroduced:  3
+reintroduced:  2 1 not reintroduced:  2
+
+final estimates: 
+not_reintroduced:  2
+reintroduced_to_ambiguous:  1
+infrequent_to_ambiguous:  8
+converted_to_ambiguous:  8
+ambiguous_candidates_not_in_batch_post_eviction:  15
+new_ambiguous_candidates:  5
+
+ending estimate of ambiguous candidate:  39
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 4, 16, 7, 9, 10, 11, 12])
+evicted:  dict_keys([0, 1, 3, 16, 9, 11])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 7, 16, 9])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 1, 7, 9])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([9])
+converted_candidates_baseline: dict_keys([16, 1, 7])
+eviction effectiveness with batch specific bottom m value:  0.0
+276232 1695 36582
+16.684208393096924 373.47836351394653
+17   Consumed
+**********************************************************
+Phase I extracting now
+7.230731248855591 380.7090947628021
+18255
+18   Produced
+**********************************************************
+starting estimate of ambiguous candidate:  39
+printing here:  39 19 20
+incomplete tweets in batch:  38277
+=> 578 37699
+ambiguous_candidates_in_batch:  19
+-0.09727232368239841
+reintroduction_threshold: 0.0
+good:  588 276666
+ambiguous:  204 204 51696
+bad:  1080 584054
+infrequent:  5781 11902
+evicted:  15 232
+tallying here:  24 7 17
+not_reintroduced:  5
+reintroduced:  4 2 not reintroduced:  3
 
 final estimates: 
 not_reintroduced:  3
 reintroduced_to_ambiguous:  1
-infrequent_to_ambiguous:  8
-converted_to_ambiguous:  5
-ambiguous_candidates_not_in_batch_post_eviction:  9
-new_ambiguous_candidates:  1
-
-ending estimate of ambiguous candidate:  27
-eviction effectiveness with batch specific bottom m value:  0.0
-187739 2141 21522
-14.662715196609497 231.29782557487488
-11   Consumed
-**********************************************************
-Phase I extracting now
-8.620572090148926 239.9183976650238
-18554
-12   Produced
-**********************************************************
-starting estimate of ambiguous candidate:  27
-printing here:  27 10 17
-incomplete tweets in batch:  23663
-=> 486 23177
-ambiguous_candidates_in_batch:  10
--0.09305558514132636
-reintroduction_threshold: 0.0
-good:  417 205232
-ambiguous:  149 149 26727
-bad:  879 383436
-infrequent:  4458 9275
-tallying here:  17 6 11
-reintroduced:  4 not reintroduced:  2
-
-final estimates: 
-not_reintroduced:  2
-reintroduced_to_ambiguous:  2
-infrequent_to_ambiguous:  8
-converted_to_ambiguous:  5
-ambiguous_candidates_not_in_batch_post_eviction:  11
-new_ambiguous_candidates:  4
-
-ending estimate of ambiguous candidate:  32
-eviction effectiveness with batch specific bottom m value:  0.0
-204193 2586 23177
-14.924369096755981 254.84276676177979
-12   Consumed
-**********************************************************
-Phase I extracting now
-8.60738730430603 263.4501540660858
-18382
-13   Produced
-**********************************************************
-starting estimate of ambiguous candidate:  32
-printing here:  32 16 16
-incomplete tweets in batch:  25763
-=> 230 25533
-ambiguous_candidates_in_batch:  16
--0.09289288421811155
-reintroduction_threshold: 0.0
-good:  432 220840
-ambiguous:  150 150 28880
-bad:  915 421260
-infrequent:  4634 9726
-tallying here:  20 10 10
-reintroduced:  6 not reintroduced:  4
-
-final estimates: 
-not_reintroduced:  4
-reintroduced_to_ambiguous:  4
-infrequent_to_ambiguous:  2
-converted_to_ambiguous:  5
-ambiguous_candidates_not_in_batch_post_eviction:  10
-new_ambiguous_candidates:  4
-
-ending estimate of ambiguous candidate:  29
-eviction effectiveness with batch specific bottom m value:  0.0
-220608 2197 25533
-15.276863098144531 278.72701716423035
-13   Consumed
-**********************************************************
-Phase I extracting now
-8.47151255607605 287.1985297203064
-17504
-14   Produced
-**********************************************************
-starting estimate of ambiguous candidate:  29
-printing here:  29 18 11
-incomplete tweets in batch:  27730
-=> 289 27441
-ambiguous_candidates_in_batch:  18
--0.09233045212620547
-reintroduction_threshold: 0.0
-good:  450 236452
-ambiguous:  164 164 32020
-bad:  938 457856
-infrequent:  4821 10033
-tallying here:  18 9 9
-reintroduced:  3 not reintroduced:  6
-
-final estimates: 
-not_reintroduced:  6
-reintroduced_to_ambiguous:  3
-infrequent_to_ambiguous:  6
-converted_to_ambiguous:  7
-ambiguous_candidates_not_in_batch_post_eviction:  9
-new_ambiguous_candidates:  1
-
-ending estimate of ambiguous candidate:  32
-eviction effectiveness with batch specific bottom m value:  0.0
-235860 2541 27441
-15.621727228164673 302.82025694847107
-14   Consumed
-**********************************************************
-Phase I extracting now
-8.292607545852661 311.11286449432373
-17123
-15   Produced
-**********************************************************
-starting estimate of ambiguous candidate:  32
-printing here:  32 17 15
-incomplete tweets in batch:  29982
-=> 313 29669
-ambiguous_candidates_in_batch:  17
--0.09177362782693946
-reintroduction_threshold: 0.0
-good:  471 252098
-ambiguous:  165 165 26366
-bad:  978 502780
-infrequent:  4989 10330
-tallying here:  20 9 11
-reintroduced:  5 not reintroduced:  4
-
-final estimates: 
-not_reintroduced:  4
-reintroduced_to_ambiguous:  3
-infrequent_to_ambiguous:  4
-converted_to_ambiguous:  3
-ambiguous_candidates_not_in_batch_post_eviction:  11
-new_ambiguous_candidates:  0
-
-ending estimate of ambiguous candidate:  25
-eviction effectiveness with batch specific bottom m value:  0.0
-251032 2264 29669
-15.880774736404419 326.99363923072815
-15   Consumed
-**********************************************************
-Phase I extracting now
-6.736988067626953 333.7306272983551
-14993
-16   Produced
-**********************************************************
-starting estimate of ambiguous candidate:  25
-printing here:  25 9 16
-incomplete tweets in batch:  31933
-=> 265 31668
-ambiguous_candidates_in_batch:  9
--0.09255936702186734
-reintroduction_threshold: 0.0
-good:  510 259516
-ambiguous:  177 177 27935
-bad:  1049 535783
-infrequent:  5338 10958
-tallying here:  15 6 9
-reintroduced:  2 not reintroduced:  4
-
-final estimates: 
-not_reintroduced:  4
-reintroduced_to_ambiguous:  2
-infrequent_to_ambiguous:  7
-converted_to_ambiguous:  2
-ambiguous_candidates_not_in_batch_post_eviction:  9
-new_ambiguous_candidates:  8
-
-ending estimate of ambiguous candidate:  32
-eviction effectiveness with batch specific bottom m value:  0.0
-263607 2683 31668
-15.210683822631836 348.94131112098694
-16   Consumed
-**********************************************************
-Phase I extracting now
-7.232547283172607 356.17385840415955
-16551
-17   Produced
-**********************************************************
-starting estimate of ambiguous candidate:  32
-printing here:  32 14 18
-incomplete tweets in batch:  34351
-=> 1587 32764
-ambiguous_candidates_in_batch:  14
--0.09477349619245849
-reintroduction_threshold: 0.0
-good:  530 268115
-ambiguous:  181 181 25704
-bad:  1089 574138
-infrequent:  5608 11551
-tallying here:  20 4 16
-reintroduced:  2 not reintroduced:  2
-
-final estimates: 
-not_reintroduced:  2
-reintroduced_to_ambiguous:  0
-infrequent_to_ambiguous:  8
-converted_to_ambiguous:  3
-ambiguous_candidates_not_in_batch_post_eviction:  16
-new_ambiguous_candidates:  4
-
-ending estimate of ambiguous candidate:  33
-eviction effectiveness with batch specific bottom m value:  0.0
-280482 1263 32764
-17.152194261550903 373.32605266571045
-17   Consumed
-**********************************************************
-Phase I extracting now
-7.245589017868042 380.5716416835785
-18255
-18   Produced
-**********************************************************
-starting estimate of ambiguous candidate:  33
-printing here:  33 14 19
-incomplete tweets in batch:  34027
-=> 231 33796
-ambiguous_candidates_in_batch:  14
--0.09722069089992975
-reintroduction_threshold: 0.0
-good:  569 272609
-ambiguous:  189 189 28892
-bad:  1113 610591
-infrequent:  5782 11906
-tallying here:  20 3 17
-reintroduced:  2 not reintroduced:  1
-
-final estimates: 
-not_reintroduced:  1
-reintroduced_to_ambiguous:  0
-infrequent_to_ambiguous:  4
-converted_to_ambiguous:  8
+infrequent_to_ambiguous:  3
+converted_to_ambiguous:  4
 ambiguous_candidates_not_in_batch_post_eviction:  17
-new_ambiguous_candidates:  3
+new_ambiguous_candidates:  5
 
 ending estimate of ambiguous candidate:  33
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 4, 16, 17, 9, 10, 11, 12])
+evicted:  dict_keys([0, 16, 2, 4, 17, 11])
+ambiguous_candidate_inBatch : dict_keys([0, 16, 4, 17])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([0, 16])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([16])
+converted_candidates_baseline: dict_keys([0, 16])
+=>batch:  16 2
 eviction effectiveness with batch specific bottom m value:  0.0
-296571 2397 33796
-17.055888175964355 397.62752985954285
+293525 1540 37699
+17.57282280921936 398.2819175720215
 18   Consumed
 **********************************************************
 Phase I extracting now
-6.822350740432739 404.4498805999756
+6.90109658241272 405.1830141544342
 17720
 19   Produced
 **********************************************************
 starting estimate of ambiguous candidate:  33
-printing here:  33 14 19
-incomplete tweets in batch:  36193
-=> 1714 34479
-ambiguous_candidates_in_batch:  14
--0.09879513924651878
+printing here:  33 13 20
+incomplete tweets in batch:  39239
+=> 687 38552
+ambiguous_candidates_in_batch:  13
+-0.09885425020312207
 reintroduction_threshold: 0.0
-good:  591 283207
-ambiguous:  195 195 26239
-bad:  1143 645640
-infrequent:  6030 12371
-tallying here:  20 4 16
-reintroduced:  3 not reintroduced:  1
+good:  609 283842
+ambiguous:  218 218 53956
+bad:  1102 617603
+infrequent:  6030 12375
+evicted:  13 245
+tallying here:  20 3 17
+not_reintroduced:  2
+reintroduced:  1 1 not reintroduced:  2
 
 final estimates: 
-not_reintroduced:  1
-reintroduced_to_ambiguous:  0
+not_reintroduced:  2
+reintroduced_to_ambiguous:  1
 infrequent_to_ambiguous:  7
-converted_to_ambiguous:  2
-ambiguous_candidates_not_in_batch_post_eviction:  16
-new_ambiguous_candidates:  2
+converted_to_ambiguous:  7
+ambiguous_candidates_not_in_batch_post_eviction:  17
+new_ambiguous_candidates:  3
 
-ending estimate of ambiguous candidate:  28
+ending estimate of ambiguous candidate:  37
+comparing: 
+ambiguous_candidate_records_before_classification:  dict_keys([0, 1, 2, 3, 4, 6, 8, 9, 10, 11, 12, 16, 18])
+evicted:  dict_keys([0, 1, 18, 4, 6, 8, 9, 16])
+ambiguous_candidate_inBatch : dict_keys([0, 1, 18, 4, 6, 16])
+ambiguous_candidates_in_batch_post_eviction : dict_keys([16, 18])
+ambiguous_candidates_reintroduced_post_eviction : dict_keys([16])
+converted_candidates_baseline: dict_keys([1, 6])
+0 630 67 ---------------->>>
+estimate_reintroduced_list:  [4, 9, 13, 16, 18, 21, 23, 25, 27, 29]
+estimate_reintroduced_and_converted_list:  [2, 4, 6, 6, 6, 6, 7, 7, 8, 8]
+estimate_evicted_list:  [12, 25, 34, 41, 43, 49, 51, 56, 59, 60]
+===============
+1 210 14 ---------------->>>
+estimate_reintroduced_list:  [1, 2, 2, 3, 4, 4, 5, 5, 6, 7]
+estimate_reintroduced_and_converted_list:  [1, 2, 2, 2, 2, 2, 3, 3, 4, 4]
+estimate_evicted_list:  [2, 4, 5, 9, 11, 13, 13, 14, 14, 14]
+===============
+2 131 14 ---------------->>>
+estimate_reintroduced_list:  [0, 0, 0, 0, 1, 1, 1, 1, 1, 1]
+estimate_reintroduced_and_converted_list:  [0, 0, 0, 0, 1, 1, 1, 1, 1, 1]
+estimate_evicted_list:  [2, 2, 3, 7, 7, 7, 8, 8, 10, 10]
+===============
+3 118 15 ---------------->>>
+estimate_reintroduced_list:  [1, 2, 3, 4, 5, 6, 8, 9, 10, 11]
+estimate_reintroduced_and_converted_list:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+estimate_evicted_list:  [2, 5, 6, 8, 10, 11, 13, 13, 14, 14]
+===============
+4 105 16 ---------------->>>
+estimate_reintroduced_list:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+estimate_reintroduced_and_converted_list:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+estimate_evicted_list:  [2, 2, 4, 4, 6, 6, 6, 9, 9, 11]
+===============
+5 74 4 ---------------->>>
+estimate_reintroduced_list:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+estimate_reintroduced_and_converted_list:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+estimate_evicted_list:  [1, 2, 2, 2, 3, 4, 4, 4, 4, 4]
+===============
+6 88 12 ---------------->>>
+estimate_reintroduced_list:  [0, 1, 1, 1, 1, 1, 1, 2, 2, 2]
+estimate_reintroduced_and_converted_list:  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+estimate_evicted_list:  [6, 9, 9, 9, 9, 9, 10, 10, 11, 11]
+===============
+7 82 11 ---------------->>>
+estimate_reintroduced_list:  [1, 2, 2, 3, 3, 3, 3, 3, 3, 3]
+estimate_reintroduced_and_converted_list:  [0, 0, 0, 1, 1, 1, 1, 1, 1, 1]
+estimate_evicted_list:  [5, 6, 6, 10, 10, 11, 13, 13, 13, 13]
+===============
+8 41 5 ---------------->>>
+estimate_reintroduced_list:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+estimate_reintroduced_and_converted_list:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+estimate_evicted_list:  [3, 4, 4, 4, 5, 5, 5, 5, 5, 5]
+===============
+9 51 13 ---------------->>>
+estimate_reintroduced_list:  [1, 1, 1, 1, 1, 1, 1, 2, 2, 2]
+estimate_reintroduced_and_converted_list:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+estimate_evicted_list:  [8, 9, 10, 12, 12, 12, 12, 13, 13, 14]
+===============
 eviction effectiveness with batch specific bottom m value:  0.0
-313987 2018 34479
-18.15082335472107 422.60070395469666
+309682 2250 38552
+20.513678789138794 425.696692943573
 19   Consumed
 **********************************************************
