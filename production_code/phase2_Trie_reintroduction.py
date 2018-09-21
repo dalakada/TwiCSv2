@@ -1797,11 +1797,17 @@ class EntityResolver ():
                     
                     if(key<10):
                         fig, axes = plt.subplots(nrows=1, ncols=1)
+
+                        # ax = plt.gca()
+                        # ax.invert_yaxis()
+
                         # axes2 = axes.twinx()
                         # # axes = fig.add_axes([1,0,19, 140])
                         axes.set_xticks(np.arange(1, 20, 1))
-                        axes.set_yticks(np.arange(0, 1, 0.1))
-                        # axes2.set_yticks(np.arange(1, 0, 0.1))
+                        # axes2.set_yticks(np.arange(0, 1, 0.1))
+                        axes.set_yticks(np.arange(1, 0, 0.1))
+                        axes.set_ylim((1, 0))
+                        # axes.yaxis_inverted()
 
                         batch_index=1
                         estimate_numerical_list= self.batchwise_reintroduction_eviction_estimates[key]
