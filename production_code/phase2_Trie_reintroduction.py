@@ -1829,6 +1829,9 @@ class EntityResolver ():
                         estimate_evicted=0
                         estimate_evicted_list=[]
 
+                        estimate_alternate_cumulative_formula=0
+                        estimate_alternate_cumulative_formula_list=[]
+
                         batch_list=[]
 
                         candidates_from_batch=len(candidate_featureBase_DF[candidate_featureBase_DF['batch']==key])
@@ -1840,6 +1843,7 @@ class EntityResolver ():
                             numerical_estimate_list=element[0]
                             numerical_estimate_list_baseline_reintroduction=element[1]
                             numerical_estimate_list_eviction=element[2]
+                            numerical_estimate_alternative_formula=element[3]
 
                             estimate_reintroduced+=numerical_estimate_list[1]
                             estimate_reintroduced_list.append(estimate_reintroduced)
@@ -1855,6 +1859,10 @@ class EntityResolver ():
                             estimate_evicted+=numerical_estimate_list_eviction[1]
                             estimate_evicted_list.append(estimate_evicted)
                             cumulative_estimate_batch_level.append(estimate_evicted)
+
+                            estimate_alternate_cumulative_formula+=numerical_estimate_alternative_formula[1]
+                            estimate_alternate_cumulative_formula_list.append(estimate_alternate_cumulative_formula)
+
 
                             batch_list.append((key+batch_index))
 
@@ -1885,6 +1893,9 @@ class EntityResolver ():
                         # print(estimate_evicted_list)
                         print('===============')
                         axes2.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
+
+                        #alternative cumulative estimate plots
+                        
 
                         max_y=max(max(estimate_reintroduced_list),max(estimate_reintroduced_and_converted_list),max(estimate_evicted_list))
                         axes.set_ylim((2*max_y, 0))
