@@ -1465,13 +1465,12 @@ class EntityResolver ():
             real_eviction_cutoff= int(20/100*(len(ambiguous_candidate_records_before_classification)))
             rank_dict_ordered_list_eviction_candidates_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-real_eviction_cutoff):]
 
-            print('evicted to converted: ', [candidate for candidate in rank_dict_ordered_list_eviction_candidates_cutoff if candidate in converted_candidate_records.candidate.tolist()])
-
             not_evicted_candidates=[candidate for candidate in rank_dict_ordered_list_eviction_candidates if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
             # candidate_featureBase_DF['evictionFlag'][candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]=1
             self.evicted_candidates.extend(rank_dict_ordered_list_eviction_candidates_cutoff)
 
             print('evicted: ', len(rank_dict_ordered_list_eviction_candidates_cutoff), len(self.evicted_candidates))
+            print('evicted to converted: ', len([candidate for candidate in rank_dict_ordered_list_eviction_candidates_cutoff if candidate in converted_candidate_records.candidate.tolist()]),len([candidate for candidate in self.evicted_candidates if candidate in converted_candidate_records.candidate.tolist()]))
 
             rank_dict_eviction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]
             rank_dict_eviction_candidates_cutoff_records_grouped_df= rank_dict_eviction_candidates_cutoff_records.groupby('batch')
@@ -1537,7 +1536,7 @@ class EntityResolver ():
             print('reintroduced_to_ambiguous: ',len(reintroduced_to_ambiguous)) 
             print('infrequent_to_ambiguous: ',len(infrequent_to_ambiguous)) 
             print('converted_to_ambiguous: ',len(converted_to_ambiguous)) 
-            print('ambiguous_candidates_not_in_batch_post_eviction: ',len(ambiguous_candidates_not_in_batch_post_eviction)) 
+            print('ambiguous_candidates_not_in_batch_post_eviction: ',len(ambiguous_candidates_not_in_batch_post_eviction),len([candidate for candidate in ambiguous_candidates_not_in_batch_post_eviction if candidate in converted_candidate_records.candidate.tolist()])) 
             print('new_ambiguous_candidates: ',len(new_ambiguous_candidates))
             print('')
 
@@ -1900,18 +1899,20 @@ class EntityResolver ():
 
                         #-----------------------------------------------------------------------------------------------------------------#
                         #alternative cumulative estimate plots
+                        
+                        print('estimate_reintroduced_and_converted_list: ', estimate_reintroduced_and_converted_list)
+                        estimate_reintroduced_and_converted_list=[float(estimate_reintroduced_and_converted_list[index]/estimate_reintroduced_list[index]) for index in range(len(estimate_reintroduced_and_converted_list))]
+                        # estimate_reintroduced_and_converted_list=[float(element/candidates_from_batch) for element in estimate_reintroduced_and_converted_list]
+                        # print(estimate_reintroduced_and_converted_list)
+                        # print('===============')
+                        axes.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv precision-'+str(key))
+
                         print('estimate_reintroduced_list: ', estimate_reintroduced_list)
                         estimate_reintroduced_list=[float(estimate_reintroduced_list[index]/estimate_alternate_cumulative_formula_list[index]) for index in range(len(estimate_reintroduced_list))]
                         # print(estimate_reintroduced_list)
                         # print('===============')
                         axes.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
 
-                        print('estimate_reintroduced_and_converted_list: ', estimate_reintroduced_and_converted_list)
-                        estimate_reintroduced_and_converted_list=[float(estimate_reintroduced_and_converted_list[index]/estimate_alternate_cumulative_formula_list[index]) for index in range(len(estimate_reintroduced_and_converted_list))]
-                        # estimate_reintroduced_and_converted_list=[float(element/candidates_from_batch) for element in estimate_reintroduced_and_converted_list]
-                        # print(estimate_reintroduced_and_converted_list)
-                        # print('===============')
-                        axes.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv batch-'+str(key))
 
                         print('estimate_baseline_reintroduction_list: ',estimate_baseline_reintroduction_list)
                         estimate_baseline_reintroduction_list=[float(estimate_baseline_reintroduction_list[index]/estimate_alternate_cumulative_formula_list[index]) for index in range(len(estimate_baseline_reintroduction_list))]
@@ -1927,7 +1928,7 @@ class EntityResolver ():
                         #-----------------------------------------------------------------------------------------------------------------#
                         
 
-                        max_y=max(max(estimate_reintroduced_list),max(estimate_reintroduced_and_converted_list))
+                        max_y=max(max(estimate_reintroduced_list),max(estimate_reintroduced_and_converted_list),max(estimate_baseline_reintroduction_list))
 
                         # axes.set_ylim((2*max_y, 0))
                         axes.set_ylim(0, 2*max_y)
