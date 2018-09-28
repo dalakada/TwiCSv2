@@ -1846,7 +1846,8 @@ class EntityResolver ():
                         estimate_alternate_cumulative_formula_list=[]
 
                         estimate_eviction_error_rate=0
-                        estimate_eviction_error_rate_list=[]
+                        estimate_eviction_error_list=[]
+                        # estimate_eviction_error_rate_list=[]
 
                         batch_list=[]
 
@@ -1884,6 +1885,13 @@ class EntityResolver ():
 
                             cumulative_estimate_list.append(cumulative_estimate_batch_level)
                             batch_index+=1
+
+                        evicted_candidate_progression_list= self.evicted_candidates_batchwise_progression[key]
+                        for evicted_candidate_list in evicted_candidate_progression_list:
+                            estimate_error=len([candidate for candidate in evicted_candidate_list if candidate not in self.ambiguous_candidates])
+                            estimate_eviction_error_rate+=estimate_error
+                            estimate_eviction_error_list.append(estimate_eviction_error_rate)
+
 
 
                         print(key,candidates_from_batch, ambiguous_candidates_from_batch, '---------------->>>')
@@ -1939,6 +1947,8 @@ class EntityResolver ():
                         # # print(estimate_evicted_list)
                         # print('===============')
                         # axes2.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
+                        print('estimate_eviction_error_list: ',estimate_eviction_error_list)
+                        estimate_eviction_error_rate_list=[float(estimate_eviction_error_list[index]/estimate_evicted_list[index]) for index in range(len(estimate_eviction_error_list))]
 
                         print('estimate_baseline_reintroduced_list: ', estimate_alternate_cumulative_formula_list)
                         #-----------------------------------------------------------------------------------------------------------------#
