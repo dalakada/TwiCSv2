@@ -926,6 +926,7 @@ class EntityResolver ():
         ambiguous_candidate_list_before_classification=[candidate for candidate in self.ambiguous_candidates if (candidate not in self.evicted_candidates)]
         ambiguous_candidate_records_before_classification=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(ambiguous_candidate_list_before_classification))]
 
+        ambiguous_candidates_records_before_classification_for_baseline = candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(ambiguous_candidates_before_classification_for_baseline))]
         # print('printing here: ',len(self.ambiguous_candidates),len(self.evicted_candidates),len(ambiguous_candidate_list_before_classification))
         
         print('starting estimate of ambiguous candidate: ',len(ambiguous_candidate_list_before_classification))
@@ -946,6 +947,7 @@ class EntityResolver ():
 
 
         ambiguous_candidate_records_before_classification_grouped_df= ambiguous_candidate_records_before_classification.groupby('batch')
+        ambiguous_candidates_records_before_classification_for_baseline_grouped_df= ambiguous_candidates_records_before_classification_for_baseline.groupby('batch')
         
 
         # print(ambiguous_candidates_in_batch_w_Count)
