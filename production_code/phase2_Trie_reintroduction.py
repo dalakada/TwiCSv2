@@ -915,6 +915,8 @@ class EntityResolver ():
         # for candidate in self.ambiguous_candidates_in_batch:
         #     if(int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate]['evictionFlag'])==0):
         #         print(candidate)
+        ambiguous_candidates_before_classification_for_baseline= self.ambiguous_candidates
+
         self.ambiguous_candidates_in_batch= [candidate for candidate in self.ambiguous_candidates_in_batch if (candidate not in self.evicted_candidates)]
         ambiguous_candidates_in_batch_w_Count=dict((x,self.ambiguous_candidates_in_batch.count(x)) for x in set(self.ambiguous_candidates_in_batch))
 
@@ -944,6 +946,8 @@ class EntityResolver ():
 
 
         ambiguous_candidate_records_before_classification_grouped_df= ambiguous_candidate_records_before_classification.groupby('batch')
+        
+
         # print(ambiguous_candidates_in_batch_w_Count)
         self.ambiguous_candidates_in_batch=list(set(self.ambiguous_candidates_in_batch))
         ambiguous_candidates_not_in_batch=[candidate for candidate in self.ambiguous_candidates if ((candidate not in self.evicted_candidates)&(candidate not in self.ambiguous_candidates_in_batch))]
@@ -1823,7 +1827,8 @@ class EntityResolver ():
                         fig2, axes2 = plt.subplots(nrows=1, ncols=1)
                         # ax = plt.gca()
                         # ax.invert_yaxis()
-                        # axes2 = axes.twinx()
+                        fig3, axes3 = plt.subplots(nrows=1, ncols=1)
+                        axes4 = axes3.twinx()
                         # # axes = fig.add_axes([1,0,19, 140])
                         # axes.yaxis_inverted()
 
@@ -1929,18 +1934,21 @@ class EntityResolver ():
                         # print(estimate_reintroduced_and_converted_list)
                         # print('===============')
                         axes.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv precision-'+str(key))
+                        axes3.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv precision-'+str(key))
 
                         print('estimate_reintroduced_list: ', estimate_reintroduced_list)
                         estimate_reintroduced_list=[float(estimate_reintroduced_list[index]/estimate_alternate_cumulative_formula_list[index]) for index in range(len(estimate_reintroduced_list))]
                         # print(estimate_reintroduced_list)
                         # print('===============')
                         axes.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
+                        axes3.plot(batch_list, estimate_reintroduced_list,'--', label='conv precision-'+str(key))
 
 
                         print('estimate_baseline_reintroduction_and_converted_list: ',estimate_baseline_reintroduction_list)
                         estimate_baseline_reintroduction_list=[float(estimate_baseline_reintroduction_list[index]/estimate_alternate_cumulative_formula_list[index]) for index in range(len(estimate_baseline_reintroduction_list))]
                         # estimate_baseline_reintroduction_list=[float(element/candidates_from_batch) for element in estimate_baseline_reintroduction_list]
                         axes.plot(batch_list, estimate_baseline_reintroduction_list,'-.', label='baseline-'+str(key))
+                        axes3.plot(batch_list, estimate_baseline_reintroduction_list,'-.', label='baseline-'+str(key))
 
                         max_y=max(max(estimate_reintroduced_list),max(estimate_reintroduced_and_converted_list),max(estimate_baseline_reintroduction_list))
 
@@ -1961,12 +1969,14 @@ class EntityResolver ():
                         print('estimate_eviction_error_list: ',estimate_eviction_error_list)
                         estimate_eviction_error_rate_list=[float(estimate_eviction_error_list[index]/estimate_alternate_cumulative_formula_list[index]) if (estimate_evicted_list[index]!=0) else 0 for index in range(len(estimate_eviction_error_list))]
                         axes2.plot(batch_list, estimate_eviction_error_rate_list, ':', label='error-rate batch-'+str(key))
+                        axes4.plot(batch_list, estimate_eviction_error_rate_list, 'x', label='error-rate batch-'+str(key))
 
                         print('estimate_evicted_list: ', estimate_evicted_list)
                         estimate_evicted_list=[float(estimate_evicted_list[index]/estimate_alternate_cumulative_formula_list[index]) for index in range(len(estimate_evicted_list))]
                         # # print(estimate_evicted_list)
                         # print('===============')
                         axes2.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
+                        axes4.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
 
                         print('estimate_baseline_reintroduced_list: ', estimate_alternate_cumulative_formula_list)
                         #-----------------------------------------------------------------------------------------------------------------#
@@ -1978,13 +1988,21 @@ class EntityResolver ():
                         # axes2.yaxis.tick_right()
                         # axes2.yaxis.set_label_position("right")
                         axes2.set_ylabel('# of ambiguous candidates')
-                        axes2.set_xticks(batch_list)
-
-                        
+                        axes2.set_xticks(batch_list)                      
                         axes2.set_xlabel('batch-value')
                         lgd2=axes2.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 8}, borderaxespad=0.)
                         axes2.set_title('Batch level candidate eviction and erroe-rate estimates')
                         # plt.savefig('reintroduction-converted-estimates.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
+
+                        #-----------------------------------------------------------------------------------------------------------------#
+
+                        max_y_3= max(max(estimate_reintroduced_list),max(estimate_reintroduced_and_converted_list),max(estimate_baseline_reintroduction_list), max(estimate_eviction_error_rate_list),max(estimate_evicted_list))
+                        axes3.set_ylim(1, 0,0.1)
+                        axes4.set_ylim(0, 1,0.1)
+                        axes3.set_ylabel('# of ambiguous candidates')
+                        axes3.set_xticks(batch_list)
+                        lgd3=axes3.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 8}, borderaxespad=0.)
+                        axes3.set_title('Batch level candidate eviction and erroe-rate estimates')
 
                         plt.show()
                         
