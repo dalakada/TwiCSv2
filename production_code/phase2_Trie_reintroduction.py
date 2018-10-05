@@ -1559,12 +1559,21 @@ class EntityResolver ():
             print('converted_candidates_baseline:', converted_candidates_grouped_df.groups.keys())
 
             #new block to measure eviction rate
+            for key in ambiguous_candidates_records_before_classification_for_baseline_grouped_df.groups.keys():
+                if((self.counter-key)<=10):
+                    list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
+                    tuple_to_edit=list_of_lists[self.counter-key-1]
+                    ambiguous_candidates_records_before_classification_for_baseline_grouped_df_key=ambiguous_candidates_records_before_classification_for_baseline_grouped_df.get_group(key)
+                    tuple_to_edit[3][0]=len(ambiguous_candidates_records_before_classification_for_baseline_grouped_df_key)
+                    list_of_lists[self.counter-key-1]=tuple_to_edit
+                    self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
+
             for key in ambiguous_candidate_records_before_classification_grouped_df.groups.keys():
                 if((self.counter-key)<=10):
                     list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
                     tuple_to_edit=list_of_lists[self.counter-key-1]
                     ambiguous_candidate_records_before_classification_grouped_df_key=ambiguous_candidate_records_before_classification_grouped_df.get_group(key)
-                    tuple_to_edit[3]=[0,len(ambiguous_candidate_records_before_classification_grouped_df_key)]
+                    tuple_to_edit[3][1]=len(ambiguous_candidate_records_before_classification_grouped_df_key)
                     list_of_lists[self.counter-key-1]=tuple_to_edit
                     self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
 
@@ -1853,6 +1862,9 @@ class EntityResolver ():
                         estimate_alternate_cumulative_formula=0
                         estimate_alternate_cumulative_formula_list=[]
 
+                        estimate_alternate_cumulative_formula_baseline=0
+                        estimate_alternate_cumulative_formula_list_baseline=[]
+
                         estimate_eviction_error_rate=0
                         estimate_eviction_error_list=[]
                         # estimate_eviction_error_rate_list=[]
@@ -1887,6 +1899,9 @@ class EntityResolver ():
 
                             estimate_alternate_cumulative_formula+=numerical_estimate_alternative_formula[1]
                             estimate_alternate_cumulative_formula_list.append(estimate_alternate_cumulative_formula)
+
+                            estimate_alternate_cumulative_formula_baseline+=numerical_estimate_alternative_formula[0]
+                            estimate_alternate_cumulative_formula_list_baseline.append(estimate_alternate_cumulative_formula_baseline)
 
 
                             batch_list.append((key+batch_index))
@@ -1947,10 +1962,15 @@ class EntityResolver ():
 
 
                         print('estimate_baseline_reintroduction_and_converted_list: ',estimate_baseline_reintroduction_list)
-                        estimate_baseline_reintroduction_list=[float(estimate_baseline_reintroduction_list[index]/estimate_alternate_cumulative_formula_list[index]) for index in range(len(estimate_baseline_reintroduction_list))]
+                        estimate_baseline_reintroduction_list=[float(estimate_baseline_reintroduction_list[index]/estimate_alternate_cumulative_formula_list_baseline[index]) for index in range(len(estimate_alternate_cumulative_formula_list_baseline))]
                         # estimate_baseline_reintroduction_list=[float(element/candidates_from_batch) for element in estimate_baseline_reintroduction_list]
                         axes.plot(batch_list, estimate_baseline_reintroduction_list,'-.', label='baseline-'+str(key))
                         axes3.plot(batch_list, estimate_baseline_reintroduction_list,'-.', label='baseline-'+str(key))
+
+                        print('estimate_baseline_reintroduced_list: ',estimate_alternate_cumulative_formula_list_baseline)
+                        estimate_conversion_rate_with_reintroduction=[float(estimate_reintroduced_and_converted_list[index]/estimate_alternate_cumulative_formula_list_baseline[index]) if (estimate_alternate_cumulative_formula_list_baseline[index]!=0) else 0 for index in range(len(estimate_alternate_cumulative_formula_list_baseline))]
+                        axes.plot(batch_list, estimate_conversion_rate_with_reintroduction,'x', label='reintro-'+str(key))
+
 
                         max_y=max(max(estimate_reintroduced_list),max(estimate_reintroduced_and_converted_list),max(estimate_baseline_reintroduction_list))
 
