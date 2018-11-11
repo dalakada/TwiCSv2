@@ -79,11 +79,11 @@ batch_size=10000
 
 
 #z_score=-0.078      #-----20K
-#z_score=-0.8      #-----3K
+# z_score=-0.8      #-----3K
 #z_score=-0.09      #-----50K
 #z_score=-0.078         #-----50K, multiple batches
 #z_score=-0.08         #-----deduplicated_tweets,
-#z_score=-0.1119        #-----tweets_1million_for_others, 200K
+z_score=-0.1119        #-----tweets_1million_for_others, 200K
 
 
 #print(entity_level_arr)
@@ -108,7 +108,7 @@ batch_size=10000
 
 # tweets = shuffle(tweets_unpartitoned)
 tweets=tweets_unpartitoned
-z_score=-0.1119
+# z_score=-0.1119
 entity_level_arr=[[-1]*20]*20
 mention_level_arr=[[-1]*20]*20
 sentence_level_arr=[[-1]*20]*20
@@ -140,6 +140,7 @@ for reintroduction_threshold in reintroduction_threshold_array:
         candidate_base=tuple_of[1]
         phase2stopwordList=tuple_of[4]
         # candidateList=candidate_base.displayTrie("",[])
+        # print('candidate list post CS:', candidateList)
         # candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
         # candidateBase.to_csv('candidate_base.csv' ,sep=',', encoding='utf-8')
 
@@ -182,7 +183,7 @@ for reintroduction_threshold in reintroduction_threshold_array:
         print(elapsedTime,total_time)
         print(g,' ','Consumed')
         print("**********************************************************")
-
+# print(candidate_base.candidate.tolist())
 #-----------------------------------------------------This part is for propagation estimates-------------------------------
 # # column_headers=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19']
 # # #Taking propagation estimates

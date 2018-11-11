@@ -1958,7 +1958,7 @@ class EntityResolver ():
                         # print(estimate_reintroduced_list)
                         # print('===============')
                         axes.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
-                        axes3.plot(batch_list, estimate_reintroduced_list,'--', label='conv precision-'+str(key))
+                        axes3.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
 
 
                         print('estimate_baseline_reintroduction_and_converted_list: ',estimate_baseline_reintroduction_list)
@@ -1968,8 +1968,9 @@ class EntityResolver ():
                         axes3.plot(batch_list, estimate_baseline_reintroduction_list,'-.', label='baseline-'+str(key))
 
                         print('estimate_baseline_reintroduced_list: ',estimate_alternate_cumulative_formula_list_baseline)
-                        estimate_conversion_rate_with_reintroduction=[float(estimate_reintroduced_and_converted_list[index]/estimate_alternate_cumulative_formula_list_baseline[index]) if (estimate_alternate_cumulative_formula_list_baseline[index]!=0) else 0 for index in range(len(estimate_alternate_cumulative_formula_list_baseline))]
-                        axes.plot(batch_list, estimate_conversion_rate_with_reintroduction,'x', label='reintro-'+str(key))
+                        estimate_conversion_rate_with_baseline_reintroduction=[float(estimate_reintroduced_and_converted_list[index]/estimate_alternate_cumulative_formula_list_baseline[index]) if (estimate_alternate_cumulative_formula_list_baseline[index]!=0) else 0 for index in range(len(estimate_alternate_cumulative_formula_list_baseline))]
+                        print('baseline-precision :',estimate_conversion_rate_with_baseline_reintroduction)
+                        axes.plot(batch_list, estimate_conversion_rate_with_baseline_reintroduction,'x', label='baseline-precision-'+str(key))
 
 
                         max_y=max(max(estimate_reintroduced_list),max(estimate_reintroduced_and_converted_list),max(estimate_baseline_reintroduction_list))

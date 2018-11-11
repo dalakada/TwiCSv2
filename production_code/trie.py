@@ -191,8 +191,8 @@ class Trie:
         if(self.value_valid):
             #print(thisText,ME_EXTR.checkInDictionary(thisText))
             #dict1 = {'candidate':thisText, 'freq':self.feature_list[0],'length':self.feature_list[1],'cap':self.feature_list[2],'start_of_sen':self.feature_list[3],'abbrv':self.feature_list[4],'all_cap':self.feature_list[5],'is_csl':self.feature_list[6],'title':self.feature_list[7],'has_no':self.feature_list[8],'date':self.feature_list[9],'is_apostrp':self.feature_list[10],'has_inter_punct':self.feature_list[11],'ends_verb':self.feature_list[12],'ends_adverb':self.feature_list[13],'change_in_cap':self.feature_list[14],'topic_ind':self.feature_list[15],'entry_time':self.feature_list[16],'entry_batch':self.feature_list[17],'@mention':self.feature_list[18]}
-            dict1 = {'candidate':thisText, 'freq':self.feature_list[0],'length':self.feature_list[1],'entry_time':self.feature_list[2],'entry_batch':self.feature_list[3]}
-            candidateBase.append(dict1)
+            # dict1 = {'candidate':thisText, 'freq':self.feature_list[0],'length':self.feature_list[1],'entry_time':self.feature_list[2],'entry_batch':self.feature_list[3]}
+            candidateBase.append(thisText)
         
         for k in self.path.keys():
             self.path[k].displayTrie(thisText,candidateBase)
