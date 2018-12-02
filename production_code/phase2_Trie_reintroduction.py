@@ -742,7 +742,7 @@ class EntityResolver ():
     #     # #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
     #     return self.incomplete_tweets
 
-    def get_reintroduced_tweets(self,candidates_to_reintroduce):
+    def get_reintroduced_tweets(self,candidates_to_reintroduce,candidates_to_reintroduce1):
         #no preferential selection
         print("incomplete tweets in batch: ",len(self.incomplete_tweets))
         # for i in range(self.counter):
@@ -752,10 +752,12 @@ class EntityResolver ():
         # get union of tweet-set of selected candidates 
         #print(self.incomplete_tweets[any(x in list(cosine_distance_dict.keys()) for x in self.incomplete_tweets['ambiguous_candidates'])])
         reintroduced_tweets=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in candidates_to_reintroduce for x in row['ambiguous_candidates']) ,axis=1)]
+
+        reintroduced_tweets_reintroduction_eviction=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in candidates_to_reintroduce1 for x in row['ambiguous_candidates']) ,axis=1)]
         #not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in list(cosine_distance_dict.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
         self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets.index)]
         # print(len(self.incomplete_tweets))
-        print("=>",len(reintroduced_tweets),len(self.not_reintroduced))
+        print("=> reintroduced tweets reintro+eviction: ", len(reintroduced_tweets_reintroduction_eviction), " reintroduced in-batch: ", len(reintroduced_tweets)," not-reintroduced tweets: ", len(self.not_reintroduced))
         #print((len(not_reintroduced)==len(self.not_reintroduced)),(len(reintroduced_tweets)+len(self.not_reintroduced)==len(self.incomplete_tweets)))
         return reintroduced_tweets
         
@@ -1046,9 +1048,41 @@ class EntityResolver ():
             # for candidate in cosine_distance_dict_wAmb.keys():
             #     print(candidate,cosine_distance_dict_wAmb[candidate])
 
+            rank_dict_eviction_candidates={candidate: max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in list(ranking_score_dict_eviction.keys())}
+            rank_dict_ordered_eviction_candidates=OrderedDict(sorted(rank_dict_eviction_candidates.items(), key=lambda x: x[1]))
+            rank_dict_ordered_list_eviction_candidates=list(rank_dict_ordered_eviction_candidates.keys())
+            real_eviction_cutoff= int(20/100*(len(ambiguous_candidate_records_before_classification)))
+            rank_dict_ordered_list_eviction_candidates_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-real_eviction_cutoff):]
+
+            # not_evicted_candidates=[candidate for candidate in rank_dict_ordered_list_eviction_candidates if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
+            # candidate_featureBase_DF['evictionFlag'][candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]=1
+            # self.evicted_candidates.extend(rank_dict_ordered_list_eviction_candidates_cutoff)
+
+            # print('evicted: ', len(rank_dict_ordered_list_eviction_candidates_cutoff), len(self.evicted_candidates))
+            # print('evicted to converted: ', len([candidate for candidate in rank_dict_ordered_list_eviction_candidates_cutoff if candidate in converted_candidate_records.candidate.tolist()]),len([candidate for candidate in self.evicted_candidates if candidate in converted_candidate_records.candidate.tolist()]))
+
+            # rank_dict_eviction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]
+            # rank_dict_eviction_candidates_cutoff_records_grouped_df= rank_dict_eviction_candidates_cutoff_records.groupby('batch')
+
+            ambiguous_candidates_in_batch_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
+            # in_batch_and_evicted= [candidate for candidate in self.ambiguous_candidates_in_batch if candidate in rank_dict_ordered_list_eviction_candidates_cutoff] #ranked for reintroduction, nonetheless evicted
+            # ambiguous_candidates_not_in_batch_post_eviction = [candidate for candidate in ambiguous_candidates_not_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
+
+            # ambiguous_candidates_in_batch_post_eviction_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_candidates_in_batch_post_eviction)]
+            # ambiguous_candidates_in_batch_post_eviction_grouped_df= ambiguous_candidates_in_batch_post_eviction_records.groupby('batch')
+
+            # print('tallying here: ', len(not_evicted_candidates), len(ambiguous_candidates_in_batch_post_eviction), len(in_batch_and_evicted), len(ambiguous_candidates_not_in_batch_post_eviction))
+
+            
+            rank_dict_reintroduction_candidates_post_eviction={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidates_in_batch_post_eviction}
+            rank_dict_ordered_reintroduction_candidates_post_eviction=OrderedDict(sorted(rank_dict_reintroduction_candidates_post_eviction.items(), key=lambda x: x[1]))
+            rank_dict_ordered_list_reintroduction_candidates_post_eviction=list(rank_dict_ordered_reintroduction_candidates_post_eviction.keys())
+            real_cutoff= int(60/100*(len(ambiguous_candidates_in_batch_post_eviction)))
+            rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction=rank_dict_ordered_list_reintroduction_candidates_post_eviction[0:real_cutoff]
+
             #tweet candidates for Reintroduction
             #reintroduced_tweets=self.get_reintroduced_tweets(cosine_distance_dict_wAmb) #single ambiguous sketch
-            reintroduced_tweets=self.get_reintroduced_tweets(cosine_distance_dict) #single entity/non-entity sketch sketch
+            reintroduced_tweets=self.get_reintroduced_tweets(candidates_to_reintroduce,rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction) #single entity/non-entity sketch sketch
             #reintroduced_tweets=self.get_reintroduced_tweets(comebined_score_dict) #combined 3 sketch score
             candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(reintroduced_tweets,CTrie,phase2stopwordList,1)
             phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
