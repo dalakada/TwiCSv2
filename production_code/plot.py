@@ -504,34 +504,53 @@ m_values=[10,15,20,25,30,35,40]
 
 
 
-batch_specific_top_k_reintroduction= [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.9866666666666667, 0.9866666666666667, 0.9634146341463414, 0.9655172413793104, 0.9662921348314607]
+# batch_specific_top_k_reintroduction= [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.9866666666666667, 0.9866666666666667, 0.9634146341463414, 0.9655172413793104, 0.9662921348314607]
 
-index=1
+# index=1
 
-
-fig, axes = plt.subplots(nrows=1, ncols=1)
-plt.hold(True)
-# for val in batch_specific_top_k_reintroduction:
-# 	if (val == 1.0):
-# 		index+=1
-# print(index)
-# print(batch_specific_top_k_reintroduction[index:])
-batch_values= list(range(10, 20))
-print(batch_values)
-print(len(batch_values),len(batch_specific_top_k_reintroduction[9:]))
-plt.plot(batch_values, batch_specific_top_k_reintroduction[9:],'--', label='dynamic batch specific reintroduction')
-# plt.yticks(np.arange(0.5, 1.0, step=0.1))
-axes.set_ylim(0,1.1)
-# axes.set_yticks(np.arange(0, 1, 0.1))
-plt.ylabel('reintroduction ranking precision')
-plt.xlabel('batch-value')
-lgd=plt.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 4}, borderaxespad=0.)
-plt.title('Reintroduction ranking precision with dynamic batch-specific reintroduction')
-plt.savefig('dynamic-batch-specific-reintroduction.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
-plt.show()
 
 # fig, axes = plt.subplots(nrows=1, ncols=1)
 # plt.hold(True)
+# # for val in batch_specific_top_k_reintroduction:
+# # 	if (val == 1.0):
+# # 		index+=1
+# # print(index)
+# # print(batch_specific_top_k_reintroduction[index:])
+# batch_values= list(range(10, 20))
+# print(batch_values)
+# print(len(batch_values),len(batch_specific_top_k_reintroduction[9:]))
+# plt.plot(batch_values, batch_specific_top_k_reintroduction[9:],'--', label='dynamic batch specific reintroduction')
+# # plt.yticks(np.arange(0.5, 1.0, step=0.1))
+# axes.set_ylim(0,1.1)
+# # axes.set_yticks(np.arange(0, 1, 0.1))
+# plt.ylabel('reintroduction ranking precision')
+# plt.xlabel('batch-value')
+# lgd=plt.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 4}, borderaxespad=0.)
+# plt.title('Reintroduction ranking precision with dynamic batch-specific reintroduction')
+# plt.savefig('dynamic-batch-specific-reintroduction.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+# plt.show()
+
+# fig, axes = plt.subplots(nrows=1, ncols=1)
+# plt.hold(True)
+tweets_been_processed= [173400, 350484, 527834, 682913, 849446, 1028661, 1188145, 1338782, 1500195, 1657711, 1713105]
+execution_time_list=[166.75889563560486, 362.2613089084625, 575.8956503868103, 809.4419324398041, 1083.4650089740753, 1425.3307547569275, 1836.3565995693207, 2316.8451795578003, 2874.0793306827545, 3927.872410297394, 4567.780866622925]
+execution_time_list_reintroduction= [154.13501000404358, 328.48251509666443, 509.3811755180359, 704.9980118274689, 919.494167804718, 1185.8589017391205, 1509.6817700862885, 1872.0712308883667, 2303.9076883792877, 2774.809245109558, 3047.7655758857727]
+execution_time_list_reintroduction_eviction =[154.8149561882019, 324.27084946632385, 498.765234708786, 686.6643452644348, 882.6111776828766, 1115.6090331077576, 1363.623596906662, 1629.3569157123566, 1915.8414995670319, 2227.6679270267487, 2387.10250043869]
+
+plt.plot(tweets_been_processed, execution_time_list,'r--', label='baseline')
+plt.plot(tweets_been_processed, execution_time_list_reintroduction,'b--', label='with reintroduction')
+plt.plot(tweets_been_processed, execution_time_list_reintroduction_eviction,'g--', label='with reintroduction and eviction')
+plt.ylabel('processing time')
+plt.xlabel('length of input tweet-sentence stream')
+lgd=plt.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 4}, borderaxespad=0.)
+
+# plt.title('Efficiency speed-up with Reintroduction')
+# plt.savefig('efficiency-speed-up-with-reintroduction.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+
+plt.title('Efficiency speed-up with Reintroduction and Eviction')
+plt.savefig('efficiency-speed-up-with-reintroduction-eviction.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+
+plt.show()
 
 #model function
 

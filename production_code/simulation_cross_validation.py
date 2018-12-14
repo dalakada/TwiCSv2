@@ -3,7 +3,8 @@
 import SatadishaModule_final_trie as phase1
 
 # import phase2_Trie_baseline_reintroduction as phase2
-import phase2_Trie_reintroduction as phase2
+import phase2_Trie_just_reintroduction as phase2 #just reintroduction, eviction without experimental result computation
+# import phase2_Trie_reintroduction as phase2
 
 import datetime
 from threading import Thread
@@ -12,7 +13,6 @@ import math
 from queue  import Queue
 import pandas as pd 
 import warnings
-import numpy as np
 import time
 import trie as trie
 import pickle
@@ -59,12 +59,13 @@ total_time=0
 tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 
 # tweets_unpartitoned=tweets_unpartitoned[400000:600000:]
-tweets_unpartitoned=tweets_unpartitoned[:200000:]
+# tweets_unpartitoned=tweets_unpartitoned[:200000:]
 
 print("***",len(tweets_unpartitoned))
 print('Tweets are in memory...')
-batch_size=10000
-# batch_size=1000
+# batch_size=10000
+
+batch_size=100000
 
 # batch_size=len(tweets_unpartitoned)
 
@@ -122,6 +123,7 @@ length=len(tweets)
 val=math.ceil(length/batch_size)-1
 count=0
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+total_time_arr=[]
 reintroduction_threshold_array=[0.0]
 iter=0
 print('run: ',str(iter))
@@ -184,6 +186,9 @@ for reintroduction_threshold in reintroduction_threshold_array:
         print(g,' ','Consumed')
         print("**********************************************************")
 # print(candidate_base.candidate.tolist())
+print('tweets been processed:', tweets_been_processed_list)
+print('execution time: ', execution_time_list)
+
 #-----------------------------------------------------This part is for propagation estimates-------------------------------
 # # column_headers=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19']
 # # #Taking propagation estimates

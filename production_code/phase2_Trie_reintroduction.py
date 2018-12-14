@@ -759,7 +759,7 @@ class EntityResolver ():
         # print(len(self.incomplete_tweets))
         print("=> reintroduced tweets reintro+eviction: ", len(reintroduced_tweets_reintroduction_eviction), " reintroduced in-batch: ", len(reintroduced_tweets)," not-reintroduced tweets: ", len(self.not_reintroduced))
         #print((len(not_reintroduced)==len(self.not_reintroduced)),(len(reintroduced_tweets)+len(self.not_reintroduced)==len(self.incomplete_tweets)))
-        return reintroduced_tweets
+        return reintroduced_tweets_reintroduction_eviction
         
     #NOTE: with simple eviction
     def frequencies_w_decay(self,ambiguous_candidates_in_batch_w_Count,candidate_featureBase_DF):
