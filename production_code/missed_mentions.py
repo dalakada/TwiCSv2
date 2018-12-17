@@ -17,13 +17,16 @@ for index,row in tweets_unpartitoned.iterrows():
 	tweet_in_first_five_hundred=str(row['First_five_hundred'])
 	if(tweet_in_first_five_hundred!=''):
 		ritter_output=str(row['Output']).split(',')
+		ritter_output=list(filter(lambda element: element !='', ritter_output))
 		annotated_mention_list=[]
 		tweet_level_candidate_list=str(row['Annotations']).split(';')
 		for tweet_level_candidates in tweet_level_candidate_list:
 			sentence_level_cand_list= tweet_level_candidates.split(',')
 			annotated_mention_list.extend(sentence_level_cand_list)
 		# for index in range(len(ritter_output)):
+		annotated_mention_list=list(filter(lambda element: element !='', annotated_mention_list))
 		print(ritter_output,annotated_mention_list)
+		
 		while(annotated_mention_list):
 			if(len(ritter_output)):
 				annotated_candidate= annotated_mention_list.pop()
