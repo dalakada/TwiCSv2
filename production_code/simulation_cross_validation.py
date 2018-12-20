@@ -2,8 +2,8 @@
 #import SatadishaModule as phase1
 import SatadishaModule_final_trie as phase1
 
-# import phase2_Trie_baseline_reintroduction as phase2
-import phase2_Trie_just_reintroduction as phase2 #just reintroduction, eviction without experimental result computation
+import phase2_Trie_baseline_reintroduction as phase2
+# import phase2_Trie_just_reintroduction as phase2 #just reintroduction, eviction without experimental result computation
 # import phase2_Trie_reintroduction as phase2
 
 import datetime

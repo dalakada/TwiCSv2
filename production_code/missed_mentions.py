@@ -16,7 +16,7 @@ for index,row in tweets_unpartitoned.iterrows():
 	unrecovered_annotated_mention_list=[]
 	tweet_in_first_five_hundred=str(row['First_five_hundred'])
 	if(tweet_in_first_five_hundred!=''):
-		ritter_output=str(row['Output']).split(',')
+		ritter_output=list(map(lambda element: element.strip(),str(row['Output']).split(',')))
 		ritter_output=list(filter(lambda element: element !='', ritter_output))
 		annotated_mention_list=[]
 		tweet_level_candidate_list=str(row['Annotations']).split(';')
@@ -24,8 +24,9 @@ for index,row in tweets_unpartitoned.iterrows():
 			sentence_level_cand_list= tweet_level_candidates.split(',')
 			annotated_mention_list.extend(sentence_level_cand_list)
 		# for index in range(len(ritter_output)):
+		annotated_mention_list=list(map(lambda element: element.strip(),annotated_mention_list))
 		annotated_mention_list=list(filter(lambda element: element !='', annotated_mention_list))
-		print(ritter_output,annotated_mention_list)
+		# print(ritter_output,annotated_mention_list)
 		
 		while(annotated_mention_list):
 			if(len(ritter_output)):
