@@ -40,4 +40,19 @@ for index,row in tweets_unpartitoned.iterrows():
 			else:
 				unrecovered_annotated_mention_list.extend(annotated_mention_list)
 				break
-		print(unrecovered_annotated_mention_list)
+		print(index, unrecovered_annotated_mention_list)
+		# unrecovered_annotated_mention_list_outer.append(unrecovered_annotated_mention_list)
+		for unrecovered_mention in unrecovered_annotated_mention_list:
+			if (unrecovered_mention!=''):
+				if(unrecovered_mention not in unrecovered_annotated_mention_list_outer):
+					unrecovered_annotated_mention_list_outer.append(unrecovered_mention)
+				if(unrecovered_mention.lower() not in unrecovered_annotated_candidate_list_outer):
+					unrecovered_annotated_candidate_list_outer.append(unrecovered_mention.lower())
+	else:
+		break
+print(index)
+# print(unrecovered_annotated_candidate_list_outer)
+print(len(unrecovered_annotated_mention_list_outer),len(unrecovered_annotated_candidate_list_outer))
+print(list(tweets_unpartitoned.columns.values))
+rest_of_tweets= tweets_unpartitoned[index:]
+

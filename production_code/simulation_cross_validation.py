@@ -55,17 +55,21 @@ total_time=0
 # # /Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv #---- for my Mac
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
 
-# /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+# # /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 
 # tweets_unpartitoned=tweets_unpartitoned[400000:600000:]
 # tweets_unpartitoned=tweets_unpartitoned[:200000:]
+
+#for the experiment
+tweets_unpartitoned=pd.read_csv("deduplicated_test_output.csv",sep =',', keep_default_na=False)
+batch_size=550
 
 print("***",len(tweets_unpartitoned))
 print('Tweets are in memory...')
 # batch_size=10000
 
-batch_size=100000
+# batch_size=100000
 
 # batch_size=len(tweets_unpartitoned)
 
@@ -83,8 +87,8 @@ batch_size=100000
 # z_score=-0.8      #-----3K
 #z_score=-0.09      #-----50K
 #z_score=-0.078         #-----50K, multiple batches
-#z_score=-0.08         #-----deduplicated_tweets,
-z_score=-0.1119        #-----tweets_1million_for_others, 200K
+z_score=-0.08         #-----deduplicated_tweets,
+# z_score=-0.1119        #-----tweets_1million_for_others, 200K
 
 
 #print(entity_level_arr)
@@ -121,6 +125,9 @@ tweets_been_processed_list=[]
 tweets_been_processed=0
 length=len(tweets)
 val=math.ceil(length/batch_size)-1
+
+print('# of batches: ',val)
+
 count=0
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 total_time_arr=[]
@@ -151,7 +158,7 @@ for reintroduction_threshold in reintroduction_threshold_array:
 
 
 
-        # print('len of tweet_base = ' , len(tweet_base))
+        print('len of tweet_base = ' , len(tweet_base))
         elapsedTime= tuple_of[3] - tuple_of[2]
         total_time+=elapsedTime
         print(elapsedTime,total_time)
@@ -167,6 +174,7 @@ for reintroduction_threshold in reintroduction_threshold_array:
         time_in=time.time()
 
         tweets_been_processed=tweets_been_processed+len(tweet_base)
+        print('tweets_been_processed: ',tweets_been_processed)
         tweets_been_processed_list.append(tweets_been_processed)
         #reintroduction_threshold=0.2
         Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)

@@ -61,6 +61,7 @@ class EntityResolver ():
             candidate_featureBase_DF,
             phase2_candidates_holder,correction_flag)
 
+        # print('untrashed_tweets: ', len(untrashed_tweets))
         # untrashed_tweets.to_csv("phase2output.csv", sep=',', encoding='utf-8')
 
 
@@ -99,8 +100,11 @@ class EntityResolver ():
         just_converted_tweets=self.get_complete_tf(untrashed_tweets)
         #incomplete tweets at the end of current batch
         incomplete_tweets=self.get_incomplete_tf(untrashed_tweets)
+
         #all incomplete_tweets---> incomplete_tweets at the end of current batch + incomplete_tweets not reintroduced
         self.incomplete_tweets=incomplete_tweets #without reintroduction--- when everything is reintroduced, just incomplete_tweets
+
+
 
         #recording tp, fp , f1
         #self.accuracy_tuples_prev_batch.append((just_converted_tweets.tp.sum(), just_converted_tweets.total_mention.sum(),just_converted_tweets.fp.sum(),just_converted_tweets.fn.sum()))
@@ -113,7 +117,9 @@ class EntityResolver ():
         self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
         self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
 
-
+        if(self.counter==71):
+            print('completed tweets: ', len(self.just_converted_tweets),'incomplete tweets: ', len(self.incomplete_tweets))
+            print('final tally: ', (len(self.just_converted_tweets)+len(self.incomplete_tweets)))
         #self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
 
 
@@ -633,28 +639,28 @@ class EntityResolver ():
     def get_reintroduced_tweets(self,candidates_to_reintroduce):
         #no reintroduction
         print("incomplete tweets in batch: ",len(self.incomplete_tweets))
-        # return self.incomplete_tweets
+        return self.incomplete_tweets
 
-        #no preferential selection
+        # #no preferential selection
         
-        # for i in range(self.counter):
-        #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
-        # return self.incomplete_tweets
+        # # for i in range(self.counter):
+        # #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
+        # # return self.incomplete_tweets
         
-        # get union of tweet-set of selected candidates 
-        #print(self.incomplete_tweets[any(x in list(cosine_distance_dict.keys()) for x in self.incomplete_tweets['ambiguous_candidates'])])
-        reintroduced_tweets=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in candidates_to_reintroduce for x in row['ambiguous_candidates']) ,axis=1)]
+        # # get union of tweet-set of selected candidates 
+        # #print(self.incomplete_tweets[any(x in list(cosine_distance_dict.keys()) for x in self.incomplete_tweets['ambiguous_candidates'])])
+        # reintroduced_tweets=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in candidates_to_reintroduce for x in row['ambiguous_candidates']) ,axis=1)]
 
-        # reintroduced_tweets_reintroduction_eviction=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in candidates_to_reintroduce1 for x in row['ambiguous_candidates']) ,axis=1)]
-        #not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in list(cosine_distance_dict.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
-        self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets.index)]
-        # # print(len(self.incomplete_tweets))
-        reintroduced_length=len(reintroduced_tweets)
-        not_reintroduced_length=len(self.not_reintroduced)
+        # # reintroduced_tweets_reintroduction_eviction=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in candidates_to_reintroduce1 for x in row['ambiguous_candidates']) ,axis=1)]
+        # #not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in list(cosine_distance_dict.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
+        # self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets.index)]
+        # # # print(len(self.incomplete_tweets))
+        # reintroduced_length=len(reintroduced_tweets)
+        # not_reintroduced_length=len(self.not_reintroduced)
 
-        print("=> reintroduced tweets: ",reintroduced_length ," not-reintroduced tweets: ", not_reintroduced_length, "total: ", (reintroduced_length+not_reintroduced_length))
-        #print((len(not_reintroduced)==len(self.not_reintroduced)),(len(reintroduced_tweets)+len(self.not_reintroduced)==len(self.incomplete_tweets)))
-        return reintroduced_tweets
+        # print("=> reintroduced tweets: ",reintroduced_length ," not-reintroduced tweets: ", not_reintroduced_length, "total: ", (reintroduced_length+not_reintroduced_length))
+        # #print((len(not_reintroduced)==len(self.not_reintroduced)),(len(reintroduced_tweets)+len(self.not_reintroduced)==len(self.incomplete_tweets)))
+        # return reintroduced_tweets
 
         #NOTE: with simple eviction
     def frequencies_w_decay(self,ambiguous_candidates_in_batch_w_Count,candidate_featureBase_DF):
