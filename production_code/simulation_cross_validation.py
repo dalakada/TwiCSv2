@@ -130,6 +130,7 @@ print('# of batches: ',val)
 
 count=0
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+reintroduction_batch_threshold=[0:(val+1)]
 total_time_arr=[]
 reintroduction_threshold_array=[0.0]
 iter=0

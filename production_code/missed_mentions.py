@@ -48,11 +48,14 @@ for index,row in tweets_unpartitoned.iterrows():
 					unrecovered_annotated_mention_list_outer.append(unrecovered_mention)
 				if(unrecovered_mention.lower() not in unrecovered_annotated_candidate_list_outer):
 					unrecovered_annotated_candidate_list_outer.append(unrecovered_mention.lower())
+		# print(index, unrecovered_annotated_candidate_list_outer)
 	else:
 		break
-print(index)
+# print(index)
+# for candidate in unrecovered_annotated_candidate_list_outer:
+# 	print(candidate)
 # print(unrecovered_annotated_candidate_list_outer)
 print(len(unrecovered_annotated_mention_list_outer),len(unrecovered_annotated_candidate_list_outer))
-print(list(tweets_unpartitoned.columns.values))
+# print(list(tweets_unpartitoned.columns.values))
 rest_of_tweets= tweets_unpartitoned[index:]
 
