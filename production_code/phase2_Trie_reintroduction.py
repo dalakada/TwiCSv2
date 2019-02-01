@@ -744,7 +744,7 @@ class EntityResolver ():
 
     def get_reintroduced_tweets(self,candidates_to_reintroduce,candidates_to_reintroduce1):
         #no preferential selection
-        print("incomplete tweets in batch: ",len(self.incomplete_tweets))
+        # print("incomplete tweets in batch: ",len(self.incomplete_tweets))
         # for i in range(self.counter):
         #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
         # return self.incomplete_tweets

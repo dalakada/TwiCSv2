@@ -117,15 +117,16 @@ class EntityResolver ():
         self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
         self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
 
-        if(self.counter==71):
-            print('completed tweets: ', len(self.just_converted_tweets),'incomplete tweets: ', len(self.incomplete_tweets))
-            print('final tally: ', (len(self.just_converted_tweets)+len(self.incomplete_tweets)))
+        # if(self.counter==71):
+        #     print('completed tweets: ', len(self.just_converted_tweets),'incomplete tweets: ', len(self.incomplete_tweets))
+        #     print('final tally: ', (len(self.just_converted_tweets)+len(self.incomplete_tweets)))
+
         #self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
 
 
         #self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
         #self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
-        return candidates_to_annotate
+        return candidate_featureBase_DF
 
 
 
@@ -636,10 +637,18 @@ class EntityResolver ():
         euclidean_distance_dict_sorted= OrderedDict(sorted(euclidean_distance_dict.items(), key=lambda x: x[1], reverse=True))
         return euclidean_distance_dict_sorted
 
-    def get_reintroduced_tweets(self,candidates_to_reintroduce):
+    def get_reintroduced_tweets(self,candidates_to_reintroduce,reintroduction_threshold):
         #no reintroduction
+        #no preferential selection
         print("incomplete tweets in batch: ",len(self.incomplete_tweets))
-        return self.incomplete_tweets
+        # print(list(self.incomplete_tweets.columns.values))
+
+        reintroduced_tweets=self.incomplete_tweets[self.incomplete_tweets['current_minus_entry']<=reintroduction_threshold]
+
+        print("reintroduced tweets: ",len(reintroduced_tweets))
+        # for i in range(self.counter):
+        #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
+        return reintroduced_tweets
 
         # #no preferential selection
         
@@ -776,7 +785,7 @@ class EntityResolver ():
 
 
             #tweet candidates for Reintroduction
-            reintroduced_tweets=self.get_reintroduced_tweets(rank_dict_ordered_list_reintroduction_candidates_cutoff)
+            reintroduced_tweets=self.get_reintroduced_tweets(rank_dict_ordered_list_reintroduction_candidates_cutoff,reintroduction_threshold)
             candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(reintroduced_tweets,CTrie,phase2stopwordList,1)
             phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
             df_holder.extend(df_holder_extracted)
