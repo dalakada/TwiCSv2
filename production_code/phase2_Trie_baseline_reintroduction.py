@@ -52,7 +52,7 @@ class EntityResolver ():
 
         # SET CB
         # print(phase2stopwordList)
-        candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,candidates_to_annotate=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
+        candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         
         candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
 
@@ -126,7 +126,7 @@ class EntityResolver ():
 
         #self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
         #self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
-        return candidate_featureBase_DF
+        return candidate_featureBase_DF,converted_candidates
 
 
 
@@ -834,10 +834,13 @@ class EntityResolver ():
             # print(ambiguous_turned_good)
             # print(ambiguous_turned_bad)
             # print(ambiguous_remaining_ambiguous)
+
+            converted_candidates= ambiguous_turned_good + ambiguous_turned_bad
         else:
             ambiguous_turned_good=[]
             ambiguous_turned_bad=[]
             ambiguous_remaining_ambiguous=[]
+            converted_candidates=[]
 
             # for cand in (ambiguous_turned_good):
             #     row=candidate_featureBase_DF[candidate_featureBase_DF.candidate==cand]
@@ -863,7 +866,7 @@ class EntityResolver ():
 
 
         #['probability'],['a,g,b']
-        return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,(ambiguous_turned_good+ambiguous_turned_bad+self.ambiguous_candidates)
+        return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,(ambiguous_turned_good+ambiguous_turned_bad+self.ambiguous_candidates), converted_candidates
 
 
         #flush out completed tweets

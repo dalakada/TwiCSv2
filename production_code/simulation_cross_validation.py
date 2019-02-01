@@ -133,7 +133,7 @@ count=0
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 
 # reintroduction_batch_threshold=range((val+1))
-reintroduction_batch_threshold=[2]
+reintroduction_batch_threshold=[10]
 
 
 # for batch_threshold in reintroduction_batch_threshold:
@@ -144,7 +144,8 @@ total_time_arr=[]
 reintroduction_threshold_array=[0.0]
 iter=0
 print('run: ',str(iter))
-candidates_to_annotate=[]
+# candidates_to_annotate=[]
+disambiguation_array=[]
 for reintroduction_threshold in reintroduction_batch_threshold:
 
     for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
@@ -187,8 +188,11 @@ for reintroduction_threshold in reintroduction_batch_threshold:
         print('tweets_been_processed: ',tweets_been_processed)
         tweets_been_processed_list.append(tweets_been_processed)
         #reintroduction_threshold=0.2
-        candidate_base_post_Phase2= Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
-        print('disambiguation status: ',len((candidate_base_post_Phase2[((candidate_base_post_Phase2['batch']<g)&((candidate_base_post_Phase2.status=="g")|(candidate_base_post_Phase2.status=="b")))]).candidate.tolist()))
+        candidate_base_post_Phase2, converted_candidates= Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
+        # print('disambiguation status: ',len((candidate_base_post_Phase2[((candidate_base_post_Phase2['batch']<g)&((candidate_base_post_Phase2.status=="g")|(candidate_base_post_Phase2.status=="b")))]).candidate.tolist()))
+        
+        # print('disambiguation status: ', len(converted_candidates))
+        disambiguation_array.append(len(converted_candidates))
         # candidates_to_annotate_in_iter=Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
         # candidates_to_annotate+=candidates_to_annotate_in_iter
         # entity_level_arr=Phase2.entity_level_arr
@@ -205,6 +209,7 @@ for reintroduction_threshold in reintroduction_batch_threshold:
         print(g,' ','Consumed')
         print("**********************************************************")
 # print(candidate_base.candidate.tolist())
+print('disambiguation status: ', disambiguation_array)
 print('tweets been processed:', tweets_been_processed_list)
 print('execution time: ', execution_time_list)
 
