@@ -118,35 +118,51 @@ tweets=tweets_unpartitoned
 entity_level_arr=[[-1]*20]*20
 mention_level_arr=[[-1]*20]*20
 sentence_level_arr=[[-1]*20]*20
-Phase1= phase1.SatadishaModule()
-Phase2 = phase2.EntityResolver()
-total_time=0
-execution_time_list=[]
-tweets_been_processed_list=[]
-tweets_been_processed=0
+
+
+
+
 length=len(tweets)
 val=math.ceil(length/batch_size)-1
 
-print('# of batches: ',val)
+print('# of batches: ',(val+1))
 
 count=0
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 
 # reintroduction_batch_threshold=range((val+1))
-reintroduction_batch_threshold=[10]
 
+# reintroduction_batch_threshold=list(range((val+1)))
+reintroduction_batch_threshold=[0,1]
+print(reintroduction_batch_threshold)
 
 # for batch_threshold in reintroduction_batch_threshold:
 #     print(batch_threshold)
 
 
 total_time_arr=[]
-reintroduction_threshold_array=[0.0]
+# reintroduction_threshold_array=[0.0]
+
 iter=0
-print('run: ',str(iter))
+# print('run: ',str(iter))
 # candidates_to_annotate=[]
 disambiguation_array=[]
+execution_time_list=[]
+tweets_been_processed_list=[]
+# total_time=0
+# tweets_been_processed=0
+
 for reintroduction_threshold in reintroduction_batch_threshold:
+    print('reintroduction_threshold value:',reintroduction_threshold)
+    Phase1= phase1.SatadishaModule()
+    Phase2 = phase2.EntityResolver()
+
+
+    disambiguation_array_inner=[]
+    execution_time_list_inner=[]
+    tweets_been_processed_list_inner=[]
+    total_time=0
+    tweets_been_processed=0
 
     for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
 
@@ -186,13 +202,13 @@ for reintroduction_threshold in reintroduction_batch_threshold:
 
         tweets_been_processed=tweets_been_processed+len(tweet_base)
         print('tweets_been_processed: ',tweets_been_processed)
-        tweets_been_processed_list.append(tweets_been_processed)
+        tweets_been_processed_list_inner.append(tweets_been_processed)
         #reintroduction_threshold=0.2
         candidate_base_post_Phase2, converted_candidates= Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
         # print('disambiguation status: ',len((candidate_base_post_Phase2[((candidate_base_post_Phase2['batch']<g)&((candidate_base_post_Phase2.status=="g")|(candidate_base_post_Phase2.status=="b")))]).candidate.tolist()))
         
         # print('disambiguation status: ', len(converted_candidates))
-        disambiguation_array.append(len(converted_candidates))
+        disambiguation_array_inner.append(len(converted_candidates))
         # candidates_to_annotate_in_iter=Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
         # candidates_to_annotate+=candidates_to_annotate_in_iter
         # entity_level_arr=Phase2.entity_level_arr
@@ -204,10 +220,15 @@ for reintroduction_threshold in reintroduction_batch_threshold:
         time_out=time.time()
         elapsedTime= time_out-time_in
         total_time+=elapsedTime
-        execution_time_list.append(total_time)
+        execution_time_list_inner.append(total_time)
         print(elapsedTime,total_time)
         print(g,' ','Consumed')
         print("**********************************************************")
+    disambiguation_array.append(disambiguation_array_inner)
+    tweets_been_processed_list.append(tweets_been_processed_list_inner)
+    execution_time_list.append(execution_time_list_inner)
+    print('end of run with reintroduction_threshold value: ',reintroduction_threshold)
+    print('------------------------------------------------------------')
 # print(candidate_base.candidate.tolist())
 print('disambiguation status: ', disambiguation_array)
 print('tweets been processed:', tweets_been_processed_list)

@@ -102,7 +102,8 @@ class EntityResolver ():
         incomplete_tweets=self.get_incomplete_tf(untrashed_tweets)
 
         #all incomplete_tweets---> incomplete_tweets at the end of current batch + incomplete_tweets not reintroduced
-        self.incomplete_tweets=incomplete_tweets #without reintroduction--- when everything is reintroduced, just incomplete_tweets
+        # self.incomplete_tweets=incomplete_tweets #without reintroduction--- when everything is reintroduced, just incomplete_tweets
+        self.incomplete_tweets=pd.concat([incomplete_tweets,self.not_reintroduced],ignore_index=True)
 
 
 
@@ -117,9 +118,22 @@ class EntityResolver ():
         self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
         self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
 
-        # if(self.counter==71):
-        #     print('completed tweets: ', len(self.just_converted_tweets),'incomplete tweets: ', len(self.incomplete_tweets))
-        #     print('final tally: ', (len(self.just_converted_tweets)+len(self.incomplete_tweets)))
+        if(self.counter==13):
+            self.just_converted_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
+
+            print('completed tweets: ', len(self.just_converted_tweets),'incomplete tweets: ', len(self.incomplete_tweets))
+            
+            print(len(list(self.just_converted_tweets.columns.values)))
+            print(len(list(self.incomplete_tweets.columns.values)))
+
+            combined_frame_list=[self.just_converted_tweets, self.incomplete_tweets]
+            complete_tweet_dataframe = pd.concat(combined_frame_list)
+
+            print('final tally: ', (len(self.just_converted_tweets)+len(self.incomplete_tweets)), len(complete_tweet_dataframe))
+
+            #to groupby tweetID and get one tuple per tweetID
+            df.groupby('user').agg(lambda x: x.tolist())
+
 
         #self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
 
@@ -643,7 +657,8 @@ class EntityResolver ():
         print("incomplete tweets in batch: ",len(self.incomplete_tweets))
         # print(list(self.incomplete_tweets.columns.values))
 
-        reintroduced_tweets=self.incomplete_tweets[self.incomplete_tweets['current_minus_entry']<=reintroduction_threshold]
+        reintroduced_tweets=self.incomplete_tweets[(self.counter-self.incomplete_tweets['entry_batch'])<=reintroduction_threshold]
+        self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets.index)]
 
         print("reintroduced tweets: ",len(reintroduced_tweets))
         # for i in range(self.counter):
@@ -1151,6 +1166,7 @@ class EntityResolver ():
         
         truth_vals=[False if any(x not in merged_g_b for x in list1) else True for list1 in phase2_candidates_holder]
 
+        output_mentions=[list(filter(lambda candidate: candidate in good_candidates, list1)) for list1 in phase2_candidates_holder]
 
         # truth_vals=[False if any(x in ambiguous_candidates for x in list1) else True for list1 in phase2_candidates_holder]
 
@@ -1164,11 +1180,15 @@ class EntityResolver ():
 
         #print(truth_vals)
         completeness_series = pd.Series( (v for v in truth_vals) )
+        output_mentions_series = pd.Series( (v for v in output_mentions) )
 
+
+        data_frame_holder['output_mentions']=output_mentions_series
         data_frame_holder['completeness']=completeness_series
         data_frame_holder["current_minus_entry"]=self.counter-data_frame_holder['entry_batch']
 
-        data_frame_holder.to_csv("phase2output_with_completeness.csv", sep=',', encoding='utf-8')
+
+        # data_frame_holder.to_csv("phase2output_with_completeness.csv", sep=',', encoding='utf-8')
 
         return data_frame_holder
 
