@@ -131,8 +131,21 @@ class EntityResolver ():
 
             print('final tally: ', (len(self.just_converted_tweets)+len(self.incomplete_tweets)), len(complete_tweet_dataframe))
 
+            # print(sorted(complete_tweet_dataframe['tweetID'].astype(int).unique()))
+            # lst=list(range(38911))
+            # for elem in lst:
+            #     if(elem not in complete_tweet_dataframe['tweetID'].astype(int).unique().tolist()):
+            #         print(elem)
+            # print(list(filter(lambda elem: elem not in complete_tweet_dataframe['tweetID'].unique(), lst)))
+
             #to groupby tweetID and get one tuple per tweetID
-            df.groupby('user').agg(lambda x: x.tolist())
+            complete_tweet_dataframe_grouped_df= (complete_tweet_dataframe.groupby('tweetID', as_index=False).aggregate(lambda x: x.tolist()))
+            complete_tweet_dataframe_grouped_df['tweetID']=complete_tweet_dataframe_grouped_df['tweetID'].astype(int)
+            self.complete_tweet_dataframe_grouped_df_sorted=(complete_tweet_dataframe_grouped_df.sort_values(by='tweetID', ascending=True)).reset_index(drop=True)
+
+            # print(list(self.complete_tweet_dataframe_grouped_df_sorted.columns.values))
+            # print(self.complete_tweet_dataframe_grouped_df_sorted.head(5))
+            # print(len(self.complete_tweet_dataframe_grouped_df_sorted))
 
 
         #self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
@@ -140,7 +153,7 @@ class EntityResolver ():
 
         #self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
         #self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
-        return candidate_featureBase_DF,converted_candidates
+        return candidate_featureBase_DF, converted_candidates, self.complete_tweet_dataframe_grouped_df_sorted
 
 
 
@@ -150,6 +163,7 @@ class EntityResolver ():
         self.decay_base_staggering=2
 
         self.my_classifier= svm.SVM1('training.csv')
+        self.complete_tweet_dataframe_grouped_df_sorted=pd.DataFrame([], columns=['tweetID', 'TweetSentence', 'ambiguous_candidates', 'annotation', 'candidates_with_label', 'completeness', 'current_minus_entry', 'entry_batch', 'hashtags', 'index', 'only_good_candidates', 'output_mentions', 'phase1Candidates', 'sentID', 'stanford_candidates', 'user'])
 
 
     def calculate_tp_fp_f1_generic(self,raw_tweets_for_others,state_of_art):

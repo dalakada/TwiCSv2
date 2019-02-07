@@ -38,7 +38,7 @@ queue = Queue(1000)
 #time_in=datetime.datetime.now()
 #time_out=datetime.datetime.now()
 fieldnames=['candidate','freq','length','cap','start_of_sen','abbrv','all_cap','is_csl','title','has_no','date','is_apostrp','has_inter_punct','ends_verb','ends_adverb','change_in_cap','topic_ind','entry_time','entry_batch','@mention']
-
+complete_tweet_dataframe_grouped_df_sorted=pd.DataFrame([], columns=['tweetID', 'TweetSentence', 'ambiguous_candidates', 'annotation', 'candidates_with_label', 'completeness', 'current_minus_entry', 'entry_batch', 'hashtags', 'index', 'only_good_candidates', 'output_mentions', 'phase1Candidates', 'sentID', 'stanford_candidates', 'user'])
 global total_time
 total_time=0
 # Phase1= phase1.SatadishaModule()
@@ -140,6 +140,8 @@ print(reintroduction_batch_threshold)
 #     print(batch_threshold)
 
 
+output_df=tweets[['ID', 'First_five_hundred', 'Output', 'Annotations', 'TweetText']]
+
 total_time_arr=[]
 # reintroduction_threshold_array=[0.0]
 
@@ -156,7 +158,7 @@ for reintroduction_threshold in reintroduction_batch_threshold:
     print('reintroduction_threshold value:',reintroduction_threshold)
     Phase1= phase1.SatadishaModule()
     Phase2 = phase2.EntityResolver()
-
+    print('**************************************',len(tweets))
 
     disambiguation_array_inner=[]
     execution_time_list_inner=[]
@@ -204,7 +206,7 @@ for reintroduction_threshold in reintroduction_batch_threshold:
         print('tweets_been_processed: ',tweets_been_processed)
         tweets_been_processed_list_inner.append(tweets_been_processed)
         #reintroduction_threshold=0.2
-        candidate_base_post_Phase2, converted_candidates= Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
+        candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted= Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
         # print('disambiguation status: ',len((candidate_base_post_Phase2[((candidate_base_post_Phase2['batch']<g)&((candidate_base_post_Phase2.status=="g")|(candidate_base_post_Phase2.status=="b")))]).candidate.tolist()))
         
         # print('disambiguation status: ', len(converted_candidates))
@@ -224,12 +226,27 @@ for reintroduction_threshold in reintroduction_batch_threshold:
         print(elapsedTime,total_time)
         print(g,' ','Consumed')
         print("**********************************************************")
+
+    print(len(complete_tweet_dataframe_grouped_df_sorted))
     disambiguation_array.append(disambiguation_array_inner)
     tweets_been_processed_list.append(tweets_been_processed_list_inner)
     execution_time_list.append(execution_time_list_inner)
+
+    output_df['output_col_'+str(reintroduction_threshold)] = ''
+    output_df['output_col_'+str(reintroduction_threshold)] = output_df['output_col_'+str(reintroduction_threshold)].apply(list)
+
+    print(output_df['output_col_'+str(reintroduction_threshold)])
+    # for elem in complete_tweet_dataframe_grouped_df_sorted['tweetID'].astype(int).unique().tolist():
+    #     output_df[output_df.index==elem]['output_col_'+str(reintroduction_threshold)]=complete_tweet_dataframe_grouped_df_sorted[complete_tweet_dataframe_grouped_df_sorted['tweetID']==elem]['only_good_candidates']
+    output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['output_col_'+str(reintroduction_threshold)]] = complete_tweet_dataframe_grouped_df_sorted.loc[complete_tweet_dataframe_grouped_df_sorted.tweetID.isin(output_df.index),['only_good_candidates']].values
+    print(output_df['output_col_'+str(reintroduction_threshold)])
+
     print('end of run with reintroduction_threshold value: ',reintroduction_threshold)
     print('------------------------------------------------------------')
 # print(candidate_base.candidate.tolist())
+
+print(list(output_df.columns.values))
+
 print('disambiguation status: ', disambiguation_array)
 print('tweets been processed:', tweets_been_processed_list)
 print('execution time: ', execution_time_list)
