@@ -15,10 +15,10 @@ our_recovered_counter=0
 our_counter_mention=0
 our_recovered_mention=0
 
-
+my_tally_arr_ritter=[]
 
 lst=[0,1]
-for 
+
 # input_df= pd.DataFrame(columns=('tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence', 'phase1Candidates','start_time','entry_batch'))
 for index,row in tweets_unpartitoned.iterrows():
 	# annotated_candidates=str(row['mentions_other'])
@@ -39,26 +39,30 @@ for index,row in tweets_unpartitoned.iterrows():
 		# for index in range(len(ritter_output)):
 		annotated_mention_list=list(map(lambda element: element.strip(),annotated_mention_list))
 		annotated_mention_list=list(filter(lambda element: element !='', annotated_mention_list))
+
+		our_counter+=len(annotated_mention_list)
 		# print(ritter_output,annotated_mention_list)
 		annotated_mention_list_tallying_array= []
 
 		for elem in lst:
 			annotated_mention_list_tallying_array.append(annotated_mention_list)
-		
+		print(index, annotated_mention_list, ritter_output)
 		while(annotated_mention_list):
 			if(len(ritter_output)):
 				annotated_candidate= annotated_mention_list.pop()
 				if(annotated_candidate in ritter_output):
-					ritter_output.pop()
+					ritter_output.pop(ritter_output.index(annotated_candidate))
 				else:
 					unrecovered_annotated_mention_list.append(annotated_candidate)
+					my_tally_arr_ritter.append(1)
 			# print(ritter_output.pop())
 			# print(ritter_output)
 			else:
 				unrecovered_annotated_mention_list.extend(annotated_mention_list)
+				my_tally_arr_ritter.append(len(annotated_mention_list))
 				break
 
-		print(index, unrecovered_annotated_mention_list)
+		print('-----', unrecovered_annotated_mention_list)
 		unrecovered_annotated_mention_list_outer_ritter.extend(unrecovered_annotated_mention_list)
 
 		for elem in lst:
@@ -71,7 +75,7 @@ for index,row in tweets_unpartitoned.iterrows():
 				if(len(multipass_output_list_flat)):
 					annotated_candidate= annotated_mention_tally_list.pop()
 					if(annotated_candidate in multipass_output_list_flat):
-						multipass_output_list_flat.pop()
+						multipass_output_list_flat.pop(multipass_output_list_flat.index(annotated_candidate))
 					else:
 						unrecovered_annotated_mention_list_multipass[elem].append(annotated_candidate)
 				else:
@@ -98,7 +102,8 @@ for index,row in tweets_unpartitoned.iterrows():
 # for candidate in unrecovered_annotated_candidate_list_outer:
 # 	print(candidate)
 # print(unrecovered_annotated_candidate_list_outer)
-print(len(unrecovered_annotated_mention_list_outer_ritter),len(unrecovered_annotated_candidate_list_outer))
+print('===',our_counter,sum(my_tally_arr_ritter))
+print(len(unrecovered_annotated_mention_list_outer_ritter),len(unrecovered_annotated_mention_list_outer_multipass[0]),len(unrecovered_annotated_mention_list_outer_multipass[1]))
 # print(list(tweets_unpartitoned.columns.values))
 rest_of_tweets= tweets_unpartitoned[index:]
 
