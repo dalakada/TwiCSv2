@@ -235,21 +235,23 @@ for reintroduction_threshold in reintroduction_batch_threshold:
     output_df['output_col_'+str(reintroduction_threshold)] = ''
     output_df['output_col_'+str(reintroduction_threshold)] = output_df['output_col_'+str(reintroduction_threshold)].apply(list)
 
-    print(output_df['output_col_'+str(reintroduction_threshold)])
+    # print(output_df['output_col_'+str(reintroduction_threshold)])
     # for elem in complete_tweet_dataframe_grouped_df_sorted['tweetID'].astype(int).unique().tolist():
     #     output_df[output_df.index==elem]['output_col_'+str(reintroduction_threshold)]=complete_tweet_dataframe_grouped_df_sorted[complete_tweet_dataframe_grouped_df_sorted['tweetID']==elem]['only_good_candidates']
-    output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['output_col_'+str(reintroduction_threshold)]] = complete_tweet_dataframe_grouped_df_sorted.loc[complete_tweet_dataframe_grouped_df_sorted.tweetID.isin(output_df.index),['only_good_candidates']].values
-    print(output_df['output_col_'+str(reintroduction_threshold)])
+    output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['output_col_'+str(reintroduction_threshold)]] = complete_tweet_dataframe_grouped_df_sorted.loc[complete_tweet_dataframe_grouped_df_sorted.tweetID.isin(output_df.index),['output_mentions']].values
+    # print(output_df['output_col_'+str(reintroduction_threshold)])
 
     print('end of run with reintroduction_threshold value: ',reintroduction_threshold)
     print('------------------------------------------------------------')
 # print(candidate_base.candidate.tolist())
 
-print(list(output_df.columns.values))
+# print(list(output_df.columns.values))
 
 print('disambiguation status: ', disambiguation_array)
 print('tweets been processed:', tweets_been_processed_list)
 print('execution time: ', execution_time_list)
+
+output_df.to_csv("deduplicated_test_output_all_runs.csv", sep=',', encoding='utf-8')
 
 #-----------------------------------------------------This part is for propagation estimates-------------------------------
 # # column_headers=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19']

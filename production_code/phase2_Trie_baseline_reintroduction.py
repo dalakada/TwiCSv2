@@ -826,7 +826,7 @@ class EntityResolver ():
         print("ambiguous_candidates_in_batch: ",len(self.ambiguous_candidates_in_batch))
 
         #set ['probabilities'] for candidate_featureBase_DF
-        candidate_featureBase_DF,infrequent_candidates= self.classify_candidate_base(z_score_threshold,candidate_featureBase_DF)
+        candidate_featureBase_DF,self.infrequent_candidates= self.classify_candidate_base(z_score_threshold,candidate_featureBase_DF)
         # set readable labels (a,g,b) for candidate_featureBase_DF based on ['probabilities.']
         candidate_featureBase_DF=self.set_readable_labels(candidate_featureBase_DF)
         self.good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
@@ -854,7 +854,7 @@ class EntityResolver ():
 
         # self.ambiguous_candidate_distanceDict_prev=self.get_cosine_distance(ambiguous_candidate_records,self.entity_sketch,self.non_entity_sketch)
         #candidate_featureBase_DF.to_csv("cb_with_prob_label.csv", sep=',', encoding='utf-8')
-        correction_flag=self.set_partition_dict(candidate_featureBase_DF,infrequent_candidates)
+        correction_flag=self.set_partition_dict(candidate_featureBase_DF,self.infrequent_candidates)
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
         if(self.counter>0):
             ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
@@ -1145,7 +1145,7 @@ class EntityResolver ():
         for candidates in phase2_candidates_holder:
             corrected_phase2_candidates=[]
             for idx, candidate in enumerate(candidates):
-                if(candidate in self.partition_dict.keys()):
+                if((candidate in self.partition_dict.keys())&(candidate in self.infrequent_candidates)):
                     #print(candidate, self.partition_dict[candidate])
                     corrected_phase2_candidates.extend(self.partition_dict[candidate])
                 else:
@@ -1163,6 +1163,8 @@ class EntityResolver ():
     #@profile
     def set_completeness_in_tweet_frame(self,data_frame_holder,candidate_featureBase_DF,phase2_candidates_holder,correction_flag):
         #print(candidate_featureBase_DF.head())
+
+        # print("donald j trump:", candidate_featureBase_DF[candidate_featureBase_DF.candidate=="donald j trump"][['status','cumulative']])
 
         good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
         bad_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"].candidate.tolist()
@@ -1201,7 +1203,14 @@ class EntityResolver ():
         data_frame_holder['completeness']=completeness_series
         data_frame_holder["current_minus_entry"]=self.counter-data_frame_holder['entry_batch']
 
+        # print('5829: ',data_frame_holder[(data_frame_holder.tweetID=='5829')]['output_mentions'])
+        # print('13687: ',data_frame_holder[(data_frame_holder.tweetID=='13687')]['output_mentions'])
+        # print('14154: ',data_frame_holder[(data_frame_holder.tweetID=='14154')]['output_mentions'])
+        # print('31877: ',data_frame_holder[(data_frame_holder.tweetID=='31877')]['output_mentions'])
+        # print('35028: ',data_frame_holder[(data_frame_holder.tweetID=='35028')]['output_mentions'])
+        # print('38894: ',data_frame_holder[(data_frame_holder.tweetID=='38894')]['output_mentions'])
 
+        
         # data_frame_holder.to_csv("phase2output_with_completeness.csv", sep=',', encoding='utf-8')
 
         return data_frame_holder
@@ -1779,6 +1788,7 @@ class EntityResolver ():
             self.good_candidates=[]
             self.bad_candidates=[]
             self.ambiguous_candidates=[]
+            self.infrequent_candidates=[]
             self.entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.non_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.ambiguous_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
@@ -1929,7 +1939,7 @@ class EntityResolver ():
             phase2_candidates_holder.append(phase2_candidates)
 
             #print(phase1Candidates,"====",phase2_candidates)
-            # if((tweetID=="9423")|(tweetID=="14155")):
+            # if((tweetID=="5829")|(tweetID=="13687")|(tweetID=="14154")|(tweetID=="31877")|(tweetID=="35028")|(tweetID=="38894")):
             #     print(phase1Candidates,"====",phase2_candidates)
             dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'annotation':annotation,'stanford_candidates':stanford}
 
