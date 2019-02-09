@@ -47,6 +47,39 @@ class Trie:
                     node.feature_list[index+2]+=1'''
             node.value_valid = True
             #print("++",node.text)
+
+
+    def setitem_forAnnotation(self, candidateText):
+        
+        head = candidateText[0]
+        if head in self.path:
+            node = self.path[head]
+        else:
+            node = Trie(head)
+            self.path[head] = node
+            
+        if len(candidateText) > 1:
+            remains = candidateText[1:]
+            node.setitem_forAnnotation(remains)
+        else:
+            #INITIALIZATION/UPDATION ROUTINE
+            # if(node.feature_list[0]==0):
+            #     #initial
+            #     now = datetime.datetime.now()
+            #     now=str(now.hour)+":"+str(now.minute)+":"+str(now.second)
+            #     node.feature_list[1]=origLength
+            #     node.feature_list.append(now)
+            #     node.feature_list.append(batch)
+            # #common updations for either case
+            # node.feature_list[0]+=1
+            '''for index in [0,1,2,3,4,5,6,7,9,10,11,13]:
+                if (candidateFeatures[index]==True):
+                    node.feature_list[index+2]+=1
+            for index in [8,12]:
+                if (candidateFeatures[index]!=-1):
+                    node.feature_list[index+2]+=1'''
+            node.value_valid = True
+            #print("++",node.text)
             
 
     def __delitem__(self, key):

@@ -1145,7 +1145,7 @@ class EntityResolver ():
         for candidates in phase2_candidates_holder:
             corrected_phase2_candidates=[]
             for idx, candidate in enumerate(candidates):
-                if((candidate in self.partition_dict.keys())&(candidate in self.infrequent_candidates)):
+                if((candidate in self.partition_dict.keys())&((candidate in self.infrequent_candidates)|(candidate in self.bad_candidates))):
                     #print(candidate, self.partition_dict[candidate])
                     corrected_phase2_candidates.extend(self.partition_dict[candidate])
                 else:
@@ -1164,7 +1164,11 @@ class EntityResolver ():
     def set_completeness_in_tweet_frame(self,data_frame_holder,candidate_featureBase_DF,phase2_candidates_holder,correction_flag):
         #print(candidate_featureBase_DF.head())
 
-        # print("donald j trump:", candidate_featureBase_DF[candidate_featureBase_DF.candidate=="donald j trump"][['status','cumulative']])
+        # print("trump:", candidate_featureBase_DF[candidate_featureBase_DF.candidate=="trump"][['status','cumulative']])
+        # print("fbi:", candidate_featureBase_DF[candidate_featureBase_DF.candidate=="fbi"][['status','cumulative']])
+        # print("fbi obtained fisa warrant:", candidate_featureBase_DF[candidate_featureBase_DF.candidate=="fbi obtained fisa warrant"][['status','cumulative']])
+        # print("trump aide:", candidate_featureBase_DF[candidate_featureBase_DF.candidate=="trump aide"][['status','cumulative']])
+        # print("agent of the russian government:", candidate_featureBase_DF[candidate_featureBase_DF.candidate=="agent of the russian government"][['status','cumulative']])
 
         good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
         bad_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"].candidate.tolist()
@@ -1203,7 +1207,7 @@ class EntityResolver ():
         data_frame_holder['completeness']=completeness_series
         data_frame_holder["current_minus_entry"]=self.counter-data_frame_holder['entry_batch']
 
-        # print('5829: ',data_frame_holder[(data_frame_holder.tweetID=='5829')]['output_mentions'])
+        # print('0: ',data_frame_holder[(data_frame_holder.tweetID=='0')]['output_mentions'])
         # print('13687: ',data_frame_holder[(data_frame_holder.tweetID=='13687')]['output_mentions'])
         # print('14154: ',data_frame_holder[(data_frame_holder.tweetID=='14154')]['output_mentions'])
         # print('31877: ',data_frame_holder[(data_frame_holder.tweetID=='31877')]['output_mentions'])
@@ -1939,7 +1943,7 @@ class EntityResolver ():
             phase2_candidates_holder.append(phase2_candidates)
 
             #print(phase1Candidates,"====",phase2_candidates)
-            # if((tweetID=="5829")|(tweetID=="13687")|(tweetID=="14154")|(tweetID=="31877")|(tweetID=="35028")|(tweetID=="38894")):
+            # if((tweetID=="0")|(tweetID=="13687")|(tweetID=="14154")|(tweetID=="31877")|(tweetID=="35028")|(tweetID=="38894")):
             #     print(phase1Candidates,"====",phase2_candidates)
             dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'annotation':annotation,'stanford_candidates':stanford}
 
