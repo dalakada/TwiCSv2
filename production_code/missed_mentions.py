@@ -114,7 +114,7 @@ def getWords(sentence):
     tweetWordList=flatten(tempList,[])
     return tweetWordList
 
-    
+
 def get_Candidates(self, sequence, CTrie,flag):
     #flag: debug_flag
     candidateList=[]
@@ -251,6 +251,7 @@ for index,row in tweets_unpartitoned.iterrows():
     unrecovered_annotated_mention_list_multipass = [[] for i in range(len(lst))]
 
     tweet_in_first_five_hundred=str(row['First_five_hundred'])
+    tweetText=str(row['TweetText'])
     annotated_mention_list=[]
 
     if(tweet_in_first_five_hundred!=''):
@@ -269,7 +270,6 @@ for index,row in tweets_unpartitoned.iterrows():
             CTrie.setitem_forAnnotation(annotation)
 
     else:
-        tweetText=str(row['TweetText'])
         tweetSentences=list(filter (lambda sentence: len(sentence)>1, tweetText.split('\n')))
         tweetSentenceList_inter=flatten(list(map(lambda sentText: sent_tokenize(sentText.lstrip().rstrip()),tweetSentences)),[])
         tweetSentenceList=list(filter (lambda sentence: len(sentence)>1, tweetSentenceList_inter))
@@ -287,13 +287,13 @@ for index,row in tweets_unpartitoned.iterrows():
             for k, g in groupby(enumerate(c), lambda element: element[0]-int(element[1][1])):
                 sequences.append(list(map(itemgetter(1), g)))
 
-            ne_candidate_list=[]
+            print(sequences)
             for sequence in sequences:
-                # if(tweetID=="14155"):
-                #     print(sequence)
-                #     seq_candidate_list=get_Candidates(sequence, CTrie,True)
-                # else:
                 seq_candidate_list=get_Candidates(sequence, CTrie,False)
+                if(seq_candidate_list):
+                    annotated_mention_list.extend(seq_candidate_list)
+
+    print(index,tweetText,annotated_mention_list)
 
 #   our_counter+=len(annotated_mention_list)
 #   # print(ritter_output,annotated_mention_list)
