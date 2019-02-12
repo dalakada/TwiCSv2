@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 import trie as trie
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
+from itertools import groupby
+from operator import itemgetter
+
 
 cachedStopWords = stopwords.words("english")
 tempList=["i","and","or","other","another","across","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always"]
@@ -37,6 +40,21 @@ def flatten(mylist, outlist,ignore_types=(str, bytes, int)):
                     item=item.strip(' \t\n\r')
                 outlist.append(item)
     return outlist
+
+
+def normalize(word):
+    strip_op=word
+    strip_op=(((strip_op.lstrip(string.punctuation)).rstrip(string.punctuation)).strip()).lower()
+    strip_op=(strip_op.lstrip('“‘’”')).rstrip('“‘’”')
+    #strip_op= self.rreplace(self.rreplace(self.rreplace(strip_op,"'s","",1),"’s","",1),"’s","",1)
+    if strip_op.endswith("'s"):
+        li = strip_op.rsplit("'s", 1)
+        return ''.join(li)
+    elif strip_op.endswith("’s"):
+        li = strip_op.rsplit("’s", 1)
+        return ''.join(li)
+    else:
+        return strip_op
 
 
 def getWords(sentence):
@@ -115,8 +133,12 @@ def getWords(sentence):
     return tweetWordList
 
 
-def get_Candidates(self, sequence, CTrie,flag):
+def get_Candidates(sequence, CTrie,flag):
     #flag: debug_flag
+
+    CTtieCandidateList=CTrie.displayTrie("",[])
+    # print('candidate list:', len(CTtieCandidateList))
+
     candidateList=[]
     left=0
     start_node=CTrie
@@ -134,12 +156,12 @@ def get_Candidates(self, sequence, CTrie,flag):
         curr_text=sequence[right][0]
         curr_pos=[sequence[right][1]]
         #normalized curr_text
-        curr=self.normalize(sequence[right][0])
-        cand_str=self.normalize(last_cand_substr+" "+curr)
+        curr=normalize(sequence[right][0])
+        cand_str=normalize(last_cand_substr+" "+curr)
         cand_str_wPunct=(last_cand_substr+" "+curr_text).lower()
         last_cand_sequence=sequence[left:(right+1)]
         last_cand_text=' '.join(str(e[0]) for e in last_cand_sequence)
-        last_cand_text_norm=self.normalize(' '.join(str(e[0]) for e in last_cand_sequence))
+        last_cand_text_norm=normalize(' '.join(str(e[0]) for e in last_cand_sequence))
         if(flag):
             print("==>",cand_str,last_cand_text_norm)
         if((cand_str==last_cand_text_norm)&((curr in start_node.path.keys())|(curr_text.lower() in start_node.path.keys()))):
@@ -212,7 +234,7 @@ def get_Candidates(self, sequence, CTrie,flag):
                 if(left<right):
                     # if(flag):
                     #     print(sequence[(left+1):(right+1)])
-                    #candidateList.extend(self.get_Candidates(sequence[(left+1):(right+1)], CTrie, flag))
+                    #candidateList.extend(get_Candidates(sequence[(left+1):(right+1)], CTrie, flag))
                     right=left
                     # if(flag):
                     #     print("++",right)
@@ -222,6 +244,8 @@ def get_Candidates(self, sequence, CTrie,flag):
     #     print(last_cand)
     if(last_cand!="NAN"):
         candidateList.append((last_cand,last_cand_pos,last_cand_batch))
+
+    # print('==>',candidateList)
     return candidateList
 
 tweets_unpartitoned=pd.read_csv("deduplicated_test_output_all_runs_6.csv",sep =',', keep_default_na=False)
@@ -267,14 +291,18 @@ for index,row in tweets_unpartitoned.iterrows():
         for annotation in annotated_mention_list:
             if annotation not in all_entity_candidates:
                 all_entity_candidates.append(annotation)
-            CTrie.setitem_forAnnotation(annotation)
+            CTrie.setitem_forAnnotation(annotation.split())
 
     else:
         tweetSentences=list(filter (lambda sentence: len(sentence)>1, tweetText.split('\n')))
         tweetSentenceList_inter=flatten(list(map(lambda sentText: sent_tokenize(sentText.lstrip().rstrip()),tweetSentences)),[])
         tweetSentenceList=list(filter (lambda sentence: len(sentence)>1, tweetSentenceList_inter))
         # tweetSentenceList=[]
-
+        CTtieCandidateList=CTrie.displayTrie("",[])
+        # print('candidate list:')
+        # for annotated_candidate in CTtieCandidateList:
+        #     print(annotated_candidate)
+        
         for sentence in tweetSentenceList:
             tweetWordList=getWords(sentence)
             tweetWordList= [(token,idx) for idx,token in enumerate(tweetWordList)]
@@ -287,62 +315,66 @@ for index,row in tweets_unpartitoned.iterrows():
             for k, g in groupby(enumerate(c), lambda element: element[0]-int(element[1][1])):
                 sequences.append(list(map(itemgetter(1), g)))
 
-            print(sequences)
+            # print(sequences)
             for sequence in sequences:
                 seq_candidate_list=get_Candidates(sequence, CTrie,False)
+                # print('+>',sequence,seq_candidate_list)
                 if(seq_candidate_list):
-                    annotated_mention_list.extend(seq_candidate_list)
+                    for candidate_tuple in seq_candidate_list:
+                        candidateText=normalize(candidate_tuple[0])
+                        if(candidate_tuple[0]!='us'):
+                            annotated_mention_list.append(candidateText)
 
-    print(index,tweetText,annotated_mention_list)
+    # print('-----',index,tweetText)
 
-#   our_counter+=len(annotated_mention_list)
+    our_counter+=len(annotated_mention_list)
 #   # print(ritter_output,annotated_mention_list)
-#   annotated_mention_list_tallying_array= [annotated_mention_list.copy() for i in range(len(lst))]
+    annotated_mention_list_tallying_array= [annotated_mention_list.copy() for i in range(len(lst))]
 
-#   ritter_output=list(map(lambda element: element.lower().strip(),str(row['Output']).split(',')))
-#   ritter_output=list(filter(lambda element: element !='', ritter_output))
-#   print('-----',index, annotated_mention_list, ritter_output)
-#   while(annotated_mention_list):
-#       if(len(ritter_output)):
-#           annotated_candidate= annotated_mention_list.pop()
-#           if(annotated_candidate in ritter_output):
-#               ritter_output.pop(ritter_output.index(annotated_candidate))
-#           else:
-#               unrecovered_annotated_mention_list.append(annotated_candidate)
-#               my_tally_arr_ritter.append(1)
-#       # print(ritter_output.pop())
-#       # print(ritter_output)
-#       else:
-#           unrecovered_annotated_mention_list.extend(annotated_mention_list)
-#           my_tally_arr_ritter.append(len(annotated_mention_list))
-#           break
+    ritter_output=list(map(lambda element: element.lower().strip(),str(row['Output']).split(',')))
+    ritter_output=list(filter(lambda element: element !='', ritter_output))
+    # print('=>', annotated_mention_list, ritter_output)
+    while(annotated_mention_list):
+      if(len(ritter_output)):
+          annotated_candidate= annotated_mention_list.pop()
+          if(annotated_candidate in ritter_output):
+              ritter_output.pop(ritter_output.index(annotated_candidate))
+          else:
+              unrecovered_annotated_mention_list.append(annotated_candidate)
+              my_tally_arr_ritter.append(1)
+      # print(ritter_output.pop())
+      # print(ritter_output)
+      else:
+          unrecovered_annotated_mention_list.extend(annotated_mention_list)
+          my_tally_arr_ritter.append(len(annotated_mention_list))
+          break
 
-#   print(unrecovered_annotated_mention_list)
-#   unrecovered_annotated_mention_list_outer_ritter.extend(unrecovered_annotated_mention_list)
+    # print(unrecovered_annotated_mention_list)
+    unrecovered_annotated_mention_list_outer_ritter.extend(unrecovered_annotated_mention_list)
 
-#   for elem in lst:
-#       multipass_output_list=ast.literal_eval(str(row['output_col_'+str(elem)]))
-#       multipass_output_list_flat = [item.lower() for sublist in multipass_output_list for item in sublist]
-#       multipass_output_list_flat=list(filter(lambda element: element !='', multipass_output_list_flat))
+    for elem in lst:
+        multipass_output_list=ast.literal_eval(str(row['output_col_'+str(elem)]))
+        multipass_output_list_flat = [item.lower() for sublist in multipass_output_list for item in sublist]
+        multipass_output_list_flat=list(filter(lambda element: element !='', multipass_output_list_flat))
 
-#       annotated_mention_tally_list= annotated_mention_list_tallying_array[elem]
+        annotated_mention_tally_list= annotated_mention_list_tallying_array[elem]
 
-#       print(index,elem,annotated_mention_tally_list,multipass_output_list_flat)
+        # print('==>', elem, annotated_mention_tally_list,multipass_output_list_flat)
 
-#       while(annotated_mention_tally_list):
-#           if(len(multipass_output_list_flat)):
-#               annotated_candidate= annotated_mention_tally_list.pop()
-#               if(annotated_candidate in multipass_output_list_flat):
-#                   multipass_output_list_flat.pop(multipass_output_list_flat.index(annotated_candidate))
-#               else:
-#                   unrecovered_annotated_mention_list_multipass[elem].append(annotated_candidate)
-#           else:
-#               unrecovered_annotated_mention_list_multipass[elem].extend(annotated_mention_tally_list)
-#               break
+        while(annotated_mention_tally_list):
+            if(len(multipass_output_list_flat)):
+                annotated_candidate= annotated_mention_tally_list.pop()
+                if(annotated_candidate in multipass_output_list_flat):
+                    multipass_output_list_flat.pop(multipass_output_list_flat.index(annotated_candidate))
+                else:
+                    unrecovered_annotated_mention_list_multipass[elem].append(annotated_candidate)
+            else:
+                unrecovered_annotated_mention_list_multipass[elem].extend(annotated_mention_tally_list)
+                break
 
-#           # multipass_output_list=list(filter(lambda element: element !='', multipass_output_list))
-#       print( elem, unrecovered_annotated_mention_list_multipass[elem])
-#       unrecovered_annotated_mention_list_outer_multipass[elem].extend(unrecovered_annotated_mention_list_multipass[elem])
+          # multipass_output_list=list(filter(lambda element: element !='', multipass_output_list))
+        # print(unrecovered_annotated_mention_list_multipass[elem])
+        unrecovered_annotated_mention_list_outer_multipass[elem].extend(unrecovered_annotated_mention_list_multipass[elem])
 
 
         
@@ -364,9 +396,9 @@ for index,row in tweets_unpartitoned.iterrows():
 # # candidateList=CTrie.displayTrie("",[])
 # # print('candidate list:', len(candidateList), len(all_entity_candidates))
 
-# print('===',our_counter,sum(my_tally_arr_ritter))
-# print(len(unrecovered_annotated_mention_list_outer_ritter),len(unrecovered_annotated_mention_list_outer_multipass[0]),len(unrecovered_annotated_mention_list_outer_multipass[1]),len(unrecovered_annotated_mention_list_outer_multipass[2]),len(unrecovered_annotated_mention_list_outer_multipass[3]),
-#   len(unrecovered_annotated_mention_list_outer_multipass[4]),len(unrecovered_annotated_mention_list_outer_multipass[5]),len(unrecovered_annotated_mention_list_outer_multipass[6]))
+print('===',our_counter,sum(my_tally_arr_ritter))
+print(len(unrecovered_annotated_mention_list_outer_ritter),len(unrecovered_annotated_mention_list_outer_multipass[0]),len(unrecovered_annotated_mention_list_outer_multipass[1]),len(unrecovered_annotated_mention_list_outer_multipass[2]),len(unrecovered_annotated_mention_list_outer_multipass[3]),
+  len(unrecovered_annotated_mention_list_outer_multipass[4]),len(unrecovered_annotated_mention_list_outer_multipass[5]),len(unrecovered_annotated_mention_list_outer_multipass[6]))
 
 
 # print(list(tweets_unpartitoned.columns.values))

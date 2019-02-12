@@ -132,8 +132,8 @@ count=0
 
 # reintroduction_batch_threshold=range((val+1))
 
-# reintroduction_batch_threshold=list(range((val+1)))
-reintroduction_batch_threshold=[0,1,2,3,4,5,6]
+reintroduction_batch_threshold=list(range((val+1)))
+# reintroduction_batch_threshold=[0,1,2,3,4,5,6]
 print(reintroduction_batch_threshold)
 
 # for batch_threshold in reintroduction_batch_threshold:
@@ -251,7 +251,7 @@ print('disambiguation status: ', disambiguation_array)
 print('tweets been processed:', tweets_been_processed_list)
 print('execution time: ', execution_time_list)
 
-output_df.to_csv("deduplicated_test_output_all_runs_6.csv", sep=',', encoding='utf-8')
+output_df.to_csv("deduplicated_test_output_all_runs.csv", sep=',', encoding='utf-8')
 
 #-----------------------------------------------------This part is for propagation estimates-------------------------------
 # # column_headers=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19']
