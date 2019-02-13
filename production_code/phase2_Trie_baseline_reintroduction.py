@@ -38,7 +38,7 @@ prep_list=["in","at","of","on","&;"] #includes common conjunction as well
 article_list=["a","an","the"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["hmm","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 string.punctuation=string.punctuation+'…‘’'
 
 
@@ -829,6 +829,12 @@ class EntityResolver ():
         candidate_featureBase_DF,self.infrequent_candidates= self.classify_candidate_base(z_score_threshold,candidate_featureBase_DF)
         # set readable labels (a,g,b) for candidate_featureBase_DF based on ['probabilities.']
         candidate_featureBase_DF=self.set_readable_labels(candidate_featureBase_DF)
+
+        good_to_amb_df=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))]
+        good_to_amb=good_to_amb_df.candidate.tolist()
+        print('good to ambiguous: ',len(good_to_amb))
+        print(good_to_amb_df[['candidate','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','status']])
+
         self.good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
         self.ambiguous_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"].candidate.tolist()
         self.bad_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"].candidate.tolist()
@@ -860,7 +866,7 @@ class EntityResolver ():
             ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
             ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
             ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
-            # print(ambiguous_turned_good)
+            print('ambiguous to good: ',len(ambiguous_turned_good))
             # print(ambiguous_turned_bad)
             # print(ambiguous_remaining_ambiguous)
 

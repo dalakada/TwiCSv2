@@ -248,7 +248,7 @@ def get_Candidates(sequence, CTrie,flag):
     # print('==>',candidateList)
     return candidateList
 
-tweets_unpartitoned=pd.read_csv("deduplicated_test_output_all_runs_6.csv",sep =',', keep_default_na=False)
+tweets_unpartitoned=pd.read_csv("deduplicated_test_output_all_runs.csv",sep =',', keep_default_na=False)
 # unrecovered_annotated_candidate_list_outer=[]
 all_entity_candidates=[]
 
@@ -258,12 +258,22 @@ ritter_list=[]
 
 our_counter=0
 our_recovered_counter=0
+
+tp_ritter_counter=0
+fp_ritter_counter=0
+fn_ritter_counter=0
+
 our_counter_mention=0
 our_recovered_mention=0
 
 my_tally_arr_ritter=[]
 
-lst=[0,1,2,3,4,5,6]
+# lst=[0,1,2,3,4,5,6]
+lst=[0,1,2,3,4,5,6,7,8,9,10,11,12]
+
+tp_multipass_counter_arr=[0 for i in range(len(lst))]
+fp_multipass_counter_arr=[0 for i in range(len(lst))]
+fn_multipass_counter_arr=[0 for i in range(len(lst))]
 
 unrecovered_annotated_mention_list_outer_ritter=[]
 unrecovered_annotated_mention_list_outer_multipass = [[] for i in range(len(lst))]
@@ -273,6 +283,18 @@ for index,row in tweets_unpartitoned.iterrows():
     # annotated_candidates=str(row['mentions_other'])
     unrecovered_annotated_mention_list=[]
     unrecovered_annotated_mention_list_multipass = [[] for i in range(len(lst))]
+
+
+    all_postitive_ritter_counter_inner=0
+    tp_ritter_counter_inner=0
+    fp_ritter_counter_inner=0
+    fn_ritter_counter_inner=0
+
+    # all_postitive_multipass_counter_inner_arr=[0 for i in range(len(lst))]
+    # tp_multipass_counter_inner_arr=[0 for i in range(len(lst))]
+    # fp_multipass_counter_inner_arr=[0 for i in range(len(lst))]
+    # fn_multipass_counter_inner_arr=[0 for i in range(len(lst))]
+
 
     tweet_in_first_five_hundred=str(row['First_five_hundred'])
     tweetText=str(row['TweetText'])
@@ -328,34 +350,52 @@ for index,row in tweets_unpartitoned.iterrows():
     # print('-----',index,tweetText)
 
     our_counter+=len(annotated_mention_list)
+    
+
 #   # print(ritter_output,annotated_mention_list)
     annotated_mention_list_tallying_array= [annotated_mention_list.copy() for i in range(len(lst))]
 
     ritter_output=list(map(lambda element: element.lower().strip(),str(row['Output']).split(',')))
     ritter_output=list(filter(lambda element: element !='', ritter_output))
+    all_postitive_ritter_counter_inner=len(ritter_output)
     # print('=>', annotated_mention_list, ritter_output)
     while(annotated_mention_list):
-      if(len(ritter_output)):
-          annotated_candidate= annotated_mention_list.pop()
-          if(annotated_candidate in ritter_output):
-              ritter_output.pop(ritter_output.index(annotated_candidate))
-          else:
-              unrecovered_annotated_mention_list.append(annotated_candidate)
-              my_tally_arr_ritter.append(1)
+        if(len(ritter_output)):
+            annotated_candidate= annotated_mention_list.pop()
+            if(annotated_candidate in ritter_output):
+                ritter_output.pop(ritter_output.index(annotated_candidate))
+                tp_ritter_counter_inner+=1
+            else:
+                unrecovered_annotated_mention_list.append(annotated_candidate)
+                my_tally_arr_ritter.append(1)
       # print(ritter_output.pop())
       # print(ritter_output)
-      else:
-          unrecovered_annotated_mention_list.extend(annotated_mention_list)
-          my_tally_arr_ritter.append(len(annotated_mention_list))
-          break
+        else:
+            unrecovered_annotated_mention_list.extend(annotated_mention_list)
+            my_tally_arr_ritter.append(len(annotated_mention_list))
+            break
 
     # print(unrecovered_annotated_mention_list)
     unrecovered_annotated_mention_list_outer_ritter.extend(unrecovered_annotated_mention_list)
+    fn_ritter_counter_inner=len(unrecovered_annotated_mention_list)
+    fp_ritter_counter_inner=all_postitive_ritter_counter_inner- tp_ritter_counter_inner
+
+    tp_ritter_counter+= tp_ritter_counter_inner
+    fp_ritter_counter+=fp_ritter_counter_inner
+    fn_ritter_counter+=fn_ritter_counter_inner
 
     for elem in lst:
+
+        all_postitive_multipass_counter_inner=0
+        tp_multipass_counter_inner=0
+        fp_multipass_counter_inner=0
+        fn_multipass_counter_inner=0
+
         multipass_output_list=ast.literal_eval(str(row['output_col_'+str(elem)]))
         multipass_output_list_flat = [item.lower() for sublist in multipass_output_list for item in sublist]
         multipass_output_list_flat=list(filter(lambda element: element !='', multipass_output_list_flat))
+
+        all_postitive_multipass_counter_inner=len(multipass_output_list_flat)
 
         annotated_mention_tally_list= annotated_mention_list_tallying_array[elem]
 
@@ -366,6 +406,7 @@ for index,row in tweets_unpartitoned.iterrows():
                 annotated_candidate= annotated_mention_tally_list.pop()
                 if(annotated_candidate in multipass_output_list_flat):
                     multipass_output_list_flat.pop(multipass_output_list_flat.index(annotated_candidate))
+                    tp_multipass_counter_inner+=1
                 else:
                     unrecovered_annotated_mention_list_multipass[elem].append(annotated_candidate)
             else:
@@ -375,6 +416,12 @@ for index,row in tweets_unpartitoned.iterrows():
           # multipass_output_list=list(filter(lambda element: element !='', multipass_output_list))
         # print(unrecovered_annotated_mention_list_multipass[elem])
         unrecovered_annotated_mention_list_outer_multipass[elem].extend(unrecovered_annotated_mention_list_multipass[elem])
+        fn_multipass_counter_inner=len(unrecovered_annotated_mention_list_multipass[elem])
+        fp_multipass_counter_inner=all_postitive_multipass_counter_inner- tp_multipass_counter_inner
+
+        tp_multipass_counter_arr[elem]+= tp_multipass_counter_inner
+        fp_multipass_counter_arr[elem]+=fp_multipass_counter_inner
+        fn_multipass_counter_arr[elem]+=fn_multipass_counter_inner
 
 
         
@@ -396,31 +443,59 @@ for index,row in tweets_unpartitoned.iterrows():
 # # candidateList=CTrie.displayTrie("",[])
 # # print('candidate list:', len(candidateList), len(all_entity_candidates))
 
-print('===',our_counter,sum(my_tally_arr_ritter))
+print('===',our_counter,sum(my_tally_arr_ritter),tp_ritter_counter,fp_ritter_counter,fn_ritter_counter)
+ritter_precision= tp_ritter_counter/(tp_ritter_counter+fp_ritter_counter)
+ritter_recall= tp_ritter_counter/(tp_ritter_counter+fn_ritter_counter)
+
+multipass_precision_arr=[tp_multipass_counter_arr[index]/(tp_multipass_counter_arr[index]+fp_multipass_counter_arr[index]) for index in range(len(tp_multipass_counter_arr))]
+multipass_recall_arr=[tp_multipass_counter_arr[index]/(tp_multipass_counter_arr[index]+fn_multipass_counter_arr[index]) for index in range(len(tp_multipass_counter_arr))]
+
+print('single-pass: ',ritter_precision,ritter_recall)
+for index in range(len(multipass_precision_arr)):
+    print(index,multipass_precision_arr[index],multipass_recall_arr[index])
+
 print(len(unrecovered_annotated_mention_list_outer_ritter),len(unrecovered_annotated_mention_list_outer_multipass[0]),len(unrecovered_annotated_mention_list_outer_multipass[1]),len(unrecovered_annotated_mention_list_outer_multipass[2]),len(unrecovered_annotated_mention_list_outer_multipass[3]),
-  len(unrecovered_annotated_mention_list_outer_multipass[4]),len(unrecovered_annotated_mention_list_outer_multipass[5]),len(unrecovered_annotated_mention_list_outer_multipass[6]))
+  len(unrecovered_annotated_mention_list_outer_multipass[4]),len(unrecovered_annotated_mention_list_outer_multipass[5]),len(unrecovered_annotated_mention_list_outer_multipass[6])
+  ,len(unrecovered_annotated_mention_list_outer_multipass[7]),len(unrecovered_annotated_mention_list_outer_multipass[8]),len(unrecovered_annotated_mention_list_outer_multipass[9]),
+  len(unrecovered_annotated_mention_list_outer_multipass[10]),len(unrecovered_annotated_mention_list_outer_multipass[11]),len(unrecovered_annotated_mention_list_outer_multipass[12])
+  )
 
 
 # print(list(tweets_unpartitoned.columns.values))
 # rest_of_tweets= tweets_unpartitoned[index:]
 
-# # fig1 = plt.figure()
-# # plt.hold(True)
+fig1 = plt.figure()
+plt.hold(True)
 # x_values=[0,0,1,2,3,4,5,6]
-# # y_values=  [len(unrecovered_annotated_mention_list_outer_ritter),len(unrecovered_annotated_mention_list_outer_multipass[0]),len(unrecovered_annotated_mention_list_outer_multipass[1]),len(unrecovered_annotated_mention_list_outer_multipass[2]),len(unrecovered_annotated_mention_list_outer_multipass[3]),
-# #     len(unrecovered_annotated_mention_list_outer_multipass[4]),len(unrecovered_annotated_mention_list_outer_multipass[5]),len(unrecovered_annotated_mention_list_outer_multipass[6])]
+x_values=[0,0,1,2,3,4,5,6,7,8,9,10,11,12]
+# y_values=  [len(unrecovered_annotated_mention_list_outer_ritter),len(unrecovered_annotated_mention_list_outer_multipass[0]),len(unrecovered_annotated_mention_list_outer_multipass[1]),len(unrecovered_annotated_mention_list_outer_multipass[2]),len(unrecovered_annotated_mention_list_outer_multipass[3]),
+#     len(unrecovered_annotated_mention_list_outer_multipass[4]),len(unrecovered_annotated_mention_list_outer_multipass[5]),len(unrecovered_annotated_mention_list_outer_multipass[6])]
 
 # y_values=[543, 337, 323, 318, 318, 316, 315, 313]
-# # for array_index in range(0,18):
-# #     array_to_plot= eviction_ranking_precision_all_sketch_combined[array_index]
-# plt.plot(x_values,y_values)
-# plt.annotate(xy=[0,543], s='single-pass-Ritter')
-# # plt.ylabel('ranking function top-k effectiveness')
+# y_values=[len(unrecovered_annotated_mention_list_outer_ritter)]
+# y_values.extend([len(elem) for elem in unrecovered_annotated_mention_list_outer_multipass])
+
+y_values=[ritter_recall]
+y_values.extend([elem for elem in multipass_recall_arr])
+
+
+# print(x_values)
+# print(y_values)
+# for array_index in range(0,18):
+#     array_to_plot= eviction_ranking_precision_all_sketch_combined[array_index]
+plt.plot(x_values,y_values)
+plt.annotate(xy=[0,y_values[0]], s='single-pass-Ritter')
+# plt.ylabel('ranking function top-k effectiveness')
+plt.xlabel('reintroduction threshold')
+
 # plt.ylabel('# of False negative mentions')
-# plt.xlabel('reintroduction threshold')
-# plt.yticks(np.arange(550, 300, 50))
-# lgd=plt.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 4}, borderaxespad=0.)
-# plt.title('single-to-multi-pass-EMD')
-# # plt.savefig('single-to-multi-pass-EMD.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
-# plt.show()
+# plt.yticks(np.arange(min(y_values)-100, max(y_values)+100, 500))
+plt.ylabel('recall value')
+plt.yticks(np.arange(min(y_values), max(y_values), .01))
+
+
+lgd=plt.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 4}, borderaxespad=0.)
+plt.title('single-to-multi-pass-EMD')
+# plt.savefig('single-to-multi-pass-EMD.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+plt.show()
 
