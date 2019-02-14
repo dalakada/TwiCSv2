@@ -132,8 +132,8 @@ count=0
 
 # reintroduction_batch_threshold=range((val+1))
 
-reintroduction_batch_threshold=list(range((val+1)))
-# reintroduction_batch_threshold=[0,1,2,3,4,5,6]
+# reintroduction_batch_threshold=list(range((val+1)))
+reintroduction_batch_threshold=[0,1]
 print(reintroduction_batch_threshold)
 
 # for batch_threshold in reintroduction_batch_threshold:

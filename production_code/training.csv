@@ -1,6 +1,28 @@
 candidate,batch,length,cap,substring-cap,s-o-sCap,all-cap,non-cap,non-discriminative,cumulative,class
+check former trump advisor carter page,4,6,2,98,0,0,0,1,101,0
 ted allen mosby,0,3,110,0,0,0,0,35,145,1
+used chemical weapons,1,3,31,3,0,0,161,20,215,0
+using chemical weapons,1,3,19,4,0,0,149,8,180,0
+use chemical weapons,1,3,31,14,0,2,442,14,503,0
+ted john cruz,0,3,3,1,0,0,0,0,4,1
+hillary rodham clinton,3,3,140,60,0,0,0,0,200,1
+eric trump says,5,3,20,125,0,0,1,16,162,0
 colin farrel,0,2,110,0,0,0,0,30,140,1
+white house,0,2,407,2,0,6,32,28,475,1
+alex jones,0,2,159,2,0,4,1,12,178,1
+donald trump,0,2,186,5,0,2,1,32,226,1
+chemical weapons,1,2,24,5,0,1,153,11,194,0
+press secretary,0,2,84,7,0,2,128,12,233,0
+foreign policy,0,2,10,13,0,0,164,10,197,0
+carter page,0,2,803,14,0,2,21,93,933,1
+united airlines,0,2,263,16,0,0,7,15,301,1
+gas chambers,0,2,9,27,0,7,190,5,238,0
+eric trump,0,2,1077,37,0,2,15,177,1308,1
+hillary clinton,3,2,150,50,0,0,0,0,200,1
+holocaust centers,0,2,208,113,0,7,66,62,456,1
+ibm center,3,2,230,140,0,9,92,76,547,1
+former trump,0,2,12,165,0,0,0,4,181,0
+sean spicer,0,2,8005,190,0,48,106,846,9195,1
 hitler,0,1,2080,0,189,16,62,81,2428,1
 people,0,1,52,0,56,15,1274,63,1460,0
 spicer,0,1,707,0,294,12,37,83,1133,1
@@ -154,26 +176,17 @@ heartbroken,5,1,3,0,13,1,138,8,163,0
 long,0,1,1,0,6,2,152,2,163,0
 ivankatrump,0,1,163,1,97,0,7,1,269,1
 big,0,1,17,1,13,9,154,25,219,0
-white house,0,2,407,2,0,6,32,28,475,1
-alex jones,0,2,159,2,0,4,1,12,178,1
-used chemical weapons,1,3,31,3,0,0,161,20,215,0
-using chemical weapons,1,3,19,4,0,0,149,8,180,0
-donald trump,0,2,186,5,0,2,1,32,226,1
-chemical weapons,1,2,24,5,0,1,153,11,194,0
-press secretary,0,2,84,7,0,2,128,12,233,0
-foreign policy,0,2,10,13,0,0,164,10,197,0
-use chemical weapons,1,3,31,14,0,2,442,14,503,0
-carter page,0,2,803,14,0,2,21,93,933,1
-united airlines,0,2,263,16,0,0,7,15,301,1
 trump,0,1,1569,19,410,22,184,130,2334,1
-gas chambers,0,2,9,27,0,7,190,5,238,0
-eric trump,0,2,1077,37,0,2,15,177,1308,1
-hillary clinton,3,2,150,50,0,0,0,0,200,1
-ted john cruz,0,3,3,1,0,0,0,0,4,1
-hillary rodham clinton,3,3,140,60,0,0,0,0,200,1
-holocaust centers,0,2,208,113,0,7,66,62,456,1
-eric trump says,5,3,20,125,0,0,1,16,162,0
-former trump,0,2,12,165,0,0,0,4,181,0
-sean spicer,0,2,8005,190,0,48,106,846,9195,1
 doj,3,1,0,0,1,14,2,3,21,1
-wolsey,3,1,54,0,2,1,18,8,83,1
+wolsey,3,1,59,0,3,1,26,8,97,1
+john,3,1,16,0,2,0,5,2,25,1
+cag,3,1,3,0,2,48,22,10,28,1
+james,3,1,40,0,5,7,12,15,29,1
+wwe,3,1,2,2,0,42,11,2,30,1
+judy,3,1,18,3,3,5,7,7,31,1
+doreen,3,1,56,0,0,0,27,0,32,1
+ssc,4,1,4,0,0,40,10,3,33,1
+facebook,4,1,48,0,2,0,20,2,72,1
+instagram,4,1,102,0,18,0,52,22,194,1
+messi,4,1,95,0,20,0,49,25,189,1
+lionel,4,1,118,0,18,0,59,35,230,1

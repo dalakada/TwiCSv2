@@ -38,7 +38,7 @@ prep_list=["in","at","of","on","&;"] #includes common conjunction as well
 article_list=["a","an","the"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["hmm","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["gee","hmm","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 string.punctuation=string.punctuation+'…‘’'
 
 
@@ -832,16 +832,21 @@ class EntityResolver ():
 
         good_to_amb_df=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))]
         good_to_amb=good_to_amb_df.candidate.tolist()
-        print('good to ambiguous: ',len(good_to_amb))
-        print(good_to_amb_df[['candidate','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','status']])
+        # print('good to ambiguous: ',good_to_amb)
+        # print(good_to_amb_df[['candidate','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','status']])
 
         self.good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
         self.ambiguous_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"].candidate.tolist()
         self.bad_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"].candidate.tolist()
 
+
         entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]
         non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
         ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
+
+        if(self.counter==12):
+            ambiguous_candidate_records.to_csv("ambiguous_records.csv",columns=['candidate','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','status'], sep=',', mode='a', index=False)
+            # print(self.ambiguous_candidates[['candidate','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','status']])
         
 
         self.entity_sketch= self.get_aggregate_sketch(entity_candidate_records)
