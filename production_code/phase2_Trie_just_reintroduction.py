@@ -29,7 +29,7 @@ from sklearn.metrics import silhouette_samples, silhouette_score
 import matplotlib.pyplot as plt
 
 cachedStopWords = stopwords.words("english")
-tempList=["i","and","or","other","another","across","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always"]
+tempList=["i","and","or","other","another","across","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always","although"]
 for item in tempList:
     if item not in cachedStopWords:
         cachedStopWords.append(item)
@@ -40,7 +40,7 @@ prep_list=["in","at","of","on","&;"] #includes common conjunction as well
 article_list=["a","an","the"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["gee","hmm","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 string.punctuation=string.punctuation+'…‘’'
 
 
@@ -58,18 +58,20 @@ class EntityResolver ():
         #print(self.entity_level_arr)
 
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
+        print('here 1')
         
-        candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
+        # candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
         # for j in range(self.counter+1):
         #     print(len(self.entity_level_arr[j]),self.entity_level_arr[j])
         #print(self.entity_level_arr)
 
         # SET TF 
+        # print(len(data_frame_holder))
         untrashed_tweets=self.set_tf(data_frame_holder,
             candidate_featureBase_DF,
             phase2_candidates_holder,correction_flag)
-
-        untrashed_tweets.to_csv("phase2output.csv", sep=',', encoding='utf-8')
+        print('here 2')
+        # untrashed_tweets.to_csv("phase2output.csv", sep=',', encoding='utf-8')
 
 
 
@@ -79,6 +81,7 @@ class EntityResolver ():
         #input: tf, candidate_featureBase_DF 
         #output: incomplete_tweets[candidates_with_label], [good_candidates], [bad_candidates]
         self.set_column_for_candidates_in_incomplete_tweets(candidate_featureBase_DF,untrashed_tweets)
+        print('here 3')
         ########
         ########
         # tp,fp,f1,accuracy calculations.
@@ -105,10 +108,12 @@ class EntityResolver ():
 
         # DROP TF
         just_converted_tweets=self.get_complete_tf(untrashed_tweets)
+        print('here 4')
         #incomplete tweets at the end of current batch
         incomplete_tweets=self.get_incomplete_tf(untrashed_tweets)
         #all incomplete_tweets---> incomplete_tweets at the end of current batch + incomplete_tweets not reintroduced
         self.incomplete_tweets=pd.concat([incomplete_tweets,self.not_reintroduced],ignore_index=True) #without reintroduction--- when everything is reintroduced, just incomplete_tweets
+        print('here 5')
         #print(self.incomplete_tweets.index)
         #recording tp, fp , f1
         #self.accuracy_tuples_prev_batch.append((just_converted_tweets.tp.sum(), just_converted_tweets.total_mention.sum(),just_converted_tweets.fp.sum(),just_converted_tweets.fn.sum()))
@@ -116,10 +121,12 @@ class EntityResolver ():
 
         #operations for getting ready for next batch.
         self.incomplete_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
+        print('here 6')
         self.counter=self.counter+1
 
         self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
         self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
+        print('here 7')
 
 
         # #printing incomplete sentence estimates here
@@ -149,20 +156,40 @@ class EntityResolver ():
         self.decay_base_staggering=2
         self.my_classifier= svm.SVM1('training.csv')
 
+        self.step_size=20
+        self.upper_reintroduction_limit=100 + self.step_size
+
         #entity non-entity top k estimates
-        self.arr1=[0,0,0,0,0] #cumulative estimates till batch single sketch
-        self.arr2=[0,0,0,0,0] #cumulative estimates till batch multi sketch cosine
-        self.arr3=[0,0,0,0,0] #cumulative estimates till batch multi sketch euclidean
-        self.arr4=[0,0,0,0,0] #cumulative estimates till batch combined sketches
+        # self.arr1=[0,0,0,0,0] #cumulative estimates till batch single sketch
+        self.arr1=[0 for i in range(20,self.upper_reintroduction_limit,self.step_size)]
+
+        # self.arr2=[0,0,0,0,0] #cumulative estimates till batch multi sketch cosine
+        self.arr2=[0 for i in range(20,self.upper_reintroduction_limit,self.step_size)]
+
+        # self.arr3=[0,0,0,0,0] #cumulative estimates till batch multi sketch euclidean
+        self.arr3=[0 for i in range(20,self.upper_reintroduction_limit,self.step_size)]
+
+        # self.arr4=[0,0,0,0,0] #cumulative estimates till batch combined sketches
+        self.arr4=[0 for i in range(20,self.upper_reintroduction_limit,self.step_size)]
 
         #ambiguous sketches top k estimates
-        self.arr5=[0,0,0,0,0] #cumulative estimates till batch single sketch
-        self.arr6=[0,0,0,0,0] #cumulative estimates till batch multi sketch cosine
-        self.arr7=[0,0,0,0,0] #cumulative estimates till batch multi sketch euclidean
-        self.arr8=[0,0,0,0,0] #cumulative estimates till batch combined sketches
+        # self.arr5=[0,0,0,0,0] #cumulative estimates till batch single sketch
+        self.arr5=[0 for i in range(20,self.upper_reintroduction_limit,self.step_size)]
+
+        # self.arr6=[0,0,0,0,0] #cumulative estimates till batch multi sketch cosine
+        self.arr6=[0 for i in range(20,self.upper_reintroduction_limit,self.step_size)]
+
+        # self.arr7=[0,0,0,0,0] #cumulative estimates till batch multi sketch euclidean
+        self.arr7=[0 for i in range(20,self.upper_reintroduction_limit,self.step_size)]
+
+        # self.arr8=[0,0,0,0,0] #cumulative estimates till batch combined sketches
+        self.arr8=[0 for i in range(20,self.upper_reintroduction_limit,self.step_size)]
 
         #all combination top k estimates
-        self.arr9=[0,0,0,0,0]
+        # self.arr9=[0,0,0,0,0]
+        self.arr9=[0 for i in range(20,self.upper_reintroduction_limit,self.step_size)]
+
+        self.baseline_counter=0
 
 
         #entity non-entity bottom m estimates
@@ -405,31 +432,35 @@ class EntityResolver ():
         #candidate_featureBase_DF.to_csv("cf_new_with_z_score.csv", sep=',', encoding='utf-8')
 
         #multi-word infrequent candidates ---> to be used for recall correction
-        infrequent_candidates=candidate_featureBase_DF[(candidate_featureBase_DF['Z_ScoreUnweighted'] < z_score_threshold) & (candidate_featureBase_DF.length>1)].candidate.tolist()
+        multiword_infrequent_candidates_list=candidate_featureBase_DF[(candidate_featureBase_DF['Z_ScoreUnweighted'] < z_score_threshold) & (candidate_featureBase_DF.length>1)].candidate.tolist()
         #all infrequent candidates
         all_infrequent= candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] < z_score_threshold]
         candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] >= z_score_threshold]
 
 
         #returns updated candidate_featureBase_DF with ["Z_score"], ["probability"],["class"] attributes.
-        return (self.my_classifier.run(candidate_featureBase_DF,z_score_threshold),infrequent_candidates,all_infrequent)
+        return (self.my_classifier.run(candidate_featureBase_DF,z_score_threshold),multiword_infrequent_candidates_list,all_infrequent)
 
 
     # recall_correction
-    def set_partition_dict(self,candidate_featureBase_DF,infrequent_candidates):
+    def set_partition_dict(self,candidate_featureBase_DF,multiword_infrequent_candidates_list):
         #print(list(self.partition_dict.keys()))
-        ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="a")|(candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
+        # multiWord_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="a")|(candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
+
+        #not including ambiguous candidates for recall correction
+        multiWord_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
+
         good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF.status=="g")].candidate.tolist()
         flag1=False
         flag2=False
-        if(len(ambiguous_bad_candidates)>0):
-            ambiguous_bad_candidates['max_column'] =ambiguous_bad_candidates[['cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative']].idxmax(axis=1) 
-            ambiguous_bad_candidates_wFilter= ambiguous_bad_candidates[ambiguous_bad_candidates.max_column=='substring-cap']
+        if(len(multiWord_candidates)>0):
+            multiWord_candidates['max_column'] =multiWord_candidates[['cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative']].idxmax(axis=1) 
+            multiWord_candidates_wFilter= multiWord_candidates[multiWord_candidates.max_column=='substring-cap']
 
             #good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF.status=="g")].candidate.tolist()
             #print(ambiguous_bad_candidates_wFilter.candidate.tolist())
 
-            for candidate in ambiguous_bad_candidates_wFilter.candidate.tolist():
+            for candidate in multiWord_candidates_wFilter.candidate.tolist():
                 #print(candidate)
                 if candidate not in self.partition_dict.keys():
                     substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates,False)
@@ -438,10 +469,10 @@ class EntityResolver ():
                         self.partition_dict[candidate]=substring_candidates
 
             flag1= True
-        if(len(infrequent_candidates)>0):
+        if(len(multiword_infrequent_candidates_list)>0):
             #print(len(ambiguous_bad_candidates_wFilter.candidate.tolist()))
-
-            for candidate in infrequent_candidates:
+            # multiword_infrequent_candidates_list=list(filter(lambda candidate: len(candidate.split())>1,infrequent_candidates))
+            for candidate in multiword_infrequent_candidates_list:
                 #print(candidate)
                 if candidate not in self.partition_dict.keys():
                     substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates,False)
@@ -751,11 +782,13 @@ class EntityResolver ():
         
         # # get union of tweet-set of selected candidates 
         # #print(self.incomplete_tweets[any(x in list(cosine_distance_dict.keys()) for x in self.incomplete_tweets['ambiguous_candidates'])])
+        
         # reintroduced_tweets=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in candidates_to_reintroduce for x in row['ambiguous_candidates']) ,axis=1)]
+        # self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets.index)]
 
         reintroduced_tweets_reintroduction_eviction=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in candidates_to_reintroduce1 for x in row['ambiguous_candidates']) ,axis=1)]
         #not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in list(cosine_distance_dict.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
-        # self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets.index)]
+        self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets_reintroduction_eviction.index)]
         # # print(len(self.incomplete_tweets))
         # print("=> reintroduced tweets reintro+eviction: ", len(reintroduced_tweets_reintroduction_eviction), " reintroduced in-batch: ", len(reintroduced_tweets)," not-reintroduced tweets: ", len(self.not_reintroduced))
         #print((len(not_reintroduced)==len(self.not_reintroduced)),(len(reintroduced_tweets)+len(self.not_reintroduced)==len(self.incomplete_tweets)))
@@ -918,13 +951,13 @@ class EntityResolver ():
         # for candidate in self.ambiguous_candidates_in_batch:
         #     if(int(candidate_featureBase_DF[candidate_featureBase_DF['candidate']==candidate]['evictionFlag'])==0):
         #         print(candidate)
-        ambiguous_candidates_before_classification_for_baseline= self.ambiguous_candidates
+        ambiguous_candidates_before_classification_for_baseline= copy.deepcopy(self.ambiguous_candidates)
 
-        self.ambiguous_candidates_in_batch= [candidate for candidate in self.ambiguous_candidates_in_batch if (candidate not in self.evicted_candidates)]
+        # self.ambiguous_candidates_in_batch= [candidate for candidate in self.ambiguous_candidates_in_batch if (candidate not in self.evicted_candidates)]
         ambiguous_candidates_in_batch_w_Count=dict((x,self.ambiguous_candidates_in_batch.count(x)) for x in set(self.ambiguous_candidates_in_batch))
 
         converted_candidate_list=self.good_candidates+self.bad_candidates
-        infrequent_candidate_list=self.all_infrequent_candidates
+        infrequent_candidate_list=self.infrequent_candidates
 
         ambiguous_candidate_list_before_classification=[candidate for candidate in self.ambiguous_candidates if (candidate not in self.evicted_candidates)]
         ambiguous_candidate_records_before_classification=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(ambiguous_candidate_list_before_classification))]
@@ -945,7 +978,7 @@ class EntityResolver ():
         #         print('bad')
         #     if(candidate in self.ambiguous_candidates):
         #         print('ambiguous',(candidate in self.evicted_candidates))
-        #     if(candidate in self.all_infrequent_candidates):
+        #     if(candidate in self.infrequent_candidates):
         #         print('infrequent')
 
 
@@ -1048,43 +1081,59 @@ class EntityResolver ():
             # for candidate in cosine_distance_dict_wAmb.keys():
             #     print(candidate,cosine_distance_dict_wAmb[candidate])
 
-            rank_dict_eviction_candidates={candidate: max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in list(ranking_score_dict_eviction.keys())}
-            rank_dict_ordered_eviction_candidates=OrderedDict(sorted(rank_dict_eviction_candidates.items(), key=lambda x: x[1]))
-            rank_dict_ordered_list_eviction_candidates=list(rank_dict_ordered_eviction_candidates.keys())
-            real_eviction_cutoff= int(20/100*(len(ambiguous_candidate_records_before_classification)))
-            rank_dict_ordered_list_eviction_candidates_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-real_eviction_cutoff):]
-            self.evicted_candidates.extend(rank_dict_ordered_list_eviction_candidates_cutoff)
 
-            # not_evicted_candidates=[candidate for candidate in rank_dict_ordered_list_eviction_candidates if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
-            # candidate_featureBase_DF['evictionFlag'][candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]=1
+            #------------for just reintroduction with eviction block, without experimentation----------------
+
+            # rank_dict_eviction_candidates={candidate: max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in list(ranking_score_dict_eviction.keys())}
+            # rank_dict_ordered_eviction_candidates=OrderedDict(sorted(rank_dict_eviction_candidates.items(), key=lambda x: x[1]))
+            # rank_dict_ordered_list_eviction_candidates=list(rank_dict_ordered_eviction_candidates.keys())
+            # real_eviction_cutoff= int(20/100*(len(ambiguous_candidate_records_before_classification)))
+            # rank_dict_ordered_list_eviction_candidates_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-real_eviction_cutoff):]
             # self.evicted_candidates.extend(rank_dict_ordered_list_eviction_candidates_cutoff)
 
-            # print('evicted: ', len(rank_dict_ordered_list_eviction_candidates_cutoff), len(self.evicted_candidates))
-            # print('evicted to converted: ', len([candidate for candidate in rank_dict_ordered_list_eviction_candidates_cutoff if candidate in converted_candidate_records.candidate.tolist()]),len([candidate for candidate in self.evicted_candidates if candidate in converted_candidate_records.candidate.tolist()]))
+            # # not_evicted_candidates=[candidate for candidate in rank_dict_ordered_list_eviction_candidates if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
+            # # candidate_featureBase_DF['evictionFlag'][candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]=1
+            # # self.evicted_candidates.extend(rank_dict_ordered_list_eviction_candidates_cutoff)
 
-            # rank_dict_eviction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]
-            # rank_dict_eviction_candidates_cutoff_records_grouped_df= rank_dict_eviction_candidates_cutoff_records.groupby('batch')
+            # # print('evicted: ', len(rank_dict_ordered_list_eviction_candidates_cutoff), len(self.evicted_candidates))
+            # # print('evicted to converted: ', len([candidate for candidate in rank_dict_ordered_list_eviction_candidates_cutoff if candidate in converted_candidate_records.candidate.tolist()]),len([candidate for candidate in self.evicted_candidates if candidate in converted_candidate_records.candidate.tolist()]))
 
-            ambiguous_candidates_in_batch_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
-            # in_batch_and_evicted= [candidate for candidate in self.ambiguous_candidates_in_batch if candidate in rank_dict_ordered_list_eviction_candidates_cutoff] #ranked for reintroduction, nonetheless evicted
-            # ambiguous_candidates_not_in_batch_post_eviction = [candidate for candidate in ambiguous_candidates_not_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
+            # # rank_dict_eviction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]
+            # # rank_dict_eviction_candidates_cutoff_records_grouped_df= rank_dict_eviction_candidates_cutoff_records.groupby('batch')
 
-            # ambiguous_candidates_in_batch_post_eviction_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_candidates_in_batch_post_eviction)]
-            # ambiguous_candidates_in_batch_post_eviction_grouped_df= ambiguous_candidates_in_batch_post_eviction_records.groupby('batch')
+            # ambiguous_candidates_in_batch_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
+            # # in_batch_and_evicted= [candidate for candidate in self.ambiguous_candidates_in_batch if candidate in rank_dict_ordered_list_eviction_candidates_cutoff] #ranked for reintroduction, nonetheless evicted
+            # # ambiguous_candidates_not_in_batch_post_eviction = [candidate for candidate in ambiguous_candidates_not_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
 
-            # print('tallying here: ', len(not_evicted_candidates), len(ambiguous_candidates_in_batch_post_eviction), len(in_batch_and_evicted), len(ambiguous_candidates_not_in_batch_post_eviction))
+            # # ambiguous_candidates_in_batch_post_eviction_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_candidates_in_batch_post_eviction)]
+            # # ambiguous_candidates_in_batch_post_eviction_grouped_df= ambiguous_candidates_in_batch_post_eviction_records.groupby('batch')
+
+            # # print('tallying here: ', len(not_evicted_candidates), len(ambiguous_candidates_in_batch_post_eviction), len(in_batch_and_evicted), len(ambiguous_candidates_not_in_batch_post_eviction))
 
             
-            rank_dict_reintroduction_candidates_post_eviction={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidates_in_batch_post_eviction}
-            rank_dict_ordered_reintroduction_candidates_post_eviction=OrderedDict(sorted(rank_dict_reintroduction_candidates_post_eviction.items(), key=lambda x: x[1]))
-            rank_dict_ordered_list_reintroduction_candidates_post_eviction=list(rank_dict_ordered_reintroduction_candidates_post_eviction.keys())
-            real_cutoff= int(60/100*(len(ambiguous_candidates_in_batch_post_eviction)))
-            rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction=rank_dict_ordered_list_reintroduction_candidates_post_eviction[0:real_cutoff]
+            # rank_dict_reintroduction_candidates_post_eviction={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidates_in_batch_post_eviction}
+            # rank_dict_ordered_reintroduction_candidates_post_eviction=OrderedDict(sorted(rank_dict_reintroduction_candidates_post_eviction.items(), key=lambda x: x[1]))
+            # rank_dict_ordered_list_reintroduction_candidates_post_eviction=list(rank_dict_ordered_reintroduction_candidates_post_eviction.keys())
+            # real_cutoff= int(40/100*(len(ambiguous_candidates_in_batch_post_eviction)))
+            # rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction=rank_dict_ordered_list_reintroduction_candidates_post_eviction[0:real_cutoff]
 
-            #tweet candidates for Reintroduction
-            #reintroduced_tweets=self.get_reintroduced_tweets(cosine_distance_dict_wAmb) #single ambiguous sketch
-            reintroduced_tweets=self.get_reintroduced_tweets(candidates_to_reintroduce,rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction) #single entity/non-entity sketch sketch
-            #reintroduced_tweets=self.get_reintroduced_tweets(comebined_score_dict) #combined 3 sketch score
+            # #tweet candidates for Reintroduction
+            # #reintroduced_tweets=self.get_reintroduced_tweets(cosine_distance_dict_wAmb) #single ambiguous sketch
+            # reintroduced_tweets=self.get_reintroduced_tweets(candidates_to_reintroduce,rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction) #single entity/non-entity sketch sketch
+            # #reintroduced_tweets=self.get_reintroduced_tweets(comebined_score_dict) #combined 3 sketch score
+
+            rank_dict_reintroduction_candidates={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in self.ambiguous_candidates_in_batch}
+            rank_dict_ordered_reintroduction_candidates=OrderedDict(sorted(rank_dict_reintroduction_candidates.items(), key=lambda x: x[1]))
+            rank_dict_ordered_list_reintroduction_candidates=list(rank_dict_ordered_reintroduction_candidates.keys())
+
+            if(self.upper_reintroduction_limit<100):
+                real_cutoff= int(self.upper_reintroduction_limit/100*(len(rank_dict_ordered_list_reintroduction_candidates)))
+            else:
+                real_cutoff= int(100/100*(len(rank_dict_ordered_list_reintroduction_candidates)))
+
+            rank_dict_ordered_list_reintroduction_candidates_cutoff=rank_dict_ordered_list_reintroduction_candidates[0:real_cutoff]
+            reintroduced_tweets=self.get_reintroduced_tweets(candidates_to_reintroduce,rank_dict_ordered_list_reintroduction_candidates_cutoff)
+
             candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(reintroduced_tweets,CTrie,phase2stopwordList,1)
             phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
             df_holder.extend(df_holder_extracted)
@@ -1114,7 +1163,7 @@ class EntityResolver ():
         # new_to_amb=candidate_featureBase_DF[((candidate_featureBase_DF["batch"]==self.counter)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
         # good_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
         # bad_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.bad_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
-        # infreq_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.all_infrequent_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
+        # infreq_to_amb=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.infrequent_candidates)&(candidate_featureBase_DF["status"]=="a"))].candidate.tolist()
         # self.ambiguous_candidates_transition_dict[self.counter]=[]
         
         # #print(len(new_to_amb),len(infreq_to_amb),len(self.ambiguous_candidates_transition_dict[self.counter]))
@@ -1133,17 +1182,21 @@ class EntityResolver ():
         self.good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
         self.ambiguous_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"].candidate.tolist()
         self.bad_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"].candidate.tolist()
-        self.all_infrequent_candidates=all_infrequent.candidate.tolist()
+        self.infrequent_candidates=all_infrequent.candidate.tolist()
 
+        
         ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
         ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
-        
+
+                
         entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]
         non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
         ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
-        # infrequent_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.all_infrequent_candidates)]
+        # infrequent_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.infrequent_candidates)]
         infrequent_candidate_records=all_infrequent
         converted_candidate_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_turned_good+ambiguous_turned_bad)]
+
+        print('converted: ',len(converted_candidate_records))
 
         # converted_candidate_records_grouped_df= converted_candidate_records.groupby('batch')
         # for key, item in converted_candidate_records_grouped_df:
@@ -1204,7 +1257,7 @@ class EntityResolver ():
         # print("good: ",len(self.good_candidates),candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]['cumulative'].sum())
         # print("ambiguous: ",len(self.ambiguous_candidates),len(ambiguous_candidate_records),ambiguous_candidate_records['cumulative'].sum())
         # print("bad: ",len(self.bad_candidates),candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]['cumulative'].sum())
-        # print("infrequent: ",len(self.all_infrequent_candidates),all_infrequent['cumulative'].sum())
+        # print("infrequent: ",len(self.infrequent_candidates),all_infrequent['cumulative'].sum())
 
         #taking entity level and mention level ambiguous candidate propagation estimates here
         # entity_arr=[-1]*20
@@ -1414,54 +1467,56 @@ class EntityResolver ():
         #     # print('eviction ranking recall all sketch combined: ', (self.bottom_m_recall_arr_all_sketch_combined))
 
 
-        # if(self.counter>0):
-        #     ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
-        #     ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
-        #     ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
+        if(self.counter>0):
+            ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
+            ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
+            ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
+
+            print('converted: ',(len(ambiguous_turned_good)+len(ambiguous_turned_bad)))
             
-        #     self.baseline_effectiveness+=len(converted_candidate_records)
+            self.baseline_effectiveness+=len(converted_candidate_records)
 
-        #     # # number of candidates from batch i going into the batch
-        #     # ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
-        #     # for key, item in ambiguous_candidate_inBatch_grouped_df:
-        #     #     new_mention_count=0
-        #     #     ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key)
-        #     #     print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key))
-        #     #     for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist():
-        #     #         new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
-        #     #     print (key,len(ambiguous_candidate_inBatch_grouped_df_key),new_mention_count)
-        #     #     print(ambiguous_candidate_inBatch_grouped_df_key)
+            # number of candidates from batch i going into the batch
+            # ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
+            # for key, item in ambiguous_candidate_inBatch_grouped_df:
+            #     new_mention_count=0
+            #     ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key)
+            #     print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key))
+            #     for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist():
+            #         new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
+            #     print (key,len(ambiguous_candidate_inBatch_grouped_df_key),new_mention_count)
+            #     print(ambiguous_candidate_inBatch_grouped_df_key)
 
-        #     # print(converted_candidate_records.groupby('batch').size())
+            # print(converted_candidate_records.groupby('batch').size())
 
-        #     #checking position of candidates that do get disambiguated in the reintroduction ranked list
-        #     # print(converted_candidate_records.groupby('batch').size())
+            #checking position of candidates that do get disambiguated in the reintroduction ranked list
+            # print(converted_candidate_records.groupby('batch').size())
             
-        #     # arr5=[]
+            # arr5=[]
 
-        #     #checking percentage of candidates from previous batch i in the new tweets of the current batch
-        #     ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
-        #     # batch_specific_rank_dict={}
-        #     # internal_batch_level_dict={}
-        #     for key, item in ambiguous_candidate_records_before_classification_grouped_df:
-        #         # predicted_k_value=-1
+            #checking percentage of candidates from previous batch i in the new tweets of the current batch
+            ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
+            # batch_specific_rank_dict={}
+            # internal_batch_level_dict={}
+            for key, item in ambiguous_candidate_records_before_classification_grouped_df:
+                # predicted_k_value=-1
                 
-        #         ambiguous_candidate_grouped_df= ambiguous_candidate_records_before_classification_grouped_df.get_group(key) #no of candidates remaining ambiguous from batch i
-        #         second_element=0
-        #         if key in ambiguous_candidate_inBatch_grouped_df.groups.keys():
-        #             ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
-        #             second_element=len(ambiguous_candidate_inBatch_grouped_df_key)
+                ambiguous_candidate_grouped_df= ambiguous_candidate_records_before_classification_grouped_df.get_group(key) #no of candidates remaining ambiguous from batch i
+                second_element=0
+                if key in ambiguous_candidate_inBatch_grouped_df.groups.keys():
+                    ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
+                    second_element=len(ambiguous_candidate_inBatch_grouped_df_key)
                 
-        #             if(key in self.batch_specific_reintroduction_tuple_dict.keys()):
-        #                 tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
-        #                 if((self.counter-key)>9):
-        #                     tuple_list=self.batch_specific_reintroduction_tuple_dict[key]
-        #                     predicted_k_value_reintroduction= self.fit_and_predict(key,tuple_list[0:10],tuple_to_append)
-        #                     tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),predicted_k_value_reintroduction)
-        #                 # else:
-        #                 self.batch_specific_reintroduction_tuple_dict[key].append(tuple_to_append)
-        #             else:
-        #                 self.batch_specific_reintroduction_tuple_dict[key]=[(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)]
+                    if(key in self.batch_specific_reintroduction_tuple_dict.keys()):
+                        tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
+                        if((self.counter-key)>9):
+                            tuple_list=self.batch_specific_reintroduction_tuple_dict[key]
+                            predicted_k_value_reintroduction= self.fit_and_predict(key,tuple_list[0:10],tuple_to_append)
+                            tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),predicted_k_value_reintroduction)
+                        # else:
+                        self.batch_specific_reintroduction_tuple_dict[key].append(tuple_to_append)
+                    else:
+                        self.batch_specific_reintroduction_tuple_dict[key]=[(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)]
 
         #         if(key in self.batch_specific_eviction_tuple_dict.keys()):
         #             tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),second_element,0)
@@ -1477,29 +1532,29 @@ class EntityResolver ():
         #         # self.batch_specific_reintroduction_tuple_dict[(self.counter,key)]=(len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
 
 
-        #     #get the list of top-k percent reintroduced candidates
-        #     rank_dict_reintroduction_candidates={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in self.ambiguous_candidates_in_batch}
-        #     rank_dict_ordered_reintroduction_candidates=OrderedDict(sorted(rank_dict_reintroduction_candidates.items(), key=lambda x: x[1]))
-        #     rank_dict_ordered_list_reintroduction_candidates=list(rank_dict_ordered_reintroduction_candidates.keys())
-        #     real_cutoff= int(40/100*(len(self.ambiguous_candidates_in_batch)))
-        #     rank_dict_ordered_list_reintroduction_candidates_cutoff=rank_dict_ordered_list_reintroduction_candidates[0:real_cutoff]
-        #     rank_dict_reintroduction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_reintroduction_candidates_cutoff)]
-        #     rank_dict_reintroduction_candidates_cutoff_records_grouped_df= rank_dict_reintroduction_candidates_cutoff_records.groupby('batch')
+        #commented out to change to just reintroduction version
+            # #get the list of top-k percent reintroduced candidates
+            # rank_dict_reintroduction_candidates={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in self.ambiguous_candidates_in_batch}
+            # rank_dict_ordered_reintroduction_candidates=OrderedDict(sorted(rank_dict_reintroduction_candidates.items(), key=lambda x: x[1]))
+            # rank_dict_ordered_list_reintroduction_candidates=list(rank_dict_ordered_reintroduction_candidates.keys())
+            # real_cutoff= int(40/100*(len(self.ambiguous_candidates_in_batch)))
+            # rank_dict_ordered_list_reintroduction_candidates_cutoff=rank_dict_ordered_list_reintroduction_candidates[0:real_cutoff]
+            # rank_dict_reintroduction_candidates_cutoff_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_reintroduction_candidates_cutoff)]
+            # rank_dict_reintroduction_candidates_cutoff_records_grouped_df= rank_dict_reintroduction_candidates_cutoff_records.groupby('batch')
 
 
-        #     converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
+            converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
+            # print('ambiguous candidate in batch: ', self.ambiguous_candidates_in_batch)
+            # print('reintroduced candidates: ',rank_dict_ordered_list_reintroduction_candidates_cutoff)
+            # print('converted candidates: ',converted_candidate_records.candidate.tolist())
 
-        #     # print('ambiguous candidate in batch: ', self.ambiguous_candidates_in_batch)
-        #     # print('reintroduced candidates: ',rank_dict_ordered_list_reintroduction_candidates_cutoff)
-        #     # print('converted candidates: ',converted_candidate_records.candidate.tolist())
 
-
-        #     for key, item in rank_dict_reintroduction_candidates_cutoff_records_grouped_df:
-        #         rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key= rank_dict_reintroduction_candidates_cutoff_records_grouped_df.get_group(key)
-        #         if(((self.counter-key)>0)&((self.counter-key)<=10)):
-        #             list_to_edit=self.all_estimates[key][(self.counter-key)-1]
-        #             list_to_edit[1]=len(rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key)
-        #             self.all_estimates[key][(self.counter-key)-1]=list_to_edit
+            # for key, item in rank_dict_reintroduction_candidates_cutoff_records_grouped_df:
+            #     rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key= rank_dict_reintroduction_candidates_cutoff_records_grouped_df.get_group(key)
+            #     if(((self.counter-key)>0)&((self.counter-key)<=10)):
+            #         list_to_edit=self.all_estimates[key][(self.counter-key)-1]
+            #         list_to_edit[1]=len(rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key)
+            #         self.all_estimates[key][(self.counter-key)-1]=list_to_edit
 
 
         #     #get the list of bottom m percent evicted candidates here
@@ -1644,208 +1699,216 @@ class EntityResolver ():
 
 
 
-        #     for key, item in converted_candidates_grouped_df:
+            for key, item in converted_candidates_grouped_df:
 
-        #         # print('=>batch: ',key)
-        #         # new_mention_count=0
-        #         batch_specific_k_value=-1
-        #         batch_specific_k_value_eviction=-1
+                # print('=>batch: ',key)
+                # new_mention_count=0
+                batch_specific_k_value=-1
+                # batch_specific_k_value_eviction=-1
 
-        #         ambiguous_candidate_records_before_classification_grouped_df_key = ambiguous_candidate_records_before_classification_grouped_df.get_group(key)
-        #         ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
-        #         converted_candidates_grouped_df_key= converted_candidates_grouped_df.get_group(key) #no of candidates from batch i converted in current batch
+                ambiguous_candidate_records_before_classification_grouped_df_key = ambiguous_candidate_records_before_classification_grouped_df.get_group(key)
+                ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
+                converted_candidates_grouped_df_key= converted_candidates_grouped_df.get_group(key) #no of candidates from batch i converted in current batch
 
-        #         if key in rank_dict_reintroduction_candidates_cutoff_records_grouped_df.groups.keys():
-        #             rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key = rank_dict_reintroduction_candidates_cutoff_records_grouped_df.get_group(key)
-
-
-        #         #altered reintroduction estimates
-        #         if key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
-        #             rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key=rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.get_group(key)
-        #             print('=>batch: ',key, len(rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key))
+                #commenting out to implement just reintroduction without eviction
+                # if key in rank_dict_reintroduction_candidates_cutoff_records_grouped_df.groups.keys():
+                #     rank_dict_reintroduction_candidates_cutoff_records_grouped_df_key = rank_dict_reintroduction_candidates_cutoff_records_grouped_df.get_group(key)
 
 
-        #         if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
-        #             rank_dict_eviction_candidates_cutoff_records_grouped_df_key = rank_dict_eviction_candidates_cutoff_records_grouped_df.get_group(key)
-
-        #         value_list=list(self.batch_specific_reintroduction_tuple_dict[key][-1])
-        #         value_list_eviction=list(self.batch_specific_eviction_tuple_dict[key][-1])
-
-        #         rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
-        #         rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
+                #altered reintroduction estimates
+                # if key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
+                #     rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key=rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.get_group(key)
+                #     print('=>batch: ',key, len(rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key))
 
 
-        #         #this is batch-specific ranking only to be used for batch-specific reintroduction
-        #         rank_dict_ordered_list=list(rank_dict_ordered.keys())
+                # if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
+                #     rank_dict_eviction_candidates_cutoff_records_grouped_df_key = rank_dict_eviction_candidates_cutoff_records_grouped_df.get_group(key)
 
-        #         top_k_reintroduction_value=0
+                value_list=list(self.batch_specific_reintroduction_tuple_dict[key][-1])
+                # value_list_eviction=list(self.batch_specific_eviction_tuple_dict[key][-1])
 
-        #         if((self.counter-key)>9):
-        #             batch_specific_k_value= value_list[3]
-        #             # batch_specific_k_value_eviction= value_list_eviction[3]
-        #             # print('batch_specific_k_value: ',batch_specific_k_value)
-        #             # val_list=self.batch_specific_reintroduction_tuple_dict[key][:-1]
-        #             # self.batch_specific_reintroduction_tuple_dict[key]=val_list
-        #         # value_list=list(internal_batch_level_dict[key])
-        #         else:
-        #             # rank_list=[ min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in converted_candidates_grouped_df_key.candidate.tolist()]
-
-        #             # rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
-        #             # rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
-        #             ranked_list=[1 if candidate in converted_candidates_grouped_df_key.candidate.tolist() else 0 for candidate in rank_dict_ordered.keys()]
-        #             count=len(ranked_list)
-        #             # print("ranked list:", ranked_list, count)
-        #             while (ranked_list[count-1]!=1):
-        #                 count-=1
-        #             # value_list[3]=len(converted_candidates_grouped_df_key) 
-        #             ## alternative argument
-        #             value_list[3]= count
-        #             value_tuple=tuple(value_list)
-        #             # print('tuple being added for reintroduction: ',self.counter,key,len(converted_candidates_grouped_df_key),value_tuple)
-        #             self.batch_specific_reintroduction_tuple_dict[key][-1]=value_tuple
+                rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
+                rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
 
 
-        #             rank_dict={candidate: max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in ambiguous_candidate_records_before_classification_grouped_df_key.candidate.tolist()}
-        #             rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
-        #             ranked_list=[1 if candidate in converted_candidates_grouped_df_key.candidate.tolist() else 0 for candidate in rank_dict_ordered.keys()]
-        #             count=len(ranked_list)
-        #             # print("ranked list:", ranked_list, count)
-        #             while (ranked_list[count-1]!=1):
-        #                 count-=1
-        #             value_list_eviction[3]= len(ranked_list)-count
-        #             value_tuple=tuple(value_list_eviction)
-        #             # print('tuple being added for eviction: ',self.counter,key,len(converted_candidates_grouped_df_key),value_tuple)
-        #             self.batch_specific_eviction_tuple_dict[key][-1]=value_tuple
+                #this is batch-specific ranking only to be used for batch-specific reintroduction
+                rank_dict_ordered_list=list(rank_dict_ordered.keys())
+
+                top_k_reintroduction_value=0
+
+                if((self.counter-key)>9):
+                    batch_specific_k_value= value_list[3]
+                    # batch_specific_k_value_eviction= value_list_eviction[3]
+                    # print('batch_specific_k_value: ',batch_specific_k_value)
+                    # val_list=self.batch_specific_reintroduction_tuple_dict[key][:-1]
+                    # self.batch_specific_reintroduction_tuple_dict[key]=val_list
+                # value_list=list(internal_batch_level_dict[key])
+                else:
+                    # rank_list=[ min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in converted_candidates_grouped_df_key.candidate.tolist()]
+
+                    # rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
+                    # rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
+                    ranked_list=[1 if candidate in converted_candidates_grouped_df_key.candidate.tolist() else 0 for candidate in rank_dict_ordered.keys()]
+                    count=len(ranked_list)
+                    # print("ranked list:", ranked_list, count)
+                    while (ranked_list[count-1]!=1):
+                        count-=1
+                    # value_list[3]=len(converted_candidates_grouped_df_key) 
+                    ## alternative argument
+                    value_list[3]= count
+                    value_tuple=tuple(value_list)
+                    # print('tuple being added for reintroduction: ',self.counter,key,len(converted_candidates_grouped_df_key),value_tuple)
+                    self.batch_specific_reintroduction_tuple_dict[key][-1]=value_tuple
 
 
-        #         for candidate in converted_candidates_grouped_df_key.candidate.tolist():
-        #             # row=converted_candidates_grouped_df_key[converted_candidates_grouped_df_key['candidate']==candidate]
-        #             row_index=converted_candidates_grouped_df_key.index[converted_candidates_grouped_df_key['candidate']==candidate].tolist()[0]
-        #             row=converted_candidates_grouped_df_key.loc[[row_index]]
-        #             candidate_synvec=[float(row['cap']),
-        #                       float(row['substring-cap']),
-        #                       float(row['s-o-sCap']),
-        #                       float(row['all-cap']),
-        #                       float(row['non-cap']),
-        #                       float(row['non-discriminative'])]
-        #             label=str(row['status'])
-        #             # print(candidate, candidates_to_reintroduce.index(candidate),candidate_synvec)
-        #             # print(candidate, candidates_to_reintroduce.index(candidate), candidates_to_reintroduce_multi_sketch.index(candidate), candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
-        #             # if(candidates_to_reintroduce_multi_sketch.index(candidate)>10):
-        #             #     print(candidate_synvec,label)
-        #             # min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
-        #             # min_rank_wAmb=min(candidates_to_reintroduce_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate))
-        #             # print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
+                    # rank_dict={candidate: max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in ambiguous_candidate_records_before_classification_grouped_df_key.candidate.tolist()}
+                    # rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
+                    # ranked_list=[1 if candidate in converted_candidates_grouped_df_key.candidate.tolist() else 0 for candidate in rank_dict_ordered.keys()]
+                    # count=len(ranked_list)
+                    # # print("ranked list:", ranked_list, count)
+                    # while (ranked_list[count-1]!=1):
+                    #     count-=1
+                    # value_list_eviction[3]= len(ranked_list)-count
+                    # value_tuple=tuple(value_list_eviction)
+                    # # print('tuple being added for eviction: ',self.counter,key,len(converted_candidates_grouped_df_key),value_tuple)
+                    # self.batch_specific_eviction_tuple_dict[key][-1]=value_tuple
 
 
-        #             if((self.counter-key)>9):
-        #                 # print('batch_specific_k_value: ',batch_specific_k_value,len(converted_candidates_grouped_df_key))
-        #                 if(rank_dict_ordered_list.index(candidate)<batch_specific_k_value):
-        #                     self.batch_specific_reintroduction_effectiveness+=1
-        #             else:
-        #                 self.batch_specific_reintroduction_effectiveness+=1 #for first six batches since entry, reintroduce like baseline
+                for candidate in converted_candidates_grouped_df_key.candidate.tolist():
+                    # row=converted_candidates_grouped_df_key[converted_candidates_grouped_df_key['candidate']==candidate]
+                    row_index=converted_candidates_grouped_df_key.index[converted_candidates_grouped_df_key['candidate']==candidate].tolist()[0]
+                    row=converted_candidates_grouped_df_key.loc[[row_index]]
+                    candidate_synvec=[float(row['cap']),
+                              float(row['substring-cap']),
+                              float(row['s-o-sCap']),
+                              float(row['all-cap']),
+                              float(row['non-cap']),
+                              float(row['non-discriminative'])]
+                    label=str(row['status'])
 
-        #             # print('=>',min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]),self.batch_specific_reintroduction_effectiveness,self.baseline_effectiveness)
-        #             # # absolute top-k
-        #             # for k in range(10,35,5):
-        #             for k in range(20,45,5):
+                    self.baseline_counter+=1
+                    # print(candidate, candidates_to_reintroduce.index(candidate),candidate_synvec)
+                    # print(candidate, candidates_to_reintroduce.index(candidate), candidates_to_reintroduce_multi_sketch.index(candidate), candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
+                    # if(candidates_to_reintroduce_multi_sketch.index(candidate)>10):
+                    #     print(candidate_synvec,label)
+                    # min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
+                    # min_rank_wAmb=min(candidates_to_reintroduce_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate))
+                    # print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
+
+
+                    if((self.counter-key)>9):
+                        # print('batch_specific_k_value: ',batch_specific_k_value,len(converted_candidates_grouped_df_key))
+                        if(rank_dict_ordered_list.index(candidate)<batch_specific_k_value):
+                            self.batch_specific_reintroduction_effectiveness+=1
+                    else:
+                        self.batch_specific_reintroduction_effectiveness+=1 #for first nine batches since entry, reintroduce like baseline
+
+                    # print('=>',min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]),self.batch_specific_reintroduction_effectiveness,self.baseline_effectiveness)
+                    # # absolute top-k
+                    # for k in range(10,35,5):
+                    for k in range(20,self.upper_reintroduction_limit,self.step_size):
                         
-        #                 #for top-k percentage instead of absolute top k: 
-        #                 real_k= int(k/100*(len(self.ambiguous_candidates_in_batch)))
-        #                 # #for absolute top k:
-        #                 # real_k=k 
-        #                 # print(k,real_k)
-        #             # for k in [15]:
-
-        #                 # i=int((k-10)/5)
-        #                 i=int((k-20)/5)
-        #                 # print(i)
-        #                 # i=0
-
-        #                 # entity/non-entity sketches
-
-        #                 # if(candidates_to_reintroduce.index(candidate)<k):
-        #                 if(candidates_to_reintroduce.index(candidate)<real_k):
-        #                     # self.ranking_effectiveness_single_sketch+=1
-        #                     self.arr1[i]+=1
+                        #for top-k percentage instead of absolute top k: 
+                        real_k= math.ceil(int(k/100*(len(self.ambiguous_candidates_in_batch))))
 
 
-        #                 # if(candidates_to_reintroduce_multi_sketch.index(candidate)<k):
-        #                 if(candidates_to_reintroduce_multi_sketch.index(candidate)<real_k):
-        #                     # self.ranking_effectiveness_multi_sketch_cosine+=1
-        #                     self.arr2[i]+=1
+                        # #for absolute top k:
+                        # real_k=k 
+                        # print(k,real_k)
+                    # for k in [15]:
+
+                        # i=int((k-10)/5)
+                        i=int((k-20)/self.step_size)
+                        # print(i)
+                        # i=0
+
+                        # entity/non-entity sketches
+
+                        # if(candidates_to_reintroduce.index(candidate)<k):
+                        if(candidates_to_reintroduce.index(candidate)<real_k):
+                            # self.ranking_effectiveness_single_sketch+=1
+                            self.arr1[i]+=1
 
 
-        #                 # if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
-        #                 if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<real_k):
-        #                     # self.ranking_effectiveness_multi_sketch_euclidean+=1
-        #                     self.arr3[i]+=1
+                        # if(candidates_to_reintroduce_multi_sketch.index(candidate)<k):
+                        if(candidates_to_reintroduce_multi_sketch.index(candidate)<real_k):
+                            # self.ranking_effectiveness_multi_sketch_cosine+=1
+                            self.arr2[i]+=1
 
 
-        #                 #---------when just combining sketch-based ranks
-        #                 # if(ranking_score_dict[candidate]<k): 
-        #                 if(ranking_score_dict[candidate]<real_k):
-        #                     # self.ranking_effectiveness_combined+=1
-        #                     self.arr4[i]+=1
-
-        #                 #ambiguous sketches
-
-        #                 # if(candidates_to_reintroduce_wAmb.index(candidate)<k):
-        #                 if(candidates_to_reintroduce_wAmb.index(candidate)<real_k):
-        #                     self.arr5[i]+=1
-
-        #                 # if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<k):
-        #                 if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<real_k):
-        #                     self.arr6[i]+=1
-
-        #                 # if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<k):
-        #                 if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<real_k):
-        #                     self.arr7[i]+=1
-
-        #                 # if(ranking_score_dict_wAmb[candidate]<k):
-        #                 if(ranking_score_dict_wAmb[candidate]<real_k):
-        #                     self.arr8[i]+=1
+                        # if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
+                        if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<real_k):
+                            # self.ranking_effectiveness_multi_sketch_euclidean+=1
+                            self.arr3[i]+=1
 
 
-        #                 #combining all possible sketches
+                        #---------when just combining sketch-based ranks
+                        # if(ranking_score_dict[candidate]<k): 
+                        if(ranking_score_dict[candidate]<real_k):
+                            # self.ranking_effectiveness_combined+=1
+                            self.arr4[i]+=1
 
-        #                 # if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<k):
-        #                 if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<real_k):
-        #                     self.arr9[i]+=1
+                        #ambiguous sketches
 
-        #                 # if((k==40)&(candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff)):
-        #                 #     top_k_reintroduction_value+=1
+                        # if(candidates_to_reintroduce_wAmb.index(candidate)<k):
+                        if(candidates_to_reintroduce_wAmb.index(candidate)<real_k):
+                            self.arr5[i]+=1
 
-        #                 if((k==40)&(candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction)):
-        #                     top_k_reintroduction_value+=1
+                        # if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<k):
+                        if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<real_k):
+                            self.arr6[i]+=1
+
+                        # if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<k):
+                        if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<real_k):
+                            self.arr7[i]+=1
+
+                        # if(ranking_score_dict_wAmb[candidate]<k):
+                        if(ranking_score_dict_wAmb[candidate]<real_k):
+                            self.arr8[i]+=1
+
+
+                        #combining all possible sketches
+
+                        # if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<k):
+                        if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<real_k):
+                            self.arr9[i]+=1
+
+                        # if((k==40)&(candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff)):
+                        #     top_k_reintroduction_value+=1
+
+                        # if(k==(self.upper_reintroduction_limit-5)):
+                        #     print('=>',min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]),real_k)
+                        #     print('tally:', self.arr9[i],self.baseline_counter)
                         
-        #             # if(candidates_to_reintroduce_w_ranking.index(candidate)<15):
-        #             #     self.ranking_effectiveness_alternate+=1
+                    # if(candidates_to_reintroduce_w_ranking.index(candidate)<15):
+                    #     self.ranking_effectiveness_alternate+=1
 
-        #             # new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
+                    # new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
 
-        #         if((self.counter-key)<=10):
-        #             # print('error check: ',key)
-        #             list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
-        #             tuple_to_edit=list_of_lists[self.counter-key-1]
-        #             #to record the reintroduction precision for this batch
-        #             if key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
-        #                 tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key)]
-        #             tuple_to_edit[1]=[top_k_reintroduction_value,len(converted_candidates_grouped_df_key)]
+                #---------- commenting out for just reintroduction, no eviction
+                # if((self.counter-key)<=10):
+                #     # print('error check: ',key)
+                #     list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
+                #     tuple_to_edit=list_of_lists[self.counter-key-1]
+                #     #to record the reintroduction precision for this batch
+                #     if key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
+                #         tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key)]
+                #     tuple_to_edit[1]=[top_k_reintroduction_value,len(converted_candidates_grouped_df_key)]
 
-        #             # if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
-        #                 # tuple_to_edit[2]=[0,len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)]
+                #     # if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
+                #         # tuple_to_edit[2]=[0,len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)]
 
-        #             # ambiguous_candidates_from_batch=len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==key)&(candidate_featureBase_DF.status=="a")])
-        #             # print('batch: ',key,'ambiguous_candidates_from_batch: ',ambiguous_candidates_from_batch,"tuple_to_edit: ",tuple_to_edit)
-        #             list_of_lists[self.counter-key-1]=tuple_to_edit
-        #             self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
-        #             # print(self.batchwise_reintroduction_eviction_estimates[key])
+                #     # ambiguous_candidates_from_batch=len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==key)&(candidate_featureBase_DF.status=="a")])
+                #     # print('batch: ',key,'ambiguous_candidates_from_batch: ',ambiguous_candidates_from_batch,"tuple_to_edit: ",tuple_to_edit)
+                #     list_of_lists[self.counter-key-1]=tuple_to_edit
+                #     self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
+                #     # print(self.batchwise_reintroduction_eviction_estimates[key])
 
 
-        #         # print (key,len(grouped_df_key),new_mention_count)
-        #         # print(grouped_df_key)
-        #         # print('+====================================+')
+                # # print (key,len(grouped_df_key),new_mention_count)
+                # # print(grouped_df_key)
+                # print('+====================================+')
+
         #     # print(self.batchwise_reintroduction_eviction_estimates)
         #     if(self.counter==19):
                 
@@ -2112,51 +2175,53 @@ class EntityResolver ():
         #     # print('ranking effectiveness multi sketch euclidean: ', (self.ranking_effectiveness_multi_sketch_euclidean/self.baseline_effectiveness))
         #     # print('combined ranking effectiveness: ', (self.ranking_effectiveness_combined/self.baseline_effectiveness))
         #     # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
-        #     arr1=[elem/self.baseline_effectiveness for elem in self.arr1]
-        #     self.top_k_effectiveness_arr_single_sketch.append(arr1)
 
-        #     arr2=[elem/self.baseline_effectiveness for elem in self.arr2]
-        #     self.top_k_effectiveness_arr_multi_sketch_cosine.append(arr2)
+            arr1=[elem/self.baseline_effectiveness for elem in self.arr1]
+            self.top_k_effectiveness_arr_single_sketch.append(arr1)
 
-        #     arr3=[elem/self.baseline_effectiveness for elem in self.arr3]
-        #     self.top_k_effectiveness_arr_multi_sketch_euclidean.append(arr3)
+            arr2=[elem/self.baseline_effectiveness for elem in self.arr2]
+            self.top_k_effectiveness_arr_multi_sketch_cosine.append(arr2)
 
-        #     arr4=[elem/self.baseline_effectiveness for elem in self.arr4]
-        #     self.top_k_effectiveness_arr_multi_sketch_combined.append(arr4)
+            arr3=[elem/self.baseline_effectiveness for elem in self.arr3]
+            self.top_k_effectiveness_arr_multi_sketch_euclidean.append(arr3)
 
-        #     arr5=[elem/self.baseline_effectiveness for elem in self.arr5]
-        #     self.top_k_effectiveness_arr_single_sketch_amb.append(arr5)
+            arr4=[elem/self.baseline_effectiveness for elem in self.arr4]
+            self.top_k_effectiveness_arr_multi_sketch_combined.append(arr4)
 
-        #     arr6=[elem/self.baseline_effectiveness for elem in self.arr6]
-        #     self.top_k_effectiveness_arr_multi_sketch_cosine_amb.append(arr6)
+            arr5=[elem/self.baseline_effectiveness for elem in self.arr5]
+            self.top_k_effectiveness_arr_single_sketch_amb.append(arr5)
 
-        #     arr7=[elem/self.baseline_effectiveness for elem in self.arr7]
-        #     self.top_k_effectiveness_arr_multi_sketch_euclidean_amb.append(arr7)
+            arr6=[elem/self.baseline_effectiveness for elem in self.arr6]
+            self.top_k_effectiveness_arr_multi_sketch_cosine_amb.append(arr6)
 
-        #     arr8=[elem/self.baseline_effectiveness for elem in self.arr8]
-        #     self.top_k_effectiveness_arr_multi_sketch_combined_amb.append(arr8)
+            arr7=[elem/self.baseline_effectiveness for elem in self.arr7]
+            self.top_k_effectiveness_arr_multi_sketch_euclidean_amb.append(arr7)
 
-        #     arr9=[elem/self.baseline_effectiveness for elem in self.arr9]
-        #     self.top_k_effectiveness_arr_all_sketch_combined.append(arr9)
+            arr8=[elem/self.baseline_effectiveness for elem in self.arr8]
+            self.top_k_effectiveness_arr_multi_sketch_combined_amb.append(arr8)
 
-        #     self.batch_specific_reintroduction_effectiveness_arr.append((self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
+            arr9=[elem/self.baseline_effectiveness for elem in self.arr9]
+            self.top_k_effectiveness_arr_all_sketch_combined.append(arr9)
 
-        #     print('reintroduction effectiveness with batch specific top-k ',(self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
+            self.batch_specific_reintroduction_effectiveness_arr.append((self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
 
-        #     # print('reintroduction ranking effectiveness ent/non-ent single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
-        #     # print('reintroduction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
-        #     # print('reintroduction ranking effectiveness ent/non-ent multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean))
-        #     # print('reintroduction combined ranking ent/non-ent  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined))
+            print('reintroduction effectiveness with batch specific top-k ',(self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
 
-        #     # print('reintroduction ranking effectiveness ambiguous single sketch: ', (self.top_k_effectiveness_arr_single_sketch_amb))
-        #     # print('reintroduction ranking effectiveness ambiguous multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine_amb))
-        #     # print('reintroduction ranking effectiveness ambiguous multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean_amb))
-        #     # print('reintroduction combined ranking ambiguous  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined_amb))
+            print('reintroduction ranking effectiveness ent/non-ent single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
+            print('reintroduction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
+            print('reintroduction ranking effectiveness ent/non-ent multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean))
+            print('reintroduction combined ranking ent/non-ent  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined))
 
-        #     # print('reintroduction combined ranking all sketches effectiveness: ', (self.top_k_effectiveness_arr_all_sketch_combined))
+            print('reintroduction ranking effectiveness ambiguous single sketch: ', (self.top_k_effectiveness_arr_single_sketch_amb))
+            print('reintroduction ranking effectiveness ambiguous multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine_amb))
+            print('reintroduction ranking effectiveness ambiguous multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean_amb))
+            print('reintroduction combined ranking ambiguous  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined_amb))
+
+            print('reintroduction combined ranking all sketches effectiveness: ', (self.top_k_effectiveness_arr_all_sketch_combined))
+
         #     # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
 
-        #     print('reintroduction effectiveness with batch specific top-k ', self.batch_specific_reintroduction_effectiveness_arr)
+            print('reintroduction effectiveness with batch specific top-k ', self.batch_specific_reintroduction_effectiveness_arr)
 
 
         #     # #testing what happens without reintroduction
@@ -2483,6 +2548,7 @@ class EntityResolver ():
         for candidates in phase2_candidates_holder:
             corrected_phase2_candidates=[]
             for idx, candidate in enumerate(candidates):
+                # if((candidate in self.partition_dict.keys())&((candidate in self.infrequent_candidates)|(candidate in self.bad_candidates))):
                 if(candidate in self.partition_dict.keys()):
                     #print(candidate, self.partition_dict[candidate])
                     corrected_phase2_candidates.extend(self.partition_dict[candidate])
@@ -2502,13 +2568,13 @@ class EntityResolver ():
     def set_completeness_in_tweet_frame(self,data_frame_holder,candidate_featureBase_DF,phase2_candidates_holder,correction_flag):
         #print(candidate_featureBase_DF.head())
 
-        good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
-        bad_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"].candidate.tolist()
+        # good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
+        # bad_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"].candidate.tolist()
 
-        merged_g_b= bad_candidates+good_candidates
+        merged_g_b= self.bad_candidates+self.good_candidates
 
         #candidate_featureBase_DF.to_csv("cf_before_labeling_comp.csv", sep=',', encoding='utf-8')
-        ambiguous_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"].candidate.tolist()
+        # ambiguous_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"].candidate.tolist()
 
         if(correction_flag):
             phase2_candidates_holder,data_frame_holder=self.recall_correction(phase2_candidates_holder,data_frame_holder)
@@ -3115,7 +3181,7 @@ class EntityResolver ():
             self.ambiguous_candidates=[]
             self.evicted_candidates=[]
             self.ambiguous_candidates_transition_dict={}
-            self.all_infrequent_candidates=[]
+            self.infrequent_candidates=[]
             self.entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.non_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.ambiguous_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]

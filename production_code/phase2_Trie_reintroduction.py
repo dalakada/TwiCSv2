@@ -29,7 +29,7 @@ from sklearn.metrics import silhouette_samples, silhouette_score
 import matplotlib.pyplot as plt
 
 cachedStopWords = stopwords.words("english")
-tempList=["i","and","or","other","another","across","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always"]
+tempList=["i","and","or","other","another","across","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always","although"]
 for item in tempList:
     if item not in cachedStopWords:
         cachedStopWords.append(item)
@@ -40,7 +40,7 @@ prep_list=["in","at","of","on","&;"] #includes common conjunction as well
 article_list=["a","an","the"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["gee","hmm","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 string.punctuation=string.punctuation+'…‘’'
 
 
@@ -58,8 +58,9 @@ class EntityResolver ():
         #print(self.entity_level_arr)
 
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
-        
-        candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
+        print('here 1')
+
+        # candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
         # for j in range(self.counter+1):
         #     print(len(self.entity_level_arr[j]),self.entity_level_arr[j])
         #print(self.entity_level_arr)
@@ -68,8 +69,9 @@ class EntityResolver ():
         untrashed_tweets=self.set_tf(data_frame_holder,
             candidate_featureBase_DF,
             phase2_candidates_holder,correction_flag)
+        print('here 2')
 
-        untrashed_tweets.to_csv("phase2output.csv", sep=',', encoding='utf-8')
+        # untrashed_tweets.to_csv("phase2output.csv", sep=',', encoding='utf-8')
 
 
 
@@ -416,20 +418,23 @@ class EntityResolver ():
 
 
     # recall_correction
-    def set_partition_dict(self,candidate_featureBase_DF,infrequent_candidates):
+    def set_partition_dict(self,candidate_featureBase_DF,multiWord_infrequent_candidates):
         #print(list(self.partition_dict.keys()))
-        ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="a")|(candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
+        # ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="a")|(candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
+        
+        #not including ambiguous candidates for recall correction
+        multiWord_bad_candidates=candidate_featureBase_DF[((candidate_featureBase_DF.status=="b")&(candidate_featureBase_DF.length.astype(int)>1))]
         good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF.status=="g")].candidate.tolist()
         flag1=False
         flag2=False
-        if(len(ambiguous_bad_candidates)>0):
-            ambiguous_bad_candidates['max_column'] =ambiguous_bad_candidates[['cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative']].idxmax(axis=1) 
-            ambiguous_bad_candidates_wFilter= ambiguous_bad_candidates[ambiguous_bad_candidates.max_column=='substring-cap']
+        if(len(multiWord_bad_candidates)>0):
+            multiWord_bad_candidates['max_column'] =multiWord_bad_candidates[['cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative']].idxmax(axis=1) 
+            multiWord_bad_candidates_wFilter= multiWord_bad_candidates[multiWord_bad_candidates.max_column=='substring-cap']
 
             #good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF.status=="g")].candidate.tolist()
             #print(ambiguous_bad_candidates_wFilter.candidate.tolist())
 
-            for candidate in ambiguous_bad_candidates_wFilter.candidate.tolist():
+            for candidate in multiWord_bad_candidates_wFilter.candidate.tolist():
                 #print(candidate)
                 if candidate not in self.partition_dict.keys():
                     substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates,False)
@@ -438,10 +443,10 @@ class EntityResolver ():
                         self.partition_dict[candidate]=substring_candidates
 
             flag1= True
-        if(len(infrequent_candidates)>0):
+        if(len(multiWord_infrequent_candidates)>0):
             #print(len(ambiguous_bad_candidates_wFilter.candidate.tolist()))
 
-            for candidate in infrequent_candidates:
+            for candidate in multiWord_infrequent_candidates:
                 #print(candidate)
                 if candidate not in self.partition_dict.keys():
                     substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates,False)
@@ -2483,6 +2488,7 @@ class EntityResolver ():
             corrected_phase2_candidates=[]
             for idx, candidate in enumerate(candidates):
                 if(candidate in self.partition_dict.keys()):
+                # if((candidate in self.partition_dict.keys())&((candidate in self.all_infrequent_candidates)|(candidate in self.bad_candidates))):
                     #print(candidate, self.partition_dict[candidate])
                     corrected_phase2_candidates.extend(self.partition_dict[candidate])
                 else:

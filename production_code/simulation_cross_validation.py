@@ -2,8 +2,8 @@
 #import SatadishaModule as phase1
 import SatadishaModule_final_trie as phase1
 
-import phase2_Trie_baseline_reintroduction as phase2
-# import phase2_Trie_just_reintroduction as phase2 #just reintroduction, eviction without experimental result computation
+# import phase2_Trie_baseline_reintroduction as phase2
+import phase2_Trie_just_reintroduction as phase2 #just reintroduction, eviction without experimental result computation
 # import phase2_Trie_reintroduction as phase2
 
 import datetime
@@ -55,22 +55,23 @@ total_time=0
 # # /Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv #---- for my Mac
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
 
-# # /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+# /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
+tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 
 # tweets_unpartitoned=tweets_unpartitoned[400000:600000:]
 # tweets_unpartitoned=tweets_unpartitoned[:200000:]
+# batch_size=10000
 
-#for the experiment
-tweets_unpartitoned=pd.read_csv("deduplicated_test_output.csv",sep =',', keep_default_na=False)
-# batch_size=550
-batch_size=3000
+# #for the experiment
+# tweets_unpartitoned=pd.read_csv("deduplicated_test_output.csv",sep =',', keep_default_na=False)
+# # batch_size=550
+# batch_size=3000
 
 print("***",len(tweets_unpartitoned))
 print('Tweets are in memory...')
-# batch_size=10000
 
-# batch_size=100000
+
+batch_size=50000
 
 # batch_size=len(tweets_unpartitoned)
 
@@ -88,8 +89,8 @@ print('Tweets are in memory...')
 # z_score=-0.8      #-----3K
 #z_score=-0.09      #-----50K
 #z_score=-0.078         #-----50K, multiple batches
-z_score=-0.08         #-----deduplicated_tweets,
-# z_score=-0.1119        #-----tweets_1million_for_others, 200K
+# z_score=-0.08         #-----deduplicated_tweets,
+z_score=-0.1119        #-----tweets_1million_for_others, 200K
 
 
 #print(entity_level_arr)
@@ -131,127 +132,197 @@ count=0
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 
 # reintroduction_batch_threshold=range((val+1))
+execution_time_list_inner=[]
+tweets_been_processed_list_inner=[]
+total_time=0
+tweets_been_processed=0
 
+Phase1= phase1.SatadishaModule()
+Phase2 = phase2.EntityResolver()
+
+for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
+
+    tuple_of= Phase1.extract(tweet_batch,g)
+    tweet_base=tuple_of[0]
+    #tweet_base.to_csv('tweet_base.csv' ,sep=',',   encoding='utf-8')
+
+    # with open('tweet_base'+str(g)+'.pkl', 'wb') as output:
+    #     pickle.dump(tweet_base, output, pickle.HIGHEST_PROTOCOL)
+
+    candidate_base=tuple_of[1]
+    phase2stopwordList=tuple_of[4]
+    # candidateList=candidate_base.displayTrie("",[])
+    # print('candidate list post CS:', candidateList)
+    # candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
+    # candidateBase.to_csv('candidate_base.csv' ,sep=',', encoding='utf-8')
+
+    # with open('candidate_base'+str(g)+'.pkl', 'wb') as output2:
+    #     pickle.dump(candidate_base, output2, pickle.HIGHEST_PROTOCOL)
+
+
+
+    print('len of tweet_base = ' , len(tweet_base))
+    elapsedTime= tuple_of[3] - tuple_of[2]
+    total_time+=elapsedTime
+    print(elapsedTime,total_time)
+    print(len(tweet_base))
+    print (g,' ','Produced')
+    print("**********************************************************")
+    # if(g==val):
+    #     candidateList=candidate_base.displayTrie("",[])
+    #     candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
+    #     #print(len(candidateBase))
+    #     candidateBase.to_csv('candidateBase.csv' ,sep=',', encoding='utf-8')
+    #     print('Finished writing Candidate Base')
+    time_in=time.time()
+
+    tweets_been_processed=tweets_been_processed+len(tweet_base)
+    print('tweets_been_processed: ',tweets_been_processed)
+    tweets_been_processed_list_inner.append(tweets_been_processed)
+    reintroduction_threshold=0.2
+    Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
+    # print('disambiguation status: ',len((candidate_base_post_Phase2[((candidate_base_post_Phase2['batch']<g)&((candidate_base_post_Phase2.status=="g")|(candidate_base_post_Phase2.status=="b")))]).candidate.tolist()))
+    
+    # print('disambiguation status: ', len(converted_candidates))
+    # disambiguation_array_inner.append(len(converted_candidates))
+    # candidates_to_annotate_in_iter=Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
+    # candidates_to_annotate+=candidates_to_annotate_in_iter
+    # entity_level_arr=Phase2.entity_level_arr
+    # mention_level_arr=Phase2.mention_level_arr
+    # sentence_level_arr=Phase2.sentence_level_arr
+
+    #print('::',len(phase2TweetBase))
+    accuracy_list=Phase2.finish()
+    time_out=time.time()
+    elapsedTime= time_out-time_in
+    total_time+=elapsedTime
+    execution_time_list_inner.append(total_time)
+    print(elapsedTime,total_time)
+    print(g,' ','Consumed')
+    print("**********************************************************")
+print(tweets_been_processed_list_inner)
+print(execution_time_list_inner)
+#---------------------------- for the single pass to multipass scale experiment
 # reintroduction_batch_threshold=list(range((val+1)))
-reintroduction_batch_threshold=[0,1]
-print(reintroduction_batch_threshold)
+# # reintroduction_batch_threshold=[0,1]
+# print(reintroduction_batch_threshold)
 
-# for batch_threshold in reintroduction_batch_threshold:
-#     print(batch_threshold)
-
-
-output_df=tweets[['ID', 'First_five_hundred', 'Output', 'Annotations', 'TweetText']]
-
-total_time_arr=[]
-# reintroduction_threshold_array=[0.0]
-
-iter=0
-# print('run: ',str(iter))
-# candidates_to_annotate=[]
-disambiguation_array=[]
-execution_time_list=[]
-tweets_been_processed_list=[]
-# total_time=0
-# tweets_been_processed=0
-
-for reintroduction_threshold in reintroduction_batch_threshold:
-    print('reintroduction_threshold value:',reintroduction_threshold)
-    Phase1= phase1.SatadishaModule()
-    Phase2 = phase2.EntityResolver()
-    print('**************************************',len(tweets))
-
-    disambiguation_array_inner=[]
-    execution_time_list_inner=[]
-    tweets_been_processed_list_inner=[]
-    total_time=0
-    tweets_been_processed=0
-
-    for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
-
-        tuple_of= Phase1.extract(tweet_batch,g)
-        tweet_base=tuple_of[0]
-        #tweet_base.to_csv('tweet_base.csv' ,sep=',',   encoding='utf-8')
-
-        # with open('tweet_base'+str(g)+'.pkl', 'wb') as output:
-        #     pickle.dump(tweet_base, output, pickle.HIGHEST_PROTOCOL)
-
-        candidate_base=tuple_of[1]
-        phase2stopwordList=tuple_of[4]
-        # candidateList=candidate_base.displayTrie("",[])
-        # print('candidate list post CS:', candidateList)
-        # candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
-        # candidateBase.to_csv('candidate_base.csv' ,sep=',', encoding='utf-8')
-
-        # with open('candidate_base'+str(g)+'.pkl', 'wb') as output2:
-        #     pickle.dump(candidate_base, output2, pickle.HIGHEST_PROTOCOL)
+# # for batch_threshold in reintroduction_batch_threshold:
+# #     print(batch_threshold)
 
 
+# output_df=tweets[['ID', 'First_five_hundred', 'Output', 'Annotations', 'TweetText']]
 
-        print('len of tweet_base = ' , len(tweet_base))
-        elapsedTime= tuple_of[3] - tuple_of[2]
-        total_time+=elapsedTime
-        print(elapsedTime,total_time)
-        print(len(tweet_base))
-        print (g,' ','Produced')
-        print("**********************************************************")
-        # if(g==val):
-        #     candidateList=candidate_base.displayTrie("",[])
-        #     candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
-        #     #print(len(candidateBase))
-        #     candidateBase.to_csv('candidateBase.csv' ,sep=',', encoding='utf-8')
-        #     print('Finished writing Candidate Base')
-        time_in=time.time()
+# total_time_arr=[]
+# # reintroduction_threshold_array=[0.0]
 
-        tweets_been_processed=tweets_been_processed+len(tweet_base)
-        print('tweets_been_processed: ',tweets_been_processed)
-        tweets_been_processed_list_inner.append(tweets_been_processed)
-        #reintroduction_threshold=0.2
-        candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted= Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
-        # print('disambiguation status: ',len((candidate_base_post_Phase2[((candidate_base_post_Phase2['batch']<g)&((candidate_base_post_Phase2.status=="g")|(candidate_base_post_Phase2.status=="b")))]).candidate.tolist()))
+# iter=0
+# # print('run: ',str(iter))
+# # candidates_to_annotate=[]
+# disambiguation_array=[]
+# execution_time_list=[]
+# tweets_been_processed_list=[]
+# # total_time=0
+# # tweets_been_processed=0
+
+# for reintroduction_threshold in reintroduction_batch_threshold:
+#     print('reintroduction_threshold value:',reintroduction_threshold)
+#     Phase1= phase1.SatadishaModule()
+#     Phase2 = phase2.EntityResolver()
+#     print('**************************************',len(tweets))
+
+#     disambiguation_array_inner=[]
+#     execution_time_list_inner=[]
+#     tweets_been_processed_list_inner=[]
+#     total_time=0
+#     tweets_been_processed=0
+
+#     for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
+
+#         tuple_of= Phase1.extract(tweet_batch,g)
+#         tweet_base=tuple_of[0]
+#         #tweet_base.to_csv('tweet_base.csv' ,sep=',',   encoding='utf-8')
+
+#         # with open('tweet_base'+str(g)+'.pkl', 'wb') as output:
+#         #     pickle.dump(tweet_base, output, pickle.HIGHEST_PROTOCOL)
+
+#         candidate_base=tuple_of[1]
+#         phase2stopwordList=tuple_of[4]
+#         # candidateList=candidate_base.displayTrie("",[])
+#         # print('candidate list post CS:', candidateList)
+#         # candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
+#         # candidateBase.to_csv('candidate_base.csv' ,sep=',', encoding='utf-8')
+
+#         # with open('candidate_base'+str(g)+'.pkl', 'wb') as output2:
+#         #     pickle.dump(candidate_base, output2, pickle.HIGHEST_PROTOCOL)
+
+
+
+#         print('len of tweet_base = ' , len(tweet_base))
+#         elapsedTime= tuple_of[3] - tuple_of[2]
+#         total_time+=elapsedTime
+#         print(elapsedTime,total_time)
+#         print(len(tweet_base))
+#         print (g,' ','Produced')
+#         print("**********************************************************")
+#         # if(g==val):
+#         #     candidateList=candidate_base.displayTrie("",[])
+#         #     candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
+#         #     #print(len(candidateBase))
+#         #     candidateBase.to_csv('candidateBase.csv' ,sep=',', encoding='utf-8')
+#         #     print('Finished writing Candidate Base')
+#         time_in=time.time()
+
+#         tweets_been_processed=tweets_been_processed+len(tweet_base)
+#         print('tweets_been_processed: ',tweets_been_processed)
+#         tweets_been_processed_list_inner.append(tweets_been_processed)
+#         #reintroduction_threshold=0.2
+#         candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted= Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
+#         # print('disambiguation status: ',len((candidate_base_post_Phase2[((candidate_base_post_Phase2['batch']<g)&((candidate_base_post_Phase2.status=="g")|(candidate_base_post_Phase2.status=="b")))]).candidate.tolist()))
         
-        # print('disambiguation status: ', len(converted_candidates))
-        disambiguation_array_inner.append(len(converted_candidates))
-        # candidates_to_annotate_in_iter=Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
-        # candidates_to_annotate+=candidates_to_annotate_in_iter
-        # entity_level_arr=Phase2.entity_level_arr
-        # mention_level_arr=Phase2.mention_level_arr
-        # sentence_level_arr=Phase2.sentence_level_arr
+#         # print('disambiguation status: ', len(converted_candidates))
+#         disambiguation_array_inner.append(len(converted_candidates))
+#         # candidates_to_annotate_in_iter=Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
+#         # candidates_to_annotate+=candidates_to_annotate_in_iter
+#         # entity_level_arr=Phase2.entity_level_arr
+#         # mention_level_arr=Phase2.mention_level_arr
+#         # sentence_level_arr=Phase2.sentence_level_arr
 
-        #print('::',len(phase2TweetBase))
-        accuracy_list=Phase2.finish()
-        time_out=time.time()
-        elapsedTime= time_out-time_in
-        total_time+=elapsedTime
-        execution_time_list_inner.append(total_time)
-        print(elapsedTime,total_time)
-        print(g,' ','Consumed')
-        print("**********************************************************")
+#         #print('::',len(phase2TweetBase))
+#         accuracy_list=Phase2.finish()
+#         time_out=time.time()
+#         elapsedTime= time_out-time_in
+#         total_time+=elapsedTime
+#         execution_time_list_inner.append(total_time)
+#         print(elapsedTime,total_time)
+#         print(g,' ','Consumed')
+#         print("**********************************************************")
 
-    print(len(complete_tweet_dataframe_grouped_df_sorted))
-    disambiguation_array.append(disambiguation_array_inner)
-    tweets_been_processed_list.append(tweets_been_processed_list_inner)
-    execution_time_list.append(execution_time_list_inner)
+#     print(len(complete_tweet_dataframe_grouped_df_sorted))
+#     disambiguation_array.append(disambiguation_array_inner)
+#     tweets_been_processed_list.append(tweets_been_processed_list_inner)
+#     execution_time_list.append(execution_time_list_inner)
 
-    output_df['output_col_'+str(reintroduction_threshold)] = ''
-    output_df['output_col_'+str(reintroduction_threshold)] = output_df['output_col_'+str(reintroduction_threshold)].apply(list)
+#     output_df['output_col_'+str(reintroduction_threshold)] = ''
+#     output_df['output_col_'+str(reintroduction_threshold)] = output_df['output_col_'+str(reintroduction_threshold)].apply(list)
 
-    # print(output_df['output_col_'+str(reintroduction_threshold)])
-    # for elem in complete_tweet_dataframe_grouped_df_sorted['tweetID'].astype(int).unique().tolist():
-    #     output_df[output_df.index==elem]['output_col_'+str(reintroduction_threshold)]=complete_tweet_dataframe_grouped_df_sorted[complete_tweet_dataframe_grouped_df_sorted['tweetID']==elem]['only_good_candidates']
-    output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['output_col_'+str(reintroduction_threshold)]] = complete_tweet_dataframe_grouped_df_sorted.loc[complete_tweet_dataframe_grouped_df_sorted.tweetID.isin(output_df.index),['output_mentions']].values
-    # print(output_df['output_col_'+str(reintroduction_threshold)])
+#     # print(output_df['output_col_'+str(reintroduction_threshold)])
+#     # for elem in complete_tweet_dataframe_grouped_df_sorted['tweetID'].astype(int).unique().tolist():
+#     #     output_df[output_df.index==elem]['output_col_'+str(reintroduction_threshold)]=complete_tweet_dataframe_grouped_df_sorted[complete_tweet_dataframe_grouped_df_sorted['tweetID']==elem]['only_good_candidates']
+#     output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['output_col_'+str(reintroduction_threshold)]] = complete_tweet_dataframe_grouped_df_sorted.loc[complete_tweet_dataframe_grouped_df_sorted.tweetID.isin(output_df.index),['output_mentions']].values
+#     # print(output_df['output_col_'+str(reintroduction_threshold)])
 
-    print('end of run with reintroduction_threshold value: ',reintroduction_threshold)
-    print('------------------------------------------------------------')
-# print(candidate_base.candidate.tolist())
+#     print('end of run with reintroduction_threshold value: ',reintroduction_threshold)
+#     print('------------------------------------------------------------')
+# # print(candidate_base.candidate.tolist())
 
-# print(list(output_df.columns.values))
+# # print(list(output_df.columns.values))
 
-print('disambiguation status: ', disambiguation_array)
-print('tweets been processed:', tweets_been_processed_list)
-print('execution time: ', execution_time_list)
+# print('disambiguation status: ', disambiguation_array)
+# print('tweets been processed:', tweets_been_processed_list)
+# print('execution time: ', execution_time_list)
 
-output_df.to_csv("deduplicated_test_output_all_runs.csv", sep=',', encoding='utf-8')
+# output_df.to_csv("deduplicated_test_output_all_runs.csv", sep=',', encoding='utf-8')
 
 #-----------------------------------------------------This part is for propagation estimates-------------------------------
 # # column_headers=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19']
