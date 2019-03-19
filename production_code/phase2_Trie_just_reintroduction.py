@@ -48,7 +48,7 @@ string.punctuation=string.punctuation+'…‘’'
 class EntityResolver ():
 
 
-    def executor(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold,raw_tweets_for_others):
+    def executor(self,max_batch_value,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold,raw_tweets_for_others):
 
 
         # SET CB
@@ -124,13 +124,23 @@ class EntityResolver ():
         print('here 6')
         self.counter=self.counter+1
 
-        self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
+        self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets) #this is useless
+
+
         self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
         print('here 7')
 
 
         # #printing incomplete sentence estimates here
+        print('printing the converted, incomplete and not-reintroduced estimates now:')
         print(len(self.just_converted_tweets),len(incomplete_tweets),len(self.not_reintroduced))
+
+        self.incomplete_tweets_array.append(len(self.incomplete_tweets))
+        print("incomplete tweets: ",self.incomplete_tweets_array)
+
+        self.converted_tweets_array.append(len(self.just_converted_tweets))
+        print("converted tweets: ",self.converted_tweets_array)
+
         # sentence_arr=[-1]*20
         # for i in range(self.counter):
         #     sentence_estimate=len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i])
@@ -139,12 +149,40 @@ class EntityResolver ():
         # self.sentence_level_arr.append(copy.deepcopy(sentence_arr))
         #print(self.sentence_level_arr)
 
+        if(self.counter==max_batch_value):
+            self.just_converted_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
+
+            print('completed tweets: ', len(self.just_converted_tweets),'incomplete tweets: ', len(self.incomplete_tweets))
+            
+            print(len(list(self.just_converted_tweets.columns.values)))
+            print(len(list(self.incomplete_tweets.columns.values)))
+
+            combined_frame_list=[self.just_converted_tweets, self.incomplete_tweets]
+            complete_tweet_dataframe = pd.concat(combined_frame_list)
+
+            print('final tally: ', (len(self.just_converted_tweets)+len(self.incomplete_tweets)), len(complete_tweet_dataframe))
+
+            # print(sorted(complete_tweet_dataframe['tweetID'].astype(int).unique()))
+            # lst=list(range(38911))
+            # for elem in lst:
+            #     if(elem not in complete_tweet_dataframe['tweetID'].astype(int).unique().tolist()):
+            #         print(elem)
+            # print(list(filter(lambda elem: elem not in complete_tweet_dataframe['tweetID'].unique(), lst)))
+
+            #to groupby tweetID and get one tuple per tweetID
+            complete_tweet_dataframe_grouped_df= (complete_tweet_dataframe.groupby('tweetID', as_index=False).aggregate(lambda x: x.tolist()))
+            complete_tweet_dataframe_grouped_df['tweetID']=complete_tweet_dataframe_grouped_df['tweetID'].astype(int)
+            self.complete_tweet_dataframe_grouped_df_sorted=(complete_tweet_dataframe_grouped_df.sort_values(by='tweetID', ascending=True)).reset_index(drop=True)
+
+            # print(self.complete_tweet_dataframe_grouped_df_sorted.head(5))
+            print(len(self.complete_tweet_dataframe_grouped_df_sorted))
+            print(list(self.complete_tweet_dataframe_grouped_df_sorted.columns.values))
 
         #self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
         # self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
         # self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
         #return self.entity_level_arr, self.mention_level_arr
-
+        return candidate_featureBase_DF, self.complete_tweet_dataframe_grouped_df_sorted
 
 
     def __init__(self):
@@ -156,8 +194,14 @@ class EntityResolver ():
         self.decay_base_staggering=2
         self.my_classifier= svm.SVM1('training.csv')
 
+        self.complete_tweet_dataframe_grouped_df_sorted=pd.DataFrame([], columns=['tweetID', 'TweetSentence', 'ambiguous_candidates', 'annotation', 'candidates_with_label', 'completeness', 'current_minus_entry', 'entry_batch', 'hashtags', 'index', 'only_good_candidates', 'output_mentions', 'phase1Candidates', 'sentID', 'user'])
+
+        # self.step_size=20
+        # self.upper_reintroduction_limit=100 + self.step_size
+
+        # for tweeet completion and EMD level estimates, no iteration over reintroduction limit and step size needed
         self.step_size=20
-        self.upper_reintroduction_limit=100 + self.step_size
+        self.upper_reintroduction_limit=20
 
         #entity non-entity top k estimates
         # self.arr1=[0,0,0,0,0] #cumulative estimates till batch single sketch
@@ -257,6 +301,9 @@ class EntityResolver ():
         self.batchwise_reintroduction_eviction_estimates={}
         self.evicted_candidates_batchwise_progression={}
         self.all_estimates={}
+
+        self.incomplete_tweets_array=[]
+        self.converted_tweets_array=[]
 
         # self.just_checking={}
 
@@ -1773,105 +1820,109 @@ class EntityResolver ():
                     # # print('tuple being added for eviction: ',self.counter,key,len(converted_candidates_grouped_df_key),value_tuple)
                     # self.batch_specific_eviction_tuple_dict[key][-1]=value_tuple
 
+                #---------------------commenting out for tweet completion estimates
+                # for candidate in converted_candidates_grouped_df_key.candidate.tolist():
+                #     # row=converted_candidates_grouped_df_key[converted_candidates_grouped_df_key['candidate']==candidate]
+                #     row_index=converted_candidates_grouped_df_key.index[converted_candidates_grouped_df_key['candidate']==candidate].tolist()[0]
+                #     row=converted_candidates_grouped_df_key.loc[[row_index]]
+                #     candidate_synvec=[float(row['cap']),
+                #               float(row['substring-cap']),
+                #               float(row['s-o-sCap']),
+                #               float(row['all-cap']),
+                #               float(row['non-cap']),
+                #               float(row['non-discriminative'])]
+                #     label=str(row['status'])
 
-                for candidate in converted_candidates_grouped_df_key.candidate.tolist():
-                    # row=converted_candidates_grouped_df_key[converted_candidates_grouped_df_key['candidate']==candidate]
-                    row_index=converted_candidates_grouped_df_key.index[converted_candidates_grouped_df_key['candidate']==candidate].tolist()[0]
-                    row=converted_candidates_grouped_df_key.loc[[row_index]]
-                    candidate_synvec=[float(row['cap']),
-                              float(row['substring-cap']),
-                              float(row['s-o-sCap']),
-                              float(row['all-cap']),
-                              float(row['non-cap']),
-                              float(row['non-discriminative'])]
-                    label=str(row['status'])
-
-                    self.baseline_counter+=1
-                    # print(candidate, candidates_to_reintroduce.index(candidate),candidate_synvec)
-                    # print(candidate, candidates_to_reintroduce.index(candidate), candidates_to_reintroduce_multi_sketch.index(candidate), candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
-                    # if(candidates_to_reintroduce_multi_sketch.index(candidate)>10):
-                    #     print(candidate_synvec,label)
-                    # min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
-                    # min_rank_wAmb=min(candidates_to_reintroduce_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate))
-                    # print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
+                #     self.baseline_counter+=1
+                #     # print(candidate, candidates_to_reintroduce.index(candidate),candidate_synvec)
+                #     # print(candidate, candidates_to_reintroduce.index(candidate), candidates_to_reintroduce_multi_sketch.index(candidate), candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
+                #     # if(candidates_to_reintroduce_multi_sketch.index(candidate)>10):
+                #     #     print(candidate_synvec,label)
+                #     # min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
+                #     # min_rank_wAmb=min(candidates_to_reintroduce_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate))
+                #     # print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
 
 
-                    if((self.counter-key)>9):
-                        # print('batch_specific_k_value: ',batch_specific_k_value,len(converted_candidates_grouped_df_key))
-                        if(rank_dict_ordered_list.index(candidate)<batch_specific_k_value):
-                            self.batch_specific_reintroduction_effectiveness+=1
-                    else:
-                        self.batch_specific_reintroduction_effectiveness+=1 #for first nine batches since entry, reintroduce like baseline
+                #     if((self.counter-key)>9):
+                #         # print('batch_specific_k_value: ',batch_specific_k_value,len(converted_candidates_grouped_df_key))
+                #         if(rank_dict_ordered_list.index(candidate)<batch_specific_k_value):
+                #             self.batch_specific_reintroduction_effectiveness+=1
+                #     else:
+                #         self.batch_specific_reintroduction_effectiveness+=1 #for first nine batches since entry, reintroduce like baseline
 
-                    # print('=>',min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]),self.batch_specific_reintroduction_effectiveness,self.baseline_effectiveness)
-                    # # absolute top-k
-                    # for k in range(10,35,5):
-                    for k in range(20,self.upper_reintroduction_limit,self.step_size):
+                #     # print('=>',min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]),self.batch_specific_reintroduction_effectiveness,self.baseline_effectiveness)
+
+                #     # # absolute top-k
+                #     # for k in range(10,35,5):
+
+                #     for k in range(20,self.upper_reintroduction_limit,self.step_size):
                         
-                        #for top-k percentage instead of absolute top k: 
-                        real_k= math.ceil(int(k/100*(len(self.ambiguous_candidates_in_batch))))
+                #         #for top-k percentage instead of absolute top k: 
+                #         real_k= math.ceil(int(k/100*(len(self.ambiguous_candidates_in_batch))))
 
 
-                        # #for absolute top k:
-                        # real_k=k 
-                        # print(k,real_k)
-                    # for k in [15]:
+                #         # #for absolute top k:
+                #         # real_k=k 
+                #         # print(k,real_k)
+                #     # for k in [15]:
 
-                        # i=int((k-10)/5)
-                        i=int((k-20)/self.step_size)
-                        # print(i)
-                        # i=0
+                #         # i=int((k-10)/5)
+                #         i=int((k-20)/self.step_size)
+                #         # print(i)
+                #         # i=0
 
-                        # entity/non-entity sketches
+                #         # entity/non-entity sketches
 
-                        # if(candidates_to_reintroduce.index(candidate)<k):
-                        if(candidates_to_reintroduce.index(candidate)<real_k):
-                            # self.ranking_effectiveness_single_sketch+=1
-                            self.arr1[i]+=1
-
-
-                        # if(candidates_to_reintroduce_multi_sketch.index(candidate)<k):
-                        if(candidates_to_reintroduce_multi_sketch.index(candidate)<real_k):
-                            # self.ranking_effectiveness_multi_sketch_cosine+=1
-                            self.arr2[i]+=1
+                #         # if(candidates_to_reintroduce.index(candidate)<k):
+                #         if(candidates_to_reintroduce.index(candidate)<real_k):
+                #             # self.ranking_effectiveness_single_sketch+=1
+                #             self.arr1[i]+=1
 
 
-                        # if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
-                        if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<real_k):
-                            # self.ranking_effectiveness_multi_sketch_euclidean+=1
-                            self.arr3[i]+=1
+                #         # if(candidates_to_reintroduce_multi_sketch.index(candidate)<k):
+                #         if(candidates_to_reintroduce_multi_sketch.index(candidate)<real_k):
+                #             # self.ranking_effectiveness_multi_sketch_cosine+=1
+                #             self.arr2[i]+=1
 
 
-                        #---------when just combining sketch-based ranks
-                        # if(ranking_score_dict[candidate]<k): 
-                        if(ranking_score_dict[candidate]<real_k):
-                            # self.ranking_effectiveness_combined+=1
-                            self.arr4[i]+=1
-
-                        #ambiguous sketches
-
-                        # if(candidates_to_reintroduce_wAmb.index(candidate)<k):
-                        if(candidates_to_reintroduce_wAmb.index(candidate)<real_k):
-                            self.arr5[i]+=1
-
-                        # if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<k):
-                        if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<real_k):
-                            self.arr6[i]+=1
-
-                        # if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<k):
-                        if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<real_k):
-                            self.arr7[i]+=1
-
-                        # if(ranking_score_dict_wAmb[candidate]<k):
-                        if(ranking_score_dict_wAmb[candidate]<real_k):
-                            self.arr8[i]+=1
+                #         # if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
+                #         if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<real_k):
+                #             # self.ranking_effectiveness_multi_sketch_euclidean+=1
+                #             self.arr3[i]+=1
 
 
-                        #combining all possible sketches
+                #         #---------when just combining sketch-based ranks
+                #         # if(ranking_score_dict[candidate]<k): 
+                #         if(ranking_score_dict[candidate]<real_k):
+                #             # self.ranking_effectiveness_combined+=1
+                #             self.arr4[i]+=1
 
-                        # if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<k):
-                        if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<real_k):
-                            self.arr9[i]+=1
+                #         #ambiguous sketches
+
+                #         # if(candidates_to_reintroduce_wAmb.index(candidate)<k):
+                #         if(candidates_to_reintroduce_wAmb.index(candidate)<real_k):
+                #             self.arr5[i]+=1
+
+                #         # if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<k):
+                #         if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<real_k):
+                #             self.arr6[i]+=1
+
+                #         # if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<k):
+                #         if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<real_k):
+                #             self.arr7[i]+=1
+
+                #         # if(ranking_score_dict_wAmb[candidate]<k):
+                #         if(ranking_score_dict_wAmb[candidate]<real_k):
+                #             self.arr8[i]+=1
+
+
+                #         #combining all possible sketches
+
+                #         # if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<k):
+                #         if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<real_k):
+                #             self.arr9[i]+=1
+
+                #---------------------commenting out for tweet completion estimates till here
 
                         # if((k==40)&(candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff)):
                         #     top_k_reintroduction_value+=1
@@ -2176,53 +2227,59 @@ class EntityResolver ():
         #     # print('combined ranking effectiveness: ', (self.ranking_effectiveness_combined/self.baseline_effectiveness))
         #     # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
 
-            arr1=[elem/self.baseline_effectiveness for elem in self.arr1]
-            self.top_k_effectiveness_arr_single_sketch.append(arr1)
+        #---------------------commenting out for tweet completion estimates from here
 
-            arr2=[elem/self.baseline_effectiveness for elem in self.arr2]
-            self.top_k_effectiveness_arr_multi_sketch_cosine.append(arr2)
+        #     arr1=[elem/self.baseline_effectiveness for elem in self.arr1]
+        #     self.top_k_effectiveness_arr_single_sketch.append(arr1)
 
-            arr3=[elem/self.baseline_effectiveness for elem in self.arr3]
-            self.top_k_effectiveness_arr_multi_sketch_euclidean.append(arr3)
+        #     arr2=[elem/self.baseline_effectiveness for elem in self.arr2]
+        #     self.top_k_effectiveness_arr_multi_sketch_cosine.append(arr2)
 
-            arr4=[elem/self.baseline_effectiveness for elem in self.arr4]
-            self.top_k_effectiveness_arr_multi_sketch_combined.append(arr4)
+        #     arr3=[elem/self.baseline_effectiveness for elem in self.arr3]
+        #     self.top_k_effectiveness_arr_multi_sketch_euclidean.append(arr3)
 
-            arr5=[elem/self.baseline_effectiveness for elem in self.arr5]
-            self.top_k_effectiveness_arr_single_sketch_amb.append(arr5)
+        #     arr4=[elem/self.baseline_effectiveness for elem in self.arr4]
+        #     self.top_k_effectiveness_arr_multi_sketch_combined.append(arr4)
 
-            arr6=[elem/self.baseline_effectiveness for elem in self.arr6]
-            self.top_k_effectiveness_arr_multi_sketch_cosine_amb.append(arr6)
+        #     arr5=[elem/self.baseline_effectiveness for elem in self.arr5]
+        #     self.top_k_effectiveness_arr_single_sketch_amb.append(arr5)
 
-            arr7=[elem/self.baseline_effectiveness for elem in self.arr7]
-            self.top_k_effectiveness_arr_multi_sketch_euclidean_amb.append(arr7)
+        #     arr6=[elem/self.baseline_effectiveness for elem in self.arr6]
+        #     self.top_k_effectiveness_arr_multi_sketch_cosine_amb.append(arr6)
 
-            arr8=[elem/self.baseline_effectiveness for elem in self.arr8]
-            self.top_k_effectiveness_arr_multi_sketch_combined_amb.append(arr8)
+        #     arr7=[elem/self.baseline_effectiveness for elem in self.arr7]
+        #     self.top_k_effectiveness_arr_multi_sketch_euclidean_amb.append(arr7)
 
-            arr9=[elem/self.baseline_effectiveness for elem in self.arr9]
-            self.top_k_effectiveness_arr_all_sketch_combined.append(arr9)
+        #     arr8=[elem/self.baseline_effectiveness for elem in self.arr8]
+        #     self.top_k_effectiveness_arr_multi_sketch_combined_amb.append(arr8)
 
-            self.batch_specific_reintroduction_effectiveness_arr.append((self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
+        #     arr9=[elem/self.baseline_effectiveness for elem in self.arr9]
+        #     self.top_k_effectiveness_arr_all_sketch_combined.append(arr9)
 
-            print('reintroduction effectiveness with batch specific top-k ',(self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
+        #     self.batch_specific_reintroduction_effectiveness_arr.append((self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
 
-            print('reintroduction ranking effectiveness ent/non-ent single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
-            print('reintroduction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
-            print('reintroduction ranking effectiveness ent/non-ent multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean))
-            print('reintroduction combined ranking ent/non-ent  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined))
+        #     print('reintroduction effectiveness with batch specific top-k ',(self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
 
-            print('reintroduction ranking effectiveness ambiguous single sketch: ', (self.top_k_effectiveness_arr_single_sketch_amb))
-            print('reintroduction ranking effectiveness ambiguous multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine_amb))
-            print('reintroduction ranking effectiveness ambiguous multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean_amb))
-            print('reintroduction combined ranking ambiguous  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined_amb))
+        #     print('reintroduction ranking effectiveness ent/non-ent single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
+        #     print('reintroduction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
+        #     print('reintroduction ranking effectiveness ent/non-ent multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean))
+        #     print('reintroduction combined ranking ent/non-ent  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined))
 
-            print('reintroduction combined ranking all sketches effectiveness: ', (self.top_k_effectiveness_arr_all_sketch_combined))
+        #     print('reintroduction ranking effectiveness ambiguous single sketch: ', (self.top_k_effectiveness_arr_single_sketch_amb))
+        #     print('reintroduction ranking effectiveness ambiguous multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine_amb))
+        #     print('reintroduction ranking effectiveness ambiguous multi sketch euclidean: ', (self.top_k_effectiveness_arr_multi_sketch_euclidean_amb))
+        #     print('reintroduction combined ranking ambiguous  sketch effectiveness: ', (self.top_k_effectiveness_arr_multi_sketch_combined_amb))
 
-        #     # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
+        #     print('reintroduction combined ranking all sketches effectiveness: ', (self.top_k_effectiveness_arr_all_sketch_combined))
 
-            print('reintroduction effectiveness with batch specific top-k ', self.batch_specific_reintroduction_effectiveness_arr)
+        # #     # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
 
+        #     print('reintroduction effectiveness with batch specific top-k ', self.batch_specific_reintroduction_effectiveness_arr)
+
+        #---------------------commenting out for tweet completion estimates till here
+
+
+        #----------------commenting for just reintroduction from here
 
         #     # #testing what happens without reintroduction
         #     # CandidateBase_dict_prev=self.CandidateBase_dict

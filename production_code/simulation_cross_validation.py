@@ -57,13 +57,19 @@ total_time=0
 
 # /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
 tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
-
+print(len(tweets_unpartitoned))
+print(tweets_unpartitoned.columns.tolist())
+# print(tweets_unpartitoned.head())
 # tweets_unpartitoned=tweets_unpartitoned[400000:600000:]
 # tweets_unpartitoned=tweets_unpartitoned[:200000:]
 # batch_size=10000
 
 # #for the experiment
 # tweets_unpartitoned=pd.read_csv("deduplicated_test_output.csv",sep =',', keep_default_na=False)
+# print(len(tweets_unpartitoned))
+# print(tweets_unpartitoned.columns.tolist())
+# print(tweets_unpartitoned.head())
+
 # # batch_size=550
 # batch_size=3000
 
@@ -122,12 +128,13 @@ sentence_level_arr=[[-1]*20]*20
 
 
 
-
+# # ---------------------------------- reintroduction ranking effectiveness experiments
 length=len(tweets)
+
 val=math.ceil(length/batch_size)-1
 
 print('# of batches: ',(val+1))
-
+max_batch_value=val
 count=0
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 
@@ -180,7 +187,7 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     print('tweets_been_processed: ',tweets_been_processed)
     tweets_been_processed_list_inner.append(tweets_been_processed)
     reintroduction_threshold=0.2
-    Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
+    candidate_base_post_Phase2, complete_tweet_dataframe_grouped_df_sorted= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold,tweet_base)
     # print('disambiguation status: ',len((candidate_base_post_Phase2[((candidate_base_post_Phase2['batch']<g)&((candidate_base_post_Phase2.status=="g")|(candidate_base_post_Phase2.status=="b")))]).candidate.tolist()))
     
     # print('disambiguation status: ', len(converted_candidates))
@@ -202,6 +209,8 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     print("**********************************************************")
 print(tweets_been_processed_list_inner)
 print(execution_time_list_inner)
+
+
 #---------------------------- for the single pass to multipass scale experiment
 # reintroduction_batch_threshold=list(range((val+1)))
 # # reintroduction_batch_threshold=[0,1]
