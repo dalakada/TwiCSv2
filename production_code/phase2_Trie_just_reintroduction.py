@@ -56,6 +56,7 @@ class EntityResolver ():
         # for j in range(self.counter+1):
         #     print(len(self.entity_level_arr[j]),self.entity_level_arr[j])
         #print(self.entity_level_arr)
+        self.upper_reintroduction_limit=20
 
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         print('here 1')
@@ -124,6 +125,8 @@ class EntityResolver ():
         print('here 6')
         self.counter=self.counter+1
 
+        #------------------end of current batch activities, preparation for next batch
+
         self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets) #this is useless
 
 
@@ -149,7 +152,9 @@ class EntityResolver ():
         # self.sentence_level_arr.append(copy.deepcopy(sentence_arr))
         #print(self.sentence_level_arr)
 
-        if(self.counter==max_batch_value):
+        phase2_output_time=time.time()
+
+        if(self.counter==(max_batch_value+1)):
             self.just_converted_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
 
             print('completed tweets: ', len(self.just_converted_tweets),'incomplete tweets: ', len(self.incomplete_tweets))
@@ -182,7 +187,7 @@ class EntityResolver ():
         # self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
         # self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
         #return self.entity_level_arr, self.mention_level_arr
-        return candidate_featureBase_DF, self.complete_tweet_dataframe_grouped_df_sorted
+        return candidate_featureBase_DF, self.complete_tweet_dataframe_grouped_df_sorted, phase2_output_time
 
 
     def __init__(self):
