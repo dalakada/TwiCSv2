@@ -760,7 +760,7 @@ class EntityResolver ():
 
         reintroduced_tweets_reintroduction_eviction=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in candidates_to_reintroduce1 for x in row['ambiguous_candidates']) ,axis=1)]
         #not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in list(cosine_distance_dict.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
-        self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets.index)]
+        self.not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in candidates_to_reintroduce1 for x in row['ambiguous_candidates']) ,axis=1)]
         # print(len(self.incomplete_tweets))
         print("=> reintroduced tweets reintro+eviction: ", len(reintroduced_tweets_reintroduction_eviction), " reintroduced in-batch: ", len(reintroduced_tweets)," not-reintroduced tweets: ", len(self.not_reintroduced))
         #print((len(not_reintroduced)==len(self.not_reintroduced)),(len(reintroduced_tweets)+len(self.not_reintroduced)==len(self.incomplete_tweets)))

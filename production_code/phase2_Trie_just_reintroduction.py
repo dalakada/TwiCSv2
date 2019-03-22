@@ -56,7 +56,7 @@ class EntityResolver ():
         # for j in range(self.counter+1):
         #     print(len(self.entity_level_arr[j]),self.entity_level_arr[j])
         #print(self.entity_level_arr)
-        self.upper_reintroduction_limit=20
+        self.upper_reintroduction_limit=reintroduction_threshold
 
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         print('here 1')
@@ -113,6 +113,8 @@ class EntityResolver ():
         #incomplete tweets at the end of current batch
         incomplete_tweets=self.get_incomplete_tf(untrashed_tweets)
         #all incomplete_tweets---> incomplete_tweets at the end of current batch + incomplete_tweets not reintroduced
+
+        print('incomplete by end of batch: ',len(incomplete_tweets),'not reintroduced: ',len(self.not_reintroduced),'tally: ',str(len(incomplete_tweets)+len(self.not_reintroduced)))
         self.incomplete_tweets=pd.concat([incomplete_tweets,self.not_reintroduced],ignore_index=True) #without reintroduction--- when everything is reintroduced, just incomplete_tweets
         print('here 5')
         #print(self.incomplete_tweets.index)
@@ -135,8 +137,8 @@ class EntityResolver ():
 
 
         # #printing incomplete sentence estimates here
-        print('printing the converted, incomplete and not-reintroduced estimates now:')
-        print(len(self.just_converted_tweets),len(incomplete_tweets),len(self.not_reintroduced))
+        print('printing the converted, incomplete and final tally estimates now:')
+        print(len(self.just_converted_tweets),len(self.incomplete_tweets),(len(self.just_converted_tweets)+len(self.incomplete_tweets)))
 
         self.incomplete_tweets_array.append(len(self.incomplete_tweets))
         print("incomplete tweets: ",self.incomplete_tweets_array)
@@ -155,6 +157,11 @@ class EntityResolver ():
         phase2_output_time=time.time()
 
         if(self.counter==(max_batch_value+1)):
+
+            self.tweet_completion_dict_incomplete[reintroduction_threshold]= self.incomplete_tweets_array
+            self.tweet_completion_dict_converted[reintroduction_threshold]= self.converted_tweets_array
+
+
             self.just_converted_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
 
             print('completed tweets: ', len(self.just_converted_tweets),'incomplete tweets: ', len(self.incomplete_tweets))
@@ -166,6 +173,8 @@ class EntityResolver ():
             complete_tweet_dataframe = pd.concat(combined_frame_list)
 
             print('final tally: ', (len(self.just_converted_tweets)+len(self.incomplete_tweets)), len(complete_tweet_dataframe))
+
+
 
             # print(sorted(complete_tweet_dataframe['tweetID'].astype(int).unique()))
             # lst=list(range(38911))
@@ -182,6 +191,13 @@ class EntityResolver ():
             # print(self.complete_tweet_dataframe_grouped_df_sorted.head(5))
             print(len(self.complete_tweet_dataframe_grouped_df_sorted))
             print(list(self.complete_tweet_dataframe_grouped_df_sorted.columns.values))
+
+        if(reintroduction_threshold==100):
+            print('tweet completion incomplete estimates: ')
+            print(self.tweet_completion_dict_incomplete)
+
+            print('tweet completion converted estimates: ')
+            print(self.tweet_completion_dict_converted)
 
         #self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
         # self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
@@ -207,6 +223,9 @@ class EntityResolver ():
         # for tweeet completion and EMD level estimates, no iteration over reintroduction limit and step size needed
         self.step_size=20
         self.upper_reintroduction_limit=20
+
+        self.tweet_completion_dict_incomplete={}
+        self.tweet_completion_dict_converted={}
 
         #entity non-entity top k estimates
         # self.arr1=[0,0,0,0,0] #cumulative estimates till batch single sketch
@@ -659,25 +678,25 @@ class EntityResolver ():
         # cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value > reintroduction_threshold }
         return cosine_distance_dict_sorted
 
-    def get_combined_score(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch,ambiguous_entity_sketch,reintroduction_threshold):
-        combined_score_dict={}
-        for index, row in ambiguous_candidate_records.iterrows():
-          candidate_synvec=[(row['cap']/row['cumulative']),
-                              (row['substring-cap']/row['cumulative']),
-                              (row['s-o-sCap']/row['cumulative']),
-                              (row['all-cap']/row['cumulative']),
-                              (row['non-cap']/row['cumulative']),
-                              (row['non-discriminative']/row['cumulative'])]
-          cosine_distance_ent=spatial.distance.cosine(candidate_synvec, entity_sketch)
-          cosine_distance_non_ent=spatial.distance.cosine(candidate_synvec, non_entity_sketch)
-          candidate_distance_array=[cosine_distance_ent,cosine_distance_non_ent]
-          cosine_distance_amb=spatial.distance.cosine(candidate_synvec, ambiguous_entity_sketch)
-          #cosine_distance_array.append(candidate_distance_array)
-          combined_score_dict[row['candidate']]=min(candidate_distance_array)/cosine_distance_amb
+    # def get_combined_score(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch,ambiguous_entity_sketch,reintroduction_threshold):
+    #     combined_score_dict={}
+    #     for index, row in ambiguous_candidate_records.iterrows():
+    #       candidate_synvec=[(row['cap']/row['cumulative']),
+    #                           (row['substring-cap']/row['cumulative']),
+    #                           (row['s-o-sCap']/row['cumulative']),
+    #                           (row['all-cap']/row['cumulative']),
+    #                           (row['non-cap']/row['cumulative']),
+    #                           (row['non-discriminative']/row['cumulative'])]
+    #       cosine_distance_ent=spatial.distance.cosine(candidate_synvec, entity_sketch)
+    #       cosine_distance_non_ent=spatial.distance.cosine(candidate_synvec, non_entity_sketch)
+    #       candidate_distance_array=[cosine_distance_ent,cosine_distance_non_ent]
+    #       cosine_distance_amb=spatial.distance.cosine(candidate_synvec, ambiguous_entity_sketch)
+    #       #cosine_distance_array.append(candidate_distance_array)
+    #       combined_score_dict[row['candidate']]=min(candidate_distance_array)/cosine_distance_amb
 
-        combined_score_dict_sorted= OrderedDict(sorted(combined_score_dict.items(), key=lambda x: x[1]))
-        combined_score_sorted_final= { key:value for key, value in combined_score_dict_sorted.items() if value < reintroduction_threshold }
-        return combined_score_sorted_final
+    #     combined_score_dict_sorted= OrderedDict(sorted(combined_score_dict.items(), key=lambda x: x[1]))
+    #     combined_score_sorted_final= { key:value for key, value in combined_score_dict_sorted.items() if value < reintroduction_threshold }
+    #     return combined_score_sorted_final
 
 
     #MULTIPLE SKETCH CLUSTERING--- COSINE
@@ -827,7 +846,7 @@ class EntityResolver ():
 
     def get_reintroduced_tweets(self,candidates_to_reintroduce,candidates_to_reintroduce1):
         #no preferential selection
-        # print("incomplete tweets in batch: ",len(self.incomplete_tweets))
+        print("incomplete tweets in batch: ",len(self.incomplete_tweets))
         # # for i in range(self.counter):
         # #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
         # return self.incomplete_tweets
@@ -839,9 +858,11 @@ class EntityResolver ():
         # self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets.index)]
 
         reintroduced_tweets_reintroduction_eviction=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:any(x in candidates_to_reintroduce1 for x in row['ambiguous_candidates']) ,axis=1)]
-        #not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in list(cosine_distance_dict.keys()) for x in row['ambiguous_candidates']) ,axis=1)]
-        self.not_reintroduced=self.incomplete_tweets[~self.incomplete_tweets.index.isin(reintroduced_tweets_reintroduction_eviction.index)]
+        self.not_reintroduced=self.incomplete_tweets[self.incomplete_tweets.apply(lambda row:all(x not in candidates_to_reintroduce1 for x in row['ambiguous_candidates']) ,axis=1)]
+
+        
         # # print(len(self.incomplete_tweets))
+        print("=> reintroduced tweets reintro: ", len(reintroduced_tweets_reintroduction_eviction), " not-reintroduced tweets: ", len(self.not_reintroduced), "tally: ",str(len(reintroduced_tweets_reintroduction_eviction)+len(self.not_reintroduced)))
         # print("=> reintroduced tweets reintro+eviction: ", len(reintroduced_tweets_reintroduction_eviction), " reintroduced in-batch: ", len(reintroduced_tweets)," not-reintroduced tweets: ", len(self.not_reintroduced))
         #print((len(not_reintroduced)==len(self.not_reintroduced)),(len(reintroduced_tweets)+len(self.not_reintroduced)==len(self.incomplete_tweets)))
         return reintroduced_tweets_reintroduction_eviction
@@ -1017,6 +1038,7 @@ class EntityResolver ():
         ambiguous_candidates_records_before_classification_for_baseline = candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(ambiguous_candidates_before_classification_for_baseline))]
         # print('printing here: ',len(self.ambiguous_candidates),len(self.evicted_candidates),len(ambiguous_candidate_list_before_classification))
         
+        print('reintroduction threshold: ',self.upper_reintroduction_limit)
         print('starting estimate of ambiguous candidate: ',len(ambiguous_candidate_list_before_classification))
 
         # over_estimate=[candidate for candidate in self.just_checking.keys() if (candidate not in ambiguous_candidate_list_before_classification)]
@@ -1179,9 +1201,9 @@ class EntityResolver ():
             rank_dict_ordered_list_reintroduction_candidates=list(rank_dict_ordered_reintroduction_candidates.keys())
 
             if(self.upper_reintroduction_limit<100):
-                real_cutoff= int(self.upper_reintroduction_limit/100*(len(rank_dict_ordered_list_reintroduction_candidates)))
+                real_cutoff= math.ceil((self.upper_reintroduction_limit/100)*(len(rank_dict_ordered_list_reintroduction_candidates)))
             else:
-                real_cutoff= int(100/100*(len(rank_dict_ordered_list_reintroduction_candidates)))
+                real_cutoff= math.ceil((100/100)*(len(rank_dict_ordered_list_reintroduction_candidates)))
 
             rank_dict_ordered_list_reintroduction_candidates_cutoff=rank_dict_ordered_list_reintroduction_candidates[0:real_cutoff]
             reintroduced_tweets=self.get_reintroduced_tweets(candidates_to_reintroduce,rank_dict_ordered_list_reintroduction_candidates_cutoff)
