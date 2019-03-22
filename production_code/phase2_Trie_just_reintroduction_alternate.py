@@ -90,7 +90,7 @@ class EntityResolver ():
             incomplete_tweets_inner=self.get_incomplete_tf(untrashed_tweets)
 
             # if(self.counter==1):
-                
+            print(candidate_featureBase_DF[candidate_featureBase_DF['candidate']=='nut job'])
             print(untrashed_tweets[untrashed_tweets['tweetID']=='1108'])
             print(incomplete_tweets_inner[incomplete_tweets_inner['tweetID']=='1108'])
             # print(incomplete_tweets_inner.head())
@@ -99,6 +99,7 @@ class EntityResolver ():
             print('incomplete by end of batch: ',len(incomplete_tweets_inner),'not reintroduced: ',len(self.not_reintroduced_arr[elem]),'tally: ',str(len(incomplete_tweets_inner)+len(self.not_reintroduced_arr[elem])))
             self.incomplete_tweets_arr[elem]=pd.concat([incomplete_tweets_inner,self.not_reintroduced_arr[elem]],ignore_index=True) #without reintroduction--- when everything is reintroduced, just incomplete_tweets
             # print(self.incomplete_tweets_arr[elem].head())
+            print(self.incomplete_tweets_arr[elem][self.incomplete_tweets_arr[elem]['tweetID']=='1108'])
             print('here 5')
        
 
@@ -823,8 +824,8 @@ class EntityResolver ():
 
         print("incomplete tweets in batch: ",len(self.incomplete_tweets_arr[elem]))
 
-        reintroduced_tweets_reintroduction=copy.deepcopy(self.incomplete_tweets_arr[elem][self.incomplete_tweets_arr[elem].apply(lambda row:any(x in candidates_to_reintroduce1 for x in row['ambiguous_candidates']) ,axis=1)])
-        self.not_reintroduced_arr[elem]=copy.deepcopy(self.incomplete_tweets_arr[elem][self.incomplete_tweets_arr[elem].apply(lambda row:all(x not in candidates_to_reintroduce1 for x in row['ambiguous_candidates']) ,axis=1)])
+        reintroduced_tweets_reintroduction=(self.incomplete_tweets_arr[elem][self.incomplete_tweets_arr[elem].apply(lambda row:any(x in candidates_to_reintroduce1 for x in row['ambiguous_candidates']) ,axis=1)])
+        self.not_reintroduced_arr[elem]=(self.incomplete_tweets_arr[elem][self.incomplete_tweets_arr[elem].apply(lambda row:all(x not in candidates_to_reintroduce1 for x in row['ambiguous_candidates']) ,axis=1)])
 
         print("=> reintroduced tweets reintro: ", len(reintroduced_tweets_reintroduction), " not-reintroduced tweets: ", len(self.not_reintroduced_arr[elem]), "tally: ",str(len(reintroduced_tweets_reintroduction)+len(self.not_reintroduced_arr[elem])))
 
@@ -1245,6 +1246,10 @@ class EntityResolver ():
                 print('reintroduction threshold: ',reintroduction_threshold)
                 real_cutoff= int((reintroduction_threshold/100)*(len(rank_dict_ordered_list_reintroduction_candidates)))
                 rank_dict_ordered_list_reintroduction_candidates_cutoff=rank_dict_ordered_list_reintroduction_candidates[0:real_cutoff]
+                print(len(rank_dict_ordered_list_reintroduction_candidates_cutoff))
+                checking_candidate='nut job'
+                if(checking_candidate in rank_dict_ordered_list_reintroduction_candidates):
+                    print(checking_candidate ,rank_dict_ordered_list_reintroduction_candidates.index(checking_candidate))
 
                 reintroduced_tweets_arr_elem=self.get_reintroduced_tweets_alternate(candidates_to_reintroduce,rank_dict_ordered_list_reintroduction_candidates_cutoff,elem)
                 reintroduced_tweets_arr.append(copy.deepcopy(reintroduced_tweets_arr_elem))
@@ -1264,8 +1269,8 @@ class EntityResolver ():
                 tuple_check_list_outer.extend(copy.deepcopy(tuple_check_list))
                 candidate_check_list_outer.extend(copy.deepcopy(candidate_check_list))
 
-                phase2_candidates_holder_outer[elem].extend(copy.deepcopy(phase2_candidates_holder_extracted_elem))
-                df_holder_outer[elem].extend(copy.deepcopy(df_holder_extracted_elem))
+                phase2_candidates_holder_outer[elem].extend(phase2_candidates_holder_extracted_elem)
+                df_holder_outer[elem].extend(df_holder_extracted_elem)
 
             if(tuple_check_list_outer):
                 print('printing what we missed')
@@ -2483,10 +2488,10 @@ class EntityResolver ():
             phase2_candidates_holder,correction_flag)
 
     def get_incomplete_tf(self,untrashed_tweets):
-        return copy.deepcopy(untrashed_tweets[untrashed_tweets.completeness==False])
+        return untrashed_tweets[untrashed_tweets.completeness==False]
 
     def get_complete_tf(self,untrashed_tweets):
-        return copy.deepcopy(untrashed_tweets[untrashed_tweets.completeness==True])
+        return untrashed_tweets[untrashed_tweets.completeness==True]
 
     def compute_seen_tweets_so_far(self,start_batch,end_batch):
         if(start_batch==end_batch):
@@ -2585,7 +2590,7 @@ class EntityResolver ():
         input_to_eval["only_good_candidates"]=candidates_filtered_g_labeled
         input_to_eval["ambiguous_candidates"]=candidates_filtered_a_labeled
 
-        return copy.deepcopy(input_to_eval)
+        return input_to_eval
 
 
 
@@ -2751,8 +2756,8 @@ class EntityResolver ():
         print('correction_flag set to: ',correction_flag)
         if(correction_flag):
             phase2_candidates_holder,data_frame_holder=self.recall_correction(phase2_candidates_holder,data_frame_holder)
-        else:
-            data_frame_holder['2nd Iteration Candidates']=phase2_candidates_holder
+        # else:
+        #     data_frame_holder['2nd Iteration Candidates']=phase2_candidates_holder
          
 
         
@@ -3524,8 +3529,8 @@ class EntityResolver ():
             phase2_candidates_holder.append(phase2_candidates)
 
             #print(phase1Candidates,"====",phase2_candidates)
-            # if((tweetID=="9423")|(tweetID=="14155")):
-            #     print(phase1Candidates,"====",phase2_candidates)
+            if((tweetID=="1108")):
+                print(new_or_old,"====",[(self.normalize(e[0]),e[-1]) for e in ne_candidate_list])
             dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'annotation':annotation,'stanford_candidates':stanford}
 
             df_holder.append(dict1)
