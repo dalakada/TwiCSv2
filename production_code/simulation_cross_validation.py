@@ -238,6 +238,7 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     execution_time_list.append(execution_time_list_inner)
 
 reintroduction_threshold_array=[20,40,60,80,100]
+# reintroduction_threshold_array=[20]
 
 for elem in range(len(reintroduction_threshold_array)):
 
@@ -261,7 +262,7 @@ for elem in range(len(reintroduction_threshold_array)):
 
 
 output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_runs.csv", sep=',', encoding='utf-8',index=False)
-# output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_80.csv", sep=',', encoding='utf-8',index=False)
+# output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_20.csv", sep=',', encoding='utf-8',index=False)
 
 
 #---------------------------- for the single pass to multipass scale experiment

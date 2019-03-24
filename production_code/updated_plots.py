@@ -99,32 +99,80 @@ import matplotlib.colors as colors
 
 
 
-#EXPERIMENT 2: reintroduction threshold for global variants experiment
+# #EXPERIMENT 2: reintroduction threshold for global variants experiment
+
+# fig1 = plt.figure()
+# plt.hold(True)
+# plt.xticks(np.arange(20, 120, 20.0))
+
+# reintroduction_threshold_arr=[20,40,60,80,100]
+
+# colours=['r','b','g','k','y']
+
+# line_style_patterns=[':','-.','--','-','+']
+
+# combined_ranking_all_sketches_effectiveness= [[0.36363636363636365, 0.8181818181818182, 1.0, 1.0, 1.0], [0.4117647058823529, 0.8235294117647058, 1.0, 1.0, 1.0], [0.5806451612903226, 0.8387096774193549, 1.0, 1.0, 1.0], [0.55, 0.825, 1.0, 1.0, 1.0], [0.6129032258064516, 0.8387096774193549, 1.0, 1.0, 1.0], [0.6265060240963856, 0.8192771084337349, 0.9879518072289156, 1.0, 1.0], [0.631578947368421, 0.8333333333333334, 0.9912280701754386, 1.0, 1.0], [0.6068965517241379, 0.8068965517241379, 0.9862068965517241, 1.0, 1.0], [0.6022099447513812, 0.7955801104972375, 0.9834254143646409, 1.0, 1.0], [0.5951219512195122, 0.7853658536585366, 0.975609756097561, 1.0, 1.0], [0.6041666666666666, 0.7791666666666667, 0.975, 1.0, 1.0], [0.6066666666666667, 0.7766666666666666, 0.9733333333333334, 1.0, 1.0], [0.6264367816091954, 0.7873563218390804, 0.9741379310344828, 1.0, 1.0], [0.630272952853598, 0.7965260545905707, 0.9776674937965261, 1.0, 1.0], [0.6382978723404256, 0.8063829787234043, 0.9787234042553191, 1.0, 1.0], [0.6384180790960452, 0.8060263653483992, 0.9698681732580038, 1.0, 1.0], [0.6389351081530782, 0.8069883527454242, 0.9717138103161398, 1.0, 1.0], [0.6435045317220544, 0.8111782477341389, 0.972809667673716, 1.0, 1.0], [0.6508379888268156, 0.8212290502793296, 0.9748603351955307, 1.0, 1.0], [0.6529032258064517, 0.8206451612903226, 0.9754838709677419, 1.0, 1.0]]
+
+# for index in range(len(combined_ranking_all_sketches_effectiveness)):
+# 	colour_string=colours[int(index/5)]
+# 	pattern_string=line_style_patterns[int(index%5)]
+
+# 	plt.plot(reintroduction_threshold_arr,combined_ranking_all_sketches_effectiveness[index],colour_string+pattern_string, label='batch '+str(index))
+
+# plt.ylabel('Candidate Disambiguation Recall')
+# plt.xlabel('percent reintroduction threshold value')
+# lgd=plt.legend(bbox_to_anchor=(1.1,1.01), loc=9, prop={'size': 6}, borderaxespad=0.)
+# plt.setp(plt.gca().get_legend().get_texts(), fontsize='12')
+
+# plt.title('Disambiguation Effectiveness for combined sketch based\n ranking with different Reintroduction Thresholds')
+# plt.savefig('candidate-disambiguation-recall-reintroduction-threshold.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+
+# plt.show()
+
+#EXPERIMENT 3: performance estimates for reintroduction thresholds: EMD F1, Tweet completion histograms
 
 fig1 = plt.figure()
 plt.hold(True)
-plt.xticks(np.arange(20, 120, 20.0))
+
 
 reintroduction_threshold_arr=[20,40,60,80,100]
+tweets= [84152, 173400, 265842, 350484, 439043, 527834, 607569, 682913, 760389, 849446, 942989, 1028661, 1113457, 1188145, 1263202, 1338782, 1419378, 1500195, 1578692, 1657711, 1713105]
+incomplete_tweets= [[4688, 10878, 23163, 29578, 35439, 41337, 60818, 62301, 67163, 74158, 77010, 81516, 87628, 95785, 102599, 109324, 115384, 121459, 128642, 135528, 140525], 
+					 [4688, 10787, 23022, 29420, 35044, 40382, 59738, 60844, 65473, 72234, 74452, 78484, 75721, 83293, 89562, 95768, 101161, 106224, 112811, 119252, 123452], 
+					 [4688, 10313, 22453, 28844, 34456, 39718, 59045, 60165, 64371, 71057, 73216, 77204, 74421, 80877, 86815, 92284, 96733, 101681, 107740, 114103, 118258], 
+					 [4688, 10165, 21853, 28085, 33673, 37569, 56890, 57979, 62173, 68546, 70631, 74604, 71321, 77389, 82977, 87873, 92228, 95532, 101408, 107444, 111586], 
+					 [4688, 9867, 21350, 27581, 33152, 36968, 55380, 55873, 59883, 65502, 67519, 70228, 65690, 70804, 76220, 81084, 84459, 87538, 92926, 98883, 101745]]
+converted_tweets=  [[79464, 162522, 242679, 320906, 403604, 486497, 546751, 620612, 693226, 775288, 865979, 947145, 1025829, 1092360, 1160603, 1229458, 1303994, 1378736, 1450050, 1522183, 1572580],
+					[79464, 162613, 242820, 321064, 403999, 487452, 547831, 622069, 694916, 777212, 868537, 950177, 1037736, 1104852, 1173640, 1243014, 1318217, 1393971, 1465881, 1538459, 1589653], 
+					[79464, 163087, 243389, 321640, 404587, 488116, 548524, 622748, 696018, 778389, 869773, 951457, 1039036, 1107268, 1176387, 1246498, 1322645, 1398514, 1470952, 1543608, 1594847], 
+					[79464, 163235, 243989, 322399, 405370, 490265, 550679, 624934, 698216, 780900, 872358, 954057, 1042136, 1110756, 1180225, 1250909, 1327150, 1404663, 1477284, 1550267, 1601519], 
+					[79464, 163533, 244492, 322903, 405891, 490866, 552189, 627040, 700506, 783944, 875470, 958433, 1047767, 1117341, 1186982, 1257698, 1334919, 1412657, 1485766, 1558828, 1611360]]
 
-colours=['r','b','g','k','y']
-
-line_style_patterns=[':','-.','--','-','+']
-
-combined_ranking_all_sketches_effectiveness= [[0.36363636363636365, 0.8181818181818182, 1.0, 1.0, 1.0], [0.4117647058823529, 0.8235294117647058, 1.0, 1.0, 1.0], [0.5806451612903226, 0.8387096774193549, 1.0, 1.0, 1.0], [0.55, 0.825, 1.0, 1.0, 1.0], [0.6129032258064516, 0.8387096774193549, 1.0, 1.0, 1.0], [0.6265060240963856, 0.8192771084337349, 0.9879518072289156, 1.0, 1.0], [0.631578947368421, 0.8333333333333334, 0.9912280701754386, 1.0, 1.0], [0.6068965517241379, 0.8068965517241379, 0.9862068965517241, 1.0, 1.0], [0.6022099447513812, 0.7955801104972375, 0.9834254143646409, 1.0, 1.0], [0.5951219512195122, 0.7853658536585366, 0.975609756097561, 1.0, 1.0], [0.6041666666666666, 0.7791666666666667, 0.975, 1.0, 1.0], [0.6066666666666667, 0.7766666666666666, 0.9733333333333334, 1.0, 1.0], [0.6264367816091954, 0.7873563218390804, 0.9741379310344828, 1.0, 1.0], [0.630272952853598, 0.7965260545905707, 0.9776674937965261, 1.0, 1.0], [0.6382978723404256, 0.8063829787234043, 0.9787234042553191, 1.0, 1.0], [0.6384180790960452, 0.8060263653483992, 0.9698681732580038, 1.0, 1.0], [0.6389351081530782, 0.8069883527454242, 0.9717138103161398, 1.0, 1.0], [0.6435045317220544, 0.8111782477341389, 0.972809667673716, 1.0, 1.0], [0.6508379888268156, 0.8212290502793296, 0.9748603351955307, 1.0, 1.0], [0.6529032258064517, 0.8206451612903226, 0.9754838709677419, 1.0, 1.0]]
-
-for index in range(len(combined_ranking_all_sketches_effectiveness)):
-	colour_string=colours[int(index/5)]
-	pattern_string=line_style_patterns[int(index%5)]
-
-	plt.plot(reintroduction_threshold_arr,combined_ranking_all_sketches_effectiveness[index],colour_string+pattern_string, label='batch '+str(index))
-
-plt.ylabel('Candidate Disambiguation Recall')
-plt.xlabel('percent reintroduction threshold value')
-lgd=plt.legend(bbox_to_anchor=(1.1,1.01), loc=9, prop={'size': 6}, borderaxespad=0.)
-plt.setp(plt.gca().get_legend().get_texts(), fontsize='12')
-
-plt.title('Disambiguation Effectiveness for combined sketch based\n ranking with different Reintroduction Thresholds')
-plt.savefig('candidate-disambiguation-recall-reintroduction-threshold.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
-
+# data to plot
+n_groups = 5
+incomplete_arr=[float(arr[-1]/tweets[-1]) for arr in incomplete_tweets]
+converted_arr=[float(arr[-1]/tweets[-1]) for arr in converted_tweets]
+# create plot
+fig, ax = plt.subplots()
+index = np.arange(n_groups)
+bar_width = 0.35
+opacity = 1.0
+ 
+rects1 = plt.bar(index, means_frank, bar_width,
+alpha=opacity,
+color='b',
+label='incomplete percentage')
+ 
+rects2 = plt.bar(index + bar_width, means_guido, bar_width,
+alpha=opacity,
+color='g',
+label='completion percentage')
+ 
+plt.xlabel('Reintroduction Threshold')
+plt.ylabel('Percentage')
+plt.title('Performance estimates for different reintroduction thresholds')
+plt.xticks(index + bar_width, ('20', '40', '60', '80', '100'))
+plt.legend()
+ 
+plt.tight_layout()
 plt.show()
