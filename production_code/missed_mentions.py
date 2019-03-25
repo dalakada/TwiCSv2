@@ -250,7 +250,7 @@ def get_Candidates(sequence, CTrie,flag):
     # print('==>',candidateList)
     return candidateList
 
-tweets_unpartitoned=pd.read_csv("deduplicated_test_output_all_runs.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("deduplicated_test_output_all_runs.csv",sep =',', keep_default_na=False)
 
 
 # unrecovered_annotated_candidate_list_outer=[]
@@ -481,12 +481,13 @@ our_recovered_counter=0
 our_counter_mention=0
 our_recovered_mention=0
 
-# tweets_unpartitoned=pd.read_csv("deduplicated_test_output_all_runs.csv",sep =',', keep_default_na=False)
+tweets_unpartitoned=pd.read_csv("deduplicated_test_output_all_runs.csv",sep =',', keep_default_na=False)
 
-bigger_tweet_dataframe=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_runs.csv",sep =',', keep_default_na=False)
+bigger_tweet_dataframe=pd.read_csv("/Users/satadisha/Downloads/output_1M_reintroduction_20.csv",sep =',', keep_default_na=False)
 
 
-lst=[20,40,60,80,100]
+# lst=[20,40,60,80,100]
+lst=[20]
 
 tp_reintroduction_counter_arr=[0 for i in range(len(lst))]
 fp_reintroduction_counter_arr=[0 for i in range(len(lst))]
@@ -522,8 +523,11 @@ for index,row in tweets_unpartitoned.iterrows():
 
 for index,row in bigger_tweet_dataframe.iterrows():
     # annotated_candidates=str(row['mentions_other'])
+    tweetText=str(row['TweetText'])
     unrecovered_annotated_mention_list=[]
     unrecovered_annotated_mention_list_reintroduction = [[] for i in range(len(lst))]
+
+    unrecovered_annotated_mention_list_multipass = [[] for i in range(len(lst))]
 
     annotated_mention_list=[]
 
@@ -593,47 +597,49 @@ for index,row in bigger_tweet_dataframe.iterrows():
     # fp_ritter_counter+=fp_ritter_counter_inner
     # fn_ritter_counter+=fn_ritter_counter_inner
 
-    for elem in lst:
+    for elem in range(len(lst)):
 
-        all_postitive_multipass_counter_inner=0
-        tp_multipass_counter_inner=0
-        fp_multipass_counter_inner=0
-        fn_multipass_counter_inner=0
+        threshold=lst[elem]
 
-        multipass_output_list=ast.literal_eval(str(row['output_col_'+str(elem)]))
+        all_postitive_reintroduction_counter_inner=0
+        tp_reintroduction_counter_inner=0
+        fp_reintroduction_counter_inner=0
+        fn_reintroduction_counter_inner=0
+
+        multipass_output_list=ast.literal_eval(str(row['output_col_'+str(threshold)]))
         multipass_output_list_flat = [item.lower() for sublist in multipass_output_list for item in sublist]
         multipass_output_list_flat=list(filter(lambda element: element !='', multipass_output_list_flat))
 
-        all_postitive_multipass_counter_inner=len(multipass_output_list_flat)
+        all_postitive_reintroduction_counter_inner=len(multipass_output_list_flat)
 
         annotated_mention_tally_list= annotated_mention_list_tallying_array[elem]
 
-        # print('==>', elem, annotated_mention_tally_list,multipass_output_list_flat)
+        print('==>', elem, annotated_mention_tally_list,multipass_output_list_flat)
 
         while(annotated_mention_tally_list):
             if(len(multipass_output_list_flat)):
                 annotated_candidate= annotated_mention_tally_list.pop()
                 if(annotated_candidate in multipass_output_list_flat):
                     multipass_output_list_flat.pop(multipass_output_list_flat.index(annotated_candidate))
-                    tp_multipass_counter_inner+=1
+                    tp_reintroduction_counter_inner+=1
                 else:
-                    unrecovered_annotated_mention_list_multipass[elem].append(annotated_candidate)
+                    unrecovered_annotated_mention_list_reintroduction[elem].append(annotated_candidate)
             else:
-                unrecovered_annotated_mention_list_multipass[elem].extend(annotated_mention_tally_list)
+                unrecovered_annotated_mention_list_reintroduction[elem].extend(annotated_mention_tally_list)
                 break
 
           # multipass_output_list=list(filter(lambda element: element !='', multipass_output_list))
-        # print(unrecovered_annotated_mention_list_multipass[elem])
-        unrecovered_annotated_mention_list_outer_multipass[elem].extend(unrecovered_annotated_mention_list_multipass[elem])
-        fn_multipass_counter_inner=len(unrecovered_annotated_mention_list_multipass[elem])
-        fp_multipass_counter_inner=all_postitive_multipass_counter_inner- tp_multipass_counter_inner
+        print(unrecovered_annotated_mention_list_reintroduction[elem])
+        unrecovered_annotated_mention_list_outer_reintroduction[elem].extend(unrecovered_annotated_mention_list_reintroduction[elem])
+        fn_reintroduction_counter_inner=len(unrecovered_annotated_mention_list_reintroduction[elem])
+        fp_reintroduction_counter_inner=all_postitive_reintroduction_counter_inner- tp_reintroduction_counter_inner
 
-        tp_multipass_counter_arr[elem]+= tp_multipass_counter_inner
-        fp_multipass_counter_arr[elem]+=fp_multipass_counter_inner
-        fn_multipass_counter_arr[elem]+=fn_multipass_counter_inner
+        tp_reintroduction_counter_arr[elem]+= tp_reintroduction_counter_inner
+        fp_reintroduction_counter_arr[elem]+=fp_reintroduction_counter_inner
+        fn_reintroduction_counter_arr[elem]+=fn_reintroduction_counter_inner
 
-multipass_precision_arr=[tp_multipass_counter_arr[index]/(tp_multipass_counter_arr[index]+fp_multipass_counter_arr[index]) for index in range(len(tp_multipass_counter_arr))]
-multipass_recall_arr=[tp_multipass_counter_arr[index]/(tp_multipass_counter_arr[index]+fn_multipass_counter_arr[index]) for index in range(len(tp_multipass_counter_arr))]
+multipass_precision_arr=[tp_reintroduction_counter_arr[index]/(tp_reintroduction_counter_arr[index]+fp_reintroduction_counter_arr[index]) for index in range(len(tp_reintroduction_counter_arr))]
+multipass_recall_arr=[tp_reintroduction_counter_arr[index]/(tp_reintroduction_counter_arr[index]+fn_reintroduction_counter_arr[index]) for index in range(len(tp_reintroduction_counter_arr))]
 
 
 for index in range(len(multipass_precision_arr)):
@@ -641,14 +647,14 @@ for index in range(len(multipass_precision_arr)):
 
 # #----------------just the plot part
 
-missed_mention_numbers=[15816, 6222, 6184, 6122, 6090, 6022, 5987, 5964, 5949, 5935, 5929, 5928, 5887, 5872]
+# missed_mention_numbers=[15816, 6222, 6184, 6122, 6090, 6022, 5987, 5964, 5949, 5935, 5929, 5928, 5887, 5872]
 # print(list(tweets_unpartitoned.columns.values))
 # rest_of_tweets= tweets_unpartitoned[index:]
 
 # fig1 = plt.figure()
 # plt.hold(True)
 # x_values=[0,0,1,2,3,4,5,6]
-x_values=[0,0,1,2,3,4,5,6,7,8,9,10,11,12]
+# x_values=[0,0,1,2,3,4,5,6,7,8,9,10,11,12]
 # y_values=  [len(unrecovered_annotated_mention_list_outer_ritter),len(unrecovered_annotated_mention_list_outer_multipass[0]),len(unrecovered_annotated_mention_list_outer_multipass[1]),len(unrecovered_annotated_mention_list_outer_multipass[2]),len(unrecovered_annotated_mention_list_outer_multipass[3]),
 #     len(unrecovered_annotated_mention_list_outer_multipass[4]),len(unrecovered_annotated_mention_list_outer_multipass[5]),len(unrecovered_annotated_mention_list_outer_multipass[6])]
 

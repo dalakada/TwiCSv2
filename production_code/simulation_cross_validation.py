@@ -56,11 +56,11 @@ total_time=0
 #tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
 
-# # /Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv #---- for my Mac
-# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
+# /Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv #---- for my Mac
+tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
 
-# /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+# # /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 print(len(tweets_unpartitoned))
 print(tweets_unpartitoned.columns.tolist())
 # print(tweets_unpartitoned.head())
@@ -261,8 +261,9 @@ for elem in range(len(reintroduction_threshold_array)):
     print('------------------------------------------------------------')
 
 
-output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_runs.csv", sep=',', encoding='utf-8',index=False)
+# output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_runs.csv", sep=',', encoding='utf-8',index=False)
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_20.csv", sep=',', encoding='utf-8',index=False)
+output_df.to_csv("/Users/satadisha/Documents/GitHub/output_1M_reintroduction_all_runs.csv", sep=',', encoding='utf-8',index=False) #for my Mac
 
 
 #---------------------------- for the single pass to multipass scale experiment

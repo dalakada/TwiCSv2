@@ -140,6 +140,9 @@ class EntityResolver ():
 
         if(self.counter==(max_batch_value+1)):
 
+            del self.my_classifier
+            gc.collect()
+
             for elem in range(len(self.reintroduction_threshold_array)):
 
                 self.just_converted_tweets_arr[elem].drop('2nd Iteration Candidates', axis=1, inplace=True)
@@ -482,10 +485,10 @@ class EntityResolver ():
         print(z_score_threshold)
         #candidate_featureBase_DF.to_csv("cf_new_with_z_score.csv", sep=',', encoding='utf-8')
 
-        #multi-word infrequent candidates ---> to be used for recall correction
-        multiword_infrequent_candidates_list=candidate_featureBase_DF[(candidate_featureBase_DF['Z_ScoreUnweighted'] < z_score_threshold) & (candidate_featureBase_DF.length>1)].candidate.tolist()
         #all infrequent candidates
         all_infrequent= candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] < z_score_threshold]
+        #multi-word infrequent candidates ---> to be used for recall correction
+        multiword_infrequent_candidates_list=all_infrequent[(all_infrequent.length>1)].candidate.tolist()
         candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] >= z_score_threshold]
 
 
