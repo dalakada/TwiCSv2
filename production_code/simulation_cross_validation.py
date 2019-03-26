@@ -56,11 +56,11 @@ total_time=0
 #tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
 
-# /Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv #---- for my Mac
-tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
+# # /Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv #---- for my Mac
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
 
-# # /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+# /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
+tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 print(len(tweets_unpartitoned))
 print(tweets_unpartitoned.columns.tolist())
 # print(tweets_unpartitoned.head())
@@ -147,7 +147,7 @@ count=0
 
 # reintroduction_threshold_array=[20,40,60,80,100]
 # reintroduction_threshold_array=[20]
-reintroduction_threshold_array=[80]
+reintroduction_threshold_array=[20]
 
 # reintroduction_batch_threshold=range((val+1))
 execution_time_list=[]
@@ -237,33 +237,35 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     tweets_been_processed_list.append(tweets_been_processed_list_inner)
     execution_time_list.append(execution_time_list_inner)
 
-reintroduction_threshold_array=[20,40,60,80,100]
-# reintroduction_threshold_array=[20]
 
-for elem in range(len(reintroduction_threshold_array)):
+#not required when only logging processing time
+# reintroduction_threshold_array=[20,40,60,80,100]
+# # reintroduction_threshold_array=[20]
 
-    reintroduction_threshold=reintroduction_threshold_array[elem]
-    complete_tweet_dataframe_grouped_df_sorted=complete_tweet_dataframe_grouped_df_sorted_arr[elem]
+# for elem in range(len(reintroduction_threshold_array)):
 
-    output_df['output_col_'+str(reintroduction_threshold)] = ''
-    output_df['output_col_'+str(reintroduction_threshold)] = output_df['output_col_'+str(reintroduction_threshold)].apply(list)
+#     reintroduction_threshold=reintroduction_threshold_array[elem]
+#     complete_tweet_dataframe_grouped_df_sorted=complete_tweet_dataframe_grouped_df_sorted_arr[elem]
 
-    # print(output_df['output_col_'+str(reintroduction_threshold)])
-    # print(len(output_df.loc[~output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['TweetText']]))
-    # for elem in complete_tweet_dataframe_grouped_df_sorted['tweetID'].astype(int).unique().tolist():
-    #     output_df[output_df.index==elem]['output_col_'+str(reintroduction_threshold)]=complete_tweet_dataframe_grouped_df_sorted[complete_tweet_dataframe_grouped_df_sorted['tweetID']==elem]['only_good_candidates']
-    output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['output_col_'+str(reintroduction_threshold)]] = complete_tweet_dataframe_grouped_df_sorted.loc[complete_tweet_dataframe_grouped_df_sorted.tweetID.isin(output_df.index),['only_good_candidates']].values
-    # print(output_df['output_col_'+str(reintroduction_threshold)])
+#     output_df['output_col_'+str(reintroduction_threshold)] = ''
+#     output_df['output_col_'+str(reintroduction_threshold)] = output_df['output_col_'+str(reintroduction_threshold)].apply(list)
 
-    print("final column names: ", list(output_df.columns.values))
+#     # print(output_df['output_col_'+str(reintroduction_threshold)])
+#     # print(len(output_df.loc[~output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['TweetText']]))
+#     # for elem in complete_tweet_dataframe_grouped_df_sorted['tweetID'].astype(int).unique().tolist():
+#     #     output_df[output_df.index==elem]['output_col_'+str(reintroduction_threshold)]=complete_tweet_dataframe_grouped_df_sorted[complete_tweet_dataframe_grouped_df_sorted['tweetID']==elem]['only_good_candidates']
+#     output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['output_col_'+str(reintroduction_threshold)]] = complete_tweet_dataframe_grouped_df_sorted.loc[complete_tweet_dataframe_grouped_df_sorted.tweetID.isin(output_df.index),['only_good_candidates']].values
+#     # print(output_df['output_col_'+str(reintroduction_threshold)])
 
-    print('end of run with reintroduction_threshold value: ',reintroduction_threshold)
-    print('------------------------------------------------------------')
+#     print("final column names: ", list(output_df.columns.values))
+
+#     print('end of run with reintroduction_threshold value: ',reintroduction_threshold)
+#     print('------------------------------------------------------------')
 
 
-# output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_runs.csv", sep=',', encoding='utf-8',index=False)
-# output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_20.csv", sep=',', encoding='utf-8',index=False)
-output_df.to_csv("/Users/satadisha/Documents/GitHub/output_1M_reintroduction_all_runs.csv", sep=',', encoding='utf-8',index=False) #for my Mac
+# # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_runs.csv", sep=',', encoding='utf-8',index=False)
+# # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_20.csv", sep=',', encoding='utf-8',index=False)
+# # output_df.to_csv("/Users/satadisha/Documents/GitHub/output_1M_reintroduction_all_runs.csv", sep=',', encoding='utf-8',index=False) #for my Mac
 
 
 #---------------------------- for the single pass to multipass scale experiment

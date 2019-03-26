@@ -483,12 +483,12 @@ our_recovered_mention=0
 
 tweets_unpartitoned=pd.read_csv("deduplicated_test_output_all_runs.csv",sep =',', keep_default_na=False)
 
-bigger_tweet_dataframe=pd.read_csv("/Users/satadisha/Downloads/output_1M_reintroduction_20.csv",sep =',', keep_default_na=False)
+bigger_tweet_dataframe=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_runs.csv",sep =',', keep_default_na=False)
 
 
-# lst=[20,40,60,80,100]
-lst=[20]
-
+lst=[20,40,60,80,100]
+# lst=[20]
+all_postitive_reintroduction_counter=0
 tp_reintroduction_counter_arr=[0 for i in range(len(lst))]
 fp_reintroduction_counter_arr=[0 for i in range(len(lst))]
 fn_reintroduction_counter_arr=[0 for i in range(len(lst))]
@@ -520,6 +520,13 @@ for index,row in tweets_unpartitoned.iterrows():
     else:
         break
 
+additional_candidates=['ivanka trump', 'president donald trump', 'jared kushner','bill clinton','president trump','anthony weiner','joe biden','anthony','democrat','john terry','jose','chris cornell','potus','morgan','nationalism','religion world tour','rust belt','trumps','spicer']
+for additional_candidate in additional_candidates:
+    CTrie.setitem_forAnnotation(additional_candidate.split())
+
+# output_df=tweets[['ID', 'HashTags', 'Tweet IDs', 'TweetText']]
+bigger_tweet_dataframe['annotation'] = ''
+bigger_tweet_dataframe['annotation'] = bigger_tweet_dataframe['annotation'].apply(list)
 
 for index,row in bigger_tweet_dataframe.iterrows():
     # annotated_candidates=str(row['mentions_other'])
@@ -559,12 +566,16 @@ for index,row in bigger_tweet_dataframe.iterrows():
             if(seq_candidate_list):
                 for candidate_tuple in seq_candidate_list:
                     candidateText=normalize(candidate_tuple[0])
-                    if(candidate_tuple[0]!='us'):
+                    # if(index=='2174'):
+                    #     print('===>',candidateText)
+                    if(candidate_tuple[0].lower()!='us'):
                         annotated_mention_list.append(candidateText)
 
-    # print('-----',index,tweetText)
+    print('-----',index,tweetText)
 
-    our_counter+=len(annotated_mention_list)
+    row['annotation']=annotated_mention_list
+
+    all_postitive_reintroduction_counter+=len(annotated_mention_list)
 
     annotated_mention_list_tallying_array= [annotated_mention_list.copy() for i in range(len(lst))]
 
@@ -629,7 +640,7 @@ for index,row in bigger_tweet_dataframe.iterrows():
                 break
 
           # multipass_output_list=list(filter(lambda element: element !='', multipass_output_list))
-        print(unrecovered_annotated_mention_list_reintroduction[elem])
+        # print(unrecovered_annotated_mention_list_reintroduction[elem])
         unrecovered_annotated_mention_list_outer_reintroduction[elem].extend(unrecovered_annotated_mention_list_reintroduction[elem])
         fn_reintroduction_counter_inner=len(unrecovered_annotated_mention_list_reintroduction[elem])
         fp_reintroduction_counter_inner=all_postitive_reintroduction_counter_inner- tp_reintroduction_counter_inner
@@ -637,13 +648,17 @@ for index,row in bigger_tweet_dataframe.iterrows():
         tp_reintroduction_counter_arr[elem]+= tp_reintroduction_counter_inner
         fp_reintroduction_counter_arr[elem]+=fp_reintroduction_counter_inner
         fn_reintroduction_counter_arr[elem]+=fn_reintroduction_counter_inner
+        
 
 multipass_precision_arr=[tp_reintroduction_counter_arr[index]/(tp_reintroduction_counter_arr[index]+fp_reintroduction_counter_arr[index]) for index in range(len(tp_reintroduction_counter_arr))]
 multipass_recall_arr=[tp_reintroduction_counter_arr[index]/(tp_reintroduction_counter_arr[index]+fn_reintroduction_counter_arr[index]) for index in range(len(tp_reintroduction_counter_arr))]
 
 
-for index in range(len(multipass_precision_arr)):
-    print(index,multipass_precision_arr[index],multipass_recall_arr[index])
+for index in range(len(multipass_recall_arr)):
+    print(tp_reintroduction_counter_arr[index],fn_reintroduction_counter_arr[index],all_postitive_reintroduction_counter)
+    print(index,multipass_recall_arr[index])
+
+bigger_tweet_dataframe.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_runs_with_annotation.csv", sep=',', encoding='utf-8',index=False)
 
 # #----------------just the plot part
 

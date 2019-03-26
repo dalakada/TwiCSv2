@@ -131,8 +131,8 @@ import matplotlib.colors as colors
 
 #EXPERIMENT 3: performance estimates for reintroduction thresholds: EMD F1, Tweet completion histograms
 
-fig1 = plt.figure()
-plt.hold(True)
+# fig1 = plt.figure()
+# plt.hold(True)
 
 
 reintroduction_threshold_arr=[20,40,60,80,100]
@@ -149,30 +149,62 @@ converted_tweets=  [[79464, 162522, 242679, 320906, 403604, 486497, 546751, 6206
 					[79464, 163533, 244492, 322903, 405891, 490866, 552189, 627040, 700506, 783944, 875470, 958433, 1047767, 1117341, 1186982, 1257698, 1334919, 1412657, 1485766, 1558828, 1611360]]
 
 # data to plot
-n_groups = 5
-incomplete_arr=[float(arr[-1]/tweets[-1]) for arr in incomplete_tweets]
-converted_arr=[float(arr[-1]/tweets[-1]) for arr in converted_tweets]
+n_groups = 6
+
+emd_recall_arr=[,0.77,0.81,0.835,0.86,0.87,0.87] #baseline and 100% should be same
+# incomplete_arr=[float(arr[-1]/tweets[-1]) for arr in incomplete_tweets]
+# complete_arr=[float(arr[-1]/tweets[-1]) for arr in converted_tweets]
+
+complete_arr=[,0.9, 0.92, 0.94, 0.946, 0.95, 0.95] #baseline and 100% should be same
+time_arr=[,2270.8641290664673,2340.172202348709,2375.272013902664,2420.948536157608,3047.7655758857727,4567.780866622925]
+
+
+print(complete_arr)
 # create plot
-fig, ax = plt.subplots()
+fig, ax1 = plt.subplots()
+
 index = np.arange(n_groups)
-bar_width = 0.35
+bar_width = 0.25
 opacity = 1.0
- 
-rects1 = plt.bar(index, means_frank, bar_width,
+
+rects1 = ax1.bar(index, emd_recall_arr, bar_width,
 alpha=opacity,
 color='b',
-label='incomplete percentage')
- 
-rects2 = plt.bar(index + bar_width, means_guido, bar_width,
+# ax=ax1,
+label='EMD recall')
+
+
+rects2 = ax1.bar(index + bar_width, complete_arr, bar_width,
 alpha=opacity,
 color='g',
+# ax=ax1,
 label='completion percentage')
+
+
+ax2 = ax1.twinx() 
+rects3 = ax2.bar(index + 2*bar_width, time_arr, bar_width,
+alpha=opacity,
+color='r',
+# ax=ax2,
+label='completion time (secs)')
  
-plt.xlabel('Reintroduction Threshold')
-plt.ylabel('Percentage')
+ax1.set_xlabel('Percent Reintroduction Threshold Value')
+ax1.set_ylabel('Effectiveness estimates')
+ax2.set_ylabel('Efficiency estimates')
 plt.title('Performance estimates for different reintroduction thresholds')
-plt.xticks(index + bar_width, ('20', '40', '60', '80', '100'))
-plt.legend()
+# ax1.set_xticks(index + 1.0*bar_width, ('20', '40', '60', '80', '100'))
+ax1.set_xticks(index+ 1.0*bar_width)
+ax1.set_xticklabels(['0','20', '40', '60', '80', '100', 'baseline'])
+
+
+lines, labels = ax1.get_legend_handles_labels()
+lines2, labels2 = ax2.get_legend_handles_labels()
+
+
+lgd=ax1.legend(lines + lines2, labels + labels2, bbox_to_anchor=(0.5,1.0), ncol=3, loc=9, prop={'size': 8}, borderaxespad=0.)
+
+plt.title('Change in EMD performance with different Reintroduction Thresholds')
+plt.savefig('performance-reintroduction-threshold.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
  
-plt.tight_layout()
+# plt.tight_layout()
 plt.show()

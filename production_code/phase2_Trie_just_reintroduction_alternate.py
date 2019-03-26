@@ -30,7 +30,7 @@ from sklearn.metrics import silhouette_samples, silhouette_score
 import matplotlib.pyplot as plt
 
 cachedStopWords = stopwords.words("english")
-tempList=["i","and","or","other","another","across","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always","although"]
+tempList=["i","and","or","other","another","across","unlike","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always","although"]
 for item in tempList:
     if item not in cachedStopWords:
         cachedStopWords.append(item)
@@ -157,23 +157,17 @@ class EntityResolver ():
 
                 print('final tally: ', (len(self.just_converted_tweets_arr[elem])+len(self.incomplete_tweets_arr[elem])), len(complete_tweet_dataframe))
 
+                # # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_"+"str(self.reintroduction_threshold_array[elem])"+".csv", sep=',', encoding='utf-8',index=False)
+                # # output_df.to_csv("/Users/satadisha/Documents/GitHub/output_1M_reintroduction_"+"str(self.reintroduction_threshold_array[elem])"+".csv", sep=',', encoding='utf-8',index=False) #for my Mac
 
 
-                # print(sorted(complete_tweet_dataframe['tweetID'].astype(int).unique()))
-                # lst=list(range(38911))
-                # for elem in lst:
-                #     if(elem not in complete_tweet_dataframe['tweetID'].astype(int).unique().tolist()):
-                #         print(elem)
-                # print(list(filter(lambda elem: elem not in complete_tweet_dataframe['tweetID'].unique(), lst)))
-
-                #to groupby tweetID and get one tuple per tweetID
-                complete_tweet_dataframe_grouped_df= (complete_tweet_dataframe.groupby('tweetID', as_index=False).aggregate(lambda x: x.tolist()))
-                complete_tweet_dataframe_grouped_df['tweetID']=complete_tweet_dataframe_grouped_df['tweetID'].astype(int)
-                self.complete_tweet_dataframe_grouped_df_sorted_arr[elem]=(complete_tweet_dataframe_grouped_df.sort_values(by='tweetID', ascending=True)).reset_index(drop=True)
-
-                # print(self.complete_tweet_dataframe_grouped_df_sorted.head(5))
-                print(len(self.complete_tweet_dataframe_grouped_df_sorted_arr[elem]))
-                print(list(self.complete_tweet_dataframe_grouped_df_sorted_arr[elem].columns.values))
+                # #to groupby tweetID and get one tuple per tweetID
+                # complete_tweet_dataframe_grouped_df= (complete_tweet_dataframe.groupby('tweetID', as_index=False).aggregate(lambda x: x.tolist()))
+                # complete_tweet_dataframe_grouped_df['tweetID']=complete_tweet_dataframe_grouped_df['tweetID'].astype(int)
+                # self.complete_tweet_dataframe_grouped_df_sorted_arr[elem]=(complete_tweet_dataframe_grouped_df.sort_values(by='tweetID', ascending=True)).reset_index(drop=True)
+                # # print(self.complete_tweet_dataframe_grouped_df_sorted.head(5))
+                # print(len(self.complete_tweet_dataframe_grouped_df_sorted_arr[elem]))
+                # print(list(self.complete_tweet_dataframe_grouped_df_sorted_arr[elem].columns.values))
 
 
         #self.aggregator_incomplete_tweets.to_csv("all_incompletes.csv", sep=',', encoding='utf-8')
@@ -197,8 +191,13 @@ class EntityResolver ():
         # self.upper_reintroduction_limit=100 + self.step_size
 
         # for tweeet completion and EMD level estimates, no iteration over reintroduction limit and step size needed
-        self.reintroduction_threshold_array=[20,40,60,80,100]
+        # self.reintroduction_threshold_array=[0,20,40,60,80,100,110]
+        self.reintroduction_threshold_array=[0]
         # self.reintroduction_threshold_array=[20]
+        # self.reintroduction_threshold_array=[40]
+        # self.reintroduction_threshold_array=[60]
+        # self.reintroduction_threshold_array=[80]
+        # self.reintroduction_threshold_array=[100]
 
 
         self.step_size=20
@@ -208,10 +207,10 @@ class EntityResolver ():
         self.tweet_completion_dict_converted={}
 
 
-        self.complete_tweet_dataframe_grouped_df_sorted_arr= [pd.DataFrame([], columns=['tweetID', 'TweetSentence', 'ambiguous_candidates', 'annotation', 'candidates_with_label', 'completeness', 'current_minus_entry', 'entry_batch', 'hashtags', 'index', 'only_good_candidates', 'output_mentions', 'phase1Candidates', 'sentID', 'user']) for i in range(len(self.reintroduction_threshold_array))]
+        self.complete_tweet_dataframe_grouped_df_sorted_arr= [pd.DataFrame([], columns=['tweetID', 'TweetSentence', 'ambiguous_candidates', 'annotation', 'candidates_with_label', 'completeness', 'current_minus_entry', 'entry_batch', 'hashtags', 'index', 'only_good_candidates', 'output_mentions', 'phase1Candidates', 'sentID']) for i in range(len(self.reintroduction_threshold_array))]
 
         #entity non-entity top k estimates
-        # self.arr1=[0,0,0,0,0] #cumulative estimates till batch single sketch
+        self.arr1=[0,0,0,0,0] #cumulative estimates till batch single sketch
         self.arr1=[0 for i in range(20,self.upper_reintroduction_limit,self.step_size)]
 
         # self.arr2=[0,0,0,0,0] #cumulative estimates till batch multi sketch cosine
@@ -999,7 +998,7 @@ class EntityResolver ():
 
         return ret_value
 
-    def get_output_aligned(self, df_holder_extracted, phase2_candidates_holder_extracted, reintroduced_tweets_arr_elem):
+    def get_output_aligned(self,reintroduction_threshold, df_holder_extracted, phase2_candidates_holder_extracted, reintroduced_tweets_arr_elem):
         df_holder_extracted_elem=[]
         phase2_candidates_holder_extracted_elem=[]
         return_tuple=[[],[]]
@@ -1009,14 +1008,14 @@ class EntityResolver ():
         # return_candidate_list=[]
 
 
-
-        id_tuple_list= [tuple(r) for r in reintroduced_tweets_arr_elem[['tweetID', 'sentID']].values]
-        df_extracted=pd.DataFrame(df_holder_extracted)
-        df_extracted_to_return=df_extracted[df_extracted[['tweetID','sentID']].apply(tuple, 1).isin(id_tuple_list)]
-        df_holder_extracted_elem=df_extracted_to_return.to_dict('records')
-        phase2_candidates_holder_extracted_elem=df_extracted_to_return['2nd Iteration Candidates'].tolist()
-        del df_extracted_to_return
-        gc.collect()
+        if(reintroduction_threshold!=0):
+            id_tuple_list= [tuple(r) for r in reintroduced_tweets_arr_elem[['tweetID', 'sentID']].values]
+            df_extracted=pd.DataFrame(df_holder_extracted)
+            df_extracted_to_return=df_extracted[df_extracted[['tweetID','sentID']].apply(tuple, 1).isin(id_tuple_list)]
+            df_holder_extracted_elem=df_extracted_to_return.to_dict('records')
+            phase2_candidates_holder_extracted_elem=df_extracted_to_return['2nd Iteration Candidates'].tolist()
+            del df_extracted_to_return
+            gc.collect()
 
 
         #2nd version
@@ -1286,6 +1285,7 @@ class EntityResolver ():
             rank_dict_reintroduction_candidates={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in self.ambiguous_candidates_in_batch}
             rank_dict_ordered_reintroduction_candidates=OrderedDict(sorted(rank_dict_reintroduction_candidates.items(), key=lambda x: x[1]))
             rank_dict_ordered_list_reintroduction_candidates=list(rank_dict_ordered_reintroduction_candidates.keys())
+            ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
 
             reintroduced_tweets_arr=[]
 
@@ -1294,16 +1294,42 @@ class EntityResolver ():
             for elem in range(len(self.reintroduction_threshold_array)):
                 reintroduction_threshold=self.reintroduction_threshold_array[elem]
                 print('reintroduction threshold: ',reintroduction_threshold)
-                real_cutoff= int((reintroduction_threshold/100)*(len(rank_dict_ordered_list_reintroduction_candidates)))
-                rank_dict_ordered_list_reintroduction_candidates_cutoff=rank_dict_ordered_list_reintroduction_candidates[0:real_cutoff]
-                print(len(rank_dict_ordered_list_reintroduction_candidates_cutoff))
-                
+                if(reintroduction_threshold!=110):
+                    real_cutoff= int((reintroduction_threshold/100)*(len(rank_dict_ordered_list_reintroduction_candidates)))
+                    rank_dict_ordered_list_reintroduction_candidates_cutoff=rank_dict_ordered_list_reintroduction_candidates[0:real_cutoff]
+                    print(len(rank_dict_ordered_list_reintroduction_candidates_cutoff))
+                    reintroduced_tweets_arr_elem=self.get_reintroduced_tweets_alternate(candidates_to_reintroduce,rank_dict_ordered_list_reintroduction_candidates_cutoff,elem)
+                else:              
+                    #for dynamic batch-specific
+                    dynamic_reitnroduction_candidate_list=[]
+                    for key, item in ambiguous_candidate_records_before_classification_grouped_df:
+                        # predicted_k_value=-1
+                    # batch_specific_rank_dict={}
+                        ambiguous_candidate_grouped_df= ambiguous_candidate_records_before_classification_grouped_df.get_group(key) #no of candidates remaining ambiguous from batch i
+                        second_element=0
+                        if key in ambiguous_candidate_inBatch_grouped_df.groups.keys():
+                            ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
 
-                reintroduced_tweets_arr_elem=self.get_reintroduced_tweets_alternate(candidates_to_reintroduce,rank_dict_ordered_list_reintroduction_candidates_cutoff,elem)
+                            rank_dict_ordered_list_reintroduction_candidates_key=[candidate for candidate in rank_dict_ordered_list_reintroduction_candidates if candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()]
+                            second_element=len(ambiguous_candidate_inBatch_grouped_df_key)
+                        
+                            if(key in self.batch_specific_reintroduction_tuple_dict.keys()):
+                                tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
+                                if((self.counter-key)>9):
+                                    tuple_list=self.batch_specific_reintroduction_tuple_dict[key]
+                                    predicted_k_value_reintroduction= self.fit_and_predict(key,tuple_list[0:10],tuple_to_append)
+                                    dynamic_reitnroduction_candidate_list.extend(rank_dict_ordered_list_reintroduction_candidates_key[0:predicted_k_value_reintroduction])
+                                    tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),predicted_k_value_reintroduction)
+                                # else:
+                                self.batch_specific_reintroduction_tuple_dict[key].append(tuple_to_append)
+                            else:
+                                self.batch_specific_reintroduction_tuple_dict[key]=[(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)]
+                                dynamic_reitnroduction_candidate_list.extend(rank_dict_ordered_list_reintroduction_candidates_key)
+                    print('dynamic_reitnroduction_candidate_list: ',len(dynamic_reitnroduction_candidate_list))
+                    reintroduced_tweets_arr_elem=self.get_reintroduced_tweets_alternate(candidates_to_reintroduce,dynamic_reitnroduction_candidate_list,elem)
                 reintroduced_tweets_arr.append(reintroduced_tweets_arr_elem)
 
-            #sending the largest reintroduced tweet group to avoid duplicate counting of newly discovered candidates in old tweets
-            
+            #sending the largest reintroduced tweet group to avoid duplicate counting of newly discovered candidates in old tweets            
             reintroduced_tweets_union=self.get_reintroduced_union(reintroduced_tweets_arr)
             candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(reintroduced_tweets_union,CTrie,phase2stopwordList,1)
 
@@ -1315,7 +1341,7 @@ class EntityResolver ():
                 # df_holder_extracted_elem,phase2_candidates_holder_extracted_elem,tuple_check_list,candidate_check_list=self.get_output_aligned(df_holder_extracted,phase2_candidates_holder_extracted,reintroduced_tweets_arr_elem)
                 # tuple_check_list_outer.extend(tuple_check_list)
                 # candidate_check_list_outer.extend(candidate_check_list)
-                df_holder_extracted_elem,phase2_candidates_holder_extracted_elem=self.get_output_aligned(df_holder_extracted,phase2_candidates_holder_extracted,reintroduced_tweets_arr_elem)
+                df_holder_extracted_elem,phase2_candidates_holder_extracted_elem=self.get_output_aligned(self.reintroduction_threshold_array[elem],df_holder_extracted,phase2_candidates_holder_extracted,reintroduced_tweets_arr_elem)
 
                 phase2_candidates_holder_outer[elem].extend(phase2_candidates_holder_extracted_elem)
                 df_holder_outer[elem].extend(df_holder_extracted_elem)
@@ -1392,10 +1418,14 @@ class EntityResolver ():
         #     if(flag):
         #         self.ambiguous_candidates_transition_dict[self.counter].append(item)
 
+        entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"]
+        non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"]
+        ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"]
 
-        self.good_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="g"].candidate.tolist()
-        self.ambiguous_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"].candidate.tolist()
-        self.bad_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="b"].candidate.tolist()
+
+        self.good_candidates=entity_candidate_records.candidate.tolist()
+        self.ambiguous_candidates=ambiguous_candidate_records.candidate.tolist()
+        self.bad_candidates=non_entity_candidate_records.candidate.tolist()
         self.infrequent_candidates=all_infrequent.candidate.tolist()
 
         
@@ -1403,10 +1433,7 @@ class EntityResolver ():
         ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
 
                 
-        entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.good_candidates)]
-        non_entity_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.bad_candidates)]
-        ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)]
-        # infrequent_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.infrequent_candidates)]
+       # infrequent_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(self.infrequent_candidates)]
         infrequent_candidate_records=all_infrequent
         converted_candidate_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(ambiguous_turned_good+ambiguous_turned_bad)]
 
@@ -1682,7 +1709,7 @@ class EntityResolver ():
 
 
         # #commenting this out as well for tweet completion estimates
-        # if(self.counter>0):
+        if(self.counter>0):
         #     ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
         #     ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
         #     ambiguous_remaining_ambiguous=list(filter(lambda element: element in self.ambiguous_candidates, self.ambiguous_candidates_in_batch))
@@ -1691,15 +1718,15 @@ class EntityResolver ():
             
         #     self.baseline_effectiveness+=len(converted_candidate_records)
 
-        #     # number of candidates from batch i going into the batch
-        #     # ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
-        #     # for key, item in ambiguous_candidate_inBatch_grouped_df:
-        #     #     new_mention_count=0
-        #     #     ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key)
-        #     #     print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key))
-        #     #     for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist():
-        #     #         new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
-        #     #     print (key,len(ambiguous_candidate_inBatch_grouped_df_key),new_mention_count)
+            # number of candidates from batch i going into the batch
+            # ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
+            # for key, item in ambiguous_candidate_inBatch_grouped_df:
+            #     new_mention_count=0
+            #     ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key)
+            #     print(self.counter,key,len(ambiguous_candidate_inBatch_grouped_df_key))
+            #     for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist():
+            #         new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
+            #     print (key,len(ambiguous_candidate_inBatch_grouped_df_key),new_mention_count)
         #     #     print(ambiguous_candidate_inBatch_grouped_df_key)
 
         #     # print(converted_candidate_records.groupby('batch').size())
@@ -1709,29 +1736,29 @@ class EntityResolver ():
             
         #     # arr5=[]
 
-        #     #checking percentage of candidates from previous batch i in the new tweets of the current batch
-        #     ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
-        #     # batch_specific_rank_dict={}
-        #     # internal_batch_level_dict={}
-        #     for key, item in ambiguous_candidate_records_before_classification_grouped_df:
-        #         # predicted_k_value=-1
+            #checking percentage of candidates from previous batch i in the new tweets of the current batch
+            # ambiguous_candidate_inBatch_grouped_df= ambiguous_candidate_inBatch_records.groupby('batch')
+            # batch_specific_rank_dict={}
+            # internal_batch_level_dict={}
+            # for key, item in ambiguous_candidate_records_before_classification_grouped_df:
+                # predicted_k_value=-1
                 
-        #         ambiguous_candidate_grouped_df= ambiguous_candidate_records_before_classification_grouped_df.get_group(key) #no of candidates remaining ambiguous from batch i
-        #         second_element=0
-        #         if key in ambiguous_candidate_inBatch_grouped_df.groups.keys():
-        #             ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
-        #             second_element=len(ambiguous_candidate_inBatch_grouped_df_key)
+                # ambiguous_candidate_grouped_df= ambiguous_candidate_records_before_classification_grouped_df.get_group(key) #no of candidates remaining ambiguous from batch i
+                # second_element=0
+                # if key in ambiguous_candidate_inBatch_grouped_df.groups.keys():
+                #     ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
+                #     second_element=len(ambiguous_candidate_inBatch_grouped_df_key)
                 
-        #             if(key in self.batch_specific_reintroduction_tuple_dict.keys()):
-        #                 tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
-        #                 if((self.counter-key)>9):
-        #                     tuple_list=self.batch_specific_reintroduction_tuple_dict[key]
-        #                     predicted_k_value_reintroduction= self.fit_and_predict(key,tuple_list[0:10],tuple_to_append)
-        #                     tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),predicted_k_value_reintroduction)
-        #                 # else:
-        #                 self.batch_specific_reintroduction_tuple_dict[key].append(tuple_to_append)
-        #             else:
-        #                 self.batch_specific_reintroduction_tuple_dict[key]=[(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)]
+                #     if(key in self.batch_specific_reintroduction_tuple_dict.keys()):
+                #         tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)
+                #         if((self.counter-key)<=9):
+                    #         tuple_list=self.batch_specific_reintroduction_tuple_dict[key]
+                    #         predicted_k_value_reintroduction= self.fit_and_predict(key,tuple_list[0:10],tuple_to_append)
+                    #         tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),predicted_k_value_reintroduction)
+                    #     # else:
+                    #     self.batch_specific_reintroduction_tuple_dict[key].append(tuple_to_append)
+                    # else:
+                            # self.batch_specific_reintroduction_tuple_dict[key]=[(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)]
 
         # #         if(key in self.batch_specific_eviction_tuple_dict.keys()):
         # #             tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),second_element,0)
@@ -1758,7 +1785,7 @@ class EntityResolver ():
         #     # rank_dict_reintroduction_candidates_cutoff_records_grouped_df= rank_dict_reintroduction_candidates_cutoff_records.groupby('batch')
 
 
-        #     converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
+            converted_candidates_grouped_df= converted_candidate_records.groupby('batch')
         #     # print('ambiguous candidate in batch: ', self.ambiguous_candidates_in_batch)
         #     # print('reintroduced candidates: ',rank_dict_ordered_list_reintroduction_candidates_cutoff)
         #     # print('converted candidates: ',converted_candidate_records.candidate.tolist())
@@ -1914,16 +1941,16 @@ class EntityResolver ():
 
 
 
-        #     for key, item in converted_candidates_grouped_df:
+            for key, item in converted_candidates_grouped_df:
 
         #         # print('=>batch: ',key)
         #         # new_mention_count=0
         #         batch_specific_k_value=-1
         #         # batch_specific_k_value_eviction=-1
 
-        #         ambiguous_candidate_records_before_classification_grouped_df_key = ambiguous_candidate_records_before_classification_grouped_df.get_group(key)
-        #         ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
-        #         converted_candidates_grouped_df_key= converted_candidates_grouped_df.get_group(key) #no of candidates from batch i converted in current batch
+                ambiguous_candidate_records_before_classification_grouped_df_key = ambiguous_candidate_records_before_classification_grouped_df.get_group(key)
+                ambiguous_candidate_inBatch_grouped_df_key= ambiguous_candidate_inBatch_grouped_df.get_group(key) #no of candidates from batch i in current batch
+                converted_candidates_grouped_df_key= converted_candidates_grouped_df.get_group(key) #no of candidates from batch i converted in current batch
 
         #         #commenting out to implement just reintroduction without eviction
         #         # if key in rank_dict_reintroduction_candidates_cutoff_records_grouped_df.groups.keys():
@@ -1939,11 +1966,11 @@ class EntityResolver ():
         #         # if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
         #         #     rank_dict_eviction_candidates_cutoff_records_grouped_df_key = rank_dict_eviction_candidates_cutoff_records_grouped_df.get_group(key)
 
-        #         value_list=list(self.batch_specific_reintroduction_tuple_dict[key][-1])
+                value_list=list(self.batch_specific_reintroduction_tuple_dict[key][-1])
         #         # value_list_eviction=list(self.batch_specific_eviction_tuple_dict[key][-1])
 
-        #         rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
-        #         rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
+                rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
+                rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
 
 
         #         #this is batch-specific ranking only to be used for batch-specific reintroduction
@@ -1951,7 +1978,7 @@ class EntityResolver ():
 
         #         top_k_reintroduction_value=0
 
-        #         if((self.counter-key)>9):
+                if((self.counter-key)<=9):
         #             batch_specific_k_value= value_list[3]
         #             # batch_specific_k_value_eviction= value_list_eviction[3]
         #             # print('batch_specific_k_value: ',batch_specific_k_value)
@@ -1959,21 +1986,21 @@ class EntityResolver ():
         #             # self.batch_specific_reintroduction_tuple_dict[key]=val_list
         #         # value_list=list(internal_batch_level_dict[key])
         #         else:
-        #             # rank_list=[ min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in converted_candidates_grouped_df_key.candidate.tolist()]
+                    # rank_list=[ min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in converted_candidates_grouped_df_key.candidate.tolist()]
 
-        #             # rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
-        #             # rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
-        #             ranked_list=[1 if candidate in converted_candidates_grouped_df_key.candidate.tolist() else 0 for candidate in rank_dict_ordered.keys()]
-        #             count=len(ranked_list)
-        #             # print("ranked list:", ranked_list, count)
-        #             while (ranked_list[count-1]!=1):
-        #                 count-=1
-        #             # value_list[3]=len(converted_candidates_grouped_df_key) 
-        #             ## alternative argument
-        #             value_list[3]= count
-        #             value_tuple=tuple(value_list)
-        #             # print('tuple being added for reintroduction: ',self.counter,key,len(converted_candidates_grouped_df_key),value_tuple)
-        #             self.batch_specific_reintroduction_tuple_dict[key][-1]=value_tuple
+                    # rank_dict={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidate_inBatch_grouped_df_key.candidate.tolist()}
+                    # rank_dict_ordered=OrderedDict(sorted(rank_dict.items(), key=lambda x: x[1]))
+                    ranked_list=[1 if candidate in converted_candidates_grouped_df_key.candidate.tolist() else 0 for candidate in rank_dict_ordered.keys()]
+                    count=len(ranked_list)
+                    # print("ranked list:", ranked_list, count)
+                    while (ranked_list[count-1]!=1):
+                        count-=1
+                    # value_list[3]=len(converted_candidates_grouped_df_key) 
+                    ## alternative argument
+                    value_list[3]= count
+                    value_tuple=tuple(value_list)
+                    # print('tuple being added for reintroduction: ',self.counter,key,len(converted_candidates_grouped_df_key),value_tuple)
+                    self.batch_specific_reintroduction_tuple_dict[key][-1]=value_tuple
 
 
         #             # rank_dict={candidate: max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in ambiguous_candidate_records_before_classification_grouped_df_key.candidate.tolist()}
@@ -3403,7 +3430,7 @@ class EntityResolver ():
             self.incomplete_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates']) for i in range(len(self.reintroduction_threshold_array))]
             
             self.not_reintroduced=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
-            self.not_reintroduced_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates']) for i in range(len(self.reintroduction_threshold_array))]
+            self.not_reintroduced_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates']) for i in range(len(self.reintroduction_threshold_array))]
             
             self.CandidateBase_dict= {}
             self.ambiguous_candidate_distanceDict_prev={}
@@ -3432,7 +3459,7 @@ class EntityResolver ():
 
             self.aggregator_incomplete_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
-            self.just_converted_tweets_arr=[pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])  for i in range(len(self.reintroduction_threshold_array))]
+            self.just_converted_tweets_arr=[pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])  for i in range(len(self.reintroduction_threshold_array))]
 
             #self.data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
             self.raw_tweets_for_others=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
