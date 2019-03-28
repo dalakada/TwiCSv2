@@ -486,7 +486,7 @@ tweets_unpartitoned=pd.read_csv("deduplicated_test_output_all_runs.csv",sep =','
 bigger_tweet_dataframe=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_runs.csv",sep =',', keep_default_na=False)
 
 
-lst=[20,40,60,80,100]
+lst=[0,20,40,60,80,100,110]
 # lst=[20]
 all_postitive_reintroduction_counter=0
 tp_reintroduction_counter_arr=[0 for i in range(len(lst))]
@@ -658,7 +658,7 @@ for index in range(len(multipass_recall_arr)):
     print(tp_reintroduction_counter_arr[index],fn_reintroduction_counter_arr[index],all_postitive_reintroduction_counter)
     print(index,multipass_recall_arr[index])
 
-bigger_tweet_dataframe.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_runs_with_annotation.csv", sep=',', encoding='utf-8',index=False)
+# bigger_tweet_dataframe.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_runs_with_annotation.csv", sep=',', encoding='utf-8',index=False)
 
 # #----------------just the plot part
 

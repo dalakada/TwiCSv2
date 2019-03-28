@@ -157,8 +157,8 @@ class EntityResolver ():
 
                 print('final tally: ', (len(self.just_converted_tweets_arr[elem])+len(self.incomplete_tweets_arr[elem])), len(complete_tweet_dataframe))
 
-                # # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_"+"str(self.reintroduction_threshold_array[elem])"+".csv", sep=',', encoding='utf-8',index=False)
-                # # output_df.to_csv("/Users/satadisha/Documents/GitHub/output_1M_reintroduction_"+"str(self.reintroduction_threshold_array[elem])"+".csv", sep=',', encoding='utf-8',index=False) #for my Mac
+                # # complete_tweet_dataframe.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_"+str(self.reintroduction_threshold_array[elem])+".csv", sep=',', encoding='utf-8',index=False)
+                # # complete_tweet_dataframe.to_csv("/Users/satadisha/Documents/GitHub/output_1M_reintroduction_"+str(self.reintroduction_threshold_array[elem])+".csv", sep=',', encoding='utf-8',index=False) #for my Mac
 
 
                 # #to groupby tweetID and get one tuple per tweetID
@@ -192,7 +192,7 @@ class EntityResolver ():
 
         # for tweeet completion and EMD level estimates, no iteration over reintroduction limit and step size needed
         # self.reintroduction_threshold_array=[0,20,40,60,80,100,110]
-        self.reintroduction_threshold_array=[0]
+        # self.reintroduction_threshold_array=[0]
         # self.reintroduction_threshold_array=[20]
         # self.reintroduction_threshold_array=[40]
         # self.reintroduction_threshold_array=[60]
@@ -1320,7 +1320,8 @@ class EntityResolver ():
                                     predicted_k_value_reintroduction= self.fit_and_predict(key,tuple_list[0:10],tuple_to_append)
                                     dynamic_reitnroduction_candidate_list.extend(rank_dict_ordered_list_reintroduction_candidates_key[0:predicted_k_value_reintroduction])
                                     tuple_to_append=(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),predicted_k_value_reintroduction)
-                                # else:
+                                else:
+                                    dynamic_reitnroduction_candidate_list.extend(rank_dict_ordered_list_reintroduction_candidates_key)
                                 self.batch_specific_reintroduction_tuple_dict[key].append(tuple_to_append)
                             else:
                                 self.batch_specific_reintroduction_tuple_dict[key]=[(self.counter,len(ambiguous_candidate_grouped_df),len(ambiguous_candidate_inBatch_grouped_df_key),0)]

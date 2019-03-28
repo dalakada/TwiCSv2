@@ -139,6 +139,7 @@ class EntityResolver ():
         # self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
         # self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
         #return self.entity_level_arr, self.mention_level_arr
+        return candidate_featureBase_DF
 
 
 
@@ -581,25 +582,25 @@ class EntityResolver ():
         # cosine_distance_dict_sorted_final= { key:value for key, value in cosine_distance_dict_sorted.items() if value > reintroduction_threshold }
         return cosine_distance_dict_sorted
 
-    def get_combined_score(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch,ambiguous_entity_sketch,reintroduction_threshold):
-        combined_score_dict={}
-        for index, row in ambiguous_candidate_records.iterrows():
-          candidate_synvec=[(row['cap']/row['cumulative']),
-                              (row['substring-cap']/row['cumulative']),
-                              (row['s-o-sCap']/row['cumulative']),
-                              (row['all-cap']/row['cumulative']),
-                              (row['non-cap']/row['cumulative']),
-                              (row['non-discriminative']/row['cumulative'])]
-          cosine_distance_ent=spatial.distance.cosine(candidate_synvec, entity_sketch)
-          cosine_distance_non_ent=spatial.distance.cosine(candidate_synvec, non_entity_sketch)
-          candidate_distance_array=[cosine_distance_ent,cosine_distance_non_ent]
-          cosine_distance_amb=spatial.distance.cosine(candidate_synvec, ambiguous_entity_sketch)
-          #cosine_distance_array.append(candidate_distance_array)
-          combined_score_dict[row['candidate']]=min(candidate_distance_array)/cosine_distance_amb
+    # def get_combined_score(self, ambiguous_candidate_records,entity_sketch,non_entity_sketch,ambiguous_entity_sketch,reintroduction_threshold):
+    #     combined_score_dict={}
+    #     for index, row in ambiguous_candidate_records.iterrows():
+    #       candidate_synvec=[(row['cap']/row['cumulative']),
+    #                           (row['substring-cap']/row['cumulative']),
+    #                           (row['s-o-sCap']/row['cumulative']),
+    #                           (row['all-cap']/row['cumulative']),
+    #                           (row['non-cap']/row['cumulative']),
+    #                           (row['non-discriminative']/row['cumulative'])]
+    #       cosine_distance_ent=spatial.distance.cosine(candidate_synvec, entity_sketch)
+    #       cosine_distance_non_ent=spatial.distance.cosine(candidate_synvec, non_entity_sketch)
+    #       candidate_distance_array=[cosine_distance_ent,cosine_distance_non_ent]
+    #       cosine_distance_amb=spatial.distance.cosine(candidate_synvec, ambiguous_entity_sketch)
+    #       #cosine_distance_array.append(candidate_distance_array)
+    #       combined_score_dict[row['candidate']]=min(candidate_distance_array)/cosine_distance_amb
 
-        combined_score_dict_sorted= OrderedDict(sorted(combined_score_dict.items(), key=lambda x: x[1]))
-        combined_score_sorted_final= { key:value for key, value in combined_score_dict_sorted.items() if value < reintroduction_threshold }
-        return combined_score_sorted_final
+    #     combined_score_dict_sorted= OrderedDict(sorted(combined_score_dict.items(), key=lambda x: x[1]))
+    #     combined_score_sorted_final= { key:value for key, value in combined_score_dict_sorted.items() if value < reintroduction_threshold }
+    #     return combined_score_sorted_final
 
 
     #MULTIPLE SKETCH CLUSTERING--- COSINE
@@ -1053,7 +1054,7 @@ class EntityResolver ():
             # for candidate in cosine_distance_dict_wAmb.keys():
             #     print(candidate,cosine_distance_dict_wAmb[candidate])
 
-            rank_dict_eviction_candidates={candidate: max(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in list(ranking_score_dict_eviction.keys())}
+            rank_dict_eviction_candidates={candidate: min(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in list(ranking_score_dict_eviction.keys())}
             rank_dict_ordered_eviction_candidates=OrderedDict(sorted(rank_dict_eviction_candidates.items(), key=lambda x: x[1]))
             rank_dict_ordered_list_eviction_candidates=list(rank_dict_ordered_eviction_candidates.keys())
             real_eviction_cutoff= int(20/100*(len(ambiguous_candidate_records_before_classification)))
@@ -1082,7 +1083,8 @@ class EntityResolver ():
             rank_dict_reintroduction_candidates_post_eviction={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in ambiguous_candidates_in_batch_post_eviction}
             rank_dict_ordered_reintroduction_candidates_post_eviction=OrderedDict(sorted(rank_dict_reintroduction_candidates_post_eviction.items(), key=lambda x: x[1]))
             rank_dict_ordered_list_reintroduction_candidates_post_eviction=list(rank_dict_ordered_reintroduction_candidates_post_eviction.keys())
-            real_cutoff= int(60/100*(len(ambiguous_candidates_in_batch_post_eviction)))
+            reintroduction_threshold=60
+            real_cutoff= int(reintroduction_threshold/100*(len(ambiguous_candidates_in_batch_post_eviction)))
             rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction=rank_dict_ordered_list_reintroduction_candidates_post_eviction[0:real_cutoff]
 
             #tweet candidates for Reintroduction
@@ -1343,81 +1345,81 @@ class EntityResolver ():
                         self.arr9_eviction[j]+=1
 
 
-            # print(self.arr1_eviction,self.arr2_eviction,self.arr3_eviction,self.arr4_eviction,self.arr5_eviction,self.arr6_eviction,self.arr7_eviction,self.arr8_eviction,self.arr9_eviction)
+            print(self.arr1_eviction,self.arr2_eviction,self.arr3_eviction,self.arr4_eviction,self.arr5_eviction,self.arr6_eviction,self.arr7_eviction,self.arr8_eviction,self.arr9_eviction)
 
-            # arr1_eviction=[elem/((self.arr1_eviction.index(elem)*5)+10) for elem in self.arr1_eviction]
-            # arr1_eviction=[elem/(denominator_array[self.arr1_eviction.index(elem)]) for elem in self.arr1_eviction]
-            # self.bottom_m_precision_arr_single_sketch.append(arr1_eviction)
-            # print('eviction ranking precision ent/non-ent single sketch: ', (self.bottom_m_precision_arr_single_sketch))
+            arr1_eviction=[elem/((self.arr1_eviction.index(elem)*5)+10) for elem in self.arr1_eviction]
+            arr1_eviction=[elem/(denominator_array[self.arr1_eviction.index(elem)]) for elem in self.arr1_eviction]
+            self.bottom_m_precision_arr_single_sketch.append(arr1_eviction)
+            print('eviction ranking precision ent/non-ent single sketch: ', (self.bottom_m_precision_arr_single_sketch))
             # arr1_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr1_eviction]
             # self.bottom_m_recall_arr_single_sketch.append(arr1_eviction)
             # print('eviction ranking recall ent/non-ent single sketch: ', (self.bottom_m_recall_arr_single_sketch))
 
-            # arr2_eviction=[elem/((self.arr2_eviction.index(elem)*5)+10) for elem in self.arr2_eviction]
-            # arr2_eviction=[elem/(denominator_array[self.arr2_eviction.index(elem)]) for elem in self.arr2_eviction]
-            # self.bottom_m_precision_arr_multi_sketch_cosine.append(arr2_eviction)
-            # print('eviction ranking precision ent/non-ent multi sketch cosine: ', (self.bottom_m_precision_arr_multi_sketch_cosine))
+            arr2_eviction=[elem/((self.arr2_eviction.index(elem)*5)+10) for elem in self.arr2_eviction]
+            arr2_eviction=[elem/(denominator_array[self.arr2_eviction.index(elem)]) for elem in self.arr2_eviction]
+            self.bottom_m_precision_arr_multi_sketch_cosine.append(arr2_eviction)
+            print('eviction ranking precision ent/non-ent multi sketch cosine: ', (self.bottom_m_precision_arr_multi_sketch_cosine))
             # arr2_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr2_eviction]
             # self.bottom_m_recall_arr_multi_sketch_cosine.append(arr2_eviction)
             # print('eviction ranking recall ent/non-ent multi sketch cosine: ', (self.bottom_m_recall_arr_multi_sketch_cosine))
 
-            # arr3_eviction=[elem/((self.arr3_eviction.index(elem)*5)+10) for elem in self.arr3_eviction]
-            # arr3_eviction=[elem/(denominator_array[self.arr3_eviction.index(elem)]) for elem in self.arr3_eviction]
-            # self.bottom_m_precision_arr_multi_sketch_euclidean.append(arr3_eviction)
-            # print('eviction ranking precision ent/non-ent multi sketch euclidean: ', (self.bottom_m_precision_arr_multi_sketch_euclidean))
+            arr3_eviction=[elem/((self.arr3_eviction.index(elem)*5)+10) for elem in self.arr3_eviction]
+            arr3_eviction=[elem/(denominator_array[self.arr3_eviction.index(elem)]) for elem in self.arr3_eviction]
+            self.bottom_m_precision_arr_multi_sketch_euclidean.append(arr3_eviction)
+            print('eviction ranking precision ent/non-ent multi sketch euclidean: ', (self.bottom_m_precision_arr_multi_sketch_euclidean))
             # arr3_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr3_eviction]
             # self.bottom_m_recall_arr_multi_sketch_euclidean.append(arr3_eviction)
             # print('eviction ranking recall ent/non-ent multi sketch euclidean: ', (self.bottom_m_recall_arr_multi_sketch_euclidean))
 
-            # arr4_eviction=[elem/((self.arr4_eviction.index(elem)*5)+10) for elem in self.arr4_eviction]
-            # arr4_eviction=[elem/(denominator_array[self.arr4_eviction.index(elem)]) for elem in self.arr4_eviction]
-            # self.bottom_m_precision_arr_multi_sketch_combined.append(arr4_eviction)
-            # print('eviction ranking precision ent/non-ent multi sketch combined: ', (self.bottom_m_precision_arr_multi_sketch_combined))
+            arr4_eviction=[elem/((self.arr4_eviction.index(elem)*5)+10) for elem in self.arr4_eviction]
+            arr4_eviction=[elem/(denominator_array[self.arr4_eviction.index(elem)]) for elem in self.arr4_eviction]
+            self.bottom_m_precision_arr_multi_sketch_combined.append(arr4_eviction)
+            print('eviction ranking precision ent/non-ent multi sketch combined: ', (self.bottom_m_precision_arr_multi_sketch_combined))
             # arr4_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr4_eviction]
             # self.bottom_m_recall_arr_multi_sketch_combined.append(arr4_eviction)
             # print('eviction ranking recall ent/non-ent multi sketch combined: ', (self.bottom_m_recall_arr_multi_sketch_combined))
 
-            # arr5_eviction=[elem/((self.arr5_eviction.index(elem)*5)+10) for elem in self.arr5_eviction]
-            # arr5_eviction=[elem/(denominator_array[self.arr5_eviction.index(elem)]) for elem in self.arr5_eviction]
-            # self.bottom_m_precision_arr_single_sketch_amb.append(arr5_eviction)
-            # print('eviction ranking precision ambiguous single sketch: ', (self.bottom_m_precision_arr_single_sketch_amb))
+            arr5_eviction=[elem/((self.arr5_eviction.index(elem)*5)+10) for elem in self.arr5_eviction]
+            arr5_eviction=[elem/(denominator_array[self.arr5_eviction.index(elem)]) for elem in self.arr5_eviction]
+            self.bottom_m_precision_arr_single_sketch_amb.append(arr5_eviction)
+            print('eviction ranking precision ambiguous single sketch: ', (self.bottom_m_precision_arr_single_sketch_amb))
             # arr5_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr5_eviction]
             # self.bottom_m_recall_arr_single_sketch_amb.append(arr5_eviction)
             # print('eviction ranking recall ambiguous single sketch: ', (self.bottom_m_recall_arr_single_sketch_amb))
 
-            # arr6_eviction=[elem/((self.arr6_eviction.index(elem)*5)+10) for elem in self.arr6_eviction]
-            # arr6_eviction=[elem/(denominator_array[self.arr6_eviction.index(elem)]) for elem in self.arr6_eviction]
-            # self.bottom_m_precision_arr_multi_sketch_cosine_amb.append(arr6_eviction)
-            # print('eviction ranking precision ambiguous multi sketch cosine: ', (self.bottom_m_precision_arr_multi_sketch_cosine_amb))
+            arr6_eviction=[elem/((self.arr6_eviction.index(elem)*5)+10) for elem in self.arr6_eviction]
+            arr6_eviction=[elem/(denominator_array[self.arr6_eviction.index(elem)]) for elem in self.arr6_eviction]
+            self.bottom_m_precision_arr_multi_sketch_cosine_amb.append(arr6_eviction)
+            print('eviction ranking precision ambiguous multi sketch cosine: ', (self.bottom_m_precision_arr_multi_sketch_cosine_amb))
             # arr6_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr6_eviction]
             # self.bottom_m_recall_arr_multi_sketch_cosine_amb.append(arr6_eviction)
             # print('eviction ranking recall ambiguous multi sketch cosine: ', (self.bottom_m_recall_arr_multi_sketch_cosine_amb))
 
-            # arr7_eviction=[elem/((self.arr7_eviction.index(elem)*5)+10) for elem in self.arr7_eviction]
-            # arr7_eviction=[elem/(denominator_array[self.arr7_eviction.index(elem)]) for elem in self.arr7_eviction]
-            # self.bottom_m_precision_arr_multi_sketch_euclidean_amb.append(arr7_eviction)
-            # print('eviction ranking precision ambiguous multi sketch euclidean: ', (self.bottom_m_precision_arr_multi_sketch_euclidean_amb))
+            arr7_eviction=[elem/((self.arr7_eviction.index(elem)*5)+10) for elem in self.arr7_eviction]
+            arr7_eviction=[elem/(denominator_array[self.arr7_eviction.index(elem)]) for elem in self.arr7_eviction]
+            self.bottom_m_precision_arr_multi_sketch_euclidean_amb.append(arr7_eviction)
+            print('eviction ranking precision ambiguous multi sketch euclidean: ', (self.bottom_m_precision_arr_multi_sketch_euclidean_amb))
             # arr7_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr7_eviction]
             # self.bottom_m_recall_arr_multi_sketch_euclidean_amb.append(arr7_eviction)
             # print('eviction ranking recall ambiguous multi sketch euclidean: ', (self.bottom_m_recall_arr_multi_sketch_euclidean_amb))
 
-            # arr8_eviction=[elem/((self.arr8_eviction.index(elem)*5)+10) for elem in self.arr8_eviction]
-            # arr8_eviction=[elem/(denominator_array[self.arr8_eviction.index(elem)]) for elem in self.arr8_eviction]
-            # self.bottom_m_precision_arr_multi_sketch_combined_amb.append(arr8_eviction)
-            # print('eviction ranking precision ambiguous multi sketch combined: ', (self.bottom_m_precision_arr_multi_sketch_combined_amb))
+            arr8_eviction=[elem/((self.arr8_eviction.index(elem)*5)+10) for elem in self.arr8_eviction]
+            arr8_eviction=[elem/(denominator_array[self.arr8_eviction.index(elem)]) for elem in self.arr8_eviction]
+            self.bottom_m_precision_arr_multi_sketch_combined_amb.append(arr8_eviction)
+            print('eviction ranking precision ambiguous multi sketch combined: ', (self.bottom_m_precision_arr_multi_sketch_combined_amb))
             # arr8_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr8_eviction]
             # self.bottom_m_recall_arr_multi_sketch_combined_amb.append(arr8_eviction)
             # print('eviction ranking recall ambiguous multi sketch combined: ', (self.bottom_m_recall_arr_multi_sketch_combined_amb))
 
-            # arr9_eviction=[elem/((self.arr9_eviction.index(elem)*5)+10) for elem in self.arr9_eviction]
-            # arr9_eviction=[elem/(denominator_array[self.arr9_eviction.index(elem)]) for elem in self.arr9_eviction]
-            # self.bottom_m_precision_arr_all_sketch_combined.append(arr9_eviction)
-            # print('eviction ranking precision all sketch combined: ', (self.bottom_m_precision_arr_all_sketch_combined))
+            arr9_eviction=[elem/((self.arr9_eviction.index(elem)*5)+10) for elem in self.arr9_eviction]
+            arr9_eviction=[elem/(denominator_array[self.arr9_eviction.index(elem)]) for elem in self.arr9_eviction]
+            self.bottom_m_precision_arr_all_sketch_combined.append(arr9_eviction)
+            print('eviction ranking precision all sketch combined: ', (self.bottom_m_precision_arr_all_sketch_combined))
             # arr9_eviction=[elem/len(all_ambiguous_remaining_ambiguous) for elem in self.arr9_eviction]
             # self.bottom_m_recall_arr_all_sketch_combined.append(arr9_eviction)
             # print('eviction ranking recall all sketch combined: ', (self.bottom_m_recall_arr_all_sketch_combined))
 
-
+        # commenting out from here to just get eviction estimates
         if(self.counter>0):
             ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
             ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
@@ -1722,136 +1724,136 @@ class EntityResolver ():
                     self.batch_specific_eviction_tuple_dict[key][-1]=value_tuple
 
 
-                for candidate in converted_candidates_grouped_df_key.candidate.tolist():
-                    # row=converted_candidates_grouped_df_key[converted_candidates_grouped_df_key['candidate']==candidate]
-                    row_index=converted_candidates_grouped_df_key.index[converted_candidates_grouped_df_key['candidate']==candidate].tolist()[0]
-                    row=converted_candidates_grouped_df_key.loc[[row_index]]
-                    candidate_synvec=[float(row['cap']),
-                              float(row['substring-cap']),
-                              float(row['s-o-sCap']),
-                              float(row['all-cap']),
-                              float(row['non-cap']),
-                              float(row['non-discriminative'])]
-                    label=str(row['status'])
-                    # print(candidate, candidates_to_reintroduce.index(candidate),candidate_synvec)
-                    # print(candidate, candidates_to_reintroduce.index(candidate), candidates_to_reintroduce_multi_sketch.index(candidate), candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
-                    # if(candidates_to_reintroduce_multi_sketch.index(candidate)>10):
-                    #     print(candidate_synvec,label)
-                    # min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
-                    # min_rank_wAmb=min(candidates_to_reintroduce_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate))
-                    # print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
+                # for candidate in converted_candidates_grouped_df_key.candidate.tolist():
+                #     # row=converted_candidates_grouped_df_key[converted_candidates_grouped_df_key['candidate']==candidate]
+                #     row_index=converted_candidates_grouped_df_key.index[converted_candidates_grouped_df_key['candidate']==candidate].tolist()[0]
+                #     row=converted_candidates_grouped_df_key.loc[[row_index]]
+                #     candidate_synvec=[float(row['cap']),
+                #               float(row['substring-cap']),
+                #               float(row['s-o-sCap']),
+                #               float(row['all-cap']),
+                #               float(row['non-cap']),
+                #               float(row['non-discriminative'])]
+                #     label=str(row['status'])
+                #     # print(candidate, candidates_to_reintroduce.index(candidate),candidate_synvec)
+                #     # print(candidate, candidates_to_reintroduce.index(candidate), candidates_to_reintroduce_multi_sketch.index(candidate), candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
+                #     # if(candidates_to_reintroduce_multi_sketch.index(candidate)>10):
+                #     #     print(candidate_synvec,label)
+                #     # min_rank=min(candidates_to_reintroduce.index(candidate),candidates_to_reintroduce_multi_sketch.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean.index(candidate))
+                #     # min_rank_wAmb=min(candidates_to_reintroduce_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_wAmb.index(candidate),candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate))
+                #     # print(candidate,min_rank,ranking_score_dict[candidate],min_rank_wAmb,ranking_score_dict_wAmb[candidate])
 
 
-                    if((self.counter-key)>9):
-                        # print('batch_specific_k_value: ',batch_specific_k_value,len(converted_candidates_grouped_df_key))
-                        if(rank_dict_ordered_list.index(candidate)<batch_specific_k_value):
-                            self.batch_specific_reintroduction_effectiveness+=1
-                    else:
-                        self.batch_specific_reintroduction_effectiveness+=1 #for first six batches since entry, reintroduce like baseline
+                #     if((self.counter-key)>9):
+                #         # print('batch_specific_k_value: ',batch_specific_k_value,len(converted_candidates_grouped_df_key))
+                #         if(rank_dict_ordered_list.index(candidate)<batch_specific_k_value):
+                #             self.batch_specific_reintroduction_effectiveness+=1
+                #     else:
+                #         self.batch_specific_reintroduction_effectiveness+=1 #for first six batches since entry, reintroduce like baseline
 
-                    # print('=>',min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]),self.batch_specific_reintroduction_effectiveness,self.baseline_effectiveness)
-                    # # absolute top-k
-                    # for k in range(10,35,5):
-                    for k in range(20,45,5):
+                #     # print('=>',min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]),self.batch_specific_reintroduction_effectiveness,self.baseline_effectiveness)
+                #     # # absolute top-k
+                #     # for k in range(10,35,5):
+                #     for k in range(20,45,5):
                         
-                        #for top-k percentage instead of absolute top k: 
-                        real_k= int(k/100*(len(self.ambiguous_candidates_in_batch)))
-                        # #for absolute top k:
-                        # real_k=k 
-                        # print(k,real_k)
-                    # for k in [15]:
+                #         #for top-k percentage instead of absolute top k: 
+                #         real_k= int(k/100*(len(self.ambiguous_candidates_in_batch)))
+                #         # #for absolute top k:
+                #         # real_k=k 
+                #         # print(k,real_k)
+                #     # for k in [15]:
 
-                        # i=int((k-10)/5)
-                        i=int((k-20)/5)
-                        # print(i)
-                        # i=0
+                #         # i=int((k-10)/5)
+                #         i=int((k-20)/5)
+                #         # print(i)
+                #         # i=0
 
-                        # entity/non-entity sketches
+                #         # entity/non-entity sketches
 
-                        # if(candidates_to_reintroduce.index(candidate)<k):
-                        if(candidates_to_reintroduce.index(candidate)<real_k):
-                            # self.ranking_effectiveness_single_sketch+=1
-                            self.arr1[i]+=1
-
-
-                        # if(candidates_to_reintroduce_multi_sketch.index(candidate)<k):
-                        if(candidates_to_reintroduce_multi_sketch.index(candidate)<real_k):
-                            # self.ranking_effectiveness_multi_sketch_cosine+=1
-                            self.arr2[i]+=1
+                #         # if(candidates_to_reintroduce.index(candidate)<k):
+                #         if(candidates_to_reintroduce.index(candidate)<real_k):
+                #             # self.ranking_effectiveness_single_sketch+=1
+                #             self.arr1[i]+=1
 
 
-                        # if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
-                        if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<real_k):
-                            # self.ranking_effectiveness_multi_sketch_euclidean+=1
-                            self.arr3[i]+=1
+                #         # if(candidates_to_reintroduce_multi_sketch.index(candidate)<k):
+                #         if(candidates_to_reintroduce_multi_sketch.index(candidate)<real_k):
+                #             # self.ranking_effectiveness_multi_sketch_cosine+=1
+                #             self.arr2[i]+=1
 
 
-                        #---------when just combining sketch-based ranks
-                        # if(ranking_score_dict[candidate]<k): 
-                        if(ranking_score_dict[candidate]<real_k):
-                            # self.ranking_effectiveness_combined+=1
-                            self.arr4[i]+=1
-
-                        #ambiguous sketches
-
-                        # if(candidates_to_reintroduce_wAmb.index(candidate)<k):
-                        if(candidates_to_reintroduce_wAmb.index(candidate)<real_k):
-                            self.arr5[i]+=1
-
-                        # if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<k):
-                        if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<real_k):
-                            self.arr6[i]+=1
-
-                        # if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<k):
-                        if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<real_k):
-                            self.arr7[i]+=1
-
-                        # if(ranking_score_dict_wAmb[candidate]<k):
-                        if(ranking_score_dict_wAmb[candidate]<real_k):
-                            self.arr8[i]+=1
+                #         # if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<k):
+                #         if(candidates_to_reintroduce_multi_sketch_euclidean.index(candidate)<real_k):
+                #             # self.ranking_effectiveness_multi_sketch_euclidean+=1
+                #             self.arr3[i]+=1
 
 
-                        #combining all possible sketches
+                #         #---------when just combining sketch-based ranks
+                #         # if(ranking_score_dict[candidate]<k): 
+                #         if(ranking_score_dict[candidate]<real_k):
+                #             # self.ranking_effectiveness_combined+=1
+                #             self.arr4[i]+=1
 
-                        # if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<k):
-                        if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<real_k):
-                            self.arr9[i]+=1
+                #         #ambiguous sketches
 
-                        # if((k==40)&(candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff)):
-                        #     top_k_reintroduction_value+=1
+                #         # if(candidates_to_reintroduce_wAmb.index(candidate)<k):
+                #         if(candidates_to_reintroduce_wAmb.index(candidate)<real_k):
+                #             self.arr5[i]+=1
 
-                        if((k==40)&(candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction)):
-                            top_k_reintroduction_value+=1
+                #         # if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<k):
+                #         if(candidates_to_reintroduce_multi_sketch_wAmb.index(candidate)<real_k):
+                #             self.arr6[i]+=1
+
+                #         # if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<k):
+                #         if(candidates_to_reintroduce_multi_sketch_euclidean_wAmb.index(candidate)<real_k):
+                #             self.arr7[i]+=1
+
+                #         # if(ranking_score_dict_wAmb[candidate]<k):
+                #         if(ranking_score_dict_wAmb[candidate]<real_k):
+                #             self.arr8[i]+=1
+
+
+                #         #combining all possible sketches
+
+                #         # if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<k):
+                #         if(min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate])<real_k):
+                #             self.arr9[i]+=1
+
+                #         # if((k==40)&(candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff)):
+                #         #     top_k_reintroduction_value+=1
+
+                #         if((k==40)&(candidate in rank_dict_ordered_list_reintroduction_candidates_cutoff_post_eviction)):
+                #             top_k_reintroduction_value+=1
                         
                     # if(candidates_to_reintroduce_w_ranking.index(candidate)<15):
                     #     self.ranking_effectiveness_alternate+=1
 
                     # new_mention_count+=ambiguous_candidates_in_batch_w_Count[candidate]
 
-                if((self.counter-key)<=10):
-                    # print('error check: ',key)
-                    list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
-                    tuple_to_edit=list_of_lists[self.counter-key-1]
-                    #to record the reintroduction precision for this batch
-                    if key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
-                        tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key)]
-                    tuple_to_edit[1]=[top_k_reintroduction_value,len(converted_candidates_grouped_df_key)]
+                # if((self.counter-key)<=10):
+                #     # print('error check: ',key)
+                #     list_of_lists=self.batchwise_reintroduction_eviction_estimates[key]
+                #     tuple_to_edit=list_of_lists[self.counter-key-1]
+                #     #to record the reintroduction precision for this batch
+                #     if key in rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df.groups.keys():
+                #         tuple_to_edit[0]=[top_k_reintroduction_value,len(rank_dict_reintroduction_candidates_cutoff_records_post_eviction_grouped_df_key)]
+                #     tuple_to_edit[1]=[top_k_reintroduction_value,len(converted_candidates_grouped_df_key)]
 
-                    # if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
-                        # tuple_to_edit[2]=[0,len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)]
+                #     # if key in rank_dict_eviction_candidates_cutoff_records_grouped_df.groups.keys():
+                #         # tuple_to_edit[2]=[0,len(rank_dict_eviction_candidates_cutoff_records_grouped_df_key)]
 
-                    # ambiguous_candidates_from_batch=len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==key)&(candidate_featureBase_DF.status=="a")])
-                    # print('batch: ',key,'ambiguous_candidates_from_batch: ',ambiguous_candidates_from_batch,"tuple_to_edit: ",tuple_to_edit)
-                    list_of_lists[self.counter-key-1]=tuple_to_edit
-                    self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
-                    # print(self.batchwise_reintroduction_eviction_estimates[key])
+                #     # ambiguous_candidates_from_batch=len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==key)&(candidate_featureBase_DF.status=="a")])
+                #     # print('batch: ',key,'ambiguous_candidates_from_batch: ',ambiguous_candidates_from_batch,"tuple_to_edit: ",tuple_to_edit)
+                #     list_of_lists[self.counter-key-1]=tuple_to_edit
+                #     self.batchwise_reintroduction_eviction_estimates[key]=list_of_lists
+                #     # print(self.batchwise_reintroduction_eviction_estimates[key])
 
 
                 # print (key,len(grouped_df_key),new_mention_count)
                 # print(grouped_df_key)
                 # print('+====================================+')
             # print(self.batchwise_reintroduction_eviction_estimates)
-            if(self.counter==19):
+            # if(self.counter==19):
                 
                 # fig = plt.figure()
                 # fig, axes = plt.subplots(nrows=1, ncols=1)
@@ -1871,201 +1873,201 @@ class EntityResolver ():
                 #             batch_index+=1
 
                 # print('print batchwise reintroduction estimates:')
-                for key in self.batchwise_reintroduction_eviction_estimates.keys():
+                # for key in self.batchwise_reintroduction_eviction_estimates.keys():
                     
-                    if(key<10):
-                        fig, axes = plt.subplots(nrows=1, ncols=1)
-                        fig2, axes2 = plt.subplots(nrows=1, ncols=1)
-                        # ax = plt.gca()
-                        # ax.invert_yaxis()
-                        fig3, axes3 = plt.subplots(nrows=1, ncols=1)
-                        axes4 = axes3.twinx()
-                        # # axes = fig.add_axes([1,0,19, 140])
-                        # axes.yaxis_inverted()
+                #     if(key<10):
+                #         fig, axes = plt.subplots(nrows=1, ncols=1)
+                #         fig2, axes2 = plt.subplots(nrows=1, ncols=1)
+                #         # ax = plt.gca()
+                #         # ax.invert_yaxis()
+                #         fig3, axes3 = plt.subplots(nrows=1, ncols=1)
+                #         axes4 = axes3.twinx()
+                #         # # axes = fig.add_axes([1,0,19, 140])
+                #         # axes.yaxis_inverted()
 
-                        batch_index=1
-                        estimate_numerical_list= self.batchwise_reintroduction_eviction_estimates[key]
-                        cumulative_estimate_list=[]
+                #         batch_index=1
+                #         estimate_numerical_list= self.batchwise_reintroduction_eviction_estimates[key]
+                #         cumulative_estimate_list=[]
 
-                        estimate_reintroduced=0
-                        estimate_reintroduced_list=[]
+                #         estimate_reintroduced=0
+                #         estimate_reintroduced_list=[]
 
-                        estimate_reintroduced_and_converted=0
-                        estimate_reintroduced_and_converted_list=[]
+                #         estimate_reintroduced_and_converted=0
+                #         estimate_reintroduced_and_converted_list=[]
 
-                        estimate_baseline_reintroduction=0
-                        estimate_baseline_reintroduction_list=[]    #baseline reintroduction check
+                #         estimate_baseline_reintroduction=0
+                #         estimate_baseline_reintroduction_list=[]    #baseline reintroduction check
 
-                        estimate_evicted=0
-                        estimate_evicted_list=[]
+                #         estimate_evicted=0
+                #         estimate_evicted_list=[]
 
-                        estimate_alternate_cumulative_formula=0
-                        estimate_alternate_cumulative_formula_list=[]
+                #         estimate_alternate_cumulative_formula=0
+                #         estimate_alternate_cumulative_formula_list=[]
 
-                        estimate_alternate_cumulative_formula_baseline=0
-                        estimate_alternate_cumulative_formula_list_baseline=[]
+                #         estimate_alternate_cumulative_formula_baseline=0
+                #         estimate_alternate_cumulative_formula_list_baseline=[]
 
-                        estimate_eviction_error_rate=0
-                        estimate_eviction_error_list=[]
-                        # estimate_eviction_error_rate_list=[]
+                #         estimate_eviction_error_rate=0
+                #         estimate_eviction_error_list=[]
+                #         # estimate_eviction_error_rate_list=[]
 
-                        batch_list=[]
+                #         batch_list=[]
 
-                        candidates_from_batch=len(candidate_featureBase_DF[candidate_featureBase_DF['batch']==key])
-                        ambiguous_candidates_from_batch=len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==key)&(candidate_featureBase_DF.status=="a")])
+                #         candidates_from_batch=len(candidate_featureBase_DF[candidate_featureBase_DF['batch']==key])
+                #         ambiguous_candidates_from_batch=len(candidate_featureBase_DF[(candidate_featureBase_DF['batch']==key)&(candidate_featureBase_DF.status=="a")])
 
-                        for element in estimate_numerical_list:
-                            cumulative_estimate_batch_level=[]
+                #         for element in estimate_numerical_list:
+                #             cumulative_estimate_batch_level=[]
                         
-                            numerical_estimate_list=element[0]
-                            numerical_estimate_list_baseline_reintroduction=element[1]
-                            numerical_estimate_list_eviction=element[2]
-                            numerical_estimate_alternative_formula=element[3]
+                #             numerical_estimate_list=element[0]
+                #             numerical_estimate_list_baseline_reintroduction=element[1]
+                #             numerical_estimate_list_eviction=element[2]
+                #             numerical_estimate_alternative_formula=element[3]
 
-                            estimate_reintroduced+=numerical_estimate_list[1]
-                            estimate_reintroduced_list.append(estimate_reintroduced)
-                            cumulative_estimate_batch_level.append(estimate_reintroduced)
+                #             estimate_reintroduced+=numerical_estimate_list[1]
+                #             estimate_reintroduced_list.append(estimate_reintroduced)
+                #             cumulative_estimate_batch_level.append(estimate_reintroduced)
 
-                            estimate_reintroduced_and_converted+=numerical_estimate_list[0]
-                            estimate_reintroduced_and_converted_list.append(estimate_reintroduced_and_converted)
-                            cumulative_estimate_batch_level.append(estimate_reintroduced_and_converted)
+                #             estimate_reintroduced_and_converted+=numerical_estimate_list[0]
+                #             estimate_reintroduced_and_converted_list.append(estimate_reintroduced_and_converted)
+                #             cumulative_estimate_batch_level.append(estimate_reintroduced_and_converted)
 
-                            estimate_baseline_reintroduction+=numerical_estimate_list_baseline_reintroduction[1]
-                            estimate_baseline_reintroduction_list.append(estimate_baseline_reintroduction)
+                #             estimate_baseline_reintroduction+=numerical_estimate_list_baseline_reintroduction[1]
+                #             estimate_baseline_reintroduction_list.append(estimate_baseline_reintroduction)
 
-                            estimate_evicted+=numerical_estimate_list_eviction[1]
-                            estimate_evicted_list.append(estimate_evicted)
-                            cumulative_estimate_batch_level.append(estimate_evicted)
+                #             estimate_evicted+=numerical_estimate_list_eviction[1]
+                #             estimate_evicted_list.append(estimate_evicted)
+                #             cumulative_estimate_batch_level.append(estimate_evicted)
 
-                            estimate_alternate_cumulative_formula+=numerical_estimate_alternative_formula[1]
-                            estimate_alternate_cumulative_formula_list.append(estimate_alternate_cumulative_formula)
+                #             estimate_alternate_cumulative_formula+=numerical_estimate_alternative_formula[1]
+                #             estimate_alternate_cumulative_formula_list.append(estimate_alternate_cumulative_formula)
 
-                            estimate_alternate_cumulative_formula_baseline+=numerical_estimate_alternative_formula[0]
-                            estimate_alternate_cumulative_formula_list_baseline.append(estimate_alternate_cumulative_formula_baseline)
-
-
-                            batch_list.append((key+batch_index))
-
-                            cumulative_estimate_list.append(cumulative_estimate_batch_level)
-                            batch_index+=1
-
-                        evicted_candidate_progression_list= self.evicted_candidates_batchwise_progression[key]
-                        for evicted_candidate_list in evicted_candidate_progression_list:
-                            estimate_error=len([candidate for candidate in evicted_candidate_list if candidate not in self.ambiguous_candidates])
-                            estimate_eviction_error_rate+=estimate_error
-                            estimate_eviction_error_list.append(estimate_eviction_error_rate)
+                #             estimate_alternate_cumulative_formula_baseline+=numerical_estimate_alternative_formula[0]
+                #             estimate_alternate_cumulative_formula_list_baseline.append(estimate_alternate_cumulative_formula_baseline)
 
 
+                #             batch_list.append((key+batch_index))
 
-                        print(key,candidates_from_batch, ambiguous_candidates_from_batch, '---------------->>>')
+                #             cumulative_estimate_list.append(cumulative_estimate_batch_level)
+                #             batch_index+=1
 
-                        # print('estimate_reintroduced_list: ', estimate_reintroduced_list)
-                        # estimate_reintroduced_list=[float(element/candidates_from_batch) for element in estimate_reintroduced_list]
-                        # # print(estimate_reintroduced_list)
-                        # # print('===============')
-                        # axes.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
-
-                        # print('estimate_reintroduced_and_converted_list: ', estimate_reintroduced_and_converted_list)
-                        # estimate_reintroduced_and_converted_list=[float(element/candidates_from_batch) for element in estimate_reintroduced_and_converted_list]
-                        # # print(estimate_reintroduced_and_converted_list)
-                        # # print('===============')
-                        # axes.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv batch-'+str(key))
-
-                        # print('estimate_baseline_reintroduction_list: ',estimate_baseline_reintroduction_list)
-                        # estimate_baseline_reintroduction_list=[float(element/candidates_from_batch) for element in estimate_baseline_reintroduction_list]
-                        # axes.plot(batch_list, estimate_baseline_reintroduction_list,'-.', label='baseline-'+str(key))
-
-                        # print('estimate_evicted_list: ', estimate_evicted_list)
-                        # estimate_evicted_list=[float(element/candidates_from_batch) for element in estimate_evicted_list]
-                        # # print(estimate_evicted_list)
-                        # print('===============')
-                        # axes2.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
+                #         evicted_candidate_progression_list= self.evicted_candidates_batchwise_progression[key]
+                #         for evicted_candidate_list in evicted_candidate_progression_list:
+                #             estimate_error=len([candidate for candidate in evicted_candidate_list if candidate not in self.ambiguous_candidates])
+                #             estimate_eviction_error_rate+=estimate_error
+                #             estimate_eviction_error_list.append(estimate_eviction_error_rate)
 
 
-                        #-----------------------------------------------------------------------------------------------------------------#
-                        #alternative cumulative estimate plots
+
+                #         print(key,candidates_from_batch, ambiguous_candidates_from_batch, '---------------->>>')
+
+                #         # print('estimate_reintroduced_list: ', estimate_reintroduced_list)
+                #         # estimate_reintroduced_list=[float(element/candidates_from_batch) for element in estimate_reintroduced_list]
+                #         # # print(estimate_reintroduced_list)
+                #         # # print('===============')
+                #         # axes.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
+
+                #         # print('estimate_reintroduced_and_converted_list: ', estimate_reintroduced_and_converted_list)
+                #         # estimate_reintroduced_and_converted_list=[float(element/candidates_from_batch) for element in estimate_reintroduced_and_converted_list]
+                #         # # print(estimate_reintroduced_and_converted_list)
+                #         # # print('===============')
+                #         # axes.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv batch-'+str(key))
+
+                #         # print('estimate_baseline_reintroduction_list: ',estimate_baseline_reintroduction_list)
+                #         # estimate_baseline_reintroduction_list=[float(element/candidates_from_batch) for element in estimate_baseline_reintroduction_list]
+                #         # axes.plot(batch_list, estimate_baseline_reintroduction_list,'-.', label='baseline-'+str(key))
+
+                #         # print('estimate_evicted_list: ', estimate_evicted_list)
+                #         # estimate_evicted_list=[float(element/candidates_from_batch) for element in estimate_evicted_list]
+                #         # # print(estimate_evicted_list)
+                #         # print('===============')
+                #         # axes2.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
+
+
+                #         #-----------------------------------------------------------------------------------------------------------------#
+                #         #alternative cumulative estimate plots
                         
-                        print('estimate_reintroduced_and_converted_list: ', estimate_reintroduced_and_converted_list)
-                        estimate_reintroduced_and_converted_list=[float(estimate_reintroduced_and_converted_list[index]/estimate_reintroduced_list[index]) if (estimate_reintroduced_list[index]!=0) else 0 for index in range(len(estimate_reintroduced_and_converted_list))]
-                        # estimate_reintroduced_and_converted_list=[float(element/candidates_from_batch) for element in estimate_reintroduced_and_converted_list]
-                        # print(estimate_reintroduced_and_converted_list)
-                        # print('===============')
-                        axes.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv precision-'+str(key))
-                        axes3.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv precision-'+str(key))
+                #         print('estimate_reintroduced_and_converted_list: ', estimate_reintroduced_and_converted_list)
+                #         estimate_reintroduced_and_converted_list=[float(estimate_reintroduced_and_converted_list[index]/estimate_reintroduced_list[index]) if (estimate_reintroduced_list[index]!=0) else 0 for index in range(len(estimate_reintroduced_and_converted_list))]
+                #         # estimate_reintroduced_and_converted_list=[float(element/candidates_from_batch) for element in estimate_reintroduced_and_converted_list]
+                #         # print(estimate_reintroduced_and_converted_list)
+                #         # print('===============')
+                #         axes.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv precision-'+str(key))
+                #         axes3.plot(batch_list, estimate_reintroduced_and_converted_list,':', label='conv precision-'+str(key))
 
-                        print('estimate_reintroduced_list: ', estimate_reintroduced_list)
-                        estimate_reintroduced_list=[float(estimate_reintroduced_list[index]/estimate_alternate_cumulative_formula_list[index]) for index in range(len(estimate_reintroduced_list))]
-                        # print(estimate_reintroduced_list)
-                        # print('===============')
-                        axes.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
-                        axes3.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
-
-
-                        print('estimate_baseline_reintroduction_and_converted_list: ',estimate_baseline_reintroduction_list)
-                        estimate_baseline_reintroduction_list=[float(estimate_baseline_reintroduction_list[index]/estimate_alternate_cumulative_formula_list_baseline[index]) for index in range(len(estimate_alternate_cumulative_formula_list_baseline))]
-                        # estimate_baseline_reintroduction_list=[float(element/candidates_from_batch) for element in estimate_baseline_reintroduction_list]
-                        axes.plot(batch_list, estimate_baseline_reintroduction_list,'-.', label='baseline-'+str(key))
-                        axes3.plot(batch_list, estimate_baseline_reintroduction_list,'-.', label='baseline-'+str(key))
-
-                        print('estimate_baseline_reintroduced_list: ',estimate_alternate_cumulative_formula_list_baseline)
-                        estimate_conversion_rate_with_baseline_reintroduction=[float(estimate_reintroduced_and_converted_list[index]/estimate_alternate_cumulative_formula_list_baseline[index]) if (estimate_alternate_cumulative_formula_list_baseline[index]!=0) else 0 for index in range(len(estimate_alternate_cumulative_formula_list_baseline))]
-                        print('baseline-precision :',estimate_conversion_rate_with_baseline_reintroduction)
-                        axes.plot(batch_list, estimate_conversion_rate_with_baseline_reintroduction,'x', label='baseline-precision-'+str(key))
+                #         print('estimate_reintroduced_list: ', estimate_reintroduced_list)
+                #         estimate_reintroduced_list=[float(estimate_reintroduced_list[index]/estimate_alternate_cumulative_formula_list[index]) for index in range(len(estimate_reintroduced_list))]
+                #         # print(estimate_reintroduced_list)
+                #         # print('===============')
+                #         axes.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
+                #         axes3.plot(batch_list, estimate_reintroduced_list,'--', label='re batch-'+str(key))
 
 
-                        max_y=max(max(estimate_reintroduced_list),max(estimate_reintroduced_and_converted_list),max(estimate_baseline_reintroduction_list))
+                #         print('estimate_baseline_reintroduction_and_converted_list: ',estimate_baseline_reintroduction_list)
+                #         estimate_baseline_reintroduction_list=[float(estimate_baseline_reintroduction_list[index]/estimate_alternate_cumulative_formula_list_baseline[index]) for index in range(len(estimate_alternate_cumulative_formula_list_baseline))]
+                #         # estimate_baseline_reintroduction_list=[float(element/candidates_from_batch) for element in estimate_baseline_reintroduction_list]
+                #         axes.plot(batch_list, estimate_baseline_reintroduction_list,'-.', label='baseline-'+str(key))
+                #         axes3.plot(batch_list, estimate_baseline_reintroduction_list,'-.', label='baseline-'+str(key))
 
-                        # axes.set_ylim((2*max_y, 0))
-                        axes.set_ylim(0, 2*max_y)
-                        axes.set_ylabel('# of ambiguous candidates')
-                        axes.set_xticks(batch_list)
-                        # axes.set_yticks(np.arange(max_y, 0, 0.1))
-                        # axes2.set_yticks(np.arange(0, max_y, 0.1))
+                #         print('estimate_baseline_reintroduced_list: ',estimate_alternate_cumulative_formula_list_baseline)
+                #         estimate_conversion_rate_with_baseline_reintroduction=[float(estimate_reintroduced_and_converted_list[index]/estimate_alternate_cumulative_formula_list_baseline[index]) if (estimate_alternate_cumulative_formula_list_baseline[index]!=0) else 0 for index in range(len(estimate_alternate_cumulative_formula_list_baseline))]
+                #         print('baseline-precision :',estimate_conversion_rate_with_baseline_reintroduction)
+                #         axes.plot(batch_list, estimate_conversion_rate_with_baseline_reintroduction,'x', label='baseline-precision-'+str(key))
 
-                        axes.set_xlabel('batch-value')
-                        lgd=axes.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 8}, borderaxespad=0.)
-                        axes.set_title('Batch level candidate reintroduction and disambiguation estimates')
-                        # plt.savefig('reintroduction-converted-estimates.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
 
-                        #-------------------------------error rate estimates
+                #         max_y=max(max(estimate_reintroduced_list),max(estimate_reintroduced_and_converted_list),max(estimate_baseline_reintroduction_list))
 
-                        print('estimate_eviction_error_list: ',estimate_eviction_error_list)
-                        estimate_eviction_error_rate_list=[float(estimate_eviction_error_list[index]/estimate_alternate_cumulative_formula_list[index]) if (estimate_evicted_list[index]!=0) else 0 for index in range(len(estimate_eviction_error_list))]
-                        axes2.plot(batch_list, estimate_eviction_error_rate_list, ':', label='error-rate batch-'+str(key))
-                        axes4.plot(batch_list, estimate_eviction_error_rate_list, 'x', label='error-rate batch-'+str(key))
+                #         # axes.set_ylim((2*max_y, 0))
+                #         axes.set_ylim(0, 2*max_y)
+                #         axes.set_ylabel('# of ambiguous candidates')
+                #         axes.set_xticks(batch_list)
+                #         # axes.set_yticks(np.arange(max_y, 0, 0.1))
+                #         # axes2.set_yticks(np.arange(0, max_y, 0.1))
 
-                        print('estimate_evicted_list: ', estimate_evicted_list)
-                        estimate_evicted_list=[float(estimate_evicted_list[index]/estimate_alternate_cumulative_formula_list[index]) for index in range(len(estimate_evicted_list))]
-                        # # print(estimate_evicted_list)
-                        # print('===============')
-                        axes2.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
-                        axes4.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
+                #         axes.set_xlabel('batch-value')
+                #         lgd=axes.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 8}, borderaxespad=0.)
+                #         axes.set_title('Batch level candidate reintroduction and disambiguation estimates')
+                #         # plt.savefig('reintroduction-converted-estimates.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
 
-                        print('estimate_baseline_reintroduced_list: ', estimate_alternate_cumulative_formula_list)
-                        #-----------------------------------------------------------------------------------------------------------------#
+                #         #-------------------------------error rate estimates
 
-                        max_y2=max(max(estimate_eviction_error_rate_list),max(estimate_evicted_list))
+                #         print('estimate_eviction_error_list: ',estimate_eviction_error_list)
+                #         estimate_eviction_error_rate_list=[float(estimate_eviction_error_list[index]/estimate_alternate_cumulative_formula_list[index]) if (estimate_evicted_list[index]!=0) else 0 for index in range(len(estimate_eviction_error_list))]
+                #         axes2.plot(batch_list, estimate_eviction_error_rate_list, ':', label='error-rate batch-'+str(key))
+                #         axes4.plot(batch_list, estimate_eviction_error_rate_list, 'x', label='error-rate batch-'+str(key))
+
+                #         print('estimate_evicted_list: ', estimate_evicted_list)
+                #         estimate_evicted_list=[float(estimate_evicted_list[index]/estimate_alternate_cumulative_formula_list[index]) for index in range(len(estimate_evicted_list))]
+                #         # # print(estimate_evicted_list)
+                #         # print('===============')
+                #         axes2.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
+                #         axes4.plot(batch_list, estimate_evicted_list, label='evicted batch-'+str(key))
+
+                #         print('estimate_baseline_reintroduced_list: ', estimate_alternate_cumulative_formula_list)
+                #         #-----------------------------------------------------------------------------------------------------------------#
+
+                #         max_y2=max(max(estimate_eviction_error_rate_list),max(estimate_evicted_list))
 
                         
-                        axes2.set_ylim(0, 2*max_y2)
-                        # axes2.yaxis.tick_right()
-                        # axes2.yaxis.set_label_position("right")
-                        axes2.set_ylabel('# of ambiguous candidates')
-                        axes2.set_xticks(batch_list)                      
-                        axes2.set_xlabel('batch-value')
-                        lgd2=axes2.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 8}, borderaxespad=0.)
-                        axes2.set_title('Batch level candidate eviction and error-rate estimates')
-                        # plt.savefig('reintroduction-converted-estimates.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
+                #         axes2.set_ylim(0, 2*max_y2)
+                #         # axes2.yaxis.tick_right()
+                #         # axes2.yaxis.set_label_position("right")
+                #         axes2.set_ylabel('# of ambiguous candidates')
+                #         axes2.set_xticks(batch_list)                      
+                #         axes2.set_xlabel('batch-value')
+                #         lgd2=axes2.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 8}, borderaxespad=0.)
+                #         axes2.set_title('Batch level candidate eviction and error-rate estimates')
+                #         # plt.savefig('reintroduction-converted-estimates.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
 
-                        #-----------------------------------------------------------------------------------------------------------------#
+                #         #-----------------------------------------------------------------------------------------------------------------#
 
-                        max_y_3= max(max(estimate_reintroduced_list),max(estimate_reintroduced_and_converted_list),max(estimate_baseline_reintroduction_list), max(estimate_eviction_error_rate_list),max(estimate_evicted_list))
-                        axes3.set_ylim(1, 0,0.1)
-                        axes4.set_ylim(0, 1,0.1)
-                        axes3.set_ylabel('# of ambiguous candidates')
-                        axes3.set_xticks(batch_list)
-                        lgd3=axes3.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 8}, borderaxespad=0.)
-                        axes3.set_title('Batch level candidate eviction and error-rate estimates')
+                #         max_y_3= max(max(estimate_reintroduced_list),max(estimate_reintroduced_and_converted_list),max(estimate_baseline_reintroduction_list), max(estimate_eviction_error_rate_list),max(estimate_evicted_list))
+                #         axes3.set_ylim(1, 0,0.1)
+                #         axes4.set_ylim(0, 1,0.1)
+                #         axes3.set_ylabel('# of ambiguous candidates')
+                #         axes3.set_xticks(batch_list)
+                #         lgd3=axes3.legend(bbox_to_anchor=(1, 1), loc=9, prop={'size': 8}, borderaxespad=0.)
+                #         axes3.set_title('Batch level candidate eviction and error-rate estimates')
 
                         # plt.show()
                         
@@ -2116,36 +2118,36 @@ class EntityResolver ():
             # print('ranking effectiveness multi sketch euclidean: ', (self.ranking_effectiveness_multi_sketch_euclidean/self.baseline_effectiveness))
             # print('combined ranking effectiveness: ', (self.ranking_effectiveness_combined/self.baseline_effectiveness))
             # print('altenative ranking effectiveness: ', (self.ranking_effectiveness_alternate/self.baseline_effectiveness))
-            arr1=[elem/self.baseline_effectiveness for elem in self.arr1]
-            self.top_k_effectiveness_arr_single_sketch.append(arr1)
+            # arr1=[elem/self.baseline_effectiveness for elem in self.arr1]
+            # self.top_k_effectiveness_arr_single_sketch.append(arr1)
 
-            arr2=[elem/self.baseline_effectiveness for elem in self.arr2]
-            self.top_k_effectiveness_arr_multi_sketch_cosine.append(arr2)
+            # arr2=[elem/self.baseline_effectiveness for elem in self.arr2]
+            # self.top_k_effectiveness_arr_multi_sketch_cosine.append(arr2)
 
-            arr3=[elem/self.baseline_effectiveness for elem in self.arr3]
-            self.top_k_effectiveness_arr_multi_sketch_euclidean.append(arr3)
+            # arr3=[elem/self.baseline_effectiveness for elem in self.arr3]
+            # self.top_k_effectiveness_arr_multi_sketch_euclidean.append(arr3)
 
-            arr4=[elem/self.baseline_effectiveness for elem in self.arr4]
-            self.top_k_effectiveness_arr_multi_sketch_combined.append(arr4)
+            # arr4=[elem/self.baseline_effectiveness for elem in self.arr4]
+            # self.top_k_effectiveness_arr_multi_sketch_combined.append(arr4)
 
-            arr5=[elem/self.baseline_effectiveness for elem in self.arr5]
-            self.top_k_effectiveness_arr_single_sketch_amb.append(arr5)
+            # arr5=[elem/self.baseline_effectiveness for elem in self.arr5]
+            # self.top_k_effectiveness_arr_single_sketch_amb.append(arr5)
 
-            arr6=[elem/self.baseline_effectiveness for elem in self.arr6]
-            self.top_k_effectiveness_arr_multi_sketch_cosine_amb.append(arr6)
+            # arr6=[elem/self.baseline_effectiveness for elem in self.arr6]
+            # self.top_k_effectiveness_arr_multi_sketch_cosine_amb.append(arr6)
 
-            arr7=[elem/self.baseline_effectiveness for elem in self.arr7]
-            self.top_k_effectiveness_arr_multi_sketch_euclidean_amb.append(arr7)
+            # arr7=[elem/self.baseline_effectiveness for elem in self.arr7]
+            # self.top_k_effectiveness_arr_multi_sketch_euclidean_amb.append(arr7)
 
-            arr8=[elem/self.baseline_effectiveness for elem in self.arr8]
-            self.top_k_effectiveness_arr_multi_sketch_combined_amb.append(arr8)
+            # arr8=[elem/self.baseline_effectiveness for elem in self.arr8]
+            # self.top_k_effectiveness_arr_multi_sketch_combined_amb.append(arr8)
 
-            arr9=[elem/self.baseline_effectiveness for elem in self.arr9]
-            self.top_k_effectiveness_arr_all_sketch_combined.append(arr9)
+            # arr9=[elem/self.baseline_effectiveness for elem in self.arr9]
+            # self.top_k_effectiveness_arr_all_sketch_combined.append(arr9)
 
-            self.batch_specific_reintroduction_effectiveness_arr.append((self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
+            # self.batch_specific_reintroduction_effectiveness_arr.append((self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
 
-            print('reintroduction effectiveness with batch specific top-k ',(self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
+            # print('reintroduction effectiveness with batch specific top-k ',(self.batch_specific_reintroduction_effectiveness/self.baseline_effectiveness))
 
             # print('reintroduction ranking effectiveness ent/non-ent single sketch: ', (self.top_k_effectiveness_arr_single_sketch))
             # print('reintroduction ranking effectiveness ent/non-ent multi sketch cosine: ', (self.top_k_effectiveness_arr_multi_sketch_cosine))
