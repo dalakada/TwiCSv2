@@ -164,36 +164,28 @@ import matplotlib.colors as colors
 # fig1 = plt.figure()
 # plt.hold(True)
 
-
-reintroduction_threshold_arr=[20,40,60,80,100]
+#110--> dynamic, 120--> baseline
+reintroduction_threshold_arr=[0,20,40,60,80,100,110,120,130]
 tweets= [84152, 173400, 265842, 350484, 439043, 527834, 607569, 682913, 760389, 849446, 942989, 1028661, 1113457, 1188145, 1263202, 1338782, 1419378, 1500195, 1578692, 1657711, 1713105]
-incomplete_tweets= [[4688, 10878, 23163, 29578, 35439, 41337, 60818, 62301, 67163, 74158, 77010, 81516, 87628, 95785, 102599, 109324, 115384, 121459, 128642, 135528, 140525], 
-					 [4688, 10787, 23022, 29420, 35044, 40382, 59738, 60844, 65473, 72234, 74452, 78484, 75721, 83293, 89562, 95768, 101161, 106224, 112811, 119252, 123452], 
-					 [4688, 10313, 22453, 28844, 34456, 39718, 59045, 60165, 64371, 71057, 73216, 77204, 74421, 80877, 86815, 92284, 96733, 101681, 107740, 114103, 118258], 
-					 [4688, 10165, 21853, 28085, 33673, 37569, 56890, 57979, 62173, 68546, 70631, 74604, 71321, 77389, 82977, 87873, 92228, 95532, 101408, 107444, 111586], 
-					 [4688, 9867, 21350, 27581, 33152, 36968, 55380, 55873, 59883, 65502, 67519, 70228, 65690, 70804, 76220, 81084, 84459, 87538, 92926, 98883, 101745]]
-# converted_tweets=  [[79464, 162522, 242679, 320906, 403604, 486497, 546751, 620612, 693226, 775288, 865979, 947145, 1025829, 1092360, 1160603, 1229458, 1303994, 1378736, 1450050, 1522183, 1572580],
-# 					[79464, 162613, 242820, 321064, 403999, 487452, 547831, 622069, 694916, 777212, 868537, 950177, 1037736, 1104852, 1173640, 1243014, 1318217, 1393971, 1465881, 1538459, 1589653], 
-# 					[79464, 163087, 243389, 321640, 404587, 488116, 548524, 622748, 696018, 778389, 869773, 951457, 1039036, 1107268, 1176387, 1246498, 1322645, 1398514, 1470952, 1543608, 1594847], 
-# 					[79464, 163235, 243989, 322399, 405370, 490265, 550679, 624934, 698216, 780900, 872358, 954057, 1042136, 1110756, 1180225, 1250909, 1327150, 1404663, 1477284, 1550267, 1601519], 
-# 					[79464, 163533, 244492, 322903, 405891, 490866, 552189, 627040, 700506, 783944, 875470, 958433, 1047767, 1117341, 1186982, 1257698, 1334919, 1412657, 1485766, 1558828, 1611360]]
-converted tweets:  [[79807, 162782, 242860, 322448, 405061, 488099, 549107, 615404, 688406, 770897, 861562, 942880, 1021344, 1088441, 1155982, 1225024, 1299338, 1374292, 1445521, 1517680, 1568008],
+converted_tweets= [[79807, 162782, 242860, 322448, 405061, 488099, 549107, 615404, 688406, 770897, 861562, 942880, 1021344, 1088441, 1155982, 1225024, 1299338, 1374292, 1445521, 1517680, 1568008],
 [79807, 163393, 243489, 323128, 405964, 489225, 550323, 624067, 697427, 780103, 871136, 952526, 1031411, 1098853, 1166658, 1236123, 1310542, 1385701, 1457121, 1529441, 1579847],
 [79807, 163393, 243510, 330917, 413769, 497501, 558847, 633582, 707155, 790081, 881489, 963302, 1042334, 1110141, 1178264, 1248370, 1324075, 1399584, 1471579, 1544401, 1595431],
 [79807, 163630, 243764, 331878, 414747, 498513, 559863, 634591, 708384, 791452, 882937, 964772, 1044513, 1112777, 1181400, 1253701, 1329840, 1405522, 1478945, 1552171, 1603281],
 [79807, 163927, 244070, 332124, 415008, 500260, 562601, 637576, 711472, 795360, 888019, 969981, 1050194, 1118786, 1187731, 1260668, 1336952, 1413345, 1487383, 1560830, 1612026],
 [79807, 164092, 244413, 332475, 415358, 500690, 563038, 638106, 712482, 796947, 889651, 971810, 1053242, 1122638, 1191600, 1264588, 1341056, 1417804, 1491966, 1565416, 1619039],
 [79807, 164092, 244413, 332475, 415358, 500690, 563038, 638106, 712482, 796947, 888577, 970736, 1051265, 1120659, 1189621, 1262584, 1339050, 1415732, 1489894, 1563344, 1616824]]
+#120--> baseline same as 100, Ritter has no concept of completion
 # data to plot
-n_groups = 6
+n_groups = 9
 
-emd_recall_arr=[,0.77,0.81,0.835,0.86,0.87,0.87] #baseline and 100% should be same
+# emd_recall_arr=[,0.77,0.81,0.835,0.86,0.87,0.87] #baseline and 100% should be same
+emd_recall_arr=[0.751, 0.77, 0.785, 0.794, 0.80, 0.81, 0.802, 0.81, 0.58]
 # incomplete_arr=[float(arr[-1]/tweets[-1]) for arr in incomplete_tweets]
-complete_arr=[float(arr[-1]/tweets[-1]) for arr in converted_tweets]
-print(complete_arr)
+# complete_arr=[float(arr[-1]/tweets[-1]) for arr in converted_tweets]
+# print(complete_arr)
 
-complete_arr=[0.88,0.9, 0.92, 0.94, 0.946, 0.95, 0.95] #baseline and 100% should be same
-time_arr=[2155.6818137168884,2270.8641290664673,2340.172202348709,2375.272013902664,2420.948536157608,3047.7655758857727,4567.780866622925]
+complete_arr=[0.89, 0.91, 0.922, 0.936, 0.94, 0.95, 0.946, 0.95] #baseline and 100% should be same
+time_arr=[2155.6818137168884,2270.8641290664673,2340.172202348709,2375.272013902664,2420.948536157608,3047.7655758857727,2481.43901515007,3427.780866622925,4523.75]
 
 
 print(complete_arr)
@@ -201,6 +193,7 @@ print(complete_arr)
 fig, ax1 = plt.subplots()
 
 index = np.arange(n_groups)
+index2 = np.arange(n_groups-1)
 bar_width = 0.25
 opacity = 1.0
 
@@ -210,8 +203,7 @@ color='b',
 # ax=ax1,
 label='EMD recall')
 
-
-rects2 = ax1.bar(index + bar_width, complete_arr, bar_width,
+rects2 = ax1.bar(index2 + 2*bar_width, complete_arr, bar_width,
 alpha=opacity,
 color='g',
 # ax=ax1,
@@ -219,29 +211,34 @@ label='completion percentage')
 
 
 ax2 = ax1.twinx() 
-rects3 = ax2.bar(index + 2*bar_width, time_arr, bar_width,
+rects3 = ax2.bar(index + bar_width, time_arr, bar_width,
 alpha=opacity,
 color='r',
 # ax=ax2,
 label='completion time (secs)')
+
+
  
-ax1.set_xlabel('Percent Reintroduction Threshold Value')
+ax1.set_xlabel('Reintroduction Variants')
 ax1.set_ylabel('Effectiveness estimates')
 ax2.set_ylabel('Efficiency estimates')
-plt.title('Performance estimates for different reintroduction thresholds')
+plt.title('EMD Performance estimates for different reintroduction variants')
 # ax1.set_xticks(index + 1.0*bar_width, ('20', '40', '60', '80', '100'))
 ax1.set_xticks(index+ 1.0*bar_width)
-ax1.set_xticklabels(['0','20', '40', '60', '80', '100', 'baseline'])
+ax1.set_xticklabels(['0','20', '40', '60', '80', '100','dynamic', 'baseline', 'ritter'])
+
+for tick in ax1.get_xticklabels():
+        tick.set_rotation(45)
 
 
 lines, labels = ax1.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
 
 
-lgd=ax1.legend(lines + lines2, labels + labels2, bbox_to_anchor=(0.5,1.0), ncol=3, loc=9, prop={'size': 8}, borderaxespad=0.)
+lgd=ax1.legend(lines + lines2, labels + labels2, bbox_to_anchor=(0.5,1.0), ncol=3, loc=9, prop={'size': 6}, borderaxespad=0.)
 
-plt.title('Change in EMD performance with different Reintroduction Thresholds')
-plt.savefig('performance-reintroduction-threshold.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+
+plt.savefig('performance-reintroduction-threshold-all-system-variants.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
  
 # plt.tight_layout()
 plt.show()

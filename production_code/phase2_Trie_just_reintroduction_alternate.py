@@ -198,6 +198,7 @@ class EntityResolver ():
         # self.reintroduction_threshold_array=[60]
         # self.reintroduction_threshold_array=[80]
         # self.reintroduction_threshold_array=[100]
+        self.reintroduction_threshold_array=[110]
 
 
         self.step_size=20
