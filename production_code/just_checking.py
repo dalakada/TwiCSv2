@@ -148,7 +148,7 @@ import collections
 
 
 #------------------------------------------------------------------------------------reintroduction files------------------------------------------------------------------
-# bigger_tweet_dataframe=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_runs_with_annotation.csv",sep =',', keep_default_na=False)
+# bigger_tweet_dataframe=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_reintroduction_runs_with_annotations.csv",sep =',', keep_default_na=False)
 # print(list(bigger_tweet_dataframe.columns.values))
 # df1=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_0.csv",sep =',', keep_default_na=False)
 # lst=[0,20,40,60,80,100,110]
@@ -280,43 +280,45 @@ import collections
 #---------------------------------------------------------------------tallying reintroduction outputs among thresholds
 # bigger_tweet_dataframe=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_reintroduction_runs_with_annotations.csv",sep =',', keep_default_na=False)
 # lst=[0,20,40,60,80,100,110]
+bigger_tweet_dataframe=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/eviction/output_1M_all_eviction_runs_with_annotations.csv",sep =',', keep_default_na=False)
+lst=[0,10,20,30,40]
 
-# elem_not_in_no_reintroduction=set()
+elem_not_in_no_reintroduction=set()
 
-# for index,row in bigger_tweet_dataframe.iterrows():
-#     tweetID=index
-#     # print(index)
+for index,row in bigger_tweet_dataframe.iterrows():
+    tweetID=index
+    # print(index)
 
-#     output_reintroduction_theshold_list=[]
+    output_reintroduction_theshold_list=[]
 
-#     for elem in range(len(lst)):
+    for elem in range(len(lst)):
 
-#         threshold=lst[elem]
+        threshold=lst[elem]
 
-#         multipass_output_list=ast.literal_eval(row['output_col_'+str(threshold)])
-#         multipass_output_list=[eval(list_str) for list_str in multipass_output_list]
-#         # print(multipass_output_list)
-#         multipass_output_list_flat = [item.lower() for sublist in multipass_output_list for item in sublist]
-#         multipass_output_list_flat=list(filter(lambda element: element !='', multipass_output_list_flat))
+        multipass_output_list=ast.literal_eval(row['output_col_'+str(threshold)])
+        multipass_output_list=[eval(list_str) for list_str in multipass_output_list]
+        # print(multipass_output_list)
+        multipass_output_list_flat = [item.lower() for sublist in multipass_output_list for item in sublist]
+        multipass_output_list_flat=list(filter(lambda element: element !='', multipass_output_list_flat))
 
-#         # multipass_output_list=ast.literal_eval(str(row['output_col_'+str(threshold)]))
-#         # multipass_output_list_flat = [item.lower() for sublist in multipass_output_list for item in sublist]
-#         # multipass_output_list_flat=list(filter(lambda element: element !='', multipass_output_list_flat))
+        # multipass_output_list=ast.literal_eval(str(row['output_col_'+str(threshold)]))
+        # multipass_output_list_flat = [item.lower() for sublist in multipass_output_list for item in sublist]
+        # multipass_output_list_flat=list(filter(lambda element: element !='', multipass_output_list_flat))
 
-#         output_reintroduction_theshold_list.append(multipass_output_list_flat)
+        output_reintroduction_theshold_list.append(multipass_output_list_flat)
 
-#     if not all(collections.Counter(x) == collections.Counter(output_reintroduction_theshold_list[0]) for x in output_reintroduction_theshold_list):
-#       print(index,output_reintroduction_theshold_list[0])
-#       for output_list in output_reintroduction_theshold_list[1:]:
-#           # print(output_list)
-#           difference=set(output_list)-set(output_reintroduction_theshold_list[0])
-#           # print(difference)
-#           elem_not_in_no_reintroduction|=difference
-#           # print('==>',elem_not_in_no_reintroduction)
+    if not all(collections.Counter(x) == collections.Counter(output_reintroduction_theshold_list[0]) for x in output_reintroduction_theshold_list):
+      print(index,output_reintroduction_theshold_list[0])
+      for output_list in output_reintroduction_theshold_list[1:]:
+          print(output_list)
+          difference=set(output_reintroduction_theshold_list[0])-set(output_list)
+          # print(difference)
+          elem_not_in_no_reintroduction|=difference
+          # print('==>',elem_not_in_no_reintroduction)
 
-#       print('================================================')
+      print('================================================')
 
-# print(elem_not_in_no_reintroduction, len(elem_not_in_no_reintroduction))
+print(elem_not_in_no_reintroduction, len(elem_not_in_no_reintroduction))
 # print(list(bigger_tweet_dataframe.columns.values))
 # bigger_tweet_dataframe.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_reintroduction_runs_with_annotations_updated.csv", sep=',', encoding='utf-8',index=False)
 # os.remove("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_reintroduction_runs_with_annotations.csv")

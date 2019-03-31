@@ -86,7 +86,7 @@ class EntityResolver ():
             just_converted_tweets_inner=self.get_complete_tf(untrashed_tweets)
             # print(just_converted_tweets_inner.head())
             print('here 4')
-        #incomplete tweets at the end of current batch
+            #incomplete tweets at the end of current batch
             incomplete_tweets_inner=self.get_incomplete_tf(untrashed_tweets)
 
             # if(self.counter==1):
@@ -94,9 +94,9 @@ class EntityResolver ():
             # print(untrashed_tweets[untrashed_tweets['tweetID']=='1108'])
             # print(incomplete_tweets_inner[incomplete_tweets_inner['tweetID']=='1108'])
             # print(incomplete_tweets_inner.head())
-        #all incomplete_tweets---> incomplete_tweets at the end of current batch + incomplete_tweets not reintroduced
-            print(list(incomplete_tweets_inner.columns.values))
-            print(list(self.evicted_tweets_arr[elem].columns.values))
+            # all incomplete_tweets---> incomplete_tweets at the end of current batch + incomplete_tweets not reintroduced
+            # print(list(incomplete_tweets_inner.columns.values))
+            # print(list(self.evicted_tweets_arr[elem].columns.values))
 
             print('incomplete by end of batch: ',len(incomplete_tweets_inner),'evicted: ',len(self.evicted_tweets_arr[elem]),'tally: ',str(len(incomplete_tweets_inner)+len(self.evicted_tweets_arr[elem])))
             self.incomplete_tweets_arr[elem]=pd.concat([incomplete_tweets_inner,self.evicted_tweets_arr[elem]],ignore_index=True) #default axis=0, concat rows
@@ -137,22 +137,22 @@ class EntityResolver ():
             del self.my_classifier
             gc.collect()
 
-            for elem in range(len(self.eviction_threshold_array)):
+            # for elem in range(len(self.eviction_threshold_array)):
 
-                self.just_converted_tweets_arr[elem].drop('2nd Iteration Candidates', axis=1, inplace=True)
+            #     self.just_converted_tweets_arr[elem].drop('2nd Iteration Candidates', axis=1, inplace=True)
 
-                print('completed tweets: ', len(self.just_converted_tweets_arr[elem]),'incomplete tweets: ', len(self.incomplete_tweets_arr[elem]))
+            #     print('completed tweets: ', len(self.just_converted_tweets_arr[elem]),'incomplete tweets: ', len(self.incomplete_tweets_arr[elem]))
                 
-                print(len(list(self.just_converted_tweets_arr[elem].columns.values)))
-                print(len(list(self.incomplete_tweets_arr[elem].columns.values)))
+            #     print(len(list(self.just_converted_tweets_arr[elem].columns.values)))
+            #     print(len(list(self.incomplete_tweets_arr[elem].columns.values)))
 
-                combined_frame_list=[self.just_converted_tweets_arr[elem], self.incomplete_tweets_arr[elem]]
-                complete_tweet_dataframe = pd.concat(combined_frame_list,ignore_index=True)
+            #     combined_frame_list=[self.just_converted_tweets_arr[elem], self.incomplete_tweets_arr[elem]]
+            #     complete_tweet_dataframe = pd.concat(combined_frame_list,ignore_index=True)
 
-                print('final tally: ', (len(self.just_converted_tweets_arr[elem])+len(self.incomplete_tweets_arr[elem])), len(complete_tweet_dataframe))
+            #     print('final tally: ', (len(self.just_converted_tweets_arr[elem])+len(self.incomplete_tweets_arr[elem])), len(complete_tweet_dataframe))
 
-                complete_tweet_dataframe.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_eviction_"+str(self.eviction_threshold_array[elem])+".csv", sep=',', encoding='utf-8',index=False)
-                # complete_tweet_dataframe.to_csv("/Users/satadisha/Documents/GitHub/output_1M_eviction_"+str(self.eviction_threshold_array[elem])+".csv", sep=',', encoding='utf-8',index=False) #for my Mac
+            #     complete_tweet_dataframe.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_eviction_"+str(self.eviction_threshold_array[elem])+".csv", sep=',', encoding='utf-8',index=False)
+            #     # complete_tweet_dataframe.to_csv("/Users/satadisha/Documents/GitHub/output_1M_eviction_"+str(self.eviction_threshold_array[elem])+".csv", sep=',', encoding='utf-8',index=False) #for my Mac
 
 
 
@@ -184,7 +184,10 @@ class EntityResolver ():
 
         # self.eviction_threshold_array=[0,10,20,30,40]
         # self.eviction_threshold_array=[0]
-        self.eviction_threshold_array=[0,10]
+        # self.eviction_threshold_array=[10]
+        self.eviction_threshold_array=[20]
+        # self.eviction_threshold_array=[30]
+        # self.eviction_threshold_array=[40]
 
         #entity non-entity top k estimates
         self.arr1=[0,0,0,0,0] #cumulative estimates till batch single sketch

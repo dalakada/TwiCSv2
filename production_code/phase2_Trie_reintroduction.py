@@ -1517,7 +1517,8 @@ class EntityResolver ():
 
             not_evicted_candidates=[candidate for candidate in rank_dict_ordered_list_eviction_candidates if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
             # candidate_featureBase_DF['evictionFlag'][candidate_featureBase_DF['candidate'].isin(rank_dict_ordered_list_eviction_candidates_cutoff)]=1
-            self.evicted_candidates.extend(rank_dict_ordered_list_eviction_candidates_cutoff)
+            # self.evicted_candidates.extend(rank_dict_ordered_list_eviction_candidates_cutoff)
+            self.evicted_candidates.extend([])
 
             print('evicted: ', len(rank_dict_ordered_list_eviction_candidates_cutoff), len(self.evicted_candidates))
             print('evicted to converted: ', len([candidate for candidate in rank_dict_ordered_list_eviction_candidates_cutoff if candidate in converted_candidate_records.candidate.tolist()]),len([candidate for candidate in self.evicted_candidates if candidate in converted_candidate_records.candidate.tolist()]))

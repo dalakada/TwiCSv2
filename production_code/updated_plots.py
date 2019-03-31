@@ -99,6 +99,7 @@ import matplotlib.colors as colors
 
 
 
+
 # #EXPERIMENT 2: reintroduction threshold for global variants experiment
 
 # fig1 = plt.figure()
@@ -129,35 +130,61 @@ import matplotlib.colors as colors
 
 # plt.show()
 
+
+
 # #EXPERIMENT 3: eviction threshold for global variants experiment
 
-# fig1 = plt.figure()
-# plt.hold(True)
-# plt.xticks(np.arange(20, 120, 20.0))
+fig1 = plt.figure()
+plt.hold(True)
 
-# reintroduction_threshold_arr=[20,40,60,80,100]
 
-# colours=['r','b','g','k','y']
+eviction_threshold_arr=[10,15,20,25,30,35,40]
 
-# line_style_patterns=[':','-.','--','-','+']
+colours=['r','b','g','k','y']
 
-# combined_ranking_all_sketches_effectiveness= [[0.36363636363636365, 0.8181818181818182, 1.0, 1.0, 1.0], [0.4117647058823529, 0.8235294117647058, 1.0, 1.0, 1.0], [0.5806451612903226, 0.8387096774193549, 1.0, 1.0, 1.0], [0.55, 0.825, 1.0, 1.0, 1.0], [0.6129032258064516, 0.8387096774193549, 1.0, 1.0, 1.0], [0.6265060240963856, 0.8192771084337349, 0.9879518072289156, 1.0, 1.0], [0.631578947368421, 0.8333333333333334, 0.9912280701754386, 1.0, 1.0], [0.6068965517241379, 0.8068965517241379, 0.9862068965517241, 1.0, 1.0], [0.6022099447513812, 0.7955801104972375, 0.9834254143646409, 1.0, 1.0], [0.5951219512195122, 0.7853658536585366, 0.975609756097561, 1.0, 1.0], [0.6041666666666666, 0.7791666666666667, 0.975, 1.0, 1.0], [0.6066666666666667, 0.7766666666666666, 0.9733333333333334, 1.0, 1.0], [0.6264367816091954, 0.7873563218390804, 0.9741379310344828, 1.0, 1.0], [0.630272952853598, 0.7965260545905707, 0.9776674937965261, 1.0, 1.0], [0.6382978723404256, 0.8063829787234043, 0.9787234042553191, 1.0, 1.0], [0.6384180790960452, 0.8060263653483992, 0.9698681732580038, 1.0, 1.0], [0.6389351081530782, 0.8069883527454242, 0.9717138103161398, 1.0, 1.0], [0.6435045317220544, 0.8111782477341389, 0.972809667673716, 1.0, 1.0], [0.6508379888268156, 0.8212290502793296, 0.9748603351955307, 1.0, 1.0], [0.6529032258064517, 0.8206451612903226, 0.9754838709677419, 1.0, 1.0]]
+line_style_patterns=[':','-.','--','-','+']
 
-# for index in range(len(combined_ranking_all_sketches_effectiveness)):
-# 	colour_string=colours[int(index/5)]
-# 	pattern_string=line_style_patterns[int(index%5)]
+combined_ranking_all_sketches_effectiveness= [[1.0, 1.0, 0.9285714285714286, 0.9411764705882353, 0.9523809523809523, 0.9583333333333334, 0.9642857142857143], 
+												[0.9, 0.9333333333333333, 0.9, 0.92, 0.9333333333333333, 0.9428571428571428, 0.95], 
+												[0.9230769230769231, 0.9, 0.9259259259259259, 0.9411764705882353, 0.95, 0.9361702127659575, 0.9444444444444444], 
+												[1.0, 1.0, 1.0, 1.0, 0.9818181818181818, 0.96875, 0.958904109589041], 
+												[1.0, 1.0, 0.9767441860465116, 0.9814814814814815, 0.9846153846153847, 0.9736842105263158, 0.9770114942528736], 
+												[0.9642857142857143, 0.9761904761904762, 0.9107142857142857, 0.9285714285714286, 0.9285714285714286, 0.9387755102040817, 0.9464285714285714], 
+												[1.0, 0.9583333333333334, 0.9375, 0.9506172839506173, 0.9587628865979382, 0.9646017699115044, 0.9534883720930233], 
+												[0.972972972972973, 0.9464285714285714, 0.9333333333333333, 0.9139784946236559, 0.9196428571428571, 0.9236641221374046, 0.9333333333333333], 
+												[1.0, 0.9682539682539683, 0.9523809523809523, 0.9523809523809523, 0.9523809523809523, 0.9523809523809523, 0.9464285714285714], 
+												[0.9534883720930233, 0.9384615384615385, 0.9080459770114943, 0.9174311926605505, 0.9230769230769231, 0.9276315789473685, 0.9367816091954023], 
+												[0.9361702127659575, 0.9436619718309859, 0.925531914893617, 0.923728813559322, 0.9366197183098591, 0.9454545454545454, 0.9417989417989417], 
+												[0.9615384615384616, 0.9615384615384616, 0.9423076923076923, 0.9541984732824428, 0.9554140127388535, 0.9562841530054644, 0.9569377990430622], 
+												[0.9508196721311475, 0.9565217391304348, 0.9512195121951219, 0.9285714285714286, 0.9405405405405406, 0.9395348837209302, 0.9471544715447154], 
+												[0.9705882352941176, 0.9705882352941176, 0.9562043795620438, 0.9473684210526315, 0.9463414634146341, 0.95, 0.948905109489051], 
+												[0.961038961038961, 0.9568965517241379, 0.9483870967741935, 0.9533678756476683, 0.9396551724137931, 0.9372693726937269, 0.9451612903225807], 
+												[0.9629629629629629, 0.9508196721311475, 0.950920245398773, 0.9509803921568627, 0.9428571428571428, 0.9473684210526315, 0.950920245398773], 
+												[0.9518072289156626, 0.968, 0.9700598802395209, 0.9665071770334929, 0.9641434262948207, 0.9590443686006825, 0.9641791044776119], 
+												[0.9772727272727273, 0.9621212121212122, 0.9602272727272727, 0.9636363636363636, 0.9621212121212122, 0.9642857142857143, 0.9630681818181818], 
+												[0.967391304347826, 0.9710144927536232, 0.9621621621621622, 0.948051948051948, 0.9458483754512635, 0.9506172839506173, 0.9567567567567568]]
+print(len(combined_ranking_all_sketches_effectiveness))
 
-# 	plt.plot(reintroduction_threshold_arr,combined_ranking_all_sketches_effectiveness[index],colour_string+pattern_string, label='batch '+str(index))
+for index in range(len(combined_ranking_all_sketches_effectiveness)):
+	colour_string=colours[int(index/5)]
+	pattern_string=line_style_patterns[int(index%5)]
 
-# plt.ylabel('Candidate Disambiguation Recall')
-# plt.xlabel('percent reintroduction threshold value')
-# lgd=plt.legend(bbox_to_anchor=(1.1,1.01), loc=9, prop={'size': 6}, borderaxespad=0.)
-# plt.setp(plt.gca().get_legend().get_texts(), fontsize='12')
+	plt.plot(eviction_threshold_arr,combined_ranking_all_sketches_effectiveness[index],colour_string+pattern_string, label='batch '+str(index+2))
 
-# plt.title('Disambiguation Effectiveness for combined sketch based\n ranking with different Reintroduction Thresholds')
-# plt.savefig('candidate-disambiguation-recall-reintroduction-threshold.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+plt.ylabel('Ranking precision\n (bottom ranked candidates remaining ambiguous)')
+plt.xlabel('percent eviction threshold value')
+plt.xticks(np.arange(10, 45, 5.0))
+plt. yticks(np.arange(0.6, 1, step=0.1))
+lgd=plt.legend(bbox_to_anchor=(0.5,0.5), ncol=4, loc=9, prop={'size': 6}, borderaxespad=0.)
+plt.setp(plt.gca().get_legend().get_texts(), fontsize='12')
 
-# plt.show()
+plt.title('Ranking Effectiveness for combined sketch based\n ranking with different Eviction Thresholds')
+plt.savefig('ranking-precision-eviction-threshold.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+
+plt.show()
+
+
+
 
 #EXPERIMENT 4: performance estimates for reintroduction thresholds: EMD F1, Tweet completion histograms
 
@@ -165,80 +192,162 @@ import matplotlib.colors as colors
 # plt.hold(True)
 
 #110--> dynamic, 120--> baseline
-reintroduction_threshold_arr=[0,20,40,60,80,100,110,120,130]
-tweets= [84152, 173400, 265842, 350484, 439043, 527834, 607569, 682913, 760389, 849446, 942989, 1028661, 1113457, 1188145, 1263202, 1338782, 1419378, 1500195, 1578692, 1657711, 1713105]
-converted_tweets= [[79807, 162782, 242860, 322448, 405061, 488099, 549107, 615404, 688406, 770897, 861562, 942880, 1021344, 1088441, 1155982, 1225024, 1299338, 1374292, 1445521, 1517680, 1568008],
-[79807, 163393, 243489, 323128, 405964, 489225, 550323, 624067, 697427, 780103, 871136, 952526, 1031411, 1098853, 1166658, 1236123, 1310542, 1385701, 1457121, 1529441, 1579847],
-[79807, 163393, 243510, 330917, 413769, 497501, 558847, 633582, 707155, 790081, 881489, 963302, 1042334, 1110141, 1178264, 1248370, 1324075, 1399584, 1471579, 1544401, 1595431],
-[79807, 163630, 243764, 331878, 414747, 498513, 559863, 634591, 708384, 791452, 882937, 964772, 1044513, 1112777, 1181400, 1253701, 1329840, 1405522, 1478945, 1552171, 1603281],
-[79807, 163927, 244070, 332124, 415008, 500260, 562601, 637576, 711472, 795360, 888019, 969981, 1050194, 1118786, 1187731, 1260668, 1336952, 1413345, 1487383, 1560830, 1612026],
-[79807, 164092, 244413, 332475, 415358, 500690, 563038, 638106, 712482, 796947, 889651, 971810, 1053242, 1122638, 1191600, 1264588, 1341056, 1417804, 1491966, 1565416, 1619039],
-[79807, 164092, 244413, 332475, 415358, 500690, 563038, 638106, 712482, 796947, 888577, 970736, 1051265, 1120659, 1189621, 1262584, 1339050, 1415732, 1489894, 1563344, 1616824]]
-#120--> baseline same as 100, Ritter has no concept of completion
-# data to plot
-n_groups = 9
+# reintroduction_threshold_arr=[0,20,40,60,80,100,110,120,130]
+# tweets= [84152, 173400, 265842, 350484, 439043, 527834, 607569, 682913, 760389, 849446, 942989, 1028661, 1113457, 1188145, 1263202, 1338782, 1419378, 1500195, 1578692, 1657711, 1713105]
+# converted_tweets= [[79807, 162782, 242860, 322448, 405061, 488099, 549107, 615404, 688406, 770897, 861562, 942880, 1021344, 1088441, 1155982, 1225024, 1299338, 1374292, 1445521, 1517680, 1568008],
+# [79807, 163393, 243489, 323128, 405964, 489225, 550323, 624067, 697427, 780103, 871136, 952526, 1031411, 1098853, 1166658, 1236123, 1310542, 1385701, 1457121, 1529441, 1579847],
+# [79807, 163393, 243510, 330917, 413769, 497501, 558847, 633582, 707155, 790081, 881489, 963302, 1042334, 1110141, 1178264, 1248370, 1324075, 1399584, 1471579, 1544401, 1595431],
+# [79807, 163630, 243764, 331878, 414747, 498513, 559863, 634591, 708384, 791452, 882937, 964772, 1044513, 1112777, 1181400, 1253701, 1329840, 1405522, 1478945, 1552171, 1603281],
+# [79807, 163927, 244070, 332124, 415008, 500260, 562601, 637576, 711472, 795360, 888019, 969981, 1050194, 1118786, 1187731, 1260668, 1336952, 1413345, 1487383, 1560830, 1612026],
+# [79807, 164092, 244413, 332475, 415358, 500690, 563038, 638106, 712482, 796947, 889651, 971810, 1053242, 1122638, 1191600, 1264588, 1341056, 1417804, 1491966, 1565416, 1619039],
+# [79807, 164092, 244413, 332475, 415358, 500690, 563038, 638106, 712482, 796947, 888577, 970736, 1051265, 1120659, 1189621, 1262584, 1339050, 1415732, 1489894, 1563344, 1616824]]
+# #120--> baseline same as 100, Ritter has no concept of completion
+# # data to plot
+# n_groups = 9
 
-# emd_recall_arr=[,0.77,0.81,0.835,0.86,0.87,0.87] #baseline and 100% should be same
-emd_recall_arr=[0.751, 0.77, 0.785, 0.794, 0.80, 0.81, 0.802, 0.81, 0.58]
-# incomplete_arr=[float(arr[-1]/tweets[-1]) for arr in incomplete_tweets]
-# complete_arr=[float(arr[-1]/tweets[-1]) for arr in converted_tweets]
+
+# emd_recall_arr=[0.751, 0.77, 0.785, 0.794, 0.80, 0.81, 0.802, 0.81, 0.58]
+# # incomplete_arr=[float(arr[-1]/tweets[-1]) for arr in incomplete_tweets]
+# # complete_arr=[float(arr[-1]/tweets[-1]) for arr in converted_tweets]
+# # print(complete_arr)
+
+# complete_arr=[0.89, 0.91, 0.922, 0.936, 0.94, 0.95, 0.946, 0.95] #baseline and 100% should be same
+# time_arr=[2155.6818137168884,2270.8641290664673,2340.172202348709,2375.272013902664,2420.948536157608,3047.7655758857727,2481.43901515007,3427.780866622925,4523.75]
+
+
 # print(complete_arr)
+# # create plot
+# fig, ax1 = plt.subplots()
 
-complete_arr=[0.89, 0.91, 0.922, 0.936, 0.94, 0.95, 0.946, 0.95] #baseline and 100% should be same
-time_arr=[2155.6818137168884,2270.8641290664673,2340.172202348709,2375.272013902664,2420.948536157608,3047.7655758857727,2481.43901515007,3427.780866622925,4523.75]
+# index = np.arange(n_groups)
+# index2 = np.arange(n_groups-1)
+# bar_width = 0.25
+# opacity = 1.0
 
+# rects1 = ax1.bar(index, emd_recall_arr, bar_width,
+# alpha=opacity,
+# color='b',
+# # ax=ax1,
+# label='EMD recall')
 
-print(complete_arr)
-# create plot
-fig, ax1 = plt.subplots()
-
-index = np.arange(n_groups)
-index2 = np.arange(n_groups-1)
-bar_width = 0.25
-opacity = 1.0
-
-rects1 = ax1.bar(index, emd_recall_arr, bar_width,
-alpha=opacity,
-color='b',
-# ax=ax1,
-label='EMD recall')
-
-rects2 = ax1.bar(index2 + 2*bar_width, complete_arr, bar_width,
-alpha=opacity,
-color='g',
-# ax=ax1,
-label='completion percentage')
+# rects2 = ax1.bar(index2 + 2*bar_width, complete_arr, bar_width,
+# alpha=opacity,
+# color='g',
+# # ax=ax1,
+# label='completion percentage')
 
 
-ax2 = ax1.twinx() 
-rects3 = ax2.bar(index + bar_width, time_arr, bar_width,
-alpha=opacity,
-color='r',
-# ax=ax2,
-label='completion time (secs)')
+# ax2 = ax1.twinx() 
+# rects3 = ax2.bar(index + bar_width, time_arr, bar_width,
+# alpha=opacity,
+# color='r',
+# # ax=ax2,
+# label='completion time (secs)')
 
 
  
-ax1.set_xlabel('Reintroduction Variants')
-ax1.set_ylabel('Effectiveness estimates')
-ax2.set_ylabel('Efficiency estimates')
-plt.title('EMD Performance estimates for different reintroduction variants')
-# ax1.set_xticks(index + 1.0*bar_width, ('20', '40', '60', '80', '100'))
-ax1.set_xticks(index+ 1.0*bar_width)
-ax1.set_xticklabels(['0','20', '40', '60', '80', '100','dynamic', 'baseline', 'ritter'])
+# ax1.set_xlabel('Reintroduction Variants')
+# ax1.set_ylabel('Effectiveness estimates')
+# ax2.set_ylabel('Efficiency estimates')
+# plt.title('EMD Performance estimates for different reintroduction variants')
+# # ax1.set_xticks(index + 1.0*bar_width, ('20', '40', '60', '80', '100'))
+# ax1.set_xticks(index+ 1.0*bar_width)
+# ax1.set_xticklabels(['0','20', '40', '60', '80', '100','dynamic', 'baseline', 'ritter'])
 
-for tick in ax1.get_xticklabels():
-        tick.set_rotation(45)
-
-
-lines, labels = ax1.get_legend_handles_labels()
-lines2, labels2 = ax2.get_legend_handles_labels()
+# for tick in ax1.get_xticklabels():
+#         tick.set_rotation(45)
 
 
-lgd=ax1.legend(lines + lines2, labels + labels2, bbox_to_anchor=(0.5,1.0), ncol=3, loc=9, prop={'size': 6}, borderaxespad=0.)
+# lines, labels = ax1.get_legend_handles_labels()
+# lines2, labels2 = ax2.get_legend_handles_labels()
 
 
-plt.savefig('performance-reintroduction-threshold-all-system-variants.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+# lgd=ax1.legend(lines + lines2, labels + labels2, bbox_to_anchor=(0.5,1.0), ncol=3, loc=9, prop={'size': 6}, borderaxespad=0.)
+
+
+# plt.savefig('performance-reintroduction-threshold-all-system-variants.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
  
-# plt.tight_layout()
-plt.show()
+# # plt.tight_layout()
+# plt.show()
+
+
+
+
+# #EXPERIMENT 4: performance estimates for eviction thresholds: EMD F1, Tweet completion histograms
+
+# eviction_threshold_arr=[0, 10, 20, 30, 40]
+# tweets= [84152, 173400, 265842, 350484, 439043, 527834, 607569, 682913, 760389, 849446, 942989, 1028661, 1113457, 1188145, 1263202, 1338782, 1419378, 1500195, 1578692, 1657711, 1713105]
+# converted_tweets= [[79916, 164186, 244499, 323944, 406836, 492040, 554309, 629498, 703320, 787582, 879170, 962364, 1052926, 1122583, 1192144, 1265401, 1341931, 1418471, 1492820, 1566154, 1619718], 
+# 				   [79916, 164186, 244499, 323937, 406829, 492033, 554258, 629395, 702809, 787037, 878495, 960321, 1050692, 1119536, 1189097, 1261812, 1338220, 1414621, 1488594, 1561926, 1613216], 
+# 				   [79916, 164168, 244303, 323740, 406608, 491034, 552207, 627310, 700637, 784351, 875632, 957452, 1046517, 1115264, 1184807, 1257508, 1333623, 1409983, 1483922, 1557220, 1608395], 
+# 				   [79916, 164021, 244145, 323342, 406209, 490622, 551795, 626462, 699689, 783343, 874611, 956298, 1045292, 1114033, 1183562, 1255581, 1331650, 1407789, 1481537, 1554630, 1605759], 
+# 				   [79916, 163738, 243861, 323048, 405899, 489537, 550709, 625301, 698493, 781377, 872617, 954291, 1042888, 1111606, 1180934, 1251965, 1327998, 1403744, 1477406, 1550456, 1601549]]
+# #120--> baseline same as 100, Ritter has no concept of completion
+# # data to plot
+# n_groups = 5
+
+# # emd_recall_arr=[,0.77,0.81,0.835,0.86,0.87,0.87]
+#  #baseline and 100% should be same
+# emd_recall_arr=[0.8147, 0.810, 0.805, 0.797, 0.7924]
+# # incomplete_arr=[float(arr[-1]/tweets[-1]) for arr in incomplete_tweets]
+# # complete_arr=[float(arr[-1]/tweets[-1]) for arr in converted_tweets]
+# # print(complete_arr)
+
+# complete_arr=[0.95, 0.943, 0.936, 0.932, 0.922]
+# time_arr=[2760.48, 2631.72, 2556.53, 2440, 2325]
+
+
+# print(complete_arr)
+# # create plot
+# fig, ax1 = plt.subplots()
+
+# index = np.arange(n_groups)
+
+# bar_width = 0.25
+# opacity = 1.0
+
+# rects1 = ax1.bar(index, emd_recall_arr, bar_width,
+# alpha=opacity,
+# color='b',
+# # ax=ax1,
+# label='EMD recall')
+
+# rects2 = ax1.bar(index + 2*bar_width, complete_arr, bar_width,
+# alpha=opacity,
+# color='g',
+# # ax=ax1,
+# label='completion percentage')
+
+
+# ax2 = ax1.twinx() 
+# rects3 = ax2.bar(index + bar_width, time_arr, bar_width,
+# alpha=opacity,
+# color='r',
+# # ax=ax2,
+# label='completion time (secs)')
+
+
+ 
+# ax1.set_xlabel('Eviction Variants')
+# ax1.set_ylabel('Effectiveness estimates')
+# ax2.set_ylabel('Efficiency estimates')
+# plt.title('EMD Performance estimates for different Eviction variants')
+# # ax1.set_xticks(index + 1.0*bar_width, ('20', '40', '60', '80', '100'))
+# ax1.set_xticks(index+ 1.0*bar_width)
+# ax1.set_xticklabels(['baseline(0)','10','20','30', '40'])
+
+# for tick in ax1.get_xticklabels():
+#         tick.set_rotation(45)
+
+
+# lines, labels = ax1.get_legend_handles_labels()
+# lines2, labels2 = ax2.get_legend_handles_labels()
+
+
+# lgd=ax1.legend(lines + lines2, labels + labels2, bbox_to_anchor=(0.5,1.0), ncol=3, loc=9, prop={'size': 6}, borderaxespad=0.)
+
+
+# plt.savefig('performance-eviction-threshold-all-system-variants.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+ 
+# # plt.tight_layout()
+# plt.show()
