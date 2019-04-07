@@ -4,9 +4,9 @@ import SatadishaModule_final_trie as phase1
 
 # import phase2_Trie_baseline_reintroduction as phase2
 # import phase2_Trie_just_reintroduction as phase2 #just reintroduction, eviction without experimental result computation
-# import phase2_Trie_just_reintroduction_alternate as phase2 # testing reintroduction with various thresholds in unified framework
+import phase2_Trie_just_reintroduction_alternate as phase2 # testing reintroduction with various thresholds in unified framework
 # import phase2_Trie_reintroduction as phase2
-import phase2_Trie_just_eviction_alternate as phase2 # testing eviction with various thresholds in unified framework
+# import phase2_Trie_just_eviction_alternate as phase2 # testing eviction with various thresholds in unified framework
 
 import datetime
 from threading import Thread
@@ -206,13 +206,13 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     tweets_been_processed_list_inner.append(tweets_been_processed)
     reintroduction_threshold_dummy=0
 
-    # #phase2_Trie_just_reintroduction_alternate
-    # candidate_base_post_Phase2, complete_tweet_dataframe_grouped_df_sorted_arr, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
-    # time_out=phase2_output_time
-
-    #phase2_Trie_just_eviction_alternate
-    candidate_base_post_Phase2, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
+    #phase2_Trie_just_reintroduction_alternate
+    candidate_base_post_Phase2, complete_tweet_dataframe_grouped_df_sorted_arr, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
     time_out=phase2_output_time
+
+    # #phase2_Trie_just_eviction_alternate
+    # candidate_base_post_Phase2, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
+    # time_out=phase2_output_time
 
     # #phase2_Trie_reintroduction
     # candidate_base_post_Phase2= Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)    
