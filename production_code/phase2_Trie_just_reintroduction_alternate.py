@@ -563,6 +563,8 @@ class EntityResolver ():
     def get_multiple_aggregate_sketches(self, function_call_label, metric, candidate_featureBase):
 
         sketch_vectors_arr=[]
+        # labelled_data_arr=[]
+
         # candidate_count=[]
         x=candidate_featureBase[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
         print(function_call_label, metric)
@@ -585,6 +587,7 @@ class EntityResolver ():
 
             silhouette_avg_arr.append(silhouette_avg)
             sketch_vectors_arr.append(sketch_vectors)
+            # labelled_data_arr.append(cluster_labels)
 
             print("For k_value =", k_value, "The average silhouette_score is :", silhouette_avg)
 
@@ -592,7 +595,11 @@ class EntityResolver ():
         max_index= silhouette_avg_arr.index(max(silhouette_avg_arr))
         print("max index is: ",max_index)
         sketch_vectors=sketch_vectors_arr[max_index]
-        print("-----------------------------------------------------------------------------------------")
+
+        # labelled_data=labelled_data_arr[max_index]
+        # print(labelled_data[0:10])
+
+        # print("-----------------------------------------------------------------------------------------")
 
         # for i in range(n_clusters):
         #     sketch_vectors.append([0.0,0.0,0.0,0.0,0.0,0.0])
@@ -625,6 +632,7 @@ class EntityResolver ():
 
         # print(sketch_vectors)
 
+        # return sketch_vectors, labelled_data
         return sketch_vectors
 
 
@@ -1067,19 +1075,38 @@ class EntityResolver ():
 
         return reintroduced_tweets
 
-    def get_nearest_neighbours(self, ambiguous_candidate_records):
+    def get_nearest_neighbours(self, ambiguous_candidates, candidate_featureBase_DF):
 
-        ambiguous_candidate_records['index_col'] = range(0, len(ambiguous_candidate_records))
-        print(ambiguous_candidate_records.columns.values)
-        ambiguous_candidate_records_reduced=ambiguous_candidate_records[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
-        D = spatial.distance.squareform(spatial.distance.pdist(ambiguous_candidate_records_reduced))
-        closest = np.argsort(D, axis=1)
+        candidate_featureBase_DF['index_col'] = range(0, len(candidate_featureBase_DF))
+        ambiguous_candidates_index_col= candidate_featureBase_DF[candidate_featureBase_DF['status']=='a']['index_col'].tolist()
+        # print(ambiguous_candidates_index_col)
+        
+        candidate_featureBase_DF_reduced=candidate_featureBase_DF[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']].values
+        # print(type(candidate_featureBase_DF_reduced))
+
+        D = spatial.distance.squareform(spatial.distance.pdist(candidate_featureBase_DF_reduced))
+        # print(type(D))
+        # print(D[:2])
+        # for elem in ambiguous_candidates_index_col:
+        #     print(type(D[elem]), type(D[elem].tolist()))
+
+        D_ambiguous = [D[elem].tolist() for elem in ambiguous_candidates_index_col]
+        # print(len(ambiguous_candidates),len(D_ambiguous))
+
+        # print(D_ambiguous[:2])
+
+        closest = np.argsort(D_ambiguous, axis=1)
+        # print(closest[:5])
+
+        closest_non_ambiguous= [[elem for elem in row if not elem in ambiguous_candidates_index_col] for row in closest]
         k=10
-        k_closest= closest[:, 1:k+1]
-        k_closest_candidates=[[ambiguous_candidate_records[ambiguous_candidate_records['index_col']==elem].candidate for elem in row] for row in k_closest]
-        print(len(ambiguous_candidate_records),len(k_closest))
-        print(k_closest_candidates)
+        k_closest_non_ambiguous= np.array(closest_non_ambiguous)[:, 0:k]
+        k_closest_non_ambiguous_candidates=[[candidate_featureBase_DF[candidate_featureBase_DF['index_col']==elem]['status'].item() for elem in row] for row in k_closest_non_ambiguous]
+        print(len(ambiguous_candidates),len(k_closest_non_ambiguous_candidates))
+        # print(k_closest_non_ambiguous_candidates)
 
+        ambiguous_candidate_nearest_neighbours = {candidate_featureBase_DF[candidate_featureBase_DF['index_col']==ambiguous_candidates_index_col[ind]].candidate.item():k_closest_non_ambiguous_candidates[ind]  for ind in range(len(ambiguous_candidates_index_col))}
+        print(ambiguous_candidate_nearest_neighbours)
 
 
 
@@ -1425,15 +1452,12 @@ class EntityResolver ():
         ambiguous_candidate_records=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"]
 
 
-        nearest_neighbour_list=self.get_nearest_neighbours(ambiguous_candidate_records)
-
-
         self.good_candidates=entity_candidate_records.candidate.tolist()
         self.ambiguous_candidates=ambiguous_candidate_records.candidate.tolist()
         self.bad_candidates=non_entity_candidate_records.candidate.tolist()
         self.infrequent_candidates=all_infrequent.candidate.tolist()
 
-        
+                
         ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
         ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
 
@@ -1486,14 +1510,18 @@ class EntityResolver ():
         self.ambiguous_entity_sketch=self.get_aggregate_sketch(ambiguous_candidate_records)
 
         #multiple sketches per category--cosine
-        self.entity_sketches= self.get_multiple_aggregate_sketches("For entities: ","cosine",entity_candidate_records)
-        self.non_entity_sketches= self.get_multiple_aggregate_sketches("For non-entities: ","cosine",non_entity_candidate_records)
-        self.ambiguous_entity_sketches=self.get_multiple_aggregate_sketches("For ambiguous: ","cosine",ambiguous_candidate_records)
+        self.entity_sketches, clustered_entities= self.get_multiple_aggregate_sketches("For entities: ","cosine",entity_candidate_records)
+        self.non_entity_sketches, clustered_non_entities= self.get_multiple_aggregate_sketches("For non-entities: ","cosine",non_entity_candidate_records)
+        self.ambiguous_entity_sketches, clustered_ambiguous=self.get_multiple_aggregate_sketches("For ambiguous: ","cosine",ambiguous_candidate_records)
         
         #multiple sketches per category--euclidean
         self.entity_sketches_euclidean= self.get_multiple_aggregate_sketches("For entities: ","euclidean",entity_candidate_records)
         self.non_entity_sketches_euclidean= self.get_multiple_aggregate_sketches("For non-entities: ","euclidean",non_entity_candidate_records)
         self.ambiguous_entity_sketches_euclidean=self.get_multiple_aggregate_sketches("For ambiguous: ","euclidean",ambiguous_candidate_records)
+
+        # nearest_neighbour_list=self.get_nearest_neighbours(self.ambiguous_candidates,candidate_featureBase_DF)
+        
+
 
         # #need to calculate cosine distance of all ambiguous candidates at the end of the batch to get displacement in next batch... do not use cutoff
         # self.ambiguous_candidate_distanceDict_prev=self.get_all_cosine_distance(ambiguous_candidate_records,self.entity_sketch,self.non_entity_sketch)

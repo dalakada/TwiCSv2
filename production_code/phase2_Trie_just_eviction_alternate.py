@@ -520,26 +520,45 @@ class EntityResolver ():
 
     #MULTIPLE SKETCHES CLUSTERING
     def get_multiple_aggregate_sketches(self, function_call_label, metric, candidate_featureBase):
-        sketch_vectors=[]
-        candidate_count_arr=[]
+
+        sketch_vectors_arr=[]
+        # labelled_data_arr=[]
+
+        # candidate_count=[]
         x=candidate_featureBase[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']]
-        # print(function_call_label)
+        print(function_call_label, metric)
 
         #insert code for silhouette plot here
-
+        silhouette_avg_arr=[]
         #considering 2 sub clusters for now, can change this into dynamic selection
         if(function_call_label=='For non-entities: '):
-            n_clusters=2
+            n_clusters=5
         else:
-            n_clusters=2
+            n_clusters=5
 
-        clusterer = KMeans(n_clusters, random_state=10)
-        cluster_labels = clusterer.fit_predict(x)
-        silhouette_avg = silhouette_score(x, cluster_labels, metric=metric)  #with metric= euclidean
-        # silhouette_avg = silhouette_score(x, cluster_labels, metric='cosine')  #with metric= cosine
-        sketch_vectors = clusterer.cluster_centers_
+        for k_value in range(2,n_clusters+1):
 
-        # print("For n_clusters =", n_clusters, "The average silhouette_score is :", silhouette_avg)
+            clusterer = KMeans(k_value, random_state=10)
+            cluster_labels = clusterer.fit_predict(x)
+            silhouette_avg = silhouette_score(x, cluster_labels, metric=metric)  #with metric= euclidean
+            # silhouette_avg = silhouette_score(x, cluster_labels, metric='cosine')  #with metric= cosine
+            sketch_vectors = clusterer.cluster_centers_
+
+            silhouette_avg_arr.append(silhouette_avg)
+            sketch_vectors_arr.append(sketch_vectors)
+            # labelled_data_arr.append(cluster_labels)
+
+            print("For k_value =", k_value, "The average silhouette_score is :", silhouette_avg)
+
+
+        max_index= silhouette_avg_arr.index(max(silhouette_avg_arr))
+        print("max index is: ",max_index)
+        sketch_vectors=sketch_vectors_arr[max_index]
+
+        # labelled_data=labelled_data_arr[max_index]
+        # print(labelled_data[0:10])
+
+        # print("-----------------------------------------------------------------------------------------")
 
         # for i in range(n_clusters):
         #     sketch_vectors.append([0.0,0.0,0.0,0.0,0.0,0.0])
@@ -976,6 +995,16 @@ class EntityResolver ():
 
         return ret_value
 
+    def ambiguous_candidates_info_dict_update(ambiguous_candidates, candidate_featureBase_DF, entity_sketches, non_entity_sketches):
+
+        for candidate in ambiguous_candidates:
+            if(candidate not in self.ambiguous_candidates_info_dict):
+                distance_arr=[]
+                directional_derivative_arr=[]
+                
+            else:
+
+
 
     def set_cb(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold):
 
@@ -1315,6 +1344,8 @@ class EntityResolver ():
 
         # #need to calculate cosine distance of all ambiguous candidates at the end of the batch to get displacement in next batch... do not use cutoff
         # self.ambiguous_candidate_distanceDict_prev=self.get_all_cosine_distance(ambiguous_candidate_records,self.entity_sketch,self.non_entity_sketch)
+        ambiguous_candidates_info_dict_update(self.ambiguous_candidates,candidate_featureBase_DF,self.entity_sketches,self.non_entity_sketches)
+
         #candidate_featureBase_DF.to_csv("cb_with_prob_label.csv", sep=',', encoding='utf-8')
         correction_flag=self.set_partition_dict(candidate_featureBase_DF,multiWord_infrequent_candidates)
         # print("reintroduction_threshold:", reintroduction_threshold)
@@ -3254,6 +3285,7 @@ class EntityResolver ():
 
             #frequency_w_decay related information
             self.ambiguous_candidates_reintroduction_dict={}
+            self.ambiguous_candidates_info_dict={}
 
             self.aggregator_incomplete_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             # self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])

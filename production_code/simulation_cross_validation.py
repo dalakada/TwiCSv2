@@ -4,9 +4,9 @@ import SatadishaModule_final_trie as phase1
 
 # import phase2_Trie_baseline_reintroduction as phase2
 # import phase2_Trie_just_reintroduction as phase2 #just reintroduction, eviction without experimental result computation
-import phase2_Trie_just_reintroduction_alternate as phase2 # testing reintroduction with various thresholds in unified framework
+# import phase2_Trie_just_reintroduction_alternate as phase2 # testing reintroduction with various thresholds in unified framework
 # import phase2_Trie_reintroduction as phase2
-# import phase2_Trie_just_eviction_alternate as phase2 # testing eviction with various thresholds in unified framework
+import phase2_Trie_just_eviction_alternate as phase2 # testing eviction with various thresholds in unified framework
 
 import datetime
 from threading import Thread
