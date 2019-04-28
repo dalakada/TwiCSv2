@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.text import OffsetFrom
 from matplotlib.patches import Ellipse
 import trie as trie
+import copy
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from itertools import groupby
@@ -15,7 +16,7 @@ from operator import itemgetter
 import collections 
 
 
-tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',', keep_default_na=False)
+tweets_unpartitoned=pd.read_csv("tweets_3k_annotated_output.csv",sep =',', keep_default_na=False)
 print(list(tweets_unpartitoned.columns.values))
 # tweet_list=[]
 # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/tweets3K.txt","w")
@@ -42,6 +43,12 @@ for index, row in tweets_unpartitoned.iterrows():
     fp_counter_inner=0
     unrecovered_annotated_mention_list=[]
 
+    all_postitive_reintroduction_counter_inner_twics=0
+    tp_counter_inner_twics=0
+    fn_counter_inner_twics=0
+    fp_counter_inner_twics=0
+    unrecovered_annotated_mention_list_twics=[]
+
     annotated_mention_list=[]
     tweet_level_candidate_list=str(row['mentions_other']).split(';')
     for tweet_level_candidates in tweet_level_candidate_list:
@@ -49,6 +56,14 @@ for index, row in tweets_unpartitoned.iterrows():
         annotated_mention_list.extend(sentence_level_cand_list)
     annotated_mention_list=list(map(lambda element: element.lower().strip(),annotated_mention_list))
     annotated_mention_list=list(filter(lambda element: (element !=''), annotated_mention_list))
+
+    annotated_mention_list_for_twiCS= copy.deepcopy(annotated_mention_list)
+    output_mentions_list_twics=ast.literal_eval(row['output_mentions'])
+    output_mentions_list_twics=[eval(list_str) for list_str in output_mentions_list_twics]
+    output_mentions_list_twics_flat = [item.lower() for sublist in output_mentions_list_twics for item in sublist]
+    output_mentions_list_twics_flat=list(filter(lambda element: element !='', output_mentions_list_twics_flat))
+
+    all_postitive_counter_inner_twics=len(output_mentions_list_twics_flat)
 
     output_mentions_list= mentions_list[output_index].split(',')
     output_mentions_list=list(map(lambda element: element.lower().strip(),output_mentions_list))
