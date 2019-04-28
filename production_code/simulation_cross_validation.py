@@ -2,11 +2,11 @@
 #import SatadishaModule as phase1
 import SatadishaModule_final_trie as phase1
 
-# import phase2_Trie_baseline_reintroduction as phase2
+import phase2_Trie_baseline_reintroduction as phase2
 # import phase2_Trie_just_reintroduction as phase2 #just reintroduction, eviction without experimental result computation
 # import phase2_Trie_just_reintroduction_alternate as phase2 # testing reintroduction with various thresholds in unified framework
 # import phase2_Trie_reintroduction as phase2
-import phase2_Trie_just_eviction_alternate as phase2 # testing eviction with various thresholds in unified framework
+# import phase2_Trie_just_eviction_alternate as phase2 # testing eviction with various thresholds in unified framework
 
 import datetime
 from threading import Thread
@@ -51,7 +51,7 @@ total_time=0
 
 #input names: 3K; deduplicated--> politics; malcolm; 1M
 # input_name="D1"
-# tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',')
+tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',')
 
 # input_name="D2"
 #tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
@@ -61,9 +61,11 @@ total_time=0
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
 
 # /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
-print(len(tweets_unpartitoned))
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+# print(len(tweets_unpartitoned))
+
 print(tweets_unpartitoned.columns.tolist())
+
 # print(tweets_unpartitoned.head())
 # tweets_unpartitoned=tweets_unpartitoned[400000:600000:]
 # tweets_unpartitoned=tweets_unpartitoned[:200000:]
@@ -82,9 +84,9 @@ print("***",len(tweets_unpartitoned))
 print('Tweets are in memory...')
 
 
-batch_size=50000
+# batch_size=50000
 
-# batch_size=len(tweets_unpartitoned)
+batch_size=len(tweets_unpartitoned)
 
 # Z_scores=[-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
 # # 
@@ -96,12 +98,12 @@ batch_size=50000
 # whole_level=[]
 
 
-#z_score=-0.078      #-----20K
-# z_score=-0.8      #-----3K
+# z_score=-0.078      #-----20K
+z_score=-0.8      #-----3K
 #z_score=-0.09      #-----50K
 #z_score=-0.078         #-----50K, multiple batches
 # z_score=-0.08         #-----deduplicated_tweets,
-z_score=-0.1119        #-----tweets_1million_for_others, 200K
+# z_score=-0.1119        #-----tweets_1million_for_others, 200K
 
 
 #print(entity_level_arr)
@@ -136,6 +138,9 @@ sentence_level_arr=[[-1]*20]*20
 # # ---------------------------------- reintroduction ranking effectiveness experiments
 
 # output_df=tweets[['ID', 'HashTags', 'Tweet IDs', 'TweetText']]
+
+#for collecting outputs for 3K with annotations
+output_df=tweets[['ID', 'HashTags', 'TweetText', 'mentions_other']]
 
 length=len(tweets)
 
@@ -207,17 +212,22 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     reintroduction_threshold_dummy=0
 
     #phase2_Trie_just_reintroduction_alternate
-    candidate_base_post_Phase2, complete_tweet_dataframe_grouped_df_sorted_arr, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
-    time_out=phase2_output_time
+    # candidate_base_post_Phase2, complete_tweet_dataframe_grouped_df_sorted_arr, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
+    # time_out=phase2_output_time
 
-    # #phase2_Trie_just_eviction_alternate
+    #phase2_Trie_just_eviction_alternate
     # candidate_base_post_Phase2, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
     # time_out=phase2_output_time
 
-    # #phase2_Trie_reintroduction
+    # # #phase2_Trie_reintroduction
     # candidate_base_post_Phase2= Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)    
     # #taking phase2 output time in phase 2 class due to unrelated index reset operation at the end of last batch
     # time_out=time.time()
+
+    # #phase2_Trie_baseline_reintroduction
+    candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
+    #taking phase2 output time in phase 2 class due to unrelated index reset operation at the end of last batch
+    time_out=time.time()
 
     # print('disambiguation status: ',len((candidate_base_post_Phase2[((candidate_base_post_Phase2['batch']<g)&((candidate_base_post_Phase2.status=="g")|(candidate_base_post_Phase2.status=="b")))]).candidate.tolist()))
     
@@ -243,11 +253,18 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
 
     # complete_tweet_dataframe_grouped_df_sorted.to_csv("output_1M_reintroduction_"+str(reintroduction_threshold)+".csv", sep=',', encoding='utf-8')
 
+
+
     print(tweets_been_processed_list_inner)
     print(execution_time_list_inner)
 
     tweets_been_processed_list.append(tweets_been_processed_list_inner)
     execution_time_list.append(execution_time_list_inner)
+
+output_df['output_mentions'] = ''
+output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['output_mentions']] = complete_tweet_dataframe_grouped_df_sorted.loc[complete_tweet_dataframe_grouped_df_sorted.tweetID.isin(output_df.index),['only_good_candidates']].values
+output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated_output.csv", sep=',', encoding='utf-8',index=False)
+print(len(output_df))
 
 
 #not required when only logging processing time

@@ -995,14 +995,14 @@ class EntityResolver ():
 
         return ret_value
 
-    def ambiguous_candidates_info_dict_update(ambiguous_candidates, candidate_featureBase_DF, entity_sketches, non_entity_sketches):
+    # def ambiguous_candidates_info_dict_update(ambiguous_candidates, candidate_featureBase_DF, entity_sketches, non_entity_sketches):
 
-        for candidate in ambiguous_candidates:
-            if(candidate not in self.ambiguous_candidates_info_dict):
-                distance_arr=[]
-                directional_derivative_arr=[]
+    #     for candidate in ambiguous_candidates:
+    #         if(candidate not in self.ambiguous_candidates_info_dict):
+    #             distance_arr=[]
+    #             directional_derivative_arr=[]
                 
-            else:
+    #         else:
 
 
 

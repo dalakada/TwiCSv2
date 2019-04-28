@@ -46,7 +46,7 @@ string.punctuation=string.punctuation+'…‘’'
 class EntityResolver ():
 
 
-    def executor(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold,raw_tweets_for_others):
+    def executor(self,max_batch_value,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold,raw_tweets_for_others):
     # def executor(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold,raw_tweets_for_others)
 
 
@@ -54,7 +54,7 @@ class EntityResolver ():
         # print(phase2stopwordList)
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         
-        candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
+        # candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
 
         # SET TF 
         untrashed_tweets=self.set_tf(data_frame_holder,
@@ -118,7 +118,7 @@ class EntityResolver ():
         self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
         self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
 
-        if(self.counter==13):
+        if(self.counter==(max_batch_value+1)):
             self.just_converted_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
 
             print('completed tweets: ', len(self.just_converted_tweets),'incomplete tweets: ', len(self.incomplete_tweets))
@@ -143,7 +143,7 @@ class EntityResolver ():
             complete_tweet_dataframe_grouped_df['tweetID']=complete_tweet_dataframe_grouped_df['tweetID'].astype(int)
             self.complete_tweet_dataframe_grouped_df_sorted=(complete_tweet_dataframe_grouped_df.sort_values(by='tweetID', ascending=True)).reset_index(drop=True)
 
-            # print(list(self.complete_tweet_dataframe_grouped_df_sorted.columns.values))
+            print(list(self.complete_tweet_dataframe_grouped_df_sorted.columns.values))
             # print(self.complete_tweet_dataframe_grouped_df_sorted.head(5))
             # print(len(self.complete_tweet_dataframe_grouped_df_sorted))
 

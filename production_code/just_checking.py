@@ -15,6 +15,83 @@ from operator import itemgetter
 import collections 
 
 
+tweets_unpartitoned=pd.read_csv("tweets_3k_annotated.csv",sep =',', keep_default_na=False)
+print(list(tweets_unpartitoned.columns.values))
+# tweet_list=[]
+# f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/tweets3K.txt","w")
+
+# for index, row in tweets_unpartitoned.iterrows():
+#     tweet_to_include= str(row['TweetText'])+' --eosc\n'
+#     f.write(tweet_to_include)
+# f.close() 
+
+fp= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/output/tweets_3K_input_2019-04-26_16-49-32-20455/mentions_output.txt","r")
+mentions_list = fp.read().split("\n") # Create a list containing all lines
+fp.close() # Close file
+
+output_index=0
+tp_counter_outer=0
+fn_counter_outer=0
+fp_counter_outer=0
+
+for index, row in tweets_unpartitoned.iterrows():
+
+    all_postitive_reintroduction_counter_inner=0
+    tp_counter_inner=0
+    fn_counter_inner=0
+    fp_counter_inner=0
+    unrecovered_annotated_mention_list=[]
+
+    annotated_mention_list=[]
+    tweet_level_candidate_list=str(row['mentions_other']).split(';')
+    for tweet_level_candidates in tweet_level_candidate_list:
+        sentence_level_cand_list= tweet_level_candidates.split(',')
+        annotated_mention_list.extend(sentence_level_cand_list)
+    annotated_mention_list=list(map(lambda element: element.lower().strip(),annotated_mention_list))
+    annotated_mention_list=list(filter(lambda element: (element !=''), annotated_mention_list))
+
+    output_mentions_list= mentions_list[output_index].split(',')
+    output_mentions_list=list(map(lambda element: element.lower().strip(),output_mentions_list))
+    output_mentions_list=list(filter(lambda element: element !='', output_mentions_list))
+
+    all_postitive_counter_inner=len(output_mentions_list)
+
+    print(annotated_mention_list, output_mentions_list)
+
+    while(annotated_mention_list):
+        if(len(output_mentions_list)):
+            annotated_candidate= annotated_mention_list.pop()
+            if(annotated_candidate in output_mentions_list):
+                output_mentions_list.pop(output_mentions_list.index(annotated_candidate))
+                tp_counter_inner+=1
+            else:
+                unrecovered_annotated_mention_list.append(annotated_candidate)
+        else:
+            unrecovered_annotated_mention_list.extend(annotated_mention_list)
+            break
+
+    print(unrecovered_annotated_mention_list)
+    print('--------------------')
+    # unrecovered_annotated_mention_list_outer.extend(unrecovered_annotated_mention_list)
+    fn_counter_inner=len(unrecovered_annotated_mention_list)
+    fp_counter_inner=all_postitive_counter_inner- tp_counter_inner
+
+    tp_counter_outer+=tp_counter_inner
+    fn_counter_outer+=fn_counter_inner
+    fp_counter_outer+=fp_counter_inner
+
+    output_index+=1
+
+print('tp_counter_outer: ',tp_counter_outer)
+print('fn_counter_outer: ',fn_counter_outer)
+print('fp_counter_outer: ',fp_counter_outer)
+
+neuroner_precision= tp_counter_outer/(tp_counter_outer+fp_counter_outer)
+neuroner_recall= tp_counter_outer/(tp_counter_outer+fn_counter_outer)
+
+print('precision: ', neuroner_precision)
+print('recall: ', neuroner_recall)
+
 #------------------------------------------------------------------------------------eviction files------------------------------------------------------------------
 
 # output_df=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/eviction/output_1M_all_eviction_runs_with_annotations.csv",sep =',', keep_default_na=False)
@@ -280,45 +357,48 @@ import collections
 #---------------------------------------------------------------------tallying reintroduction outputs among thresholds
 # bigger_tweet_dataframe=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_reintroduction_runs_with_annotations.csv",sep =',', keep_default_na=False)
 # lst=[0,20,40,60,80,100,110]
-bigger_tweet_dataframe=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/eviction/output_1M_all_eviction_runs_with_annotations.csv",sep =',', keep_default_na=False)
-lst=[0,10,20,30,40]
+# bigger_tweet_dataframe=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/eviction/output_1M_all_eviction_runs_with_annotations.csv",sep =',', keep_default_na=False)
+# lst=[0,10,20,30,40]
 
-elem_not_in_no_reintroduction=set()
+# elem_not_in_no_reintroduction=set()
 
-for index,row in bigger_tweet_dataframe.iterrows():
-    tweetID=index
-    # print(index)
+# for index,row in bigger_tweet_dataframe.iterrows():
+#     tweetID=index
+#     # print(index)
 
-    output_reintroduction_theshold_list=[]
+#     output_reintroduction_theshold_list=[]
 
-    for elem in range(len(lst)):
+#     for elem in range(len(lst)):
 
-        threshold=lst[elem]
+#         threshold=lst[elem]
 
-        multipass_output_list=ast.literal_eval(row['output_col_'+str(threshold)])
-        multipass_output_list=[eval(list_str) for list_str in multipass_output_list]
-        # print(multipass_output_list)
-        multipass_output_list_flat = [item.lower() for sublist in multipass_output_list for item in sublist]
-        multipass_output_list_flat=list(filter(lambda element: element !='', multipass_output_list_flat))
+#         multipass_output_list=ast.literal_eval(row['output_col_'+str(threshold)])
+#         multipass_output_list=[eval(list_str) for list_str in multipass_output_list]
+#         # print(multipass_output_list)
+#         multipass_output_list_flat = [item.lower() for sublist in multipass_output_list for item in sublist]
+#         multipass_output_list_flat=list(filter(lambda element: element !='', multipass_output_list_flat))
 
-        # multipass_output_list=ast.literal_eval(str(row['output_col_'+str(threshold)]))
-        # multipass_output_list_flat = [item.lower() for sublist in multipass_output_list for item in sublist]
-        # multipass_output_list_flat=list(filter(lambda element: element !='', multipass_output_list_flat))
+#         # multipass_output_list=ast.literal_eval(str(row['output_col_'+str(threshold)]))
+#         # multipass_output_list_flat = [item.lower() for sublist in multipass_output_list for item in sublist]
+#         # multipass_output_list_flat=list(filter(lambda element: element !='', multipass_output_list_flat))
 
-        output_reintroduction_theshold_list.append(multipass_output_list_flat)
+#         output_reintroduction_theshold_list.append(multipass_output_list_flat)
 
-    if not all(collections.Counter(x) == collections.Counter(output_reintroduction_theshold_list[0]) for x in output_reintroduction_theshold_list):
-      print(index,output_reintroduction_theshold_list[0])
-      for output_list in output_reintroduction_theshold_list[1:]:
-          print(output_list)
-          difference=set(output_reintroduction_theshold_list[0])-set(output_list)
-          # print(difference)
-          elem_not_in_no_reintroduction|=difference
-          # print('==>',elem_not_in_no_reintroduction)
+#     if not all(collections.Counter(x) == collections.Counter(output_reintroduction_theshold_list[0]) for x in output_reintroduction_theshold_list):
+#       print(index,output_reintroduction_theshold_list[0])
+#       for output_list in output_reintroduction_theshold_list[1:]:
+#           print(output_list)
+#           difference=set(output_reintroduction_theshold_list[0])-set(output_list)
+#           # print(difference)
+#           elem_not_in_no_reintroduction|=difference
+#           # print('==>',elem_not_in_no_reintroduction)
 
-      print('================================================')
+#       print('================================================')
 
-print(elem_not_in_no_reintroduction, len(elem_not_in_no_reintroduction))
+# print(elem_not_in_no_reintroduction, len(elem_not_in_no_reintroduction))
+
+
+
 # print(list(bigger_tweet_dataframe.columns.values))
 # bigger_tweet_dataframe.to_csv("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_reintroduction_runs_with_annotations_updated.csv", sep=',', encoding='utf-8',index=False)
 # os.remove("/home/satadisha/Desktop/GitProjects/data/output_1M_reintroduction_all_reintroduction_runs_with_annotations.csv")
