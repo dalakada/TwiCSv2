@@ -41,11 +41,12 @@ for item in tempList:
 cachedStopWords.remove("don")
 cachedStopWords.remove("your")
 cachedTitles = ["mr.","mr","mrs.","mrs","miss","ms","sen.","dr","dr.","prof.","president","congressman"]
-prep_list=["in","at","of","on","&;"] #includes common conjunction as well
+prep_list=["in","at","of","on","&;","v."] #includes common conjunction as well
 article_list=["a","an","the"]
+conjoiner=["de"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["nope","gee","hmm","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","bye","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 
 #string.punctuation.extend('“','’','”')
 #---------------------Existing Lists--------------------
@@ -302,7 +303,7 @@ class SatadishaModule():
                     #returns list of stopwords in tweet sentence
                     combined_list_here=([]+cachedStopWords+article_list+prep_list+chat_word_list)
                     #combined_list_here.remove("the")
-                    tweetWordList_stopWords=list(filter(lambda word: ((word[0].islower()) & (((word.strip()).strip(string.punctuation)).lower() in combined_list_here))|(word.strip() in string.punctuation)|(word.startswith('@')), tweetWordList))
+                    tweetWordList_stopWords=list(filter(lambda word: ((word[0].islower()) & (((word.strip()).strip(string.punctuation)).lower() in combined_list_here))|(word.strip() in string.punctuation)|(word.startswith('#'))|(word.startswith('@')), tweetWordList))
                     
                     #returns list of @userMentions
                     userMentionswPunct=list(filter(lambda phrase: phrase.startswith('@'), tweetWordList))
@@ -361,7 +362,7 @@ class SatadishaModule():
                 combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list
                 if not ((candidateText in combined)|(candidateText.isdigit())|(self.is_float(candidateText))):
                     self.CTrie.__setitem__(candidateText.split(),len(candidateText.split()),candidate.features,batch_number)
-            # if(index==191):
+            # if(index==923):
             #     print(sentence)
             #     self.printList(ne_List_final)
             #if(userMention_List_final):
@@ -596,6 +597,8 @@ class SatadishaModule():
                 #print(first,second)
                 #print(tweetWordList[first[-1]])
                 if ((not (tweetWordList[first[-1]]).endswith('"'))&((second[0]-first[-1])==2) & (tweetWordList[first[-1]+1].lower() in prep_list)):
+                    (final_output[-1]).extend([first[-1]+1]+second)
+                elif ((not (tweetWordList[first[-1]]).endswith('"'))&((second[0]-first[-1])==2) & (tweetWordList[first[-1]+1].lower() in conjoiner)):
                     (final_output[-1]).extend([first[-1]+1]+second)
                 elif((not (tweetWordList[first[-1]].endswith('"')))&((second[0]-first[-1])==3) & (tweetWordList[first[-1]+1].lower() in prep_list)& (tweetWordList[first[-1]+2].lower() in article_list)):
                     (final_output[-1]).extend([first[-1]+1]+[first[-1]+2]+second)
@@ -862,8 +865,10 @@ class SatadishaModule():
     # In[309]:
 
     def capCheck(self,word):
-        combined_list=[]+cachedStopWords+prep_list+chat_word_list+article_list
+        combined_list=[]+cachedStopWords+prep_list+chat_word_list+article_list+conjoiner
         if word.startswith('@'):
+            return False
+        if word.startswith('#'):
             return False
         elif "<Hashtag" in word:
             return False
@@ -1187,7 +1192,7 @@ class SatadishaModule():
                                 if(len(out)==1):
                                     temp.append(index)
                                 else:
-                                    if (word not in prep_list)&(word not in article_list):
+                                    if ((word not in prep_list)&(word not in article_list)):
                                         temp.append(index)
                                     else:
                                         sflag=True

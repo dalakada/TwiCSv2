@@ -1,3 +1,61 @@
+# with NEURONER and TwiCS on the venezuela set
+
+
+tp_counter_outer:  
+fn_counter_outer:  
+fp_counter_outer:  
+neuroner_precision:  
+neuroner_recall:  
+433.8575417995453
+
+tp_counter_outer_twics:  
+fn_counter_outer_twics:  
+fp_counter_outer_twics:  
+twics_precision:  
+twics_recall:  
+3.9453341960906982
+
+# with NEURONER and TwiCS on the venezuela set
+
+
+tp_counter_outer:  1063
+fn_counter_outer:  299
+fp_counter_outer:  2166
+neuroner_precision:  0.3292040879529266
+neuroner_recall:  0.7804698972099853
+343.5908000469208
+
+tp_counter_outer_twics:  1035
+fn_counter_outer_twics:  327
+fp_counter_outer_twics:  135
+twics_precision:  0.8846153846153846
+twics_recall:  0.7599118942731278
+3.5452351570129395
+
+neuroner_f1:  0.4630799390111087 twics_f1:  0.8175355450236967
+
+
+
+
+# with NEURONER and TwiCS on the 3K set
+
+tp_counter_outer:  2486
+fn_counter_outer:  883
+fp_counter_outer:  1368
+neuroner_precision:  0.6450441100155683
+neuroner_recall:  0.7379044226773523
+
+tp_counter_outer_twics:  2192
+fn_counter_outer_twics:  1177
+fp_counter_outer_twics:  359
+twics_precision:  0.8592708741669933
+twics_recall:  0.6506381715642624
+
+neuroner_f1:  0.6883566385158522 twics_f1:  0.7405405405405405
+
+
+
+
 tweets in stream: [84152, 173400, 265842, 350484, 439043, 527834, 607569, 682913, 760389, 849446, 942989, 1028661, 1113457, 1188145, 1263202, 1338782, 1419378, 1500195, 1578692, 1657711, 1713105]
 
 

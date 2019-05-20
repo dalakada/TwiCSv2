@@ -1,0 +1,3322 @@
+['ID', 'HashTags', 'TweetText', 'mentions_other', 'output_mentions']
+0 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+1 ['macron'] ['macron']
+[]
+===========================
+2 ['macron'] ['macron']
+[]
+===========================
+3 ['venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+4 ['trump', 'trump', 'pompeo', 'bolton', 'abrams', 'trump'] ['trump', 'trump', 'trump', 'bolton']
+['abrams', 'pompeo']
+===========================
+5 [] []
+[]
+===========================
+6 ['dictator raul castro', 'minister of defense', 'castro', 'cuban'] ['cuban']
+['dictator raul castro', 'minister of defense', 'castro']
+===========================
+7 ['venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+8 [] []
+[]
+===========================
+9 [] []
+[]
+===========================
+10 ['los teques'] ['teques']
+['los teques']
+===========================
+11 ['neokaxtrizmo'] []
+['neokaxtrizmo']
+===========================
+12 [] []
+[]
+===========================
+13 ['trump', 'cuba', 'canada', 'maduro', 'bolton', 'abrams', 'erdogan', 'putin', 'maduro', 'venezuela'] ['canada', 'maduro', 'bolton', 'venezuela', 'cuba', 'maduro']
+['putin', 'erdogan', 'abrams', 'trump']
+===========================
+14 [] []
+[]
+===========================
+15 ['secretary of state mike pompeo', 'united states'] ['united states']
+['secretary of state mike pompeo']
+===========================
+16 ['venezuela', 'constitution', 'nicolás maduro', 'maduro'] ['venezuela', 'constitution', 'nicolás maduro', 'maduro']
+[]
+===========================
+17 [] []
+[]
+===========================
+18 [] []
+[]
+===========================
+19 [] []
+[]
+===========================
+20 [] []
+[]
+===========================
+21 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+22 [] []
+[]
+===========================
+23 [] []
+[]
+===========================
+24 [] []
+[]
+===========================
+25 ['vpn'] []
+['vpn']
+===========================
+26 ['venezuela', 'maduro'] ['venezuela', 'maduro']
+[]
+===========================
+27 ['socialism'] []
+['socialism']
+===========================
+28 ['russians'] ['russians']
+[]
+===========================
+29 [] []
+[]
+===========================
+30 [] []
+[]
+===========================
+31 ['u.s. secretary of state', 'russian foreign minister'] ['u.s. secretary of state', 'russian foreign minister']
+[]
+===========================
+32 [] []
+[]
+===========================
+33 ['us', 'venezuela'] ['us', 'venezuela']
+[]
+===========================
+34 ['socialism', 'socialism', 'maduro'] ['maduro']
+['socialism', 'socialism']
+===========================
+35 [] []
+[]
+===========================
+36 [] []
+[]
+===========================
+37 [] []
+[]
+===========================
+38 [] []
+[]
+===========================
+39 [] []
+[]
+===========================
+40 [] []
+[]
+===========================
+41 ['guaido'] ['watch live', 'guaido']
+[]
+===========================
+42 [] []
+[]
+===========================
+43 [] []
+[]
+===========================
+44 ['ret. brigadier general', 'u.s. military', 'u.s. special forces', 'juan guaido'] ['brigadier general', 'u.s', 'u.s', 'guaido']
+['juan guaido', 'u.s. special forces', 'u.s. military', 'ret. brigadier general']
+===========================
+45 ['russia', 'u.s', 'venezuela'] ['russia', 'u.s', 'venezuela']
+[]
+===========================
+46 [] []
+[]
+===========================
+47 ['juan guaido'] ['juan guaido']
+[]
+===========================
+48 [] []
+[]
+===========================
+49 [] []
+[]
+===========================
+50 ['usmc'] ['usmc']
+[]
+===========================
+51 ['russia', 'u.s', 'venezuela'] ['russia', 'u.s', 'venezuela']
+[]
+===========================
+52 [] []
+[]
+===========================
+53 ['macron'] ['macron']
+[]
+===========================
+54 ['spanish'] ['spanish']
+[]
+===========================
+55 ['america', 'usa'] ['america']
+['usa']
+===========================
+56 [] []
+[]
+===========================
+57 ['el diario de dmfusion'] []
+['el diario de dmfusion']
+===========================
+58 [] []
+[]
+===========================
+59 [] []
+[]
+===========================
+60 [] []
+[]
+===========================
+61 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+62 ['altamira', 'caracas', 'gnb'] ['altamira', 'caracas', 'gnb']
+[]
+===========================
+63 ['ret. brigadier general', 'u.s', 'u.s', 'juan guaido'] ['brigadier general', 'u.s', 'u.s', 'guaido']
+['juan guaido', 'ret. brigadier general']
+===========================
+64 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+65 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+66 ['lima group', 'interim president', 'venezuelans'] ['venezuelans']
+['lima group', 'interim president']
+===========================
+67 [] []
+[]
+===========================
+68 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+69 [] []
+[]
+===========================
+70 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+71 [] []
+[]
+===========================
+72 ['venezuela', 'maduro'] ['venezuela', 'maduro']
+[]
+===========================
+73 ['msnbc'] ['msnbc']
+[]
+===========================
+74 ['altamira'] ['altamira', 'caracas']
+[]
+===========================
+75 [] []
+[]
+===========================
+76 [] []
+[]
+===========================
+77 ['trish regan primetime', 'u.s', 'president'] ['trish regan primetime', 'u.s']
+['president']
+===========================
+78 ['usmc'] ['usmc']
+[]
+===========================
+79 [] []
+[]
+===========================
+80 ['ret. brigadier general', 'u.s', 'u.s special forces', 'juan guaido'] ['brigadier general', 'u.s', 'u.s', 'guaido']
+['juan guaido', 'u.s special forces', 'ret. brigadier general']
+===========================
+81 [] []
+[]
+===========================
+82 ['guaido', 'maduro'] ['guaido', 'maduro']
+[]
+===========================
+83 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+84 ['venezuela', 'latin america', 'democrat socialists', 'bernie sanders', 'united states'] ['venezuela', 'latin america', 'democrat socialists', 'bernie sanders', 'united states']
+[]
+===========================
+85 [] []
+[]
+===========================
+86 [] []
+[]
+===========================
+87 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+88 ['hillary'] ['hillary']
+[]
+===========================
+89 ['gnb', 'caracas'] ['gnb in caracas']
+['caracas', 'gnb']
+===========================
+90 ['adm. faller', 'iran', 'tehran', 'cuba'] ['adm. faller', 'iran', 'tehran', 'cuba']
+[]
+===========================
+91 [] []
+[]
+===========================
+92 [] []
+[]
+===========================
+93 [] []
+[]
+===========================
+94 ['russia', 'u.s', 'venezuela'] ['russia', 'u.s', 'venezuela']
+[]
+===========================
+95 [] []
+[]
+===========================
+96 ['adm. faller', 'iran', 'tehran', 'cuba'] ['adm. faller']
+['cuba', 'tehran', 'iran']
+===========================
+97 [] []
+[]
+===========================
+98 [] []
+[]
+===========================
+99 ['measles', 'bill', 'iraqi'] []
+['measles', 'bill', 'iraqi']
+===========================
+100 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+101 [] []
+[]
+===========================
+102 [] []
+[]
+===========================
+103 [] []
+[]
+===========================
+104 ['socialism'] []
+['socialism']
+===========================
+105 [] []
+[]
+===========================
+106 [] []
+[]
+===========================
+107 [] []
+[]
+===========================
+108 ['rubén brito', 'altamira interchange', 'la carlota', 'national guard'] ['altamira', 'la carlota']
+['national guard', 'altamira interchange', 'rubén brito']
+===========================
+109 ['spanish government', 'caracas', 'catalonia'] ['spanish', 'caracas']
+['catalonia', 'spanish government']
+===========================
+110 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+111 ['gnb', 'valencia', 'carabobo'] ['gnb']
+['carabobo', 'valencia']
+===========================
+112 ['socialism'] []
+['socialism']
+===========================
+113 [] []
+[]
+===========================
+114 ['usmc'] ['usmc']
+[]
+===========================
+115 ['american', 'us government', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine'] ['american', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine']
+['us government']
+===========================
+116 [] []
+[]
+===========================
+117 [] []
+[]
+===========================
+118 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+119 [] []
+[]
+===========================
+120 ['usmc'] ['usmc']
+[]
+===========================
+121 [] []
+[]
+===========================
+122 ['crabcon'] []
+['crabcon']
+===========================
+123 ['la carlota', 'caracas'] ['la carlota', 'caracas']
+[]
+===========================
+124 ['adm. faller', 'china', 'venezuela', 'venezuelan', 'venezuelan'] ['adm. faller', 'venezuela', 'venezuelan', 'venezuelan']
+['china']
+===========================
+125 [] []
+[]
+===========================
+126 ['greek', 'venezuelans', 'venezuela'] ['venezuela', 'venezuelans']
+['greek']
+===========================
+127 [] []
+[]
+===========================
+128 ['maduro', 'american', 'coup', 'maduro', 'america'] ['maduro', 'american', 'maduro', 'america']
+['coup']
+===========================
+129 ['venezuela', 'venezuela', 'venezuelans'] ['venezuela', 'venezuela', 'venezuelans']
+[]
+===========================
+130 ['constitutionality', 'venezuela'] []
+['constitutionality', 'venezuela']
+===========================
+131 ['macron'] ['macron']
+[]
+===========================
+132 ['gru'] []
+['gru']
+===========================
+133 ['venezuela'] ['venezuela']
+[]
+===========================
+134 ['juan guaidó', 'us', 'maduro'] ['us', 'maduro']
+['juan guaidó']
+===========================
+135 ['pepe mujica', 'maduro'] ['pepe mujica', 'maduro']
+[]
+===========================
+136 ["guardian's soy boy", 'corbynista kryptonite'] ["guardian's soy boy", 'corbynista kryptonite']
+[]
+===========================
+137 [] []
+[]
+===========================
+138 [] []
+[]
+===========================
+139 ['adm. faller', 'venezuela'] ['adm. faller']
+['venezuela']
+===========================
+140 ['ron paul', 'guaido', 'washington', 'venezuelan'] ['ron paul warns', 'hapless', 'guaido', 'washington', 'zero hedge']
+['venezuelan', 'ron paul']
+===========================
+141 ['maduro death squads', 'faes'] ['maduro death squads', 'faes']
+[]
+===========================
+142 [] []
+[]
+===========================
+143 [] []
+[]
+===========================
+144 ['bolivar'] []
+['bolivar']
+===========================
+145 ['macron'] ['macron']
+[]
+===========================
+146 [] []
+[]
+===========================
+147 [] []
+[]
+===========================
+148 ['socialism'] []
+['socialism']
+===========================
+149 ['socialism'] []
+['socialism']
+===========================
+150 [] []
+[]
+===========================
+151 ['venezuela', 'venezuela', 'venezuelans'] ['venezuela', 'venezuela', 'venezuelans']
+[]
+===========================
+152 ['colorado', 'florida', 'u.s'] ['u.s']
+['colorado', 'florida']
+===========================
+153 [] []
+[]
+===========================
+154 [] []
+[]
+===========================
+155 ['mike pompeo'] ['america']
+['mike pompeo']
+===========================
+156 ['macron'] ['macron']
+[]
+===========================
+157 [] []
+[]
+===========================
+158 ['president of the united states'] ['united states']
+['president of the united states']
+===========================
+159 ['venezuela'] []
+['venezuela']
+===========================
+160 [] []
+[]
+===========================
+161 [] []
+[]
+===========================
+162 [] []
+[]
+===========================
+163 [] []
+[]
+===========================
+164 [] []
+[]
+===========================
+165 ['venezuelan army', 'maduro'] ['spectacularly fails', 'venezuelan army', 'maduro']
+[]
+===========================
+166 [] []
+[]
+===========================
+167 ['macron'] ['macron']
+[]
+===========================
+168 ['trish regan', 'venezuela'] ['venezuela']
+['trish regan']
+===========================
+169 [] []
+[]
+===========================
+170 [] []
+[]
+===========================
+171 [] []
+[]
+===========================
+172 [] []
+[]
+===========================
+173 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+174 ['trish regan primetime', 'u.s', 'president'] ['trish regan primetime', 'u.s']
+['president']
+===========================
+175 [] []
+[]
+===========================
+176 ['macron'] ['macron']
+[]
+===========================
+177 [] []
+[]
+===========================
+178 ['spanish'] ['spanish']
+[]
+===========================
+179 ['maduro', 'us', 'uk', 'us', 'us', 'uk'] ['maduro', 'uk', 'us', 'uk']
+['us', 'us']
+===========================
+180 [] []
+[]
+===========================
+181 ['guaido'] ['watch live', 'guaido']
+[]
+===========================
+182 ['american', 'us', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine'] ['american', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine']
+['us']
+===========================
+183 ['pepe mujica'] ['pepe mujica']
+[]
+===========================
+184 ['guaido', 'maduro', 'us', 'trump', 'us'] ['guaido', 'maduro']
+['us', 'trump', 'us']
+===========================
+185 [] []
+[]
+===========================
+186 ['russians'] ['russians']
+[]
+===========================
+187 ['socialism'] []
+['socialism']
+===========================
+188 ['us', 'obama', 'hillary'] ['us', 'hillary']
+['obama']
+===========================
+189 ['macron'] ['macron']
+[]
+===========================
+190 ['macron'] ['macron']
+[]
+===========================
+191 [] []
+[]
+===========================
+192 [] []
+[]
+===========================
+193 [] []
+[]
+===========================
+194 ['guaido', 'gnb', 'la carlota'] ['guaido', 'gnb', 'la carlota']
+[]
+===========================
+195 [] []
+[]
+===========================
+196 [] []
+[]
+===========================
+197 ['macron'] ['macron']
+[]
+===========================
+198 [] []
+[]
+===========================
+199 ["guardian's soy boy", 'corbynista kryptonite'] ["guardian's soy boy", 'corbynista kryptonite']
+[]
+===========================
+200 ['democracy'] []
+['democracy']
+===========================
+201 ['russia', 'u.s', 'venezuela'] ['russia', 'u.s', 'venezuela']
+[]
+===========================
+202 [] []
+[]
+===========================
+203 [] []
+[]
+===========================
+204 ['fort russ news', 'venezuelan army', 'maduro'] ['spectacularly fails', 'venezuelan army', 'maduro']
+['fort russ news']
+===========================
+205 [] []
+[]
+===========================
+206 ['leftists', 'socialist utopia', 'socialism'] []
+['leftists', 'socialist utopia', 'socialism']
+===========================
+207 ['u.s. secretary of state', 'russian foreign minister'] ['u.s. secretary of state', 'russian foreign minister']
+[]
+===========================
+208 ['ron paul', 'guaido', 'washington', 'venezuelan'] ['ron paul warns', 'hapless', 'guaido', 'washington', 'zero hedge']
+['venezuelan', 'ron paul']
+===========================
+209 ['trump administration', 'u.s'] ['trump administration', 'u.s']
+[]
+===========================
+210 ['socialism'] []
+['socialism']
+===========================
+211 [] []
+[]
+===========================
+212 ['venezuelans', 'venezuelans'] ['venezuelans', 'venezuelans']
+[]
+===========================
+213 ['russians'] ['russians']
+[]
+===========================
+214 [] []
+[]
+===========================
+215 [] []
+[]
+===========================
+216 [] []
+[]
+===========================
+217 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+218 ['macron'] ['macron']
+[]
+===========================
+219 [] []
+[]
+===========================
+220 ['adm. faller'] ['adm. faller']
+[]
+===========================
+221 [] []
+[]
+===========================
+222 [] []
+[]
+===========================
+223 [] []
+[]
+===========================
+224 ['guaido'] ['watch live', 'guaido']
+[]
+===========================
+225 [] []
+[]
+===========================
+226 ['maduro', 'france', 'twitter'] ['maduro', 'france', 'twitter']
+[]
+===========================
+227 ['socialism'] []
+['socialism']
+===========================
+228 ['msm', 'bbc'] []
+['msm', 'bbc']
+===========================
+229 ['adm. faller', 'venezuela'] ['adm. faller']
+['venezuela']
+===========================
+230 [] []
+[]
+===========================
+231 ['adm. faller', 'venezuela'] ['adm. faller']
+['venezuela']
+===========================
+232 [] []
+[]
+===========================
+233 [] []
+[]
+===========================
+234 [] []
+[]
+===========================
+235 ['macron'] ['macron']
+[]
+===========================
+236 [] []
+[]
+===========================
+237 [] []
+[]
+===========================
+238 [] []
+[]
+===========================
+239 [] []
+[]
+===========================
+240 ['faller'] ['day now', 'faller']
+[]
+===========================
+241 ['united states'] ['united states']
+[]
+===========================
+242 [] []
+[]
+===========================
+243 ['venezuelan'] ['venezuelan']
+[]
+===========================
+244 [] ['usd', 'usd']
+[]
+===========================
+245 ['venezuelans'] ['venezuelans']
+[]
+===========================
+246 ['us', 'isis', 'us'] ['us', 'isis', 'us']
+[]
+===========================
+247 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+248 ['msnbc'] ['ironic', 'msnbc']
+[]
+===========================
+249 [] []
+[]
+===========================
+250 ['venezuela', 'socialist'] ['venezuela']
+['socialist']
+===========================
+251 [] []
+[]
+===========================
+252 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+253 [] []
+[]
+===========================
+254 ['usa foreign policy', 'libya', 'yemen', 'gaza', 'syria', 'honduras', 'iran', 'somalia'] ['libya', 'yemen', 'syria', 'honduras', 'iran']
+['somalia', 'gaza', 'usa foreign policy']
+===========================
+255 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+256 ['us', 'bernie sanders', 'congress'] ['us', 'bernie sanders']
+['congress']
+===========================
+257 ['venezuela', 'latin america', 'democrat socialists', 'bernie sanders', 'united states'] ['venezuela', 'latin america', 'democrat socialists', 'bernie sanders', 'united states']
+[]
+===========================
+258 ['venezuela', 'socialist'] ['venezuela']
+['socialist']
+===========================
+259 ['president of venezuela', 'constitution'] ['venezuela', 'constitution']
+['president of venezuela']
+===========================
+260 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+261 ['u.s'] ['u.s']
+[]
+===========================
+262 ['socialism'] []
+['socialism']
+===========================
+263 ['maduro', 'chavez', 'mestizos', 'chavez', 'guaido', 'maduro'] ['maduro', 'guaido', 'maduro', 'chavez', 'chavez']
+['mestizos']
+===========================
+264 [] []
+[]
+===========================
+265 [] []
+[]
+===========================
+266 ['us'] ['us']
+[]
+===========================
+267 ['trish regan primetime', 'u.s'] ['trish regan primetime', 'u.s']
+[]
+===========================
+268 ['venezuelans'] ['venezuelans']
+[]
+===========================
+269 [] []
+[]
+===========================
+270 [] []
+[]
+===========================
+271 [] []
+[]
+===========================
+272 [] []
+[]
+===========================
+273 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+274 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+275 ['msnbc'] ['ironic', 'msnbc']
+[]
+===========================
+276 ['us', 'obama', 'hillary'] ['us', 'hillary']
+['obama']
+===========================
+277 ['trish regan primetime', 'u.s'] ['trish regan primetime', 'u.s']
+[]
+===========================
+278 ['trump', 'dictator baby doc duvalier'] ['trump']
+['dictator baby doc duvalier']
+===========================
+279 ['venezuela', 'maduro'] ['venezuela', 'maduro']
+[]
+===========================
+280 ['venezuelans'] ['venezuelans']
+[]
+===========================
+281 [] []
+[]
+===========================
+282 ['venezuelans'] ['venezuelans']
+[]
+===========================
+283 [] []
+[]
+===========================
+284 [] []
+[]
+===========================
+285 [] []
+[]
+===========================
+286 ['caracas'] ['caracas']
+[]
+===========================
+287 [] []
+[]
+===========================
+288 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+289 ['la carlota air base', 'caracas'] ['caracas']
+['la carlota air base']
+===========================
+290 [] []
+[]
+===========================
+291 ['russians'] ['russians']
+[]
+===========================
+292 [] []
+[]
+===========================
+293 [] []
+[]
+===========================
+294 [] []
+[]
+===========================
+295 ['guaidó', 'white house'] []
+['guaidó', 'white house']
+===========================
+296 ['president of the united states'] ['united states']
+['president of the united states']
+===========================
+297 [] []
+[]
+===========================
+298 [] []
+[]
+===========================
+299 ['beatriz becerra', 'twitter'] ['twitter']
+['beatriz becerra']
+===========================
+300 [] []
+[]
+===========================
+301 ['sb 168', 'venezuelans', 'maduro', 'venezuelans', 'florida'] ['venezuelans', 'maduro', 'venezuelans']
+['florida', 'sb 168']
+===========================
+302 ['mossos'] []
+['mossos']
+===========================
+303 ['u.s', 'guaido', 'maduro', 'u.s'] ['u.s', 'guaido', 'maduro', 'u.s']
+[]
+===========================
+304 ['venezuela', 'freeland'] ['venezuela']
+['freeland']
+===========================
+305 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+306 [] []
+[]
+===========================
+307 ['socialism'] []
+['socialism']
+===========================
+308 ['dubarry films daily'] []
+['dubarry films daily']
+===========================
+309 [] []
+[]
+===========================
+310 [] []
+[]
+===========================
+311 ['south american'] ['american']
+['south american']
+===========================
+312 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+313 [] []
+[]
+===========================
+314 ['adm. faller', 'russia'] ['adm. faller', 'russia']
+[]
+===========================
+315 [] []
+[]
+===========================
+316 ['hirono'] []
+['hirono']
+===========================
+317 [] []
+[]
+===========================
+318 ['venezuelans'] ['venezuelans']
+[]
+===========================
+319 ['united states'] ['united states']
+[]
+===========================
+320 [] []
+[]
+===========================
+321 ['pompeo'] []
+['pompeo']
+===========================
+322 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+323 ['nicolas maduro', 'democracy'] ['nicolas maduro']
+['democracy']
+===========================
+324 [] []
+[]
+===========================
+325 ['macron'] ['macron']
+[]
+===========================
+326 ['usmc'] ['usmc']
+[]
+===========================
+327 [] []
+[]
+===========================
+328 ['russia', 'u.s', 'venezuela'] ['russia', 'u.s', 'venezuela']
+[]
+===========================
+329 [] []
+[]
+===========================
+330 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+331 ['macron'] ['macron']
+[]
+===========================
+332 [] []
+[]
+===========================
+333 ['young voices', 'daniel dimartino', 'venezuela', 'fox news'] ['venezuela']
+['fox news', 'young voices', 'daniel dimartino']
+===========================
+334 ['macron'] ['macron']
+[]
+===========================
+335 ['maduro'] []
+['maduro']
+===========================
+336 ['socialism'] []
+['socialism']
+===========================
+337 ['smith'] []
+['smith']
+===========================
+338 [] []
+[]
+===========================
+339 ['juan guaido'] ['juan guaido']
+[]
+===========================
+340 ['starbucks commies'] ['starbucks commies']
+[]
+===========================
+341 ['foreign minister lavrov'] []
+['foreign minister lavrov']
+===========================
+342 ['rubén brito', 'altamira interchange', 'la carlota', 'national guard troops'] ['altamira', 'la carlota']
+['national guard troops', 'altamira interchange', 'rubén brito']
+===========================
+343 [] []
+[]
+===========================
+344 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+345 [] []
+[]
+===========================
+346 [] []
+[]
+===========================
+347 [] []
+[]
+===========================
+348 ['socialism'] []
+['socialism']
+===========================
+349 [] []
+[]
+===========================
+350 ['venezuela', 'constitution', 'nicolás maduro', 'maduro'] ['venezuela', 'constitution', 'nicolás maduro', 'maduro']
+[]
+===========================
+351 [] []
+[]
+===========================
+352 [] []
+[]
+===========================
+353 [] []
+[]
+===========================
+354 [] []
+[]
+===========================
+355 ['venezuela', 'paris'] ['venezuela', 'paris']
+[]
+===========================
+356 ['adm. faller', 'iran', 'tehran', 'cuba'] ['adm. faller', 'iran', 'tehran', 'cuba']
+[]
+===========================
+357 [] []
+[]
+===========================
+358 [] []
+[]
+===========================
+359 [] []
+[]
+===========================
+360 ['russia', 'reuters', 'pentagon'] ['russia']
+['pentagon', 'reuters']
+===========================
+361 ['venezuelans'] ['venezuelans']
+[]
+===========================
+362 ['united states'] ['united states']
+[]
+===========================
+363 ['macron'] ['macron']
+[]
+===========================
+364 [] []
+[]
+===========================
+365 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+366 [] []
+[]
+===========================
+367 [] []
+[]
+===========================
+368 [] []
+[]
+===========================
+369 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+370 ['florida'] []
+['florida']
+===========================
+371 ['usmc'] ['usmc']
+[]
+===========================
+372 ['venezuela'] []
+['venezuela']
+===========================
+373 [] []
+[]
+===========================
+374 [] []
+[]
+===========================
+375 [] []
+[]
+===========================
+376 [] []
+[]
+===========================
+377 ['caracas'] ['caracas']
+[]
+===========================
+378 ['venezuela', 'socialism'] ['venezuela']
+['socialism']
+===========================
+379 ['juan guaido'] ['juan guaido']
+[]
+===========================
+380 ['trish regan primetime', 'u.s', 'president'] ['trish regan primetime', 'u.s']
+['president']
+===========================
+381 ['maduro', 'chavez'] ['maduro', 'chavez']
+[]
+===========================
+382 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+383 [] []
+[]
+===========================
+384 [] []
+[]
+===========================
+385 [] []
+[]
+===========================
+386 [] []
+[]
+===========================
+387 ['macron'] ['macron']
+[]
+===========================
+388 ['president of the united states'] ['united states']
+['president of the united states']
+===========================
+389 ['saudi arabia', 'us', 'uk'] ['saudi arabia']
+['uk', 'us']
+===========================
+390 ['macron'] ['macron']
+[]
+===========================
+391 ['president', 'president'] []
+['president', 'president']
+===========================
+392 ['venezuela', 'maduro'] ['venezuela', 'maduro']
+[]
+===========================
+393 ['macron'] ['macron']
+[]
+===========================
+394 [] []
+[]
+===========================
+395 ['donald trump', 'mike pence', 'john bolton', 'elliott abrams', 'ted cruz', 'marco rubio', 'juan guaido', 'venezuelans', 'american fossil fuel industry'] ['venezuelans', 'american', 'trump', 'bolton', 'juan guaido']
+['american fossil fuel industry', 'marco rubio', 'ted cruz', 'elliott abrams', 'john bolton', 'mike pence', 'donald trump']
+===========================
+396 ['usmc'] ['usmc']
+[]
+===========================
+397 ['colombia'] []
+['colombia']
+===========================
+398 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+399 [] []
+[]
+===========================
+400 [] ['spanish']
+[]
+===========================
+401 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+402 [] []
+[]
+===========================
+403 ['maduro'] ['maduro']
+[]
+===========================
+404 [] []
+[]
+===========================
+405 ['america', 'mike pompeo'] ['america']
+['mike pompeo']
+===========================
+406 ['ar-57', 'kent', 'washington', 'p90'] ['kent', 'washington', 'p90']
+['ar-57']
+===========================
+407 [] []
+[]
+===========================
+408 [] []
+[]
+===========================
+409 [] []
+[]
+===========================
+410 ['venezuela', 'scott', 'broward', 'dws'] ['venezuela']
+['dws', 'broward', 'scott']
+===========================
+411 ['maduro'] ['maduro']
+[]
+===========================
+412 ['trump', 'colombia'] ['trump']
+['colombia']
+===========================
+413 ['us', 'obama', 'hillary'] ['us', 'hillary']
+['obama']
+===========================
+414 [] []
+[]
+===========================
+415 ['pepe mujica'] ['pepe mujica']
+[]
+===========================
+416 [] []
+[]
+===========================
+417 ['pepe mujica', 'left', 'maduro'] ['pepe mujica', 'maduro']
+['left']
+===========================
+418 [] []
+[]
+===========================
+419 [] []
+[]
+===========================
+420 ["guardian's soy boy", 'socialist', 'corbynista kryptonite'] ["guardian's soy boy", 'corbynista kryptonite']
+['socialist']
+===========================
+421 [] []
+[]
+===========================
+422 [] []
+[]
+===========================
+423 [] []
+[]
+===========================
+424 ['maduro death squads', 'faes'] ['maduro death squads', 'faes']
+[]
+===========================
+425 ['uk', 'us', 'venezuelan', 'us'] ['uk', 'us', 'venezuelan', 'us']
+[]
+===========================
+426 [] []
+[]
+===========================
+427 ['spanish'] ['spanish']
+[]
+===========================
+428 ['maduro', 'venezuelan national assembly', 'nicolas maduro', 'maduro'] ['maduro', 'venezuelan', 'nicolas maduro', 'maduro']
+['venezuelan national assembly']
+===========================
+429 [] ['utc', 'vet']
+[]
+===========================
+430 [] []
+[]
+===========================
+431 ['western', 'us'] []
+['western', 'us']
+===========================
+432 [] []
+[]
+===========================
+433 ['ret. brigadier general', 'u.s', 'u.s', 'juan guaido'] ['brigadier general', 'u.s', 'u.s', 'guaido']
+['juan guaido', 'ret. brigadier general']
+===========================
+434 ['venezuela', 'socialism'] ['venezuela']
+['socialism']
+===========================
+435 ['president of the united states'] ['united states']
+['president of the united states']
+===========================
+436 ['adm. faller', 'venezuela'] ['adm. faller']
+['venezuela']
+===========================
+437 ['operation freedom'] []
+['operation freedom']
+===========================
+438 ['president of the united states'] ['united states']
+['president of the united states']
+===========================
+439 [] []
+[]
+===========================
+440 ['united states'] ['united states']
+[]
+===========================
+441 [] []
+[]
+===========================
+442 ['venezuela'] ['venezuela']
+[]
+===========================
+443 ['guardian', 'washington'] ['guardian', 'washington']
+[]
+===========================
+444 [] []
+[]
+===========================
+445 ['day now', 'faller'] ['day now', 'faller']
+[]
+===========================
+446 [] []
+[]
+===========================
+447 [] ['spanish']
+[]
+===========================
+448 ['trudeau', 'federal ndp'] []
+['trudeau', 'federal ndp']
+===========================
+449 ['altamira', 'altamira', 'vz', 'guaido'] ['altamira', 'altamira', 'guaido']
+['vz']
+===========================
+450 ['adm. faller'] ['adm. faller']
+[]
+===========================
+451 [] []
+[]
+===========================
+452 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+453 [] []
+[]
+===========================
+454 [] []
+[]
+===========================
+455 ["guardian's soy boy", 'socialist', 'corbynista kryptonite'] ["guardian's soy boy", 'corbynista kryptonite']
+['socialist']
+===========================
+456 ['ar-57', 'kent', 'washington', 'p90'] ['kent', 'washington', 'p90']
+['ar-57']
+===========================
+457 ['spanish'] ['spanish']
+[]
+===========================
+458 ['united states'] ['united states']
+[]
+===========================
+459 [] []
+[]
+===========================
+460 [] []
+[]
+===========================
+461 ['latin america'] ['latin america']
+[]
+===========================
+462 ['cia', '21 air boeing 767-241 n881yv', 'bogota', '21air'] []
+['cia', '21 air boeing 767-241 n881yv', 'bogota', '21air']
+===========================
+463 ['guaido', 'maduro'] ['guaido', 'maduro']
+[]
+===========================
+464 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+465 ['australian', 'socialism'] []
+['australian', 'socialism']
+===========================
+466 [] []
+[]
+===========================
+467 ['macron'] ['macron']
+[]
+===========================
+468 [] []
+[]
+===========================
+469 [] []
+[]
+===========================
+470 [] []
+[]
+===========================
+471 [] []
+[]
+===========================
+472 ['venezuelans'] ['venezuelans']
+[]
+===========================
+473 ['democratic', 'socialism'] []
+['democratic', 'socialism']
+===========================
+474 [] []
+[]
+===========================
+475 ['navy', 'san diego'] []
+['navy', 'san diego']
+===========================
+476 ['us', 'isis', 'us'] ['us', 'isis', 'us']
+[]
+===========================
+477 [] []
+[]
+===========================
+478 ['msm', 'bbc'] []
+['msm', 'bbc']
+===========================
+479 [] []
+[]
+===========================
+480 [] []
+[]
+===========================
+481 ['president of the united states'] ['united states']
+['president of the united states']
+===========================
+482 [] []
+[]
+===========================
+483 ['socialism'] []
+['socialism']
+===========================
+484 [] []
+[]
+===========================
+485 ['american', 'us', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine'] ['american', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine']
+['us']
+===========================
+486 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+487 [] []
+[]
+===========================
+488 ['usmc'] ['usmc']
+[]
+===========================
+489 [] []
+[]
+===========================
+490 ['socialism'] []
+['socialism']
+===========================
+491 ['macron'] ['macron']
+[]
+===========================
+492 ['pro-guaido', 'gnb', 'la carlota'] ['guaido', 'gnb', 'la carlota']
+['pro-guaido']
+===========================
+493 [] []
+[]
+===========================
+494 ['pres of venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+495 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+496 [] []
+[]
+===========================
+497 ['us', 'obama', 'hillary'] ['us', 'hillary']
+['obama']
+===========================
+498 [] []
+[]
+===========================
+499 ['pepe mujica'] ['pepe mujica']
+[]
+===========================
+500 ['trish regan primetime', 'u.s', 'president'] ['trish regan primetime', 'u.s']
+['president']
+===========================
+501 [] []
+[]
+===========================
+502 [] []
+[]
+===========================
+503 ['macron'] ['macron']
+[]
+===========================
+504 ['guaido', 'maduro'] ['guaido', 'maduro']
+[]
+===========================
+505 ['btr', 'bolivar'] []
+['btr', 'bolivar']
+===========================
+506 ['venezuelans'] ['venezuelans']
+[]
+===========================
+507 [] []
+[]
+===========================
+508 [] []
+[]
+===========================
+509 [] []
+[]
+===========================
+510 ['pat robertson', 'us', 'president nicolas maduro', 'christian', 'zionist'] ['us', 'nicolas maduro']
+['zionist', 'christian', 'president nicolas maduro', 'pat robertson']
+===========================
+511 [] []
+[]
+===========================
+512 [] []
+[]
+===========================
+513 [] []
+[]
+===========================
+514 ['dictator raul castro', 'minister of defense', 'castro', 'cuban'] ['cuban']
+['dictator raul castro', 'minister of defense', 'castro']
+===========================
+515 [] []
+[]
+===========================
+516 ['pres of venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+517 [] []
+[]
+===========================
+518 ['cuban'] ['cuban']
+[]
+===========================
+519 [] []
+[]
+===========================
+520 ['spanish'] ['spanish']
+[]
+===========================
+521 [] []
+[]
+===========================
+522 ['maduro death squads', 'faes'] ['maduro death squads', 'faes']
+[]
+===========================
+523 [] []
+[]
+===========================
+524 [] []
+[]
+===========================
+525 [] []
+[]
+===========================
+526 [] []
+[]
+===========================
+527 ['american', 'us', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine'] ['american', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine']
+['us']
+===========================
+528 ['spanish'] ['spanish']
+[]
+===========================
+529 [] []
+[]
+===========================
+530 [] []
+[]
+===========================
+531 ['venezuelans'] ['venezuelans']
+[]
+===========================
+532 [] []
+[]
+===========================
+533 ['starbucks commies'] ['starbucks commies']
+[]
+===========================
+534 [] []
+[]
+===========================
+535 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+536 ['socialism'] []
+['socialism']
+===========================
+537 ['pres of venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+538 [] []
+[]
+===========================
+539 [] []
+[]
+===========================
+540 ['senators', 'u.s. war'] []
+['senators', 'u.s. war']
+===========================
+541 ['pres of venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+542 [] []
+[]
+===========================
+543 [] []
+[]
+===========================
+544 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+545 ['us'] []
+['us']
+===========================
+546 ['altamira'] ['altamira', 'caracas']
+[]
+===========================
+547 [] []
+[]
+===========================
+548 [] []
+[]
+===========================
+549 ['guaido'] ['watch live', 'guaido']
+[]
+===========================
+550 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+551 [] []
+[]
+===========================
+552 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+553 [] []
+[]
+===========================
+554 ['macron'] ['macron']
+[]
+===========================
+555 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+556 [] []
+[]
+===========================
+557 [] ['utc', 'vet']
+[]
+===========================
+558 [] []
+[]
+===========================
+559 [] []
+[]
+===========================
+560 [] []
+[]
+===========================
+561 [] []
+[]
+===========================
+562 ['macron'] ['macron']
+[]
+===========================
+563 ['maduro', 'chavez'] ['maduro', 'chavez']
+[]
+===========================
+564 [] []
+[]
+===========================
+565 ['u.s', 'reuters'] ['u.s']
+['reuters']
+===========================
+566 ['venezuela'] ['venezuela']
+[]
+===========================
+567 ['leftist'] []
+['leftist']
+===========================
+568 ['usmc'] ['usmc']
+[]
+===========================
+569 [] []
+[]
+===========================
+570 [] []
+[]
+===========================
+571 [] []
+[]
+===========================
+572 [] ['spanish']
+[]
+===========================
+573 [] []
+[]
+===========================
+574 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+575 ['russia', 'u.s', 'venezuela'] ['russia', 'u.s', 'venezuela']
+[]
+===========================
+576 [] []
+[]
+===========================
+577 ['fake news'] ['venezuela']
+['fake news']
+===========================
+578 ['us', 'cia', 'guarimbas'] []
+['us', 'cia', 'guarimbas']
+===========================
+579 [] []
+[]
+===========================
+580 [] []
+[]
+===========================
+581 [] []
+[]
+===========================
+582 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+583 ['macron'] ['macron']
+[]
+===========================
+584 [] []
+[]
+===========================
+585 [] []
+[]
+===========================
+586 ['venezuela'] ['venezuela']
+[]
+===========================
+587 ['macron'] ['macron']
+[]
+===========================
+588 [] []
+[]
+===========================
+589 ['venezuela', 'maduro'] ['venezuela', 'maduro']
+[]
+===========================
+590 ['day now', 'faller'] ['day now', 'faller']
+[]
+===========================
+591 ['macron'] ['macron']
+[]
+===========================
+592 [] []
+[]
+===========================
+593 ['venezuela'] ['venezuela']
+[]
+===========================
+594 [] []
+[]
+===========================
+595 [] []
+[]
+===========================
+596 [] []
+[]
+===========================
+597 [] []
+[]
+===========================
+598 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+599 ['rory carroll', 'guardian', 'caracas', 'bolivarian revolution'] ['guardian', 'caracas']
+['bolivarian revolution', 'rory carroll']
+===========================
+600 ['cia'] []
+['cia']
+===========================
+601 ['los teques'] ['teques']
+['los teques']
+===========================
+602 [] []
+[]
+===========================
+603 ['los teques'] ['teques']
+['los teques']
+===========================
+604 [] []
+[]
+===========================
+605 ['venezuelan national guard', 'caracas'] ['venezuelan', 'caracas']
+['venezuelan national guard']
+===========================
+606 [] []
+[]
+===========================
+607 [] []
+[]
+===========================
+608 [] []
+[]
+===========================
+609 ['youtube', 'bing', 'google', 'guaido', 'caracas'] ['guaido', 'caracas']
+['youtube', 'bing', 'google']
+===========================
+610 ['kinder', 'socialism'] []
+['kinder', 'socialism']
+===========================
+611 [] []
+[]
+===========================
+612 [] []
+[]
+===========================
+613 ['macron'] ['macron']
+[]
+===========================
+614 ['venezuela', 'constitution', 'nicolás maduro', 'maduro'] ['venezuela', 'constitution', 'nicolás maduro', 'maduro']
+[]
+===========================
+615 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+616 ['uss theodore roosevelt'] []
+['uss theodore roosevelt']
+===========================
+617 [] []
+[]
+===========================
+618 [] []
+[]
+===========================
+619 ['ret. brigadier general', 'u.s', 'u.s', 'juan guaido'] ['brigadier general', 'u.s', 'u.s', 'guaido']
+['juan guaido', 'ret. brigadier general']
+===========================
+620 ['president'] []
+['president']
+===========================
+621 ['venezuela'] ['venezuela']
+[]
+===========================
+622 ['venezuela', 'socialist'] ['venezuela']
+['socialist']
+===========================
+623 ['dictator', 'los teques'] ['teques']
+['los teques', 'dictator']
+===========================
+624 [] []
+[]
+===========================
+625 ['pres of venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+626 [] []
+[]
+===========================
+627 ['macron'] ['macron']
+[]
+===========================
+628 [] []
+[]
+===========================
+629 [] []
+[]
+===========================
+630 [] []
+[]
+===========================
+631 [] []
+[]
+===========================
+632 [] []
+[]
+===========================
+633 ['bay of pigs', 'allen dulles'] []
+['bay of pigs', 'allen dulles']
+===========================
+634 [] []
+[]
+===========================
+635 ['venezuela', 'constitution', 'nicolás maduro', 'maduro'] ['venezuela', 'constitution', 'nicolás maduro', 'maduro']
+[]
+===========================
+636 ['pompeo'] []
+['pompeo']
+===========================
+637 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+638 ['russians'] ['russians']
+[]
+===========================
+639 [] []
+[]
+===========================
+640 [] []
+[]
+===========================
+641 [] ['venezuelans']
+[]
+===========================
+642 ['macron'] ['macron']
+[]
+===========================
+643 ['pres of venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+644 [] []
+[]
+===========================
+645 [] []
+[]
+===========================
+646 ['pres of venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+647 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+648 [] []
+[]
+===========================
+649 ['gnb', 'caracas'] ['gnb in caracas']
+['caracas', 'gnb']
+===========================
+650 ['venezuelans'] ['us', 'venezuelans']
+[]
+===========================
+651 ['national guard'] []
+['national guard']
+===========================
+652 [] []
+[]
+===========================
+653 [] []
+[]
+===========================
+654 ['defense secretary shanahan', 'europe', 'bolton', 'nsc', 'weds', 'u.s', 'russia', 'cuba'] ['u.s', 'russia', 'cuba', 'bolton']
+['weds', 'nsc', 'defense secretary shanahan', 'europe']
+===========================
+655 ['american', 'us', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine'] ['american', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine']
+['us']
+===========================
+656 [] []
+[]
+===========================
+657 ['macron'] ['macron']
+[]
+===========================
+658 ['pres of venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+659 ['maduro', 'france', 'twitter'] ['maduro', 'france', 'twitter']
+[]
+===========================
+660 ['venezuela', 'cia'] ['venezuela']
+['cia']
+===========================
+661 ['venezuela', 'national armed forces commander in chief', 'constitution'] ['venezuela', 'constitution']
+['national armed forces commander in chief']
+===========================
+662 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+663 ['us'] ['us']
+[]
+===========================
+664 ['national guards'] []
+['national guards']
+===========================
+665 [] []
+[]
+===========================
+666 ['guaido'] ['watch live', 'guaido']
+[]
+===========================
+667 ['starbucks commies'] ['starbucks commies']
+[]
+===========================
+668 [] []
+[]
+===========================
+669 [] []
+[]
+===========================
+670 [] []
+[]
+===========================
+671 ['guaido'] ['watch live', 'guaido']
+[]
+===========================
+672 ['los teques'] ['teques']
+['los teques']
+===========================
+673 ['pres of venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+674 ['information and press department'] []
+['information and press department']
+===========================
+675 [] []
+[]
+===========================
+676 ['representative', 'senators', 'u.s. war'] []
+['representative', 'senators', 'u.s. war']
+===========================
+677 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+678 [] []
+[]
+===========================
+679 [] []
+[]
+===========================
+680 ['lima group', 'interim president', 'venezuelans'] ['venezuelans']
+['lima group', 'interim president']
+===========================
+681 ['macron'] ['macron']
+[]
+===========================
+682 ['macron'] ['macron']
+[]
+===========================
+683 ['maduro', 'americans', 'coup', 'maduro', 'america'] ['maduro', 'american', 'maduro', 'america']
+['coup', 'americans']
+===========================
+684 ['armed forces'] ['armed forces']
+[]
+===========================
+685 ['trish regan primetime', 'u.s', 'president'] ['trish regan primetime', 'u.s']
+['president']
+===========================
+686 ['adm. faller'] ['adm. faller']
+[]
+===========================
+687 [] []
+[]
+===========================
+688 ['venezuela', 'maduro'] ['venezuela', 'maduro']
+[]
+===========================
+689 [] []
+[]
+===========================
+690 [] []
+[]
+===========================
+691 [] []
+[]
+===========================
+692 ['starbucks commies'] ['starbucks commies']
+[]
+===========================
+693 [] []
+[]
+===========================
+694 [] []
+[]
+===========================
+695 ['socialism'] []
+['socialism']
+===========================
+696 ['macron'] ['macron']
+[]
+===========================
+697 ['ron paul', 'guaido', 'washington', 'venezuelan'] ['ron paul warns', 'hapless', 'guaido', 'washington', 'zero hedge']
+['venezuelan', 'ron paul']
+===========================
+698 ['pres of venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+699 ['venezuelans', 'saudi arabia'] ['venezuelans', 'saudi arabia']
+[]
+===========================
+700 [] []
+[]
+===========================
+701 ['pres of venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+702 ['venezuela', 'maduro'] ['venezuela', 'maduro']
+[]
+===========================
+703 ['socialism'] []
+['socialism']
+===========================
+704 [] []
+[]
+===========================
+705 ['venezuelan'] ['venezuelan']
+[]
+===========================
+706 [] []
+[]
+===========================
+707 [] []
+[]
+===========================
+708 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+709 ['macron'] ['macron']
+[]
+===========================
+710 ['macron'] ['macron']
+[]
+===========================
+711 ['ted', 'barr'] []
+['ted', 'barr']
+===========================
+712 ['macron'] ['macron']
+[]
+===========================
+713 ['leftist', 'socialist utopia', 'socialism'] []
+['leftist', 'socialist utopia', 'socialism']
+===========================
+714 ['guaido'] ['watch live', 'guaido']
+[]
+===========================
+715 [] []
+[]
+===========================
+716 [] []
+[]
+===========================
+717 [] []
+[]
+===========================
+718 ['united states'] ['united states']
+[]
+===========================
+719 [] []
+[]
+===========================
+720 ['macron'] ['macron']
+[]
+===========================
+721 ['smith'] []
+['smith']
+===========================
+722 [] []
+[]
+===========================
+723 [] []
+[]
+===========================
+724 ['tc-tsr', 'caracas', 'punta cana'] ['caracas']
+['punta cana', 'tc-tsr']
+===========================
+725 ['macron'] ['macron']
+[]
+===========================
+726 [] []
+[]
+===========================
+727 [] []
+[]
+===========================
+728 ['us', 'venezuela'] ['us', 'venezuela']
+[]
+===========================
+729 [] []
+[]
+===========================
+730 ['national guard', 'la guardia'] []
+['national guard', 'la guardia']
+===========================
+731 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+732 ["venezuela's culture minister", 'twitter', 'correo del orinoco', 'va', 'twitter'] ['twitter', 'twitter']
+['va', 'correo del orinoco', "venezuela's culture minister"]
+===========================
+733 ['socialism'] []
+['socialism']
+===========================
+734 ['starbucks commies'] ['starbucks commies']
+[]
+===========================
+735 ['ron paul', 'washington', 'venezuelan'] ['ron paul warns', 'hapless', 'washington']
+['venezuelan', 'ron paul']
+===========================
+736 [] []
+[]
+===========================
+737 ['east coast', 'west coast'] ['east coast', 'west coast']
+[]
+===========================
+738 ['national guard'] []
+['national guard']
+===========================
+739 ['venezuela', 'paris'] ['venezuela', 'paris']
+[]
+===========================
+740 ['us', 'obama', 'hillary'] ['us', 'hillary']
+['obama']
+===========================
+741 ['us', 'obama', 'hillary'] ['us', 'hillary']
+['obama']
+===========================
+742 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+743 ['president', 'constitution', 'oas'] ['constitution']
+['oas', 'president']
+===========================
+744 [] []
+[]
+===========================
+745 ['venezuela', 'maduro'] ['venezuela', 'maduro']
+[]
+===========================
+746 ['socialism'] []
+['socialism']
+===========================
+747 ['dictator', 'los teques'] ['teques']
+['los teques', 'dictator']
+===========================
+748 ['ret. brigadier general', 'u.s', 'u.s', 'juan guaido'] ['brigadier general', 'u.s', 'u.s', 'guaido']
+['juan guaido', 'ret. brigadier general']
+===========================
+749 ['dictator', 'los teques'] ['teques']
+['los teques', 'dictator']
+===========================
+750 ['paramilitaries', 'guerrillas', 'military', 'venezuela'] ['venezuela']
+['paramilitaries', 'guerrillas', 'military']
+===========================
+751 ['place d’italie', 'paris'] ['paris']
+['place d’italie']
+===========================
+752 [] []
+[]
+===========================
+753 ['macron'] ['macron']
+[]
+===========================
+754 ['trump', 'libya', 'muslim brotherhood', 'russia', 'isis', 'baghdadi'] ['trump', 'libya', 'russia', 'isis']
+['baghdadi', 'muslim brotherhood']
+===========================
+755 ['venezuela', 'maduro'] ['venezuela', 'maduro']
+[]
+===========================
+756 [] []
+[]
+===========================
+757 ['usmc'] ['usmc']
+[]
+===========================
+758 [] []
+[]
+===========================
+759 [] []
+[]
+===========================
+760 ['bolton', 'trump', 'us'] ['us', 'bolton', 'trump']
+[]
+===========================
+761 ['blackwater'] []
+['blackwater']
+===========================
+762 [] []
+[]
+===========================
+763 [] []
+[]
+===========================
+764 ['spanish'] ['spanish']
+[]
+===========================
+765 ['pres of venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+766 [] []
+[]
+===========================
+767 [] []
+[]
+===========================
+768 [] []
+[]
+===========================
+769 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+770 [] []
+[]
+===========================
+771 ["guardian's soy boy", 'socialist', 'corbynista kryptonite'] ["guardian's soy boy", 'corbynista kryptonite']
+['socialist']
+===========================
+772 ['stalin'] []
+['stalin']
+===========================
+773 ['adm. faller', 'venezuela'] ['adm. faller']
+['venezuela']
+===========================
+774 [] []
+[]
+===========================
+775 [] []
+[]
+===========================
+776 [] []
+[]
+===========================
+777 [] []
+[]
+===========================
+778 [] []
+[]
+===========================
+779 [] []
+[]
+===========================
+780 [] []
+[]
+===========================
+781 ['venezuela', 'latin america', 'democrat socialists', 'berniew sanders', 'united states'] ['venezuela', 'latin america', 'democrat socialists', 'bernie sanders', 'united states']
+['berniew sanders']
+===========================
+782 [] []
+[]
+===========================
+783 [] []
+[]
+===========================
+784 [] []
+[]
+===========================
+785 ['venezuelans'] ['venezuelans']
+[]
+===========================
+786 ['1989 caracazo massacres', 'neoliberal'] []
+['1989 caracazo massacres', 'neoliberal']
+===========================
+787 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+788 [] []
+[]
+===========================
+789 [] []
+[]
+===========================
+790 ['spanish'] ['spanish']
+[]
+===========================
+791 ['pepe mujica', 'left', 'maduro'] ['pepe mujica', 'maduro']
+['left']
+===========================
+792 ['venezuela'] ['venezuela']
+[]
+===========================
+793 [] []
+[]
+===========================
+794 [] []
+[]
+===========================
+795 ['canada'] ['canada']
+[]
+===========================
+796 [] []
+[]
+===========================
+797 ['macron'] ['macron']
+[]
+===========================
+798 [] []
+[]
+===========================
+799 ['caracas'] ['caracas']
+[]
+===========================
+800 ['msnbc'] ['ironic', 'msnbc']
+[]
+===========================
+801 ['venezuela', 'maduro'] ['venezuela', 'maduro']
+[]
+===========================
+802 [] []
+[]
+===========================
+803 ['puerto ordaz'] []
+['puerto ordaz']
+===========================
+804 [] []
+[]
+===========================
+805 ['guaido', 'white house'] ['guaido']
+['white house']
+===========================
+806 ['venezuela embassy', 'maduro', 'correspondence dinner', 'hilton'] ['venezuela', 'maduro']
+['hilton', 'correspondence dinner', 'venezuela embassy']
+===========================
+807 [] []
+[]
+===========================
+808 ["guardian's soy boy", 'socialist', 'corbynista kryptonite!'] ["guardian's soy boy", 'corbynista kryptonite']
+['corbynista kryptonite!', 'socialist']
+===========================
+809 ['russians'] ['russians']
+[]
+===========================
+810 ['venezuela', 'armed forces'] ['venezuela', 'armed forces']
+[]
+===========================
+811 [] []
+[]
+===========================
+812 [] []
+[]
+===========================
+813 ['socialism'] []
+['socialism']
+===========================
+814 [] []
+[]
+===========================
+815 ['maduro'] []
+['maduro']
+===========================
+816 [] []
+[]
+===========================
+817 ['macron'] ['macron']
+[]
+===========================
+818 ["guardian's soy boy", 'socialist', 'corbynista kryptonite'] ["guardian's soy boy", 'corbynista kryptonite']
+['socialist']
+===========================
+819 ['macron'] ['macron']
+[]
+===========================
+820 ['federal aviation administration', 'u.s', 'u.s', 'venezuela'] ['u.s', 'u.s', 'venezuela']
+['federal aviation administration']
+===========================
+821 ['president'] []
+['president']
+===========================
+822 ['los teques'] ['teques']
+['los teques']
+===========================
+823 ['adm. faller', 'venezuela'] ['adm. faller']
+['venezuela']
+===========================
+824 ["guardian's soy boy", 'socialist', 'corbynista kryptonite'] ["guardian's soy boy", 'corbynista kryptonite']
+['socialist']
+===========================
+825 ['caracas'] ['caracas']
+[]
+===========================
+826 [] []
+[]
+===========================
+827 ['macron'] ['macron']
+[]
+===========================
+828 ['u.s. secretary of state', 'russian foreign minister'] ['u.s. secretary of state', 'russian foreign minister']
+[]
+===========================
+829 ['guaido'] ['watch live', 'guaido']
+[]
+===========================
+830 [] []
+[]
+===========================
+831 ['macron'] ['macron']
+[]
+===========================
+832 ['msnbc'] ['ironic', 'msnbc']
+[]
+===========================
+833 ['democratic socialism'] []
+['democratic socialism']
+===========================
+834 [] []
+[]
+===========================
+835 [] []
+[]
+===========================
+836 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+837 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+838 [] []
+[]
+===========================
+839 ['gnb'] ['gnb']
+[]
+===========================
+840 [] []
+[]
+===========================
+841 ['ar-57', 'kent', 'washington', 'p-90'] ['kent', 'washington', 'p90']
+['p-90', 'ar-57']
+===========================
+842 [] []
+[]
+===========================
+843 ['juan guaidó', 'socialist', 'maduro'] ['maduro']
+['juan guaidó', 'socialist']
+===========================
+844 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+845 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+846 [] []
+[]
+===========================
+847 [] []
+[]
+===========================
+848 ['dow', 'sp 500', 'powell', 'fred imbert'] []
+['dow', 'sp 500', 'powell', 'fred imbert']
+===========================
+849 [] []
+[]
+===========================
+850 ['macron'] ['macron']
+[]
+===========================
+851 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+852 [] []
+[]
+===========================
+853 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+854 ['socialism'] []
+['socialism']
+===========================
+855 ['caracas'] ['caracas']
+[]
+===========================
+856 ['lavrov'] []
+['lavrov']
+===========================
+857 ['american', 'us', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine'] ['american', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine']
+['us']
+===========================
+858 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+859 [] []
+[]
+===========================
+860 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+861 [] []
+[]
+===========================
+862 ['socialism'] []
+['socialism']
+===========================
+863 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+864 ['miraflores', 'nicolas maduro'] ['armed forces', 'maduro']
+['nicolas maduro', 'miraflores']
+===========================
+865 [] []
+[]
+===========================
+866 ['macron'] ['macron']
+[]
+===========================
+867 ['dictator', 'los teques'] ['teques']
+['los teques', 'dictator']
+===========================
+868 [] []
+[]
+===========================
+869 [] []
+[]
+===========================
+870 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+871 [] []
+[]
+===========================
+872 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+873 ['spanish', 'caracas', 'catalonia'] ['spanish', 'caracas']
+['catalonia']
+===========================
+874 [] []
+[]
+===========================
+875 [] []
+[]
+===========================
+876 [] []
+[]
+===========================
+877 [] []
+[]
+===========================
+878 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+879 [] []
+[]
+===========================
+880 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+881 [] []
+[]
+===========================
+882 ['president of the united states'] ['united states']
+['president of the united states']
+===========================
+883 [] []
+[]
+===========================
+884 [] []
+[]
+===========================
+885 [] []
+[]
+===========================
+886 ['macron'] ['macron']
+[]
+===========================
+887 [] []
+[]
+===========================
+888 ['lavrov', 'russian', 'u.s'] ['u.s']
+['lavrov', 'russian']
+===========================
+889 [] []
+[]
+===========================
+890 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+891 ['macron'] ['macron']
+[]
+===========================
+892 [] []
+[]
+===========================
+893 ['assad'] []
+['assad']
+===========================
+894 ['opposition', 'maracaibo'] []
+['opposition', 'maracaibo']
+===========================
+895 ['rory carroll', 'guardian', 'caracas', 'bolivarian revolution'] ['guardian', 'caracas']
+['bolivarian revolution', 'rory carroll']
+===========================
+896 [] []
+[]
+===========================
+897 ['la carlota'] ['la carlota']
+[]
+===========================
+898 ['remain', 'eu', 'france'] ['france']
+['remain', 'eu']
+===========================
+899 [] []
+[]
+===========================
+900 ['diplomacy', 'us government'] []
+['diplomacy', 'us government']
+===========================
+901 ['venezuelan army', 'maduro'] ['spectacularly fails', 'venezuelan army', 'maduro']
+[]
+===========================
+902 ['gnb', 'caracas'] ['gnb in caracas']
+['caracas', 'gnb']
+===========================
+903 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+904 ['east coast', 'west coast'] ['east coast', 'west coast']
+[]
+===========================
+905 [] []
+[]
+===========================
+906 ['socialism'] []
+['socialism']
+===========================
+907 [] []
+[]
+===========================
+908 [] []
+[]
+===========================
+909 ['juan guaido'] ['juan guaido']
+[]
+===========================
+910 [] []
+[]
+===========================
+911 ['el julio perotti dario'] []
+['el julio perotti dario']
+===========================
+912 ['macron'] ['macron']
+[]
+===========================
+913 ['venezuela'] ['venezuela']
+[]
+===========================
+914 ['u.s', 'u.s'] ['canada', 'u.s', 'u.s']
+[]
+===========================
+915 ['socialism'] []
+['socialism']
+===========================
+916 [] []
+[]
+===========================
+917 ['national bolivarian armed forces', 'ak-103', 'fn fal', 'fn fnc', 'us', 'juan guadió', 'north-american assault rifle m-16'] ['us', 'american']
+['north-american assault rifle m-16', 'juan guadió', 'fn fnc', 'fn fal', 'ak-103', 'national bolivarian armed forces']
+===========================
+918 ['usmc'] ['usmc']
+[]
+===========================
+919 [] []
+[]
+===========================
+920 ['socialist'] []
+['socialist']
+===========================
+921 ['national guard'] []
+['national guard']
+===========================
+922 ['u.s'] ['u.s']
+[]
+===========================
+923 [] []
+[]
+===========================
+924 ['paramilitaries', 'guerillas', 'military', 'drug trafficiking', 'venezuela'] ['venezuela']
+['paramilitaries', 'guerillas', 'military', 'drug trafficiking']
+===========================
+925 [] []
+[]
+===========================
+926 ['russiagaters', 'militant zionists', 'qanon cultists'] []
+['russiagaters', 'militant zionists', 'qanon cultists']
+===========================
+927 ['east coast', 'west coast'] ['east coast', 'west coast']
+[]
+===========================
+928 [] []
+[]
+===========================
+929 ['macron'] ['macron']
+[]
+===========================
+930 [] []
+[]
+===========================
+931 [] []
+[]
+===========================
+932 [] []
+[]
+===========================
+933 [] []
+[]
+===========================
+934 ['american', 'us', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine'] ['american', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine']
+['us']
+===========================
+935 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+936 [] []
+[]
+===========================
+937 ['adm. faller', 'venezuela'] ['adm. faller']
+['venezuela']
+===========================
+938 ['pepe mujica'] ['pepe mujica']
+[]
+===========================
+939 ['president of the united states'] ['united states']
+['president of the united states']
+===========================
+940 ['osint', 'eisenhower', 'roosevelt'] []
+['osint', 'eisenhower', 'roosevelt']
+===========================
+941 ['la marea naranja'] []
+['la marea naranja']
+===========================
+942 ['president'] []
+['president']
+===========================
+943 [] []
+[]
+===========================
+944 [] ['venezuela']
+[]
+===========================
+945 ['national guard'] []
+['national guard']
+===========================
+946 [] []
+[]
+===========================
+947 ['ret. brigadier general', 'u.s', 'u.s', 'juan guaido'] ['brigadier general', 'u.s', 'u.s', 'guaido']
+['juan guaido', 'ret. brigadier general']
+===========================
+948 ['president guaidó'] []
+['president guaidó']
+===========================
+949 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+950 [] []
+[]
+===========================
+951 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+952 ['isp cantv'] []
+['isp cantv']
+===========================
+953 ['altamira'] ['altamira']
+[]
+===========================
+954 ['vzla'] []
+['vzla']
+===========================
+955 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+956 [] []
+[]
+===========================
+957 ['venezuelans', 'saudi arabia'] ['venezuelans', 'saudi arabia']
+[]
+===========================
+958 ['macron'] ['macron']
+[]
+===========================
+959 ['us', 'isis', 'us'] ['us', 'isis', 'us']
+[]
+===========================
+960 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+961 [] []
+[]
+===========================
+962 [] ['venezuela']
+[]
+===========================
+963 [] []
+[]
+===========================
+964 [] []
+[]
+===========================
+965 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+966 [] []
+[]
+===========================
+967 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+968 [] []
+[]
+===========================
+969 ['trudeau', 'maduro', 'maduro'] ['maduro', 'maduro']
+['trudeau']
+===========================
+970 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+971 ['vietnams', 'iraq'] ['iraq']
+['vietnams']
+===========================
+972 ['venezuela', 'maduro'] ['venezuela', 'maduro']
+[]
+===========================
+973 ['hospital maria auxiliadora', 'minister of health zulema tomás'] []
+['hospital maria auxiliadora', 'minister of health zulema tomás']
+===========================
+974 ['pres of venezuela', 'venezuela'] ['trish regan primetime', 'u.s']
+['venezuela', 'pres of venezuela']
+===========================
+975 [] []
+[]
+===========================
+976 ['adm. faller', 'iran', 'tehran', 'cuba'] ['adm. faller', 'iran', 'tehran', 'cuba']
+[]
+===========================
+977 ['president'] []
+['president']
+===========================
+978 [] []
+[]
+===========================
+979 ['macron'] ['macron']
+[]
+===========================
+980 ['macron'] ['macron']
+[]
+===========================
+981 ['adm. faller', 'iran', 'tehran', 'cuba'] ['adm. faller', 'iran', 'tehran', 'cuba']
+[]
+===========================
+982 ['pres of venezuela', 'venezuela'] ['trish regan primetime', 'u.s']
+['venezuela', 'pres of venezuela']
+===========================
+983 ['altamira'] ['altamira']
+[]
+===========================
+984 [] []
+[]
+===========================
+985 [] []
+[]
+===========================
+986 ['usmc'] ['usmc']
+[]
+===========================
+987 ['american', 'us', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine'] ['american', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine']
+['us']
+===========================
+988 ['caracas', 'punta cana'] ['caracas']
+['punta cana']
+===========================
+989 ['maduro', 'american', 'maduro', 'america'] ['maduro', 'american', 'maduro', 'america']
+[]
+===========================
+990 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+991 [] []
+[]
+===========================
+992 ['u.s'] ['u.s']
+[]
+===========================
+993 [] []
+[]
+===========================
+994 [] []
+[]
+===========================
+995 [] []
+[]
+===========================
+996 [] []
+[]
+===========================
+997 ['venezuelan'] ['venezuelan']
+[]
+===========================
+998 ['socialism'] []
+['socialism']
+===========================
+999 [] []
+[]
+===========================
+1000 [] []
+[]
+===========================
+1001 ['russia', 'saudi arabia', 'shia'] ['russia', 'saudi arabia']
+['shia']
+===========================
+1002 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+1003 [] []
+[]
+===========================
+1004 ['democratic socialism'] []
+['democratic socialism']
+===========================
+1005 [] []
+[]
+===========================
+1006 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+1007 ['venezuela'] ['venezuela']
+[]
+===========================
+1008 [] []
+[]
+===========================
+1009 [] ['russians']
+[]
+===========================
+1010 ['macron'] ['macron']
+[]
+===========================
+1011 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+1012 ['venezuela', 'maduro', 'venezuela'] ['venezuela', 'maduro', 'venezuela']
+[]
+===========================
+1013 ['u.s', 'venezuela'] ['u.s', 'venezuela']
+[]
+===========================
+1014 [] []
+[]
+===========================
+1015 ['venezuelans'] ['venezuelans']
+[]
+===========================
+1016 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+1017 [] []
+[]
+===========================
+1018 [] []
+[]
+===========================
+1019 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+1020 [] []
+[]
+===========================
+1021 [] []
+[]
+===========================
+1022 ['venezuela', 'socialist dictator'] ['venezuela']
+['socialist dictator']
+===========================
+1023 ['opposition'] []
+['opposition']
+===========================
+1024 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+1025 ['president', 'nicolas maduro', 'maduro', 'cuba', 'narco terrorist regime'] ['nicolas maduro', 'maduro', 'cuba']
+['narco terrorist regime', 'president']
+===========================
+1026 ['venezuelans'] ['venezuelans']
+[]
+===========================
+1027 ['altamira', 'altamira', 'vz', 'guaido'] ['altamira', 'altamira', 'guaido']
+['vz']
+===========================
+1028 ['ar-57', 'kent', 'washington', 'p90'] ['kent', 'washington', 'p90']
+['ar-57']
+===========================
+1029 ['macron'] ['macron']
+[]
+===========================
+1030 [] []
+[]
+===========================
+1031 ['youtube', 'bing', 'google', 'guaido', 'caracas'] ['guaido', 'caracas']
+['youtube', 'bing', 'google']
+===========================
+1032 ['trish regan primetime', 'u.s', 'president'] ['trish regan primetime', 'u.s']
+['president']
+===========================
+1033 ['trump administration', 'globalism'] ['trump administration']
+['globalism']
+===========================
+1034 [] []
+[]
+===========================
+1035 ['irish', 'cia'] []
+['irish', 'cia']
+===========================
+1036 [] []
+[]
+===========================
+1037 [] []
+[]
+===========================
+1038 ['american', 'us', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine'] ['american', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine']
+['us']
+===========================
+1039 ['vietnam', 'iraq'] ['iraq']
+['vietnam']
+===========================
+1040 [] []
+[]
+===========================
+1041 ['macron'] ['macron']
+[]
+===========================
+1042 ['pepe mujica'] ['pepe mujica']
+[]
+===========================
+1043 ['cyclone kenneth', 'mozambique', 'lebo diseko', 'pemba'] []
+['cyclone kenneth', 'mozambique', 'lebo diseko', 'pemba']
+===========================
+1044 [] []
+[]
+===========================
+1045 [] []
+[]
+===========================
+1046 ['russians'] ['russians']
+[]
+===========================
+1047 [] []
+[]
+===========================
+1048 ['macron'] ['macron']
+[]
+===========================
+1049 ['pepe mujica', 'left', 'maduro'] ['pepe mujica', 'maduro']
+['left']
+===========================
+1050 [] []
+[]
+===========================
+1051 [] []
+[]
+===========================
+1052 [] []
+[]
+===========================
+1053 ['day now', 'faller'] ['day now', 'faller']
+[]
+===========================
+1054 ['american', 'us', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine'] ['american', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine']
+['us']
+===========================
+1055 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+1056 [] []
+[]
+===========================
+1057 [] []
+[]
+===========================
+1058 [] []
+[]
+===========================
+1059 ['venezuela', 'socialist'] ['venezuela']
+['socialist']
+===========================
+1060 ['macron'] ['macron']
+[]
+===========================
+1061 ['venezuela', 'venezuela', 'venezuelans'] ['venezuela', 'venezuela', 'venezuelans']
+[]
+===========================
+1062 ['united states'] ['united states']
+[]
+===========================
+1063 [] []
+[]
+===========================
+1064 ['adm. faller'] ['adm. faller']
+[]
+===========================
+1065 ['usmc'] ['usmc']
+[]
+===========================
+1066 [] []
+[]
+===========================
+1067 ['socialism'] []
+['socialism']
+===========================
+1068 [] []
+[]
+===========================
+1069 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+1070 ['venezuela', 'maduro'] ['venezuela', 'maduro']
+[]
+===========================
+1071 [] []
+[]
+===========================
+1072 ['maduro'] ['maduro']
+[]
+===========================
+1073 ['gnb', 'caracas'] ['gnb', 'caracas']
+[]
+===========================
+1074 [] []
+[]
+===========================
+1075 ['american', 'us', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine'] ['american', 'venezuela', 'iran', 'libya', 'iraq', 'syria', 'haiti', 'honduras', 'afghanistan', 'yemen', 'palestine']
+['us']
+===========================
+1076 [] []
+[]
+===========================
+1077 [] []
+[]
+===========================
+1078 ['russians'] ['russians']
+[]
+===========================
+1079 ['starbucks commies'] ['starbucks commies']
+[]
+===========================
+1080 ['msnbc'] ['ironic', 'msnbc']
+[]
+===========================
+1081 ['u.s'] ['u.s']
+[]
+===========================
+1082 ['spanish'] ['spanish']
+[]
+===========================
+1083 [] []
+[]
+===========================
+1084 [] []
+[]
+===========================
+1085 [] []
+[]
+===========================
+1086 [] []
+[]
+===========================
+1087 [] ['usd', 'usd']
+[]
+===========================
+1088 ['biz coach news'] []
+['biz coach news']
+===========================
+1089 [] []
+[]
+===========================
+1090 ['macron'] ['macron']
+[]
+===========================
+1091 ['president'] []
+['president']
+===========================
+1092 [] []
+[]
+===========================
+1093 ['united states'] ['united states']
+[]
+===========================
+1094 [] []
+[]
+===========================
+1095 [] []
+[]
+===========================
+1096 [] ['utc', 'vet']
+[]
+===========================
+1097 ['president', 'nicolas maduro', 'maduro', 'cuba', 'narco terrorist regime'] ['nicolas maduro', 'maduro', 'cuba']
+['narco terrorist regime', 'president']
+===========================
+1098 ['uk', 'us', 'venezuelan', 'us'] ['uk', 'us', 'venezuelan', 'us']
+[]
+===========================
+1099 ['pres of venezuela', 'venezuela'] ['pres of venezuela', 'venezuela']
+[]
+===========================
+1100 [] []
+[]
+===========================
+1101 [] []
+[]
+===========================
+1102 ['adm. faller', 'iran', 'tehran', 'cuba'] ['adm. faller', 'venezuela', 'venezuelan', 'venezuelan']
+['cuba', 'tehran', 'iran']
+===========================
+1103 [] []
+[]
+===========================
+1104 [] []
+[]
+===========================
+tp_counter_outer_twics:  930
+fn_counter_outer_twics:  439
+fp_counter_outer_twics:  129
+twics_precision:  0.8781869688385269
+twics_recall:  0.6793279766252739
+twics_f1:  0.7660626029654036

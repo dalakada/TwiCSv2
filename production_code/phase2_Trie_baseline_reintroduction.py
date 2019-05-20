@@ -34,11 +34,12 @@ for item in tempList:
 cachedStopWords.remove("don")
 cachedStopWords.remove("your")
 cachedTitles = ["mr.","mr","mrs.","mrs","miss","ms","sen.","dr","dr.","prof.","president","congressman"]
-prep_list=["in","at","of","on","&;"] #includes common conjunction as well
+prep_list=["in","at","of","on","&;","v."] #includes common conjunction as well
 article_list=["a","an","the"]
+conjoiner=["de"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["nope","gee","hmm","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","bye","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 string.punctuation=string.punctuation+'…‘’'
 
 
@@ -52,14 +53,14 @@ class EntityResolver ():
 
         # SET CB
         # print(phase2stopwordList)
-        candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
+        candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         
-        # candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
+        candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
 
         # SET TF 
         untrashed_tweets=self.set_tf(data_frame_holder,
             candidate_featureBase_DF,
-            phase2_candidates_holder,correction_flag)
+            phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag)
 
         # print('untrashed_tweets: ', len(untrashed_tweets))
         # untrashed_tweets.to_csv("phase2output.csv", sep=',', encoding='utf-8')
@@ -112,14 +113,16 @@ class EntityResolver ():
 
 
         #operations for getting ready for next batch.
-        self.incomplete_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
+        # self.incomplete_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
+        self.incomplete_tweets.drop(['2nd Iteration Candidates','2nd Iteration Candidates Unnormalized'], axis=1, inplace=True)
         self.counter=self.counter+1
 
         self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
         self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
 
         if(self.counter==(max_batch_value+1)):
-            self.just_converted_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
+            # self.just_converted_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
+            self.just_converted_tweets.drop(['2nd Iteration Candidates','2nd Iteration Candidates Unnormalized'], axis=1, inplace=True)
 
             print('completed tweets: ', len(self.just_converted_tweets),'incomplete tweets: ', len(self.incomplete_tweets))
             
@@ -332,7 +335,7 @@ class EntityResolver ():
         zscore_array1=stats.zscore(mert1)
 
         candidate_featureBase_DF['Z_ScoreUnweighted']=zscore_array1
-        z_score_threshold=candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==3].Z_ScoreUnweighted.tolist()[0]
+        z_score_threshold=candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==2].Z_ScoreUnweighted.tolist()[0]
         print(z_score_threshold)
         #candidate_featureBase_DF.to_csv("cf_new_with_z_score.csv", sep=',', encoding='utf-8')
 
@@ -363,9 +366,11 @@ class EntityResolver ():
             for candidate in ambiguous_bad_candidates_wFilter.candidate.tolist():
                 #print(candidate)
                 if candidate not in self.partition_dict.keys():
+
                     substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates,False)
                     if(len(substring_candidates)>0):
-                        #print(candidate,substring_candidates)
+                        if(candidate=="bill de blasio's 2020"):
+                            print(candidate,substring_candidates)
                         self.partition_dict[candidate]=substring_candidates
 
             flag1= True
@@ -377,6 +382,8 @@ class EntityResolver ():
                 if candidate not in self.partition_dict.keys():
                     substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates,False)
                     if(len(substring_candidates)>0):
+                        if(candidate=="bill de blasio's 2020"):
+                            print(candidate,substring_candidates)
                         self.partition_dict[candidate]=substring_candidates
             flag2= True
         return (flag1|flag2)
@@ -749,19 +756,21 @@ class EntityResolver ():
 
         #input new_tweets, z_score, Updated candidatebase of phase1
         #output candidate_featureBase_DF, Incomplete_tweets
-        data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
+        data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized'])
         phase2_candidates_holder=[]
+        phase2_unnormalized_candidates_holder=[]
         df_holder=[]
 
-        candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted= self.extract(TweetBase,CTrie,phase2stopwordList,0)
+        candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted,phase2_unnormalized_candidates_holder_extracted= self.extract(TweetBase,CTrie,phase2stopwordList,0)
         phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
+        phase2_unnormalized_candidates_holder.extend(phase2_unnormalized_candidates_holder_extracted)
         df_holder.extend(df_holder_extracted)
 
 
         ambiguous_candidates_in_batch_w_Count=dict((x,self.ambiguous_candidates_in_batch.count(x)) for x in set(self.ambiguous_candidates_in_batch))
 
         self.ambiguous_candidates_in_batch=list(set(self.ambiguous_candidates_in_batch))
-        print(len(self.ambiguous_candidates_in_batch))
+        # print(len(self.ambiguous_candidates_in_batch))
         cosine_distance_dict_wAmb={}
         if((self.counter>0)&(len(self.incomplete_tweets)>0)):
             
@@ -815,8 +824,9 @@ class EntityResolver ():
 
             #tweet candidates for Reintroduction
             reintroduced_tweets=self.get_reintroduced_tweets(rank_dict_ordered_list_reintroduction_candidates_cutoff,reintroduction_threshold)
-            candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(reintroduced_tweets,CTrie,phase2stopwordList,1)
+            candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted,phase2_unnormalized_candidates_holder_extracted = self.extract(reintroduced_tweets,CTrie,phase2stopwordList,1)
             phase2_candidates_holder.extend(phase2_candidates_holder_extracted)
+            phase2_unnormalized_candidates_holder.extend(phase2_unnormalized_candidates_holder_extracted)
             df_holder.extend(df_holder_extracted)
 
         #print(len(df_holder))
@@ -907,7 +917,7 @@ class EntityResolver ():
 
 
         #['probability'],['a,g,b']
-        return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,correction_flag,(ambiguous_turned_good+ambiguous_turned_bad+self.ambiguous_candidates), converted_candidates
+        return candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag,(ambiguous_turned_good+ambiguous_turned_bad+self.ambiguous_candidates), converted_candidates
 
 
         #flush out completed tweets
@@ -915,10 +925,10 @@ class EntityResolver ():
         # output: incomplete tweets (a tags in it.), incomplete_tweets["Complete"]
     def set_tf(self,data_frame_holder,
             candidate_featureBase_DF,
-            phase2_candidates_holder,correction_flag):
+            phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag):
         return self.set_completeness_in_tweet_frame(data_frame_holder,
             candidate_featureBase_DF,
-            phase2_candidates_holder,correction_flag)
+            phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag)
 
     def get_incomplete_tf(self,untrashed_tweets):
         return untrashed_tweets[untrashed_tweets.completeness==False]
@@ -974,24 +984,29 @@ class EntityResolver ():
 
 
     def set_column_for_candidates_in_incomplete_tweets(self,candidate_featureBase_DF,input_to_eval):
+
         incomplete_candidates= input_to_eval['2nd Iteration Candidates'].tolist()
+
+        # incomplete_candidates_unnormalized= input_to_eval['2nd Iteration Candidates Unnormalized'].tolist()
+
 
 
         candidate_featureBase_DF= candidate_featureBase_DF.set_index('candidate')
 
         candidate_with_label_holder=[]
         one_level=[]
-
+        
 
         for sentence_level_candidates in incomplete_candidates:
+
             one_level.clear()
+
             for candidate in sentence_level_candidates:
-                if candidate in candidate_featureBase_DF.index:
-                    label=candidate_featureBase_DF.get_value(candidate,'status')
+                if candidate.lower() in candidate_featureBase_DF.index:
+                    label=candidate_featureBase_DF.get_value(candidate.lower(),'status')
                     one_level.append((candidate,label))
                 else:
                     one_level.append((candidate,"na"))
-
 
             candidate_with_label_holder.append(copy.deepcopy(one_level))
 
@@ -1000,24 +1015,28 @@ class EntityResolver ():
         debug_candidates_label_list= input_to_eval['candidates_with_label'].tolist()
         candidates_filtered_g_labeled=[]
         row_level_candidates=[]
+        index_outer=0
 
         candidates_filtered_a_labeled=[]
         row_level_a_candidates=[]
 
         for sentence_level in debug_candidates_label_list:
+
+            # sentence_level_candidates_unnormalized= incomplete_candidates_unnormalized[index_outer]
             row_level_candidates.clear()
             row_level_a_candidates.clear()
             for candidate in sentence_level:
                 if(candidate[1]=="g"):
-                        row_level_candidates.append(candidate[0])
-
+                    row_level_candidates.append(candidate[0])
+                if((candidate[1]=="b")&(candidate[0]=="US")):
+                    # print('here')
+                    row_level_candidates.append(candidate[0])
                 if(candidate[1]=="a"):
-                        row_level_a_candidates.append(candidate[0])
+                    row_level_a_candidates.append(candidate[0])
+
             candidates_filtered_g_labeled.append(copy.deepcopy(row_level_candidates))
             candidates_filtered_a_labeled.append(copy.deepcopy(row_level_a_candidates))
-
-
-
+            index_outer+=1
 
 
         input_to_eval["only_good_candidates"]=candidates_filtered_g_labeled
@@ -1151,18 +1170,25 @@ class EntityResolver ():
         return input_to_eval
 
 
-    def recall_correction(self,phase2_candidates_holder,data_frame_holder):
-        corrected_phase2_candidates_holder=[]
+    def recall_correction(self,candidate_featureBase_DF,phase2_candidates_holder,phase2_unnormalized_candidates_holder,data_frame_holder):
 
+        corrected_phase2_candidates_holder=[]
+        index_outer=0
         for candidates in phase2_candidates_holder:
+            unnormalized_candidates=phase2_unnormalized_candidates_holder[index_outer]
             corrected_phase2_candidates=[]
             for idx, candidate in enumerate(candidates):
-                if((candidate in self.partition_dict.keys())&((candidate in self.infrequent_candidates)|(candidate in self.bad_candidates))):
+                unnormalized_candidate=unnormalized_candidates[idx]
+                # if((candidate in self.partition_dict.keys())&((candidate in self.infrequent_candidates)|(candidate in self.bad_candidates))):
+                if((candidate in self.partition_dict.keys())&((candidate in self.infrequent_candidates)|(candidate in self.bad_candidates)|(candidate in self.ambiguous_candidates))):   #do this only for 3K tweets
                     #print(candidate, self.partition_dict[candidate])
                     corrected_phase2_candidates.extend(self.partition_dict[candidate])
                 else:
+                    if((candidate in self.bad_candidates)&(candidate=='us')&(unnormalized_candidate=='US')):
+                        candidate=unnormalized_candidate
                     corrected_phase2_candidates.append(candidate)
             corrected_phase2_candidates_holder.append(copy.deepcopy(corrected_phase2_candidates))
+            index_outer+=1
 
         
         #print(corrected_phase2_candidates_holder)
@@ -1173,7 +1199,7 @@ class EntityResolver ():
 
 
     #@profile
-    def set_completeness_in_tweet_frame(self,data_frame_holder,candidate_featureBase_DF,phase2_candidates_holder,correction_flag):
+    def set_completeness_in_tweet_frame(self,data_frame_holder,candidate_featureBase_DF,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag):
         #print(candidate_featureBase_DF.head())
 
         # print("trump:", candidate_featureBase_DF[candidate_featureBase_DF.candidate=="trump"][['status','cumulative']])
@@ -1191,7 +1217,7 @@ class EntityResolver ():
         ambiguous_candidates=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"].candidate.tolist()
 
         if(correction_flag):
-            phase2_candidates_holder,data_frame_holder=self.recall_correction(phase2_candidates_holder,data_frame_holder)
+            phase2_candidates_holder,data_frame_holder=self.recall_correction(candidate_featureBase_DF,phase2_candidates_holder,phase2_unnormalized_candidates_holder,data_frame_holder)
 
          
 
@@ -1250,6 +1276,7 @@ class EntityResolver ():
         strip_op=word
         strip_op=(((strip_op.lstrip(string.punctuation)).rstrip(string.punctuation)).strip()).lower()
         strip_op=(strip_op.lstrip('“‘’”')).rstrip('“‘’”')
+        strip_op=(((strip_op.lstrip(string.punctuation)).rstrip(string.punctuation)).strip()).lower()
         #strip_op= self.rreplace(self.rreplace(self.rreplace(strip_op,"'s","",1),"’s","",1),"’s","",1)
         if strip_op.endswith("'s"):
             li = strip_op.rsplit("'s", 1)
@@ -1721,7 +1748,7 @@ class EntityResolver ():
         strip_op=(((strip_op.lstrip(string.punctuation)).rstrip(string.punctuation)).strip())
         strip_op=(strip_op.lstrip('“‘’”')).rstrip('“‘’”')
         strip_op= self.rreplace(self.rreplace(self.rreplace(strip_op,"'s","",1),"’s","",1),"’s","",1)
-        prep_article_list=prep_list+article_list+self.phase2stopwordList
+        prep_article_list=prep_list+article_list+self.phase2stopwordList+conjoiner
         word_list=strip_op.split()
         for i in range(len(word_list)):
             word=word_list[i]
@@ -1780,7 +1807,7 @@ class EntityResolver ():
             feature_list[0]=self.counter
             feature_list[1]=len(normalized_candidate.split())
         feature_to_update=self.check_feature_update(candidate_tuple,non_discriminative_flag)
-        # if(normalized_candidate=="not even hitler"):
+        # if(normalized_candidate=="mayor of new york"):
         #     print(candidateText,feature_to_update)
         feature_list[feature_to_update]+=1
         feature_list[8]+=1
@@ -1795,9 +1822,9 @@ class EntityResolver ():
 
         if(self.counter==0):
             #output_queue
-            self.data_frame_holder_OQ=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
-            self.incomplete_tweets=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
-            self.not_reintroduced=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
+            self.data_frame_holder_OQ=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
+            self.incomplete_tweets=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
+            self.not_reintroduced=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
             self.CandidateBase_dict= {}
             self.ambiguous_candidate_distanceDict_prev={}
             self.partition_dict={}
@@ -1808,10 +1835,10 @@ class EntityResolver ():
             self.entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.non_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.ambiguous_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
-            self.aggregator_incomplete_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
-            self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
+            self.aggregator_incomplete_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
+            self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
             #self.data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
-            self.raw_tweets_for_others=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
+            self.raw_tweets_for_others=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized'])
 
             self.accuracy_tuples_prev_batch=[]
             self.accuracy_vals=[]
@@ -1829,9 +1856,10 @@ class EntityResolver ():
         self.number_of_seen_tweets_per_batch.append(len(tweetBaseInput))
 
 
-        #data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
+        #data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized'])
         phase1_holder_holder=[]
         phase2_candidates_holder=[]
+        phase2_unnormalized_candidates_holder=[]
         df_holder=[]
         if(new_or_old==0):
             self.ambiguous_candidates_in_batch=[]
@@ -1908,7 +1936,7 @@ class EntityResolver ():
 
             #combined_list_here=([]+list(cachedStopWords)+prep_list+chat_word_list+article_list+day_list+month_list)
             
-            tweetWordList_stopWords=list(filter (lambda word: ((((word[0].strip()).strip(string.punctuation)).lower() in combined_list_filtered)|(word[0].strip() in string.punctuation)|(word[0].startswith('@'))), tweetWordList))
+            tweetWordList_stopWords=list(filter (lambda word: ((((word[0].strip()).strip(string.punctuation)).lower() in combined_list_filtered)|(word[0].strip() in string.punctuation)|(word[0].startswith('@'))|(word[0].startswith('#'))), tweetWordList))
 
 
             # phase 2 candidate tuples without stopwords for a sentence
@@ -1922,14 +1950,15 @@ class EntityResolver ():
 
             ne_candidate_list=[]
             for sequence in sequences:
-                # if(tweetID=="14155"):
+                # if((tweetID=="436")|(tweetID=="938")):
                 #     print(sequence)
                 #     seq_candidate_list=self.get_Candidates(sequence, CTrie,True)
                 # else:
                 seq_candidate_list=self.get_Candidates(sequence, CTrie,False)
                 if(seq_candidate_list):
-                    '''seq_candidate_list= list(map(lambda e: self.join_token_tuples(e) ,seq_candidates))
-                    print("====",seq_candidate_list)'''
+                    '''seq_candidate_list= list(map(lambda e: self.join_token_tuples(e) ,seq_candidates))'''
+                    # if((tweetID=="14")|(tweetID=="938")):
+                    #     print("====",seq_candidate_list)
 
                     
                     for candidate_tuple in seq_candidate_list:
@@ -1944,6 +1973,10 @@ class EntityResolver ():
             #phase2_candidates='||'.join(e[0] for e in ne_candidate_list)
 
             phase2_candidates=[self.normalize(e[0]) for e in ne_candidate_list]
+            phase2_candidates_unnormalized=[e[0] for e in ne_candidate_list]
+
+            # if(tweetID=="14"):
+            #     print((phase2_candidates),(phase2_candidates_unnormalized))
             #print(len(self.ambiguous_candidates))
             if(new_or_old==0):
                 #self.ambiguous_candidates_in_batch=[]
@@ -1953,11 +1986,13 @@ class EntityResolver ():
             #     if candidate in self.ambiguous_candidates:
             #         print(candidate)
             phase2_candidates_holder.append(phase2_candidates)
+            phase2_unnormalized_candidates_holder.append(phase2_candidates_unnormalized)
 
             #print(phase1Candidates,"====",phase2_candidates)
-            # if((tweetID=="0")|(tweetID=="13687")|(tweetID=="14154")|(tweetID=="31877")|(tweetID=="35028")|(tweetID=="38894")):
-            #     print(phase1Candidates,"====",phase2_candidates)
-            dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'annotation':annotation,'stanford_candidates':stanford}
+            # if((tweetID=="63")|(tweetID=="130")|(tweetID=="277")|(tweetID=="335")|(tweetID=="13")):
+            if((tweetID=="923")):
+                print(tweetID,phase1Candidates,"====",phase2_candidates)
+            dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'2nd Iteration Candidates Unnormalized':phase2_candidates_unnormalized, 'annotation':annotation,'stanford_candidates':stanford}
 
             df_holder.append(dict1)
             #-------------------------------------------------------------------END of 1st iteration: RESCAN+CANDIDATE_UPDATION-----------------------------------------------------------
@@ -1977,7 +2012,7 @@ class EntityResolver ():
 
 
         #data_frame_holder.to_csv("phase2output.csv", sep=',', encoding='utf-8')
-        return candidate_featureBase_DF,df_holder,phase2_candidates_holder
+        return candidate_featureBase_DF,df_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder
 
 
         # self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
