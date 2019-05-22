@@ -19,6 +19,7 @@ import datetime
 import trie as trie
 import re
 import pickle
+import itertools
 from scipy import spatial
 
 from sklearn.preprocessing import PolynomialFeatures
@@ -367,7 +368,7 @@ class EntityResolver ():
                 #print(candidate)
                 if candidate not in self.partition_dict.keys():
 
-                    substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates,False)
+                    substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates)
                     if(len(substring_candidates)>0):
                         if(candidate=="bill de blasio's 2020"):
                             print(candidate,substring_candidates)
@@ -380,7 +381,7 @@ class EntityResolver ():
             for candidate in infrequent_candidates:
                 #print(candidate)
                 if candidate not in self.partition_dict.keys():
-                    substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates,False)
+                    substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates)
                     if(len(substring_candidates)>0):
                         if(candidate=="bill de blasio's 2020"):
                             print(candidate,substring_candidates)
@@ -1315,34 +1316,63 @@ class EntityResolver ():
         return npmi,pklv
         #return pklv
 
+    def multiSlice(self,s,cutpoints,good_candidates):
+        k = len(cutpoints)
+        multislices=[]
+        if k == 0:
+            curr_candidate=self.normalize(' '.join(s))
 
-    def get_substring_candidates(self,candidate_words,good_candidates,whole_check_flag):
-        substring_candidates=[]
-        last_cand=""
-        break_flag=False
-        start=0
-        for i in range(len(candidate_words)):
-            curr=' '.join(candidate_words[0:(i+1)])
-            if curr in good_candidates:
-                #print("got: ",curr)
-                last_cand=curr
-            else:
-                if i==0:
-                    start=i+1
-                else:
-                    start=i
-                    if(last_cand!=""):
-                        substring_candidates.append(last_cand)
-                    else:
-                        substring_candidates.extend(self.get_substring_candidates(candidate_words[0:(i+1)],good_candidates,True))
-                break_flag=True
-                break
-        if(break_flag & (len(candidate_words[start:])>0)):
-            substring_candidates.extend(self.get_substring_candidates(candidate_words[start:],good_candidates,True))
-        if(whole_check_flag & (not break_flag) & (last_cand!="")):
-            substring_candidates.append(last_cand)
+            if(curr_candidate in good_candidates):
+                multislices = [curr_candidate]        
+        else:
+            
+            curr_candidate=self.normalize(' '.join(s[:cutpoints[0]]))
+            alt_list=[curr_candidate]
+            
+            if(curr_candidate in good_candidates):
+                multislices = [curr_candidate]
 
-        return substring_candidates
+            alt_list.extend(self.normalize(' '.join(s[cutpoints[i]:cutpoints[i+1]])) for i in range(k-1))
+            multislices.extend(self.normalize(' '.join(s[cutpoints[i]:cutpoints[i+1]])) for i in range(k-1) if self.normalize(' '.join(s[cutpoints[i]:cutpoints[i+1]])) in good_candidates)
+
+            curr_candidate=self.normalize(' '.join(s[cutpoints[k-1]:]))
+            alt_list.append(curr_candidate)
+            
+            if(curr_candidate in good_candidates):
+                multislices.append(curr_candidate)
+            # print('::',alt_list)
+        return multislices
+
+
+
+    def get_substring_candidates(self,candidate_words,good_candidates):
+        n = len(candidate_words)
+        all_partitions=[]
+        all_partitions_length=[]
+        cuts = list(range(1,n))
+        for k in range(n):
+            # all_partitions_inner=[]
+            partition_list=[]
+            partition_length_list=[]
+            for cutpoints in itertools.combinations(cuts,k):
+                ret_list=self.multiSlice(candidate_words,cutpoints,good_candidates)
+                if(ret_list):
+                    partition_length=sum([len(elem.split()) for elem in ret_list])
+                    # print('==',ret_list,partition_length)
+                    if(partition_length==len(candidate_words)):
+                        return ret_list
+                    partition_list.append(ret_list)
+                    partition_length_list.append(partition_length)
+                    # yield ret_list
+            # print('------')
+            if(partition_length_list):
+                max_index=partition_length_list.index(max(partition_length_list))
+                all_partitions.append(partition_list[max_index])
+                all_partitions_length.append(partition_length_list[max_index])
+        # print(all_partitions)
+        max_index=all_partitions_length.index(max(all_partitions_length))
+        # print(all_partitions[max_index])
+        return all_partitions[max_index]
     
     #@profile
     def verify(self, subsequence, CTrie):

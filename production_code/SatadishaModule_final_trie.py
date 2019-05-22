@@ -362,9 +362,9 @@ class SatadishaModule():
                 combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list
                 if not ((candidateText in combined)|(candidateText.isdigit())|(self.is_float(candidateText))):
                     self.CTrie.__setitem__(candidateText.split(),len(candidateText.split()),candidate.features,batch_number)
-            # if(index==923):
-            #     print(sentence)
-            #     self.printList(ne_List_final)
+            if(index==923):
+                print(sentence)
+                self.printList(ne_List_final)
             #if(userMention_List_final):
             #    print(userMention_List_final)
 
