@@ -16,6 +16,8 @@ from operator import itemgetter
 import collections 
 
 
+
+#---- for my PC
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated_output_backup.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/venezuela_output.csv",sep =',', keep_default_na=False)
@@ -25,7 +27,15 @@ import collections
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/ripcity_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billnye_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade_output.csv",sep =',', keep_default_na=False)
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio_output.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio_output.csv",sep =',', keep_default_na=False)
+
+#---- for my Mac
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/pikapika_output.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/ripcity_output.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/billnye_output.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/roevwade_output.csv",sep =',', keep_default_na=False)
+tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/billdeblasio_output.csv",sep =',', keep_default_na=False)
+
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade.csv",sep =',')
 # print(list(tweets_unpartitoned.columns.values))

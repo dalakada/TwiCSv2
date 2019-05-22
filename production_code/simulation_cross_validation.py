@@ -57,11 +57,19 @@ total_time=0
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/venezuela.csv",sep =',')
 
+#---- for my PC
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/pikapika.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/ripcity.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billnye.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade.csv",sep =',')
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio.csv",sep =',')
+
+#---- for my Mac
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/pikapika.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/ripcity.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/billnye.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/roevwade.csv",sep =',')
+tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/billdeblasio.csv",sep =',')
 
 # input_name="D2"
 #tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
@@ -274,15 +282,24 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
 output_df['output_mentions'] = ''
 output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['output_mentions']] = complete_tweet_dataframe_grouped_df_sorted.loc[complete_tweet_dataframe_grouped_df_sorted.tweetID.isin(output_df.index),['only_good_candidates']].values
 
+#---- for my PC
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated_output.csv", sep=',', encoding='utf-8',index=False)
 
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/venezuela_output.csv", sep=',', encoding='utf-8',index=False)
+
 
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/pikapika_output.csv", sep=',', encoding='utf-8',index=False)
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/ripcity_output.csv", sep=',', encoding='utf-8',index=False)
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/billnye_output.csv", sep=',', encoding='utf-8',index=False)
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/roevwade_output.csv", sep=',', encoding='utf-8',index=False)
-output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio_output.csv", sep=',', encoding='utf-8',index=False)
+# output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio_output.csv", sep=',', encoding='utf-8',index=False)
+
+#---- for my Mac
+# output_df.to_csv("/Users/satadisha/Documents/GitHub/pikapika_output.csv", sep=',', encoding='utf-8',index=False)
+# output_df.to_csv("/Users/satadisha/Documents/GitHub/ripcity_output.csv", sep=',', encoding='utf-8',index=False)
+# output_df.to_csv("/Users/satadisha/Documents/GitHub/billnye_output.csv", sep=',', encoding='utf-8',index=False)
+# output_df.to_csv("/Users/satadisha/Documents/GitHub/roevwade_output.csv", sep=',', encoding='utf-8',index=False)
+output_df.to_csv("/Users/satadisha/Documents/GitHub/billdeblasio_output.csv", sep=',', encoding='utf-8',index=False)
 
 
 print(len(output_df))

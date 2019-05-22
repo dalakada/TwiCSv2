@@ -1370,9 +1370,12 @@ class EntityResolver ():
                 all_partitions.append(partition_list[max_index])
                 all_partitions_length.append(partition_length_list[max_index])
         # print(all_partitions)
-        max_index=all_partitions_length.index(max(all_partitions_length))
-        # print(all_partitions[max_index])
-        return all_partitions[max_index]
+        if(all_partitions_length):
+            max_index=all_partitions_length.index(max(all_partitions_length))
+            # print(all_partitions[max_index])
+            return all_partitions[max_index]
+        else:
+            return []
     
     #@profile
     def verify(self, subsequence, CTrie):
