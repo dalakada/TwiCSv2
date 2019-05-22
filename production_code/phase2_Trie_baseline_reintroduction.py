@@ -11,6 +11,7 @@ from itertools import groupby
 from operator import itemgetter
 from collections import Iterable, OrderedDict
 from scipy import stats
+import emoji
 import SVM as svm
 import statistics
 import pandas as pd
@@ -40,7 +41,7 @@ article_list=["a","an","the"]
 conjoiner=["de"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["nope","gee","hmm","bye","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","bye","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 string.punctuation=string.punctuation+'…‘’'
 
 
@@ -57,6 +58,9 @@ class EntityResolver ():
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         
         candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
+        print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='science guy on the john oliver'])
+        # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='knows'])
+        # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='democrat'])
 
         # SET TF 
         untrashed_tweets=self.set_tf(data_frame_holder,
@@ -146,6 +150,8 @@ class EntityResolver ():
             complete_tweet_dataframe_grouped_df= (complete_tweet_dataframe.groupby('tweetID', as_index=False).aggregate(lambda x: x.tolist()))
             complete_tweet_dataframe_grouped_df['tweetID']=complete_tweet_dataframe_grouped_df['tweetID'].astype(int)
             self.complete_tweet_dataframe_grouped_df_sorted=(complete_tweet_dataframe_grouped_df.sort_values(by='tweetID', ascending=True)).reset_index(drop=True)
+
+            print('536: ',self.complete_tweet_dataframe_grouped_df_sorted[(self.complete_tweet_dataframe_grouped_df_sorted.tweetID==536)]['output_mentions'])
 
             print(list(self.complete_tweet_dataframe_grouped_df_sorted.columns.values))
             # print(self.complete_tweet_dataframe_grouped_df_sorted.head(5))
@@ -336,7 +342,7 @@ class EntityResolver ():
         zscore_array1=stats.zscore(mert1)
 
         candidate_featureBase_DF['Z_ScoreUnweighted']=zscore_array1
-        z_score_threshold=candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==2].Z_ScoreUnweighted.tolist()[0]
+        z_score_threshold=candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==3].Z_ScoreUnweighted.tolist()[0]
         print(z_score_threshold)
         #candidate_featureBase_DF.to_csv("cf_new_with_z_score.csv", sep=',', encoding='utf-8')
 
@@ -352,6 +358,7 @@ class EntityResolver ():
 
     # recall_correction
     def set_partition_dict(self,candidate_featureBase_DF,infrequent_candidates):
+
         #print(list(self.partition_dict.keys()))
         ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="a")|(candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
         good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF.status=="g")].candidate.tolist()
@@ -370,7 +377,7 @@ class EntityResolver ():
 
                     substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates)
                     if(len(substring_candidates)>0):
-                        if(candidate=="bill de blasio's 2020"):
+                        if(candidate=="science guy on the john oliver"):
                             print(candidate,substring_candidates)
                         self.partition_dict[candidate]=substring_candidates
 
@@ -383,8 +390,8 @@ class EntityResolver ():
                 if candidate not in self.partition_dict.keys():
                     substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates)
                     if(len(substring_candidates)>0):
-                        if(candidate=="bill de blasio's 2020"):
-                            print(candidate,substring_candidates)
+                        # if(candidate=="bill de blasio's 2020"):
+                        #     print(candidate,substring_candidates)
                         self.partition_dict[candidate]=substring_candidates
             flag2= True
         return (flag1|flag2)
@@ -1029,7 +1036,7 @@ class EntityResolver ():
             for candidate in sentence_level:
                 if(candidate[1]=="g"):
                     row_level_candidates.append(candidate[0])
-                if((candidate[1]=="b")&(candidate[0]=="US")):
+                if(((candidate[1]=="b")|(candidate[1]=="a"))&(candidate[0]=="US")):
                     # print('here')
                     row_level_candidates.append(candidate[0])
                 if(candidate[1]=="a"):
@@ -1185,7 +1192,8 @@ class EntityResolver ():
                     #print(candidate, self.partition_dict[candidate])
                     corrected_phase2_candidates.extend(self.partition_dict[candidate])
                 else:
-                    if((candidate in self.bad_candidates)&(candidate=='us')&(unnormalized_candidate=='US')):
+                    if(((candidate in self.bad_candidates)|(candidate in self.ambiguous_candidates))&(candidate=='us')&(unnormalized_candidate=='US')):
+                        # print(index_outer)
                         candidate=unnormalized_candidate
                     corrected_phase2_candidates.append(candidate)
             corrected_phase2_candidates_holder.append(copy.deepcopy(corrected_phase2_candidates))
@@ -1225,7 +1233,7 @@ class EntityResolver ():
         
         truth_vals=[False if any(x not in merged_g_b for x in list1) else True for list1 in phase2_candidates_holder]
 
-        output_mentions=[list(filter(lambda candidate: candidate in good_candidates, list1)) for list1 in phase2_candidates_holder]
+        output_mentions=[list(filter(lambda candidate: (candidate in good_candidates)|(candidate=='US'), list1)) for list1 in phase2_candidates_holder]
 
         # truth_vals=[False if any(x in ambiguous_candidates for x in list1) else True for list1 in phase2_candidates_holder]
 
@@ -1247,7 +1255,7 @@ class EntityResolver ():
         data_frame_holder["current_minus_entry"]=self.counter-data_frame_holder['entry_batch']
 
         # print('0: ',data_frame_holder[(data_frame_holder.tweetID=='0')]['output_mentions'])
-        # print('13687: ',data_frame_holder[(data_frame_holder.tweetID=='13687')]['output_mentions'])
+        # print('1006: ',data_frame_holder[(data_frame_holder.tweetID=='1006')]['output_mentions'])
         # print('14154: ',data_frame_holder[(data_frame_holder.tweetID=='14154')]['output_mentions'])
         # print('31877: ',data_frame_holder[(data_frame_holder.tweetID=='31877')]['output_mentions'])
         # print('35028: ',data_frame_holder[(data_frame_holder.tweetID=='35028')]['output_mentions'])
@@ -2023,7 +2031,7 @@ class EntityResolver ():
 
             #print(phase1Candidates,"====",phase2_candidates)
             # if((tweetID=="63")|(tweetID=="130")|(tweetID=="277")|(tweetID=="335")|(tweetID=="13")):
-            if((tweetID=="923")):
+            if((tweetID=="536")):
                 print(tweetID,phase1Candidates,"====",phase2_candidates)
             dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'2nd Iteration Candidates Unnormalized':phase2_candidates_unnormalized, 'annotation':annotation,'stanford_candidates':stanford}
 

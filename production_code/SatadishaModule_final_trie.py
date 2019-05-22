@@ -9,6 +9,8 @@ import string
 import csv
 import random
 import time
+import emoji
+# import regex
 #import binascii
 #import shlex
 import numpy as np
@@ -46,7 +48,7 @@ article_list=["a","an","the"]
 conjoiner=["de"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["nope","gee","hmm","bye","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","bye","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 
 #string.punctuation.extend('“','’','”')
 #---------------------Existing Lists--------------------
@@ -297,6 +299,8 @@ class SatadishaModule():
                     #token_count+=len(tweetWordList)
                     #returns position of words that are capitalized
                     #print(tweetWordList)
+                    
+
                     tweetWordList_cappos = list(map(lambda element : element[0], filter(lambda element : self.capCheck(element[1]), enumerate(tweetWordList))))
                     #print(tweetWordList_cappos)
 
@@ -319,8 +323,20 @@ class SatadishaModule():
                     #non @usermentions are processed in this function to find non @, non hashtag Entities---- thread 2
                     ne_List_allCheck=[]
                     #if(len(tweetWordList)>len(tweetWordList_cappos)):
-                    #print(len(tweetWordList),str(len(tweetWordList_cappos)),str(len(tweetWordList_stopWords)))
-                    if((len(tweetWordList))>(len(tweetWordList_cappos))):
+                    if(index==589):
+                    #    print(tweetWordList)
+                      print(len(tweetWordList),str(len(tweetWordList_cappos)),str(len(tweetWordList_stopWords)))
+                        # flags = re.findall(r'[^\w\s,]', tweetText)
+                        # print([c for c in tweetWordList if c in emoji.UNICODE_EMOJI],flags) 
+
+                    emoji_list = []
+                    # # data = regex.findall(r'\X', tweetWordList)
+                    for word in tweetWordList:
+                        if any(char in emoji.UNICODE_EMOJI for char in word):
+                            emoji_list.append(word)
+                    # print(emoji_list)
+
+                    if((len(tweetWordList))>(len(tweetWordList_cappos)+len(emoji_list))):
                         
                         #q = queue.Queue()
                         #threading.Thread(target=self.trueEntity_process, args=(tweetWordList_cappos,tweetWordList,q)).start()
@@ -362,9 +378,10 @@ class SatadishaModule():
                 combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list
                 if not ((candidateText in combined)|(candidateText.isdigit())|(self.is_float(candidateText))):
                     self.CTrie.__setitem__(candidateText.split(),len(candidateText.split()),candidate.features,batch_number)
-            if(index==923):
-                print(sentence)
-                self.printList(ne_List_final)
+            # if(index==589):
+            #     # print(sentence)
+            #     self.printList(ne_List_final)
+
             #if(userMention_List_final):
             #    print(userMention_List_final)
 

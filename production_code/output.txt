@@ -1,4 +1,24 @@
-# with NEURONER and TwiCS on the venezuela set
+
+
+
+# with NEURONER and TwiCS on the billdeblasio set
+
+
+tp_counter_outer:  
+fn_counter_outer:  
+fp_counter_outer:  
+neuroner_precision:  
+neuroner_recall:  
+
+tp_counter_outer_twics:  1352
+fn_counter_outer_twics:  473
+fp_counter_outer_twics:  224
+twics_precision:  0.8578680203045685
+twics_recall:  0.7408219178082192
+twics_f1:  0.7950602763892973
+3.54993
+
+# with NEURONER and TwiCS on the billdeblasio set
 
 
 tp_counter_outer:  
@@ -8,12 +28,14 @@ neuroner_precision:
 neuroner_recall:  
 433.8575417995453
 
-tp_counter_outer_twics:  
-fn_counter_outer_twics:  
-fp_counter_outer_twics:  
-twics_precision:  
-twics_recall:  
-3.9453341960906982
+tp_counter_outer_twics:  1017
+fn_counter_outer_twics:  180
+fp_counter_outer_twics:  188
+twics_precision:  0.8439834024896266
+twics_recall:  0.849624060150376
+twics_f1:  0.8467943380516236
+4.0088
+
 
 # with NEURONER and TwiCS on the venezuela set
 
