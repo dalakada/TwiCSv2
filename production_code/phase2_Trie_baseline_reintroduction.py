@@ -58,7 +58,7 @@ class EntityResolver ():
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         
         candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
-        print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='science guy on the john oliver'])
+        print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='makes'])
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='knows'])
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='democrat'])
 
@@ -151,7 +151,7 @@ class EntityResolver ():
             complete_tweet_dataframe_grouped_df['tweetID']=complete_tweet_dataframe_grouped_df['tweetID'].astype(int)
             self.complete_tweet_dataframe_grouped_df_sorted=(complete_tweet_dataframe_grouped_df.sort_values(by='tweetID', ascending=True)).reset_index(drop=True)
 
-            print('536: ',self.complete_tweet_dataframe_grouped_df_sorted[(self.complete_tweet_dataframe_grouped_df_sorted.tweetID==536)]['output_mentions'])
+            print('524: ',self.complete_tweet_dataframe_grouped_df_sorted[(self.complete_tweet_dataframe_grouped_df_sorted.tweetID==524)]['output_mentions'])
 
             print(list(self.complete_tweet_dataframe_grouped_df_sorted.columns.values))
             # print(self.complete_tweet_dataframe_grouped_df_sorted.head(5))
@@ -342,7 +342,7 @@ class EntityResolver ():
         zscore_array1=stats.zscore(mert1)
 
         candidate_featureBase_DF['Z_ScoreUnweighted']=zscore_array1
-        z_score_threshold=candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==3].Z_ScoreUnweighted.tolist()[0]
+        z_score_threshold=candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==2].Z_ScoreUnweighted.tolist()[0]
         print(z_score_threshold)
         #candidate_featureBase_DF.to_csv("cf_new_with_z_score.csv", sep=',', encoding='utf-8')
 
@@ -1233,7 +1233,7 @@ class EntityResolver ():
         
         truth_vals=[False if any(x not in merged_g_b for x in list1) else True for list1 in phase2_candidates_holder]
 
-        output_mentions=[list(filter(lambda candidate: (candidate in good_candidates)|(candidate=='US'), list1)) for list1 in phase2_candidates_holder]
+        output_mentions=[list(filter(lambda candidate: ((candidate in good_candidates))|(candidate=='US'), list1)) for list1 in phase2_candidates_holder]
 
         # truth_vals=[False if any(x in ambiguous_candidates for x in list1) else True for list1 in phase2_candidates_holder]
 
@@ -1941,8 +1941,11 @@ class EntityResolver ():
             stanford=list(row['stanford_candidates'])
             non_discriminative_flag=False
 
+            # if((tweetID=="524")):
+            # print(tweetID,phase1Candidates)
 
-            if(phase1Candidates!="nan"):
+
+            if (phase1Candidates !='nan'):
                 phase1Raw=phase1Candidates.split("||")
                 phase1Raw = list(filter(None, phase1Raw))
 
@@ -2031,8 +2034,9 @@ class EntityResolver ():
 
             #print(phase1Candidates,"====",phase2_candidates)
             # if((tweetID=="63")|(tweetID=="130")|(tweetID=="277")|(tweetID=="335")|(tweetID=="13")):
-            if((tweetID=="536")):
-                print(tweetID,phase1Candidates,"====",phase2_candidates)
+
+            if((tweetID=="213")):
+                print(tweetID,phase1Candidates,"====",phase2_candidates,non_discriminative_flag)
             dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'2nd Iteration Candidates Unnormalized':phase2_candidates_unnormalized, 'annotation':annotation,'stanford_candidates':stanford}
 
             df_holder.append(dict1)

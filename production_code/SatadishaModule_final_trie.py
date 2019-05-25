@@ -304,6 +304,8 @@ class SatadishaModule():
                     tweetWordList_cappos = list(map(lambda element : element[0], filter(lambda element : self.capCheck(element[1]), enumerate(tweetWordList))))
                     #print(tweetWordList_cappos)
 
+                    hashtags_usermentions = list(filter(lambda word: (word.startswith('#'))|(word.startswith('@')|(word.strip() in string.punctuation)), tweetWordList))
+
                     #returns list of stopwords in tweet sentence
                     combined_list_here=([]+cachedStopWords+article_list+prep_list+chat_word_list)
                     #combined_list_here.remove("the")
@@ -322,10 +324,10 @@ class SatadishaModule():
 
                     #non @usermentions are processed in this function to find non @, non hashtag Entities---- thread 2
                     ne_List_allCheck=[]
-                    #if(len(tweetWordList)>len(tweetWordList_cappos)):
-                    if(index==589):
-                    #    print(tweetWordList)
-                      print(len(tweetWordList),str(len(tweetWordList_cappos)),str(len(tweetWordList_stopWords)))
+
+                    # if(index==279):
+                        # print(tweetWordList,hashtags_usermentions)
+                        # print(len(tweetWordList),str(len(tweetWordList_cappos)),len(hashtags_usermentions))
                         # flags = re.findall(r'[^\w\s,]', tweetText)
                         # print([c for c in tweetWordList if c in emoji.UNICODE_EMOJI],flags) 
 
@@ -336,11 +338,11 @@ class SatadishaModule():
                             emoji_list.append(word)
                     # print(emoji_list)
 
-                    if((len(tweetWordList))>(len(tweetWordList_cappos)+len(emoji_list))):
+                    if((len(tweetWordList))>(len(tweetWordList_cappos)+len(emoji_list)+len(hashtags_usermentions))):
                         
                         #q = queue.Queue()
                         #threading.Thread(target=self.trueEntity_process, args=(tweetWordList_cappos,tweetWordList,q)).start()
-                        ne_List_allCheck= self.trueEntity_process(tweetWordList_cappos,tweetWordList)
+                        ne_List_allCheck= self.trueEntity_process(index,tweetWordList_cappos,tweetWordList)
                     #ne_List_allCheck= q.get()
                         
                     ne_count+=len(ne_List_allCheck)
@@ -349,7 +351,7 @@ class SatadishaModule():
                     #write row to output dataframe
 
                     
-                    if(len(tweetWordList)==len(tweetWordList_cappos)):
+                    if(len(tweetWordList)==(len(tweetWordList_cappos)+len(emoji_list)+len(hashtags_usermentions))):
                         phase1Out="nan"
 
                     if(len(ne_List_allCheck)>0):
@@ -378,9 +380,9 @@ class SatadishaModule():
                 combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list
                 if not ((candidateText in combined)|(candidateText.isdigit())|(self.is_float(candidateText))):
                     self.CTrie.__setitem__(candidateText.split(),len(candidateText.split()),candidate.features,batch_number)
-            # if(index==589):
+            if(index==213):
             #     # print(sentence)
-            #     self.printList(ne_List_final)
+                self.printList(ne_List_final)
 
             #if(userMention_List_final):
             #    print(userMention_List_final)
@@ -601,7 +603,7 @@ class SatadishaModule():
 
 # In[304]:
 
-    def consecutive_cap(self,tweetWordList_cappos,tweetWordList):
+    def consecutive_cap(self,index,tweetWordList_cappos,tweetWordList):
         output=[]
         #identifies consecutive numbers in the sequence
         #print(tweetWordList_cappos)
@@ -624,6 +626,11 @@ class SatadishaModule():
                     #merge_positions.append(False)
         else:
             final_output=[]
+
+        # if(index==589):
+        #     print('here')
+        #     print(output)
+        #     print(final_output)
         
         return final_output
 
@@ -1173,14 +1180,16 @@ class SatadishaModule():
 
     # In[318]:
 
-    def trueEntity_process(self,tweetWordList_cappos,tweetWordList):
+    def trueEntity_process(self,tweet_index,tweetWordList_cappos,tweetWordList):
         
         
-        combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list
+        combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list+conjoiner
         #returns list with position of consecutively capitalized words
         #print(tweetWordList_cappos, tweetWordList)
-        output_unfiltered = self.consecutive_cap(tweetWordList_cappos,tweetWordList)
+        output_unfiltered = self.consecutive_cap(tweet_index,tweetWordList_cappos,tweetWordList)
         #print("==>",output_unfiltered)
+        # if(tweet_index==589):
+        #     print("==>",output_unfiltered)
 
         #splitting at quoted units
         output_quoteProcessed=[]
@@ -1188,7 +1197,8 @@ class SatadishaModule():
         end_quote=[]
         for unitQuoted in output_unfiltered:
             unitout=self.quoteProcess(unitQuoted, tweetWordList)
-            #print("==>",unitout)
+            # if(tweet_index==589):
+            #     print("here ==>",unitout)
             for elem in unitout:
                 mod_out=[]
                 out=elem[0]
@@ -1209,7 +1219,7 @@ class SatadishaModule():
                                 if(len(out)==1):
                                     temp.append(index)
                                 else:
-                                    if ((word not in prep_list)&(word not in article_list)):
+                                    if ((word not in prep_list)&(word not in article_list)&(word not in conjoiner)):
                                         temp.append(index)
                                     else:
                                         sflag=True
@@ -1239,14 +1249,19 @@ class SatadishaModule():
                 if(mod_out):
                     output_quoteProcessed.extend(mod_out)
         #'cgl\print("=====>",output_quoteProcessed)
+        # if(tweet_index==589):
+        #     print("=====>",output_quoteProcessed)
         output= list(filter(lambda element: ((element[0]!=[0])&(element[0]!=[])), output_quoteProcessed))
+        
         #print(output)
 
         #consecutive capitalized phrases 
         consecutive_cap_phrases1=list(map(lambda x: self.f(x[0],x[1],x[2],tweetWordList), output))
 
         consecutive_cap_phrases=list(filter(lambda candidate:(candidate.phraseText!="JUST_DIGIT_ERROR"),consecutive_cap_phrases1))
-        #self.printList(consecutive_cap_phrases)
+        # if(tweet_index==589):
+        #     print('herherhe')
+        #     self.printList(consecutive_cap_phrases)
 
         #implement the punctuation clause
         ne_List_pc=self.flatten(list(map(lambda NE_phrase: self.punct_clause(NE_phrase), consecutive_cap_phrases)),[])
@@ -1257,6 +1272,9 @@ class SatadishaModule():
         #self.printList(ne_List_pc_sr)
         ne_List_pc_checked= list(filter(lambda candidate: ((candidate.phraseText!="")&(candidate.position!=[0])), ne_List_pc_sr))
 
+        # if(tweet_index==589):
+        #     print(':',self.printList(ne_List_pc_sr))
+        #     print('::',self.printList(ne_List_pc_checked))
 
         #implement title detection
         #ne_List_titleCheck= list(map(lambda element: self.title_check(element), ne_List_pc_checked))

@@ -1,9 +1,40 @@
+# with NEURONER and TwiCS on the pikapika set
 
 
+
+
+# with NEURONER and TwiCS on the ripcity set
+tp_counter_outer:  
+fn_counter_outer:  
+fp_counter_outer:  
+neuroner_precision:  
+neuroner_recall:  
+
+tp_counter_outer_twics:  909
+fn_counter_outer_twics:  207
+fp_counter_outer_twics:  214
+twics_precision:  0.8094390026714159
+twics_recall:  0.8145161290322581
+twics_f1:  0.8119696292987941
+2.9664804935455322
+
+# with NEURONER and TwiCS on the billnye set
+tp_counter_outer:  
+fn_counter_outer:  
+fp_counter_outer:  
+neuroner_precision:  
+neuroner_recall:  
+
+tp_counter_outer_twics:  625
+fn_counter_outer_twics:  187
+fp_counter_outer_twics:  89
+twics_precision:  0.8753501400560224
+twics_recall:  0.7697044334975369
+twics_f1:  0.8191349934469201
+
+3.343975305557251
 
 # with NEURONER and TwiCS on the billdeblasio set
-
-
 tp_counter_outer:  
 fn_counter_outer:  
 fp_counter_outer:  
@@ -18,9 +49,7 @@ twics_recall:  0.7408219178082192
 twics_f1:  0.7950602763892973
 3.54993
 
-# with NEURONER and TwiCS on the billdeblasio set
-
-
+# with NEURONER and TwiCS on the roevwade set
 tp_counter_outer:  
 fn_counter_outer:  
 fp_counter_outer:  
@@ -38,8 +67,6 @@ twics_f1:  0.8467943380516236
 
 
 # with NEURONER and TwiCS on the venezuela set
-
-
 tp_counter_outer:  1063
 fn_counter_outer:  299
 fp_counter_outer:  2166
@@ -60,7 +87,6 @@ neuroner_f1:  0.4630799390111087 twics_f1:  0.8175355450236967
 
 
 # with NEURONER and TwiCS on the 3K set
-
 tp_counter_outer:  2486
 fn_counter_outer:  883
 fp_counter_outer:  1368

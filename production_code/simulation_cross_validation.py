@@ -59,8 +59,8 @@ total_time=0
 
 #---- for my PC
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/pikapika.csv",sep =',')
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/ripcity.csv",sep =',')
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billnye.csv",sep =',')
+tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/ripcity.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billnye.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio.csv",sep =',')
 
@@ -289,8 +289,8 @@ output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tw
 
 
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/pikapika_output.csv", sep=',', encoding='utf-8',index=False)
-# output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/ripcity_output.csv", sep=',', encoding='utf-8',index=False)
-output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/billnye_output.csv", sep=',', encoding='utf-8',index=False)
+output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/ripcity_output.csv", sep=',', encoding='utf-8',index=False)
+# output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/billnye_output.csv", sep=',', encoding='utf-8',index=False)
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/roevwade_output.csv", sep=',', encoding='utf-8',index=False)
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio_output.csv", sep=',', encoding='utf-8',index=False)
 
