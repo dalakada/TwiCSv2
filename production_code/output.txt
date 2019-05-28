@@ -1,7 +1,23 @@
 # with NEURONER and TwiCS on the pikapika set
+tp_counter_outer:  
+fn_counter_outer:  
+fp_counter_outer:  
+neuroner_precision:  
+neuroner_recall:  
 
+tp_counter_outer_ritter:  213
+fn_counter_outer_ritter:  931
+fp_counter_outer_ritter:  1088
+twics_precision:  0.16372021521906227
+ritter_recall:  0.1861888111888112
+ritter_f1:  0.17423312883435582
 
-
+tp_counter_outer_twics:  982
+fn_counter_outer_twics:  162
+fp_counter_outer_twics:  164
+twics_precision:  0.8568935427574171
+twics_recall:  0.8583916083916084
+twics_f1:  0.85764192139738
 
 # with NEURONER and TwiCS on the ripcity set
 tp_counter_outer:  
@@ -10,12 +26,19 @@ fp_counter_outer:
 neuroner_precision:  
 neuroner_recall:  
 
-tp_counter_outer_twics:  909
-fn_counter_outer_twics:  207
-fp_counter_outer_twics:  214
-twics_precision:  0.8094390026714159
-twics_recall:  0.8145161290322581
-twics_f1:  0.8119696292987941
+tp_counter_outer_ritter:  646
+fn_counter_outer_ritter:  473
+fp_counter_outer_ritter:  175
+ritter_precision:  0.7868453105968332
+ritter_recall:  0.5773011617515639
+ritter_f1:  0.6659793814432989
+
+tp_counter_outer_twics:  920
+fn_counter_outer_twics:  199
+fp_counter_outer_twics:  213
+twics_precision:  0.8120035304501324
+twics_recall:  0.8221626452189454
+twics_f1:  0.817051509769094
 2.9664804935455322
 
 # with NEURONER and TwiCS on the billnye set
@@ -24,6 +47,13 @@ fn_counter_outer:
 fp_counter_outer:  
 neuroner_precision:  
 neuroner_recall:  
+
+tp_counter_outer_ritter:  379
+fn_counter_outer_ritter:  429
+fp_counter_outer_ritter:  369
+ritter_precision:  0.5066844919786097
+ritter_recall:  0.46905940594059403
+ritter_f1:  0.487146529562982
 
 tp_counter_outer_twics:  625
 fn_counter_outer_twics:  187
@@ -39,15 +69,23 @@ tp_counter_outer:
 fn_counter_outer:  
 fp_counter_outer:  
 neuroner_precision:  
-neuroner_recall:  
+neuroner_recall: 
 
-tp_counter_outer_twics:  1352
-fn_counter_outer_twics:  473
-fp_counter_outer_twics:  224
-twics_precision:  0.8578680203045685
-twics_recall:  0.7408219178082192
-twics_f1:  0.7950602763892973
-3.54993
+tp_counter_outer_ritter:  268
+fn_counter_outer_ritter:  929
+fp_counter_outer_ritter:  193
+ritter_precision:  0.5813449023861171
+ritter_recall:  0.22389306599832914
+ritter_f1:  0.3232810615199035 
+
+tp_counter_outer_twics:  1017
+fn_counter_outer_twics:  180
+fp_counter_outer_twics:  188
+twics_precision:  0.8439834024896266
+twics_recall:  0.849624060150376
+twics_f1:  0.8467943380516236
+4.0088
+
 
 # with NEURONER and TwiCS on the roevwade set
 tp_counter_outer:  
@@ -57,13 +95,20 @@ neuroner_precision:
 neuroner_recall:  
 433.8575417995453
 
-tp_counter_outer_twics:  1017
-fn_counter_outer_twics:  180
-fp_counter_outer_twics:  188
-twics_precision:  0.8439834024896266
-twics_recall:  0.849624060150376
-twics_f1:  0.8467943380516236
-4.0088
+tp_counter_outer_ritter:  1001
+fn_counter_outer_ritter:  824
+fp_counter_outer_ritter:  109
+ritter_precision:  0.9018018018018018
+ritter_recall:  0.5484931506849315
+ritter_f1:  0.6821124361158433
+
+tp_counter_outer_twics:  1352
+fn_counter_outer_twics:  473
+fp_counter_outer_twics:  224
+twics_precision:  0.8578680203045685
+twics_recall:  0.7408219178082192
+twics_f1:  0.7950602763892973
+3.54993
 
 
 # with NEURONER and TwiCS on the venezuela set

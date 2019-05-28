@@ -24,17 +24,26 @@ import collections
 
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/pikapika_output.csv",sep =',', keep_default_na=False)
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/ripcity_output.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/ripcity_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billnye_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio_output.csv",sep =',', keep_default_na=False)
 
 #---- for my Mac
+
+################---------TWICS OUTPUTS
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/pikapika_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/ripcity_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/billnye_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/roevwade_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/billdeblasio_output.csv",sep =',', keep_default_na=False)
+
+################---------RITTER OUTPUTS
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/my-baseline-setup/ritter-pikapika-output.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/my-baseline-setup/ritter-ripcity-output.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/my-baseline-setup/ritter-billnye-output.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/my-baseline-setup/ritter-roevwade-output.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/my-baseline-setup/ritter-billdeblasio-output.csv",sep =',', keep_default_na=False)
 
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade.csv",sep =',')
@@ -47,12 +56,19 @@ tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/ripcit
 
 # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/roevwade.txt","w")
 
+# f= open("/Users/satadisha/Documents/GitHub/pikapika.txt","w")
+# f= open("/Users/satadisha/Documents/GitHub/ripcity.txt","w")
+# f= open("/Users/satadisha/Documents/GitHub/billnye.txt","w")
+# f= open("/Users/satadisha/Documents/GitHub/roevwade.txt","w")
+# f= open("/Users/satadisha/Documents/GitHub/billdeblasio.txt","w")
+
 # for index, row in tweets_unpartitoned.iterrows():
 #     tweet_to_include= str(row['TweetText'])+' --eosc\n'
 #     f.write(tweet_to_include)
 # f.close() 
 
 
+#------------------------------commenting everything from here
 
 #------------------------------commenting from here
 # fp= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/output/tweets_3K_input_2019-04-26_16-49-32-20455/mentions_output.txt","r")
@@ -97,11 +113,18 @@ for index, row in tweets_unpartitoned.iterrows():
     annotated_mention_list=list(filter(lambda element: (element !=''), annotated_mention_list))
     annotated_mention_list_for_twiCS= copy.deepcopy(annotated_mention_list)
 
-    output_mentions_list_twics=ast.literal_eval(row['output_mentions'])
-    # print(output_mentions_list_twics)
-    # output_mentions_list_twics=[eval(list_str) for list_str in output_mentions_list_twics]
-    output_mentions_list_twics_flat = [item.lower() for sublist in output_mentions_list_twics for item in sublist]
-    output_mentions_list_twics_flat=list(filter(lambda element: element !='', output_mentions_list_twics_flat))
+
+    ritter_candidate_list=str(row['Output']).split(',')
+    ritter_mention_list=list(map(lambda element: element.lower().strip(),ritter_candidate_list))
+    ritter_mention_list=list(filter(lambda element: (element !=''), ritter_mention_list))
+    output_mentions_list_twics_flat= copy.deepcopy(ritter_mention_list)
+
+
+    # output_mentions_list_twics=ast.literal_eval(row['output_mentions'])
+    # # print(output_mentions_list_twics)
+    # # output_mentions_list_twics=[eval(list_str) for list_str in output_mentions_list_twics]
+    # output_mentions_list_twics_flat = [item.lower() for sublist in output_mentions_list_twics for item in sublist]
+    # output_mentions_list_twics_flat=list(filter(lambda element: element !='', output_mentions_list_twics_flat))
 
     all_postitive_counter_inner_twics=len(output_mentions_list_twics_flat)
 
@@ -199,6 +222,8 @@ print('twics_recall: ', twics_recall)
 twics_f1 = (2*twics_precision*twics_recall)/(twics_precision+twics_recall)
 print('twics_f1: ',twics_f1)
 #------------------------------commenting to here
+
+#------------------------------commenting everything to here
 
 #------------------------------------------------------------------------------------eviction files------------------------------------------------------------------
 

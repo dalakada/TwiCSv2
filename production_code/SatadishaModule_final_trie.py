@@ -1183,7 +1183,7 @@ class SatadishaModule():
     def trueEntity_process(self,tweet_index,tweetWordList_cappos,tweetWordList):
         
         
-        combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list+conjoiner
+        combined=[]+cachedStopWords+prep_list+chat_word_list+article_list+day_list+conjoiner
         #returns list with position of consecutively capitalized words
         #print(tweetWordList_cappos, tweetWordList)
         output_unfiltered = self.consecutive_cap(tweet_index,tweetWordList_cappos,tweetWordList)

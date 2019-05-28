@@ -58,7 +58,7 @@ class EntityResolver ():
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         
         candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
-        print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='christian james mccollum'])
+        print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='trainers'])
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='knows'])
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='democrat'])
 
@@ -1793,7 +1793,7 @@ class EntityResolver ():
         word_list=strip_op.split()
         for i in range(len(word_list)):
             word=word_list[i]
-            if(word[0].isupper()):
+            if((word[0].isupper())|(word[0].isdigit())):
                 continue
             else:
                 if(word in prep_article_list):
@@ -2035,7 +2035,7 @@ class EntityResolver ():
             #print(phase1Candidates,"====",phase2_candidates)
             # if((tweetID=="63")|(tweetID=="130")|(tweetID=="277")|(tweetID=="335")|(tweetID=="13")):
 
-            if((tweetID=="213")):
+            if((tweetID=="1863")):
                 print(tweetID,phase1Candidates,"====",phase2_candidates,non_discriminative_flag)
             dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'2nd Iteration Candidates Unnormalized':phase2_candidates_unnormalized, 'annotation':annotation,'stanford_candidates':stanford}
 
