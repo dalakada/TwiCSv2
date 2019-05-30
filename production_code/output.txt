@@ -6,7 +6,14 @@ neuroner_precision:  0.2926486106225818
 neuroner_recall:  0.7272727272727273
 neuroner_f1:  0.41735640832706294
 83.656
- 
+
+tp_counter_outer:  213
+fn_counter_outer:  931
+fp_counter_outer:  98
+stanford_precision:  0.684887459807074
+stanford_recall:  0.1861888111888112
+stanford_f1:  0.2927835051546392
+
 
 tp_counter_outer_ritter:  213
 fn_counter_outer_ritter:  931
@@ -30,6 +37,13 @@ neuroner_precision:  0.552357624004899
 neuroner_recall:  0.8060768543342269
 neuroner_f1:  0.6555232558139534
 81.055
+
+tp_counter_outer:  319
+fn_counter_outer:  800
+fp_counter_outer:  93
+stanford_precision:  0.7742718446601942
+stanford_recall:  0.28507596067917784
+stanford_f1:  0.4167210973220118
 
 tp_counter_outer_ritter:  646
 fn_counter_outer_ritter:  473
@@ -55,6 +69,14 @@ neuroner_recall:  0.7647783251231527
 neuroner_f1:  0.41663871184166384
 82.838
 
+tp_counter_outer:  346
+fn_counter_outer:  466
+fp_counter_outer:  72
+stanford_precision:  0.8277511961722488
+stanford_recall:  0.42610837438423643
+stanford_f1:  0.5626016260162601
+
+
 tp_counter_outer_ritter:  379
 fn_counter_outer_ritter:  429
 fp_counter_outer_ritter:  369
@@ -79,6 +101,13 @@ neuroner_precision:  0.35805626598465473
 neuroner_recall:  0.8187134502923976
 neuroner_f1:  0.498220640569395
 131.227
+
+tp_counter_outer:  776
+fn_counter_outer:  421
+fp_counter_outer:  88
+stanford_precision:  0.8981481481481481
+stanford_recall:  0.6482873851294904
+stanford_f1:  0.7530325084910237
 
 
 tp_counter_outer_ritter:  268
@@ -106,6 +135,13 @@ neuroner_recall:  0.9145205479452054
 neuroner_f1:  0.7097597278332978 
 520.51633
 
+tp_counter_outer:  849
+fn_counter_outer:  976
+fp_counter_outer:  81
+stanford_precision:  0.9129032258064517
+stanford_recall:  0.4652054794520548
+stanford_f1:  0.616333938294011
+
 tp_counter_outer_ritter:  1001
 fn_counter_outer_ritter:  824
 fp_counter_outer_ritter:  109
@@ -113,12 +149,12 @@ ritter_precision:  0.9018018018018018
 ritter_recall:  0.5484931506849315
 ritter_f1:  0.6821124361158433
 
-tp_counter_outer_twics:  1352
-fn_counter_outer_twics:  473
-fp_counter_outer_twics:  224
-twics_precision:  0.8578680203045685
-twics_recall:  0.7408219178082192
-twics_f1:  0.7950602763892973
+tp_counter_outer_twics:  1425
+fn_counter_outer_twics:  400
+fp_counter_outer_twics:  136
+twics_precision:  0.9128763613068546
+twics_recall:  0.7808219178082192
+twics_f1:  0.8417011222681631
 3.54993
 
 
@@ -129,6 +165,22 @@ fp_counter_outer:  2166
 neuroner_precision:  0.3292040879529266
 neuroner_recall:  0.7804698972099853
 343.5908000469208
+neuroner_f1:  0.4630799390111087 
+
+tp_counter_outer:  400
+fn_counter_outer:  962
+fp_counter_outer:  209
+stanford_precision:  0.6568144499178982
+stanford_recall:  0.2936857562408223
+stanford_f1:  0.40588533739218674
+
+tp_counter_outer_ritter:  637
+fn_counter_outer_ritter:  725
+fp_counter_outer_ritter:  336
+ritter_precision:  0.6546762589928058
+ritter_recall:  0.46769456681350957
+ritter_f1:  0.545610278372591
+
 
 tp_counter_outer_twics:  1035
 fn_counter_outer_twics:  327
@@ -136,9 +188,7 @@ fp_counter_outer_twics:  135
 twics_precision:  0.8846153846153846
 twics_recall:  0.7599118942731278
 3.5452351570129395
-
-neuroner_f1:  0.4630799390111087 twics_f1:  0.8175355450236967
-
+twics_f1:  0.8175355450236967
 
 
 
@@ -148,14 +198,29 @@ fn_counter_outer:  883
 fp_counter_outer:  1368
 neuroner_precision:  0.6450441100155683
 neuroner_recall:  0.7379044226773523
+neuroner_f1:  0.6883566385158522
+
+tp_counter_outer:  1392
+fn_counter_outer:  1977
+fp_counter_outer:  311
+stanford_precision:  0.8173810921902525
+stanford_recall:  0.41317898486197685
+stanford_f1:  0.5488958990536277
+
+tp_counter_outer_ritter:  1675
+fn_counter_outer_ritter:  1696
+fp_counter_outer_ritter:  420
+ritter_precision:  0.7995226730310262
+ritter_recall:  0.4968851972708395
+ritter_f1:  0.6128796194657885
+
 
 tp_counter_outer_twics:  2192
 fn_counter_outer_twics:  1177
 fp_counter_outer_twics:  359
 twics_precision:  0.8592708741669933
 twics_recall:  0.6506381715642624
-
-neuroner_f1:  0.6883566385158522 twics_f1:  0.7405405405405405
+twics_f1:  0.7405405405405405
 
 
 

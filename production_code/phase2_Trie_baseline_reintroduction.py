@@ -58,7 +58,7 @@ class EntityResolver ():
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         
         candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
-        print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='trainers'])
+        print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='new york city'])
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='knows'])
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='democrat'])
 

@@ -342,7 +342,8 @@ class SatadishaModule():
                         
                         #q = queue.Queue()
                         #threading.Thread(target=self.trueEntity_process, args=(tweetWordList_cappos,tweetWordList,q)).start()
-                        ne_List_allCheck= self.trueEntity_process(index,tweetWordList_cappos,tweetWordList)
+                        tweetWordList_justcappos = list(map(lambda element : element[0], filter(lambda element : self.capCheck2(element[1]), enumerate(tweetWordList))))
+                        ne_List_allCheck= self.trueEntity_process(index,tweetWordList_justcappos,tweetWordList)
                     #ne_List_allCheck= q.get()
                         
                     ne_count+=len(ne_List_allCheck)
@@ -380,7 +381,7 @@ class SatadishaModule():
                 combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list
                 if not ((candidateText in combined)|(candidateText.isdigit())|(self.is_float(candidateText))):
                     self.CTrie.__setitem__(candidateText.split(),len(candidateText.split()),candidate.features,batch_number)
-            if(index==213):
+            if(index==24):
             #     # print(sentence)
                 self.printList(ne_List_final)
 
@@ -613,13 +614,13 @@ class SatadishaModule():
         if output:        
             final_output=[output[0]]
             for first, second in (zip(output,output[1:])):
-                #print(first,second)
+                # print(first,second)
                 #print(tweetWordList[first[-1]])
-                if ((not (tweetWordList[first[-1]]).endswith('"'))&((second[0]-first[-1])==2) & (tweetWordList[first[-1]+1].lower() in prep_list)):
+                if (((not (tweetWordList[first[-1]]).endswith('"'))&(not (tweetWordList[first[-1]].isdigit()|self.isfloat(tweetWordList[first[-1]])|self.ispercent(tweetWordList[first[-1]]))))&(((second[0]-first[-1])==2)&(not ((tweetWordList[second[0]].isdigit()|self.isfloat(tweetWordList[second[0]])|self.ispercent(tweetWordList[second[0]]))))) & (tweetWordList[first[-1]+1].lower() in prep_list)):
                     (final_output[-1]).extend([first[-1]+1]+second)
-                elif ((not (tweetWordList[first[-1]]).endswith('"'))&((second[0]-first[-1])==2) & (tweetWordList[first[-1]+1].lower() in conjoiner)):
+                elif (((not (tweetWordList[first[-1]]).endswith('"'))&(not (tweetWordList[first[-1]].isdigit()|self.isfloat(tweetWordList[first[-1]])|self.ispercent(tweetWordList[first[-1]]))))&(((second[0]-first[-1])==2)&(not ((tweetWordList[second[0]].isdigit()|self.isfloat(tweetWordList[second[0]])|self.ispercent(tweetWordList[second[0]]))))) & (tweetWordList[first[-1]+1].lower() in conjoiner)):
                     (final_output[-1]).extend([first[-1]+1]+second)
-                elif((not (tweetWordList[first[-1]].endswith('"')))&((second[0]-first[-1])==3) & (tweetWordList[first[-1]+1].lower() in prep_list)& (tweetWordList[first[-1]+2].lower() in article_list)):
+                elif(((not (tweetWordList[first[-1]]).endswith('"'))&(not (tweetWordList[first[-1]].isdigit()|self.isfloat(tweetWordList[first[-1]])|self.ispercent(tweetWordList[first[-1]]))))&(((second[0]-first[-1])==3)&(not ((tweetWordList[second[0]].isdigit()|self.isfloat(tweetWordList[second[0]])|self.ispercent(tweetWordList[second[0]]))))) & (tweetWordList[first[-1]+1].lower() in prep_list)& (tweetWordList[first[-1]+2].lower() in article_list)):
                     (final_output[-1]).extend([first[-1]+1]+[first[-1]+2]+second)
                 else:
                     final_output.append(second)
@@ -627,10 +628,10 @@ class SatadishaModule():
         else:
             final_output=[]
 
-        # if(index==589):
+        if(index==24):
         #     print('here')
-        #     print(output)
-        #     print(final_output)
+            print(output)
+            print(final_output)
         
         return final_output
 
@@ -887,6 +888,46 @@ class SatadishaModule():
 
 
     # In[309]:
+    def ispercent(self,word):
+        # print(word)
+
+        p=re.compile(r'\b(?<!\.)(?!0+(?:\.0+)?%)(?:\d|[1-9]\d|100)(?:(?<!100)\.\d+)?%')
+        l= p.match(word)
+        if l:
+            return True
+        else:
+            return False
+
+    def isfloat(self, value):
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
+
+    def capCheck2(self,word):
+        combined_list=[]+cachedStopWords+prep_list+chat_word_list+article_list+conjoiner
+        if word.startswith('@'):
+            return False
+        if word.startswith('#'):
+            return False
+        elif "<Hashtag" in word:
+            return False
+        #elif (((word.strip('“‘’”')).lstrip(string.punctuation)).rstrip(string.punctuation)).lower() in combined_list:
+        elif (((word.strip('“‘’”')).lstrip(string.punctuation)).rstrip(string.punctuation)) in combined_list:
+            # if((word=="The")|(word=="THE")):
+            #     return True
+            # else:
+            return False
+        elif (word[0].isdigit()):
+            return True
+        else:
+            p=re.compile(r'^[\W]*[A-Z]')
+            l= p.match(word)
+            if l:
+                return True
+            else:
+                return False
 
     def capCheck(self,word):
         combined_list=[]+cachedStopWords+prep_list+chat_word_list+article_list+conjoiner
@@ -1188,8 +1229,8 @@ class SatadishaModule():
         #print(tweetWordList_cappos, tweetWordList)
         output_unfiltered = self.consecutive_cap(tweet_index,tweetWordList_cappos,tweetWordList)
         #print("==>",output_unfiltered)
-        # if(tweet_index==589):
-        #     print("==>",output_unfiltered)
+        if(tweet_index==24):
+            print("==>",output_unfiltered)
 
         #splitting at quoted units
         output_quoteProcessed=[]
@@ -1285,7 +1326,9 @@ class SatadishaModule():
         #implement apostrophe, tense and punctuation marker with final number check
         #ne_List_apostropeCheck= list(map(lambda element: self.apostrope_check(element), ne_List_slangCheck))
         #ne_List_punctuationCheck= list(map(lambda element: self.punctuation_check(element), ne_List_apostropeCheck))
-        ne_List_numCheck=list(filter(lambda candidate: not (candidate.phraseText.lstrip(string.punctuation).rstrip(string.punctuation).strip()).isdigit(), ne_List_slangCheck))
+
+        #not just number
+        ne_List_numCheck=list(filter(lambda candidate: not ((candidate.phraseText.lstrip(string.punctuation).rstrip(string.punctuation).strip()).isdigit()|self.isfloat(candidate.phraseText.lstrip(string.punctuation).rstrip(string.punctuation).strip())|self.ispercent(candidate.phraseText.lstrip(string.punctuation).rstrip(string.punctuation).strip())), ne_List_slangCheck))
         #ne_List_tenseCheck= list(map(lambda element: self.tense_check(element), ne_List_numCheck))
         
         #tracking sudden change in capitalization pattern
