@@ -1038,21 +1038,38 @@ class SatadishaModule():
     def apostrope_check(self,ne_phrase):
         apostrophe="'s"
         bad_apostrophe="’s"
+        ret_ne_list=[]
         phrase=(ne_phrase.phraseText.strip()).rstrip(string.punctuation).lower()
+        position=ne_phrase.position
         if (apostrophe in phrase):
             if (phrase.endswith(apostrophe)):
                 ne_phrase.set_feature(ne.is_apostrophed,0)
+                ret_ne_list.append(ne_phrase)
             else:
-                #print(phrase.find(apostrophe))
+                # ret_ne_list=re.split(apostrophe,ne_phrase)
+                #splitting at apostrophe
+                phrase_beg=phrase[:phrase.find(apostrophe)].strip()
+                pos_beg=position[:len(phrase_beg.split())]
+                ret_ne_list.append(self.build_custom_NE(phrase_beg,pos_beg,ne.is_csl,ne_phrase.is_csl))
+
+                phrase_end=phrase[phrase.find(apostrophe)+2:].strip()
+                pos_end=position[len(phrase_beg.split()):]
+                
+                # ret_ne_list=[,ne_phrase[ne_phrase.find(apostrophe)+2:].strip()]
+                # print(phrase,ret_ne_list)
                 ne_phrase.set_feature(ne.is_apostrophed,phrase.find(apostrophe))
         elif (bad_apostrophe in phrase):
             if phrase.endswith(bad_apostrophe):
                 ne_phrase.set_feature(ne.is_apostrophed,0)
+                ret_ne_list.append(ne_phrase)
             else:
                 #print(phrase.find(apostrophe))
+                # ret_ne_list=[ne_phrase[:ne_phrase.find(bad_apostrophe)].strip(),ne_phrase[ne_phrase.find(bad_apostrophe)+2:].strip()]
+                # print(phrase,ret_ne_list)
                 ne_phrase.set_feature(ne.is_apostrophed,phrase.find(bad_apostrophe))
         else:
             ne_phrase.set_feature(ne.is_apostrophed,-1)
+            ret_ne_list.append(ne_phrase)
         return ne_phrase
 
 
@@ -1217,12 +1234,15 @@ class SatadishaModule():
         #print(retList)
         return retList
 
+    def apostrophe_split(self,ne_phrase):
+
+        apostrophe="'s"
+        bad_apostrophe="’s"
 
 
     # In[318]:
 
     def trueEntity_process(self,tweet_index,tweetWordList_cappos,tweetWordList):
-        
         
         combined=[]+cachedStopWords+prep_list+chat_word_list+article_list+day_list+conjoiner
         #returns list with position of consecutively capitalized words
@@ -1304,9 +1324,14 @@ class SatadishaModule():
         #     print('herherhe')
         #     self.printList(consecutive_cap_phrases)
 
+        # #new apostrophe split function should be here
+        # ne_List_pc=self.flatten(list(map(lambda NE_phrase: self.apostrophe_split(NE_phrase), consecutive_cap_phrases)),[])
+
         #implement the punctuation clause
         ne_List_pc=self.flatten(list(map(lambda NE_phrase: self.punct_clause(NE_phrase), consecutive_cap_phrases)),[])
         #self.printList(ne_List_pc)
+
+        ne_List_apostropeCheck= list(map(lambda element: self.apostrope_check(element), ne_List_pc_checked))
 
         #stopword removal and start-of-sentence
         ne_List_pc_sr= list(map(lambda candidate: self.stopwordReplace(candidate), ne_List_pc))
@@ -1316,6 +1341,7 @@ class SatadishaModule():
         # if(tweet_index==589):
         #     print(':',self.printList(ne_List_pc_sr))
         #     print('::',self.printList(ne_List_pc_checked))
+
 
         #implement title detection
         #ne_List_titleCheck= list(map(lambda element: self.title_check(element), ne_List_pc_checked))
