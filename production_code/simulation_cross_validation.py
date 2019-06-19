@@ -2,7 +2,8 @@
 #import SatadishaModule as phase1
 import SatadishaModule_final_trie as phase1
 
-import phase2_Trie_baseline_reintroduction as phase2
+# import phase2_Trie_baseline_reintroduction_effectiveness as phase2
+import phase2_Trie_baseline_reintroduction_efficiency as phase2
 # import phase2_Trie_just_reintroduction as phase2 #just reintroduction, eviction without experimental result computation
 # import phase2_Trie_just_reintroduction_alternate as phase2 # testing reintroduction with various thresholds in unified framework
 # import phase2_Trie_reintroduction as phase2
@@ -64,12 +65,13 @@ total_time=0
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio.csv",sep =',')
 
+
 #---- for my Mac
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/pikapika.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/ripcity.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/billnye.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/roevwade.csv",sep =',')
-tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/billdeblasio.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/billdeblasio.csv",sep =',')
 
 # input_name="D2"
 #tweets_unpartitoned=pd.read_csv("malcolmx.csv",sep =',')
@@ -82,7 +84,27 @@ tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/billdeblasio.
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 # print(len(tweets_unpartitoned))
 
-print(tweets_unpartitoned.columns.tolist())
+#NIST DATA FILES
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110123.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110124.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110125.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110126.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110127.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110128.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110129.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110130.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110131.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110201.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110202.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110203.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110204.csv",sep =',')
+tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110205.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110206.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110207.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110208.csv",sep =',')
+
+# print(tweets_unpartitoned.columns.tolist())
+batch_size=100000
 
 # print(tweets_unpartitoned.head())
 # tweets_unpartitoned=tweets_unpartitoned[400000:600000:]
@@ -98,13 +120,15 @@ print(tweets_unpartitoned.columns.tolist())
 # # batch_size=550
 # batch_size=3000
 
-print("***",len(tweets_unpartitoned))
-print('Tweets are in memory...')
+# print("***",len(tweets_unpartitoned))
+# print('Tweets are in memory...')
 
 
 # batch_size=50000
 
-batch_size=len(tweets_unpartitoned)
+# batch_size=len(tweets_unpartitoned)
+
+
 
 # Z_scores=[-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
 # # 
@@ -117,11 +141,11 @@ batch_size=len(tweets_unpartitoned)
 
 
 # z_score=-0.078      #-----20K
-z_score=-0.8      #-----3K
+# z_score=-0.8      #-----3K
 #z_score=-0.09      #-----50K
 #z_score=-0.078         #-----50K, multiple batches
 # z_score=-0.08         #-----deduplicated_tweets,
-# z_score=-0.1119        #-----tweets_1million_for_others, 200K
+z_score=-0.1119        #-----tweets_1million_for_others, 200K
 
 
 #print(entity_level_arr)
@@ -145,7 +169,7 @@ z_score=-0.8      #-----3K
 #     print('run: ',str(iter))
 
 # tweets = shuffle(tweets_unpartitoned)
-tweets=tweets_unpartitoned
+
 # z_score=-0.1119
 entity_level_arr=[[-1]*20]*20
 mention_level_arr=[[-1]*20]*20
@@ -155,23 +179,34 @@ sentence_level_arr=[[-1]*20]*20
 
 # # ---------------------------------- reintroduction ranking effectiveness experiments
 
+#----------------------------------------------------------------------------comment out when testing efficiency
 # output_df=tweets[['ID', 'HashTags', 'Tweet IDs', 'TweetText']]
 
-#for collecting outputs for 3K with annotations
-output_df=tweets[['ID', 'HashTags', 'TweetText', 'mentions_other']]
-
+# #for collecting outputs for 3K with annotations
+# output_df=tweets[['ID', 'HashTags', 'TweetText', 'mentions_other']]
+tweets=tweets_unpartitoned
 length=len(tweets)
 
 val=math.ceil(length/batch_size)-1
 
 print('# of batches: ',(val+1))
 max_batch_value=val
-count=0
+
+# count=0
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+
+# dir_list=['20110123','20110124','20110125','20110126','20110127','20110128','20110129','20110130','20110131','20110201','20110202','20110203','20110204','20110205','20110206','20110207','20110208']
+# dir_list=['20110205']
+# read_path="/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/"
 
 # reintroduction_threshold_array=[20,40,60,80,100]
 # reintroduction_threshold_array=[20]
-reintroduction_threshold_array=[20]
+# reintroduction_threshold_array=[20]
+
+# val=len(dir_list)
+# print('# of batches: ',(val))
+# max_batch_value=val-1
+# count=0
 
 # reintroduction_batch_threshold=range((val+1))
 execution_time_list=[]
@@ -187,6 +222,14 @@ Phase1= phase1.SatadishaModule()
 Phase2 = phase2.EntityResolver()
 
 complete_tweet_dataframe_grouped_df_sorted_arr= []
+
+
+# for g in range(len(dir_list)):
+#     dir_name=dir_list[g]
+#     full_read_path=read_path+dir_name+'.csv'
+#     tweet_batch=pd.read_csv(full_read_path,sep =',')
+#     print(dir_name,"***",len(tweet_batch))
+#     print('Tweets are in memory...')
 
 for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
 
@@ -228,7 +271,7 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     print('tweets_been_processed: ',tweets_been_processed)
     tweets_been_processed_list_inner.append(tweets_been_processed)
     reintroduction_threshold_dummy=0
-
+    print(list(tweet_base.columns.values))
     #phase2_Trie_just_reintroduction_alternate
     # candidate_base_post_Phase2, complete_tweet_dataframe_grouped_df_sorted_arr, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
     # time_out=phase2_output_time
@@ -242,10 +285,17 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     # #taking phase2 output time in phase 2 class due to unrelated index reset operation at the end of last batch
     # time_out=time.time()
 
-    # #phase2_Trie_baseline_reintroduction
-    candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
+    # # #phase2_Trie_baseline_reintroduction_effectiveness
+    # candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
+    # #taking phase2 output time in phase 2 class due to unrelated index reset operation at the end of last batch
+    # time_out=time.time()
+
+    # #phase2_Trie_baseline_reintroduction_efficiency
+    reintroduction_threshold_dummy=2
+    candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted,phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
     #taking phase2 output time in phase 2 class due to unrelated index reset operation at the end of last batch
-    time_out=time.time()
+    # time_out=time.time()
+    time_out=phase2_output_time
 
     # print('disambiguation status: ',len((candidate_base_post_Phase2[((candidate_base_post_Phase2['batch']<g)&((candidate_base_post_Phase2.status=="g")|(candidate_base_post_Phase2.status=="b")))]).candidate.tolist()))
     
@@ -269,6 +319,8 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     print(g,' ','Consumed')
     print("**********************************************************")
 
+    # candidate_base_post_Phase2.to_csv("candidate_feature_base_20110123.csv",index=False,header=True,mode= 'w', sep=',', encoding='utf-8')
+
     # complete_tweet_dataframe_grouped_df_sorted.to_csv("output_1M_reintroduction_"+str(reintroduction_threshold)+".csv", sep=',', encoding='utf-8')
 
 
@@ -279,9 +331,12 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     tweets_been_processed_list.append(tweets_been_processed_list_inner)
     execution_time_list.append(execution_time_list_inner)
 
-output_df['output_mentions'] = ''
-output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['output_mentions']] = complete_tweet_dataframe_grouped_df_sorted.loc[complete_tweet_dataframe_grouped_df_sorted.tweetID.isin(output_df.index),['only_good_candidates']].values
-# print('1006: ',output_df[(output_df.index==1006)]['output_mentions'])
+# #----------------------------------------------------------------------------comment out when testing efficiency
+# output_df['output_mentions'] = ''
+# output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tweetID), ['output_mentions']] = complete_tweet_dataframe_grouped_df_sorted.loc[complete_tweet_dataframe_grouped_df_sorted.tweetID.isin(output_df.index),['only_good_candidates']].values
+# # print('1006: ',output_df[(output_df.index==1006)]['output_mentions'])
+# print(len(output_df))
+
 #---- for my PC
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated_output.csv", sep=',', encoding='utf-8',index=False)
 
@@ -293,6 +348,7 @@ output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tw
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/billnye_output.csv", sep=',', encoding='utf-8',index=False)
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/roevwade_output.csv", sep=',', encoding='utf-8',index=False)
 # output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio_output.csv", sep=',', encoding='utf-8',index=False)
+# output_df.to_csv("/home/satadisha/Desktop/GitProjects/data/pikapika_output2.csv", sep=',', encoding='utf-8',index=False)
 
 #---- for my Mac
 # output_df.to_csv("/Users/satadisha/Documents/GitHub/pikapika_output.csv", sep=',', encoding='utf-8',index=False)
@@ -301,10 +357,10 @@ output_df.loc[output_df.index.isin(complete_tweet_dataframe_grouped_df_sorted.tw
 # output_df.to_csv("/Users/satadisha/Documents/GitHub/roevwade_output.csv", sep=',', encoding='utf-8',index=False)
 # output_df.to_csv("/Users/satadisha/Documents/GitHub/billdeblasio_output.csv", sep=',', encoding='utf-8',index=False)
 
-output_df.to_csv("/Users/satadisha/Documents/GitHub/billdeblasio_output2.csv", sep=',', encoding='utf-8',index=False)
+# output_df.to_csv("/Users/satadisha/Documents/GitHub/billdeblasio_output2.csv", sep=',', encoding='utf-8',index=False)
 
 
-print(len(output_df))
+
 
 
 #not required when only logging processing time

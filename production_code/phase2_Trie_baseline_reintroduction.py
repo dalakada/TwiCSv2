@@ -11,7 +11,6 @@ from itertools import groupby
 from operator import itemgetter
 from collections import Iterable, OrderedDict
 from scipy import stats
-import emoji
 import SVM as svm
 import statistics
 import pandas as pd
@@ -20,7 +19,6 @@ import datetime
 import trie as trie
 import re
 import pickle
-import itertools
 from scipy import spatial
 
 from sklearn.preprocessing import PolynomialFeatures
@@ -36,12 +34,11 @@ for item in tempList:
 cachedStopWords.remove("don")
 cachedStopWords.remove("your")
 cachedTitles = ["mr.","mr","mrs.","mrs","miss","ms","sen.","dr","dr.","prof.","president","congressman"]
-prep_list=["in","at","of","on","&;","v."] #includes common conjunction as well
+prep_list=["in","at","of","on","&;"] #includes common conjunction as well
 article_list=["a","an","the"]
-conjoiner=["de"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["nope","gee","hmm","bye","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 string.punctuation=string.punctuation+'…‘’'
 
 
@@ -58,9 +55,6 @@ class EntityResolver ():
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         
         candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
-        print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='new york city'])
-        # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='knows'])
-        # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='democrat'])
 
         # SET TF 
         untrashed_tweets=self.set_tf(data_frame_holder,
@@ -150,8 +144,6 @@ class EntityResolver ():
             complete_tweet_dataframe_grouped_df= (complete_tweet_dataframe.groupby('tweetID', as_index=False).aggregate(lambda x: x.tolist()))
             complete_tweet_dataframe_grouped_df['tweetID']=complete_tweet_dataframe_grouped_df['tweetID'].astype(int)
             self.complete_tweet_dataframe_grouped_df_sorted=(complete_tweet_dataframe_grouped_df.sort_values(by='tweetID', ascending=True)).reset_index(drop=True)
-
-            print('524: ',self.complete_tweet_dataframe_grouped_df_sorted[(self.complete_tweet_dataframe_grouped_df_sorted.tweetID==524)]['output_mentions'])
 
             print(list(self.complete_tweet_dataframe_grouped_df_sorted.columns.values))
             # print(self.complete_tweet_dataframe_grouped_df_sorted.head(5))
@@ -358,7 +350,6 @@ class EntityResolver ():
 
     # recall_correction
     def set_partition_dict(self,candidate_featureBase_DF,infrequent_candidates):
-
         #print(list(self.partition_dict.keys()))
         ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="a")|(candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
         good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF.status=="g")].candidate.tolist()
@@ -374,11 +365,9 @@ class EntityResolver ():
             for candidate in ambiguous_bad_candidates_wFilter.candidate.tolist():
                 #print(candidate)
                 if candidate not in self.partition_dict.keys():
-
-                    substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates)
+                    substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates,False)
                     if(len(substring_candidates)>0):
-                        if(candidate=="science guy on the john oliver"):
-                            print(candidate,substring_candidates)
+                        #print(candidate,substring_candidates)
                         self.partition_dict[candidate]=substring_candidates
 
             flag1= True
@@ -388,10 +377,8 @@ class EntityResolver ():
             for candidate in infrequent_candidates:
                 #print(candidate)
                 if candidate not in self.partition_dict.keys():
-                    substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates)
+                    substring_candidates=self.get_substring_candidates(candidate.split(),good_candidates,False)
                     if(len(substring_candidates)>0):
-                        # if(candidate=="bill de blasio's 2020"):
-                        #     print(candidate,substring_candidates)
                         self.partition_dict[candidate]=substring_candidates
             flag2= True
         return (flag1|flag2)
@@ -1036,7 +1023,7 @@ class EntityResolver ():
             for candidate in sentence_level:
                 if(candidate[1]=="g"):
                     row_level_candidates.append(candidate[0])
-                if(((candidate[1]=="b")|(candidate[1]=="a"))&(candidate[0]=="US")):
+                if((candidate[1]=="b")&(candidate[0]=="US")):
                     # print('here')
                     row_level_candidates.append(candidate[0])
                 if(candidate[1]=="a"):
@@ -1192,8 +1179,7 @@ class EntityResolver ():
                     #print(candidate, self.partition_dict[candidate])
                     corrected_phase2_candidates.extend(self.partition_dict[candidate])
                 else:
-                    if(((candidate in self.bad_candidates)|(candidate in self.ambiguous_candidates))&(candidate=='us')&(unnormalized_candidate=='US')):
-                        # print(index_outer)
+                    if((candidate in self.bad_candidates)&(candidate=='us')&(unnormalized_candidate=='US')):
                         candidate=unnormalized_candidate
                     corrected_phase2_candidates.append(candidate)
             corrected_phase2_candidates_holder.append(copy.deepcopy(corrected_phase2_candidates))
@@ -1233,7 +1219,7 @@ class EntityResolver ():
         
         truth_vals=[False if any(x not in merged_g_b for x in list1) else True for list1 in phase2_candidates_holder]
 
-        output_mentions=[list(filter(lambda candidate: ((candidate in good_candidates))|(candidate=='US'), list1)) for list1 in phase2_candidates_holder]
+        output_mentions=[list(filter(lambda candidate: candidate in good_candidates, list1)) for list1 in phase2_candidates_holder]
 
         # truth_vals=[False if any(x in ambiguous_candidates for x in list1) else True for list1 in phase2_candidates_holder]
 
@@ -1255,7 +1241,7 @@ class EntityResolver ():
         data_frame_holder["current_minus_entry"]=self.counter-data_frame_holder['entry_batch']
 
         # print('0: ',data_frame_holder[(data_frame_holder.tweetID=='0')]['output_mentions'])
-        # print('1006: ',data_frame_holder[(data_frame_holder.tweetID=='1006')]['output_mentions'])
+        # print('13687: ',data_frame_holder[(data_frame_holder.tweetID=='13687')]['output_mentions'])
         # print('14154: ',data_frame_holder[(data_frame_holder.tweetID=='14154')]['output_mentions'])
         # print('31877: ',data_frame_holder[(data_frame_holder.tweetID=='31877')]['output_mentions'])
         # print('35028: ',data_frame_holder[(data_frame_holder.tweetID=='35028')]['output_mentions'])
@@ -1324,66 +1310,34 @@ class EntityResolver ():
         return npmi,pklv
         #return pklv
 
-    def multiSlice(self,s,cutpoints,good_candidates):
-        k = len(cutpoints)
-        multislices=[]
-        if k == 0:
-            curr_candidate=self.normalize(' '.join(s))
 
-            if(curr_candidate in good_candidates):
-                multislices = [curr_candidate]        
-        else:
-            
-            curr_candidate=self.normalize(' '.join(s[:cutpoints[0]]))
-            alt_list=[curr_candidate]
-            
-            if(curr_candidate in good_candidates):
-                multislices = [curr_candidate]
+    def get_substring_candidates(self,candidate_words,good_candidates,whole_check_flag):
+        substring_candidates=[]
+        last_cand=""
+        break_flag=False
+        start=0
+        for i in range(len(candidate_words)):
+            curr=' '.join(candidate_words[0:(i+1)])
+            if curr in good_candidates:
+                #print("got: ",curr)
+                last_cand=curr
+            else:
+                if i==0:
+                    start=i+1
+                else:
+                    start=i
+                    if(last_cand!=""):
+                        substring_candidates.append(last_cand)
+                    else:
+                        substring_candidates.extend(self.get_substring_candidates(candidate_words[0:(i+1)],good_candidates,True))
+                break_flag=True
+                break
+        if(break_flag & (len(candidate_words[start:])>0)):
+            substring_candidates.extend(self.get_substring_candidates(candidate_words[start:],good_candidates,True))
+        if(whole_check_flag & (not break_flag) & (last_cand!="")):
+            substring_candidates.append(last_cand)
 
-            alt_list.extend(self.normalize(' '.join(s[cutpoints[i]:cutpoints[i+1]])) for i in range(k-1))
-            multislices.extend(self.normalize(' '.join(s[cutpoints[i]:cutpoints[i+1]])) for i in range(k-1) if self.normalize(' '.join(s[cutpoints[i]:cutpoints[i+1]])) in good_candidates)
-
-            curr_candidate=self.normalize(' '.join(s[cutpoints[k-1]:]))
-            alt_list.append(curr_candidate)
-            
-            if(curr_candidate in good_candidates):
-                multislices.append(curr_candidate)
-            # print('::',alt_list)
-        return multislices
-
-
-
-    def get_substring_candidates(self,candidate_words,good_candidates):
-        n = len(candidate_words)
-        all_partitions=[]
-        all_partitions_length=[]
-        cuts = list(range(1,n))
-        for k in range(n):
-            # all_partitions_inner=[]
-            partition_list=[]
-            partition_length_list=[]
-            for cutpoints in itertools.combinations(cuts,k):
-                ret_list=self.multiSlice(candidate_words,cutpoints,good_candidates)
-                if(ret_list):
-                    partition_length=sum([len(elem.split()) for elem in ret_list])
-                    # print('==',ret_list,partition_length)
-                    if(partition_length==len(candidate_words)):
-                        return ret_list
-                    partition_list.append(ret_list)
-                    partition_length_list.append(partition_length)
-                    # yield ret_list
-            # print('------')
-            if(partition_length_list):
-                max_index=partition_length_list.index(max(partition_length_list))
-                all_partitions.append(partition_list[max_index])
-                all_partitions_length.append(partition_length_list[max_index])
-        # print(all_partitions)
-        if(all_partitions_length):
-            max_index=all_partitions_length.index(max(all_partitions_length))
-            # print(all_partitions[max_index])
-            return all_partitions[max_index]
-        else:
-            return []
+        return substring_candidates
     
     #@profile
     def verify(self, subsequence, CTrie):
@@ -1789,11 +1743,11 @@ class EntityResolver ():
         strip_op=(((strip_op.lstrip(string.punctuation)).rstrip(string.punctuation)).strip())
         strip_op=(strip_op.lstrip('“‘’”')).rstrip('“‘’”')
         strip_op= self.rreplace(self.rreplace(self.rreplace(strip_op,"'s","",1),"’s","",1),"’s","",1)
-        prep_article_list=prep_list+article_list+self.phase2stopwordList+conjoiner
+        prep_article_list=prep_list+article_list+self.phase2stopwordList
         word_list=strip_op.split()
         for i in range(len(word_list)):
             word=word_list[i]
-            if((word[0].isupper())|(word[0].isdigit())):
+            if(word[0].isupper()):
                 continue
             else:
                 if(word in prep_article_list):
@@ -1848,7 +1802,7 @@ class EntityResolver ():
             feature_list[0]=self.counter
             feature_list[1]=len(normalized_candidate.split())
         feature_to_update=self.check_feature_update(candidate_tuple,non_discriminative_flag)
-        # if(normalized_candidate=="mayor of new york"):
+        # if(normalized_candidate=="not even hitler"):
         #     print(candidateText,feature_to_update)
         feature_list[feature_to_update]+=1
         feature_list[8]+=1
@@ -1941,11 +1895,8 @@ class EntityResolver ():
             stanford=list(row['stanford_candidates'])
             non_discriminative_flag=False
 
-            # if((tweetID=="524")):
-            # print(tweetID,phase1Candidates)
 
-
-            if (phase1Candidates !='nan'):
+            if(phase1Candidates!="nan"):
                 phase1Raw=phase1Candidates.split("||")
                 phase1Raw = list(filter(None, phase1Raw))
 
@@ -2033,10 +1984,8 @@ class EntityResolver ():
             phase2_unnormalized_candidates_holder.append(phase2_candidates_unnormalized)
 
             #print(phase1Candidates,"====",phase2_candidates)
-            # if((tweetID=="63")|(tweetID=="130")|(tweetID=="277")|(tweetID=="335")|(tweetID=="13")):
-
-            if((tweetID=="1863")):
-                print(tweetID,phase1Candidates,"====",phase2_candidates,non_discriminative_flag)
+            if((tweetID=="63")|(tweetID=="130")|(tweetID=="277")|(tweetID=="335")|(tweetID=="13")):
+                print(tweetID,phase1Candidates,"====",phase2_candidates)
             dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'2nd Iteration Candidates Unnormalized':phase2_candidates_unnormalized, 'annotation':annotation,'stanford_candidates':stanford}
 
             df_holder.append(dict1)

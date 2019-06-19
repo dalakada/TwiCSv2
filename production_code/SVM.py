@@ -2,8 +2,15 @@
 # coding: utf-8
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
 from sklearn import svm
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import LinearSVC
+from sklearn.calibration import CalibratedClassifierCV
+
+
 from scipy import stats
 
 class SVM1():
@@ -40,14 +47,25 @@ class SVM1():
         self.trainArr = self.train.as_matrix(self.cols) #training array
         #print(self.trainArr)
         self.trainRes = self.train.as_matrix(self.colsRes) # training results
-        self.clf = svm.SVC(probability=True)
-        self.clf.fit(self.trainArr, self.trainRes) # fit the data to the algorithm
+
+        # self.clf = svm.SVC(probability=True)
+        # self.clf.fit(self.trainArr, self.trainRes) # fit the data to the algorithm
+
+        #--------------only for efficiency experiments
+        # self.scaler = StandardScaler()
+        self.clf = CalibratedClassifierCV(base_estimator=svm.SVC(probability=True), cv=5)
+        # self.clf = CalibratedClassifierCV(base_estimator=LinearSVC(penalty='l2', dual=False), cv=5)
+        self.clf.fit(self.trainArr, self.trainRes)
+
+        # X_train = self.scaler.fit_transform(self.trainArr)
+        # self.clf.fit(X_train, self.trainRes)
 
       
 
 
 
     def run(self,x_test,z_score_threshold):
+    # def run(self,x_test,cumulative_threshold): #for the efficiency_run
         x_test['normalized_cap']=x_test['cap']/x_test['cumulative']
         x_test['normalized_capnormalized_substring-cap']=x_test['substring-cap']/x_test['cumulative']
         x_test['normalized_s-o-sCap']=x_test['s-o-sCap']/x_test['cumulative']
@@ -79,12 +97,15 @@ class SVM1():
 
         pred_prob=self.clf.predict_proba(testArr)
 
+        # X_test = self.scaler.fit_transform(testArr)
+        # pred_prob=self.clf.predict_proba(X_test)
+
 
         # In[67]:
 
-        prob_first_column=[]
-        for i in pred_prob:
-            prob_first_column.append(i[1])
+        prob_first_column= pred_prob[:, 1]
+        # for i in pred_prob:
+        #     prob_first_column.append(i[1])
             
 
 

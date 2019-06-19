@@ -20,6 +20,8 @@ from operator import itemgetter
 from collections import Iterable, OrderedDict
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
+from nltk.corpus import gutenberg
+from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktTrainer
 from scipy import stats
 #from datasketch import MinHash, MinHashLSH
 import NE_candidate_module as ne
@@ -42,13 +44,14 @@ for item in tempList:
         cachedStopWords.append(item)
 cachedStopWords.remove("don")
 cachedStopWords.remove("your")
+cachedStopWords.remove("up")
 cachedTitles = ["mr.","mr","mrs.","mrs","miss","ms","sen.","dr","dr.","prof.","president","congressman"]
-prep_list=["in","at","of","on","&;","v."] #includes common conjunction as well
+prep_list=["in","at","of","on","v."] #includes common conjunction as well
 article_list=["a","an","the"]
 conjoiner=["de"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["nope","gee","hmm","bye","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","bye","vs","please","retweet","2mrw","2moro","4get","ooh","reppin","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 
 #string.punctuation.extend('“','’','”')
 #---------------------Existing Lists--------------------
@@ -63,8 +66,110 @@ class SatadishaModule():
         #self.batch=batch
         #self.batch=self.batch[:3000:]
         self.counter=0
+        gutenberg_text = ""
+        for file_id in gutenberg.fileids():
+            gutenberg_text += gutenberg.raw(file_id)
+        trainer = PunktTrainer()
+        trainer.INCLUDE_ALL_COLLOCS = True
+        trainer.train(gutenberg_text)
+        self.my_sentence_tokenizer = PunktSentenceTokenizer(trainer.get_params())
+        self.my_sentence_tokenizer._params.abbrev_types.add('dr')
+        self.my_sentence_tokenizer._params.abbrev_types.add('c.j')
+        self.my_sentence_tokenizer._params.abbrev_types.add('u.s')
+        self.my_sentence_tokenizer._params.abbrev_types.add('u.s.a')
+
 
         #self.extract()
+
+    def getWords(self, sentence):
+        tempList=[]
+        tempWordList=sentence.split()
+        p_dots= re.compile(r'[.]{2,}')
+        #print(tempWordList)
+        for word in tempWordList:
+            temp=[]
+            
+            if "(" in word:
+                temp=list(filter(lambda elem: elem!='',word.split("(")))
+                if(temp):
+                    temp=list(map(lambda elem: '('+elem, temp))
+            elif ")" in word:
+                temp=list(filter(lambda elem: elem!='',word.split(")")))
+                if(temp):
+                    temp=list(map(lambda elem: elem+')', temp))
+                # temp.append(temp1[-1])
+            elif (("-" in word)&(not word.endswith("-"))):
+                temp1=list(filter(lambda elem: elem!='',word.split("-")))
+                if(temp1):
+                    temp=list(map(lambda elem: elem+'-', temp1[:-1]))
+                temp.append(temp1[-1])
+            elif (("?" in word)&(not word.endswith("?"))):
+                temp1=list(filter(lambda elem: elem!='',word.split("?")))
+                if(temp1):
+                    temp=list(map(lambda elem: elem+'?', temp1[:-1]))
+                temp.append(temp1[-1])
+            elif ((":" in word)&(not word.endswith(":"))):
+                temp1=list(filter(lambda elem: elem!='',word.split(":")))
+                if(temp1):
+                    temp=list(map(lambda elem: elem+':', temp1[:-1]))
+                temp.append(temp1[-1])
+            elif (("," in word)&(not word.endswith(","))):
+                #temp=list(filter(lambda elem: elem!='',word.split(",")))
+                temp1=list(filter(lambda elem: elem!='',word.split(",")))
+                if(temp1):
+                    temp=list(map(lambda elem: elem+',', temp1[:-1]))
+                temp.append(temp1[-1])
+            elif (("/" in word)&(not word.endswith("/"))):
+                temp1=list(filter(lambda elem: elem!='',word.split("/")))
+                if(temp1):
+                    temp=list(map(lambda elem: elem+'/', temp1[:-1]))
+                temp.append(temp1[-1])
+                #print(index, temp)
+            # elif "..." in word:
+            #     #print("here")
+            #     temp=list(filter(lambda elem: elem!='',word.split("...")))
+            #     if(temp):
+            #         if(word.endswith("...")):
+            #             temp=list(map(lambda elem: elem+'...', temp))
+            #         else:
+            #            temp=list(map(lambda elem: elem+'...', temp[:-1]))+[temp[-1]]
+            #     # temp.append(temp1[-1])
+            # elif ".." in word:
+            #     temp=list(filter(lambda elem: elem!='',word.split("..")))
+            #     if(temp):
+            #         if(word.endswith("..")):
+            #             temp=list(map(lambda elem: elem+'..', temp))
+            #         else:
+            #             temp=list(map(lambda elem: elem+'..', temp[:-1]))+[temp[-1]]
+            #     #temp.append(temp1[-1])
+            elif (list(p_dots.finditer(word))):
+                matched_spans= list(p_dots.finditer(word)) 
+                temp=[]
+                next_string_start=0
+                for matched_span in matched_spans:
+                    matched_start=matched_span.span()[0]
+                    this_excerpt=word[next_string_start:matched_start]
+                    if(this_excerpt):
+                        temp.append(this_excerpt)
+                    next_string_start=matched_span.span()[1]
+                if(next_string_start<len(word)):
+                    last_excerpt=word[next_string_start:]
+                    if(last_excerpt):
+                        temp.append(last_excerpt)
+            elif "…" in word:
+                temp=list(filter(lambda elem: elem!='',word.split("…")))
+                if(temp):
+                    if(word.endswith("…")):
+                        temp=list(map(lambda elem: elem+'…', temp))
+                    else:
+                        temp=list(map(lambda elem: elem+'…', temp[:-1]))+[temp[-1]]
+            else:
+                #if word not in string.punctuation:
+                temp=[word]
+            if(temp):
+                tempList.append(temp)
+        tweetWordList=self.flatten(tempList,[])
+        return tweetWordList
 
 
     def flatten(self,mylist, outlist,ignore_types=(str, bytes, int, ne.NE_candidate)):
@@ -107,7 +212,7 @@ class SatadishaModule():
         self.batch=batch
         #output.csv
         #df_out= DataFrame(columns=('tweetID', 'sentID', 'hashtags', 'user', 'usertype', 'TweetSentence', 'phase1Candidates'))
-        self.df_out= pd.DataFrame(columns=('tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence', 'phase1Candidates','start_time','entry_batch','annotation'))
+        self.df_out= pd.DataFrame(columns=('tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList', 'phase1Candidates','start_time','entry_batch','annotation'))
         if(self.counter==0):
             #self.df_out= pd.DataFrame(columns=('tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence', 'phase1Candidates','correct_candidates_tweet'))
             #dict1 = {'tweetID':0, 'sentID':0, 'hashtags':'first', 'user':'user', 'TweetSentence':'sentence', 'phase1Candidates':'phase1Out','start_time':'now','entry_batch':'batch_number'}
@@ -139,18 +244,31 @@ class SatadishaModule():
         
 
         df_holder=[]
+        # df= self.batch.filter(['TweetSentence','tweetID','sentID','tweetwordList','phase1Candidates','hashtags','user','entry_batch','annotation','stanford_candidates'])
 
         #--------------------------------------PHASE I---------------------------------------------------
-        for index, row in self.batch.iterrows():
+        # for index, row in self.batch.iterrows():
+        for row in self.batch.itertuples():
+
+            index=row.Index
 
             now = datetime.datetime.now()
             #now=str(now.hour)+":"+str(now.minute)+":"+str(now.second)
 
             #hashtags=str(row['Discussion'])
-            hashtags=str(row['HashTags'])
-            user=str(row['User'])
+
+            # hashtags=str(row['HashTags'])
+            hashtags=str(row.HashTags)
+
+            # user=str(row['User'])
+            user=str(row.User)
+
             #userType=str(row['User Type'])
-            tweetText=str(row['TweetText'])
+            
+            # tweetText=str(row['TweetText'])
+            tweetText=str(row.TweetText)
+
+
             #print(tweetText)
             #correct_candidates_tweet=str(row['Mentions'])
             #print(str(index))
@@ -204,7 +322,8 @@ class SatadishaModule():
             userMention_List_final=[]
             #pre-modification: returns word list split at whitespaces; retains punctuation
             tweetSentences=list(filter (lambda sentence: len(sentence)>1, tweetText.split('\n')))
-            tweetSentenceList_inter=self.flatten(list(map(lambda sentText: sent_tokenize(sentText.lstrip().rstrip()),tweetSentences)),[])
+            # tweetSentenceList_inter=self.flatten(list(map(lambda sentText: sent_tokenize(sentText.lstrip().rstrip()),tweetSentences)),[])
+            tweetSentenceList_inter=self.flatten(list(map(lambda sentText: self.my_sentence_tokenizer.tokenize(sentText.lstrip().rstrip()),tweetSentences)),[])
             tweetSentenceList=list(filter (lambda sentence: len(sentence)>1, tweetSentenceList_inter))
 
 
@@ -242,6 +361,11 @@ class SatadishaModule():
                 #print(sentence)
                 #print(sen_index)
                 #tweetWordList= list(filter(lambda word:(word.strip(string.punctuation))!="",sentence.split()))
+                p_dots= re.compile(r'[.]{2,}')
+                # if p_dots.match(word):
+                #     match_lst = p_dots.findall(word)
+                #     index= (list( p1.finditer(cap_phrases) )[-1]).span()[1]
+
                 phase1Out=""
                 if((not tweetText.isupper()) &(not tweetText.islower())):
                     tempList=[]
@@ -279,18 +403,42 @@ class SatadishaModule():
                         #     if(temp1):
                         #         temp=list(map(lambda elem: elem+'-', temp1[:-1]))
                         #     temp.append(temp1[-1])
-                        elif "..." in word:
-                            #print("here")
-                            temp=list(filter(lambda elem: elem!='',word.split("...")))
-                            # if(temp1):
-                            #     temp=list(map(lambda elem: elem+'...', temp1[:-1]))
-                            # temp.append(temp1[-1])
-                        elif ".." in word:
-                            temp=list(filter(lambda elem: elem!='',word.split("..")))
-                            #print(index, temp)
+                        elif (list(p_dots.finditer(word))):
+                            matched_spans= list(p_dots.finditer(word)) 
+                            temp=[]
+                            next_string_start=0
+                            for matched_span in matched_spans:
+                                matched_start=matched_span.span()[0]
+                                this_excerpt=word[next_string_start:matched_start]
+                                if(this_excerpt):
+                                    temp.append(this_excerpt)
+                                next_string_start=matched_span.span()[1]
+                            if(next_string_start<len(word)):
+                                last_excerpt=word[next_string_start:]
+                                if(last_excerpt):
+                                    temp.append(last_excerpt)
+                        elif "…" in word:
+                            temp=list(filter(lambda elem: elem!='',word.split("…")))
+                            if(temp):
+                                if(word.endswith("…")):
+                                    temp=list(map(lambda elem: elem+'…', temp))
+                                else:
+                                    temp=list(map(lambda elem: elem+'…', temp[:-1]))+[temp[-1]]
+                        # elif "..." in word:
+                        #     #print("here")
+                        #     temp=list(filter(lambda elem: elem!='',word.split("...")))
+                        #     # if(temp1):
+                        #     #     temp=list(map(lambda elem: elem+'...', temp1[:-1]))
+                        #     # temp.append(temp1[-1])
+                        # elif ".." in word:
+                        #     temp=list(filter(lambda elem: elem!='',word.split("..")))
+                        #     #print(index, temp)
                         else:
                             #if word not in string.punctuation:
-                            temp=[word]
+                            if(word!='&;'):
+                                temp=[word]
+                            else:
+                                temp=['&']
                         if(temp):
                             tempList.append(temp)
                     tweetWordList=self.flatten(tempList,[])
@@ -304,7 +452,7 @@ class SatadishaModule():
                     tweetWordList_cappos = list(map(lambda element : element[0], filter(lambda element : self.capCheck(element[1]), enumerate(tweetWordList))))
                     #print(tweetWordList_cappos)
 
-                    hashtags_usermentions = list(filter(lambda word: (word.startswith('#'))|(word.startswith('@')|(word.strip() in string.punctuation)), tweetWordList))
+                    hashtags_usermentions = list(filter(lambda word: (word.startswith('#'))|(word.startswith('@')), tweetWordList))
 
                     #returns list of stopwords in tweet sentence
                     combined_list_here=([]+cachedStopWords+article_list+prep_list+chat_word_list)
@@ -325,9 +473,9 @@ class SatadishaModule():
                     #non @usermentions are processed in this function to find non @, non hashtag Entities---- thread 2
                     ne_List_allCheck=[]
 
-                    # if(index==279):
-                        # print(tweetWordList,hashtags_usermentions)
-                        # print(len(tweetWordList),str(len(tweetWordList_cappos)),len(hashtags_usermentions))
+                    # if(index==484):
+                    #     print(tweetWordList,tweetWordList_cappos)
+                    #     print(len(tweetWordList),str(len(tweetWordList_cappos)),len(hashtags_usermentions))
                         # flags = re.findall(r'[^\w\s,]', tweetText)
                         # print([c for c in tweetWordList if c in emoji.UNICODE_EMOJI],flags) 
 
@@ -338,12 +486,32 @@ class SatadishaModule():
                             emoji_list.append(word)
                     # print(emoji_list)
 
+                    # print(index,sentence)
+                    # print(tweetWordList,tweetWordList_cappos,emoji_list,hashtags_usermentions)
+                    # if((len(tweetWordList))<(len(tweetWordList_cappos)+len(emoji_list)+len(hashtags_usermentions))):
+                    #     print(index,sentence)
+                    #     print(tweetWordList,tweetWordList_cappos,emoji_list,hashtags_usermentions)
+                    
+
                     if((len(tweetWordList))>(len(tweetWordList_cappos)+len(emoji_list)+len(hashtags_usermentions))):
                         
                         #q = queue.Queue()
                         #threading.Thread(target=self.trueEntity_process, args=(tweetWordList_cappos,tweetWordList,q)).start()
-                        tweetWordList_justcappos = list(map(lambda element : element[0], filter(lambda element : self.capCheck2(element[1]), enumerate(tweetWordList))))
-                        ne_List_allCheck= self.trueEntity_process(index,tweetWordList_justcappos,tweetWordList)
+                        initial_elems_to_remove=[]
+                        inner_index=0
+                        for elem in tweetWordList:
+                            if((elem.startswith('@'))|(elem.startswith('#'))):
+                                initial_elems_to_remove.append(inner_index)
+                                inner_index+=1
+                                # print(tweetWordList)
+                            else:
+                                break
+                        tweetWordList_edited=[tweetWordList[index] for index in range(len(tweetWordList)) if index not in initial_elems_to_remove]
+
+                        tweetWordList_justcappos = list(map(lambda element : element[0], filter(lambda element : self.capCheck2(element[1]), enumerate(tweetWordList_edited))))
+
+                        
+                        ne_List_allCheck= self.trueEntity_process(index,tweetWordList_justcappos,tweetWordList_edited)
                     #ne_List_allCheck= q.get()
                         
                     ne_count+=len(ne_List_allCheck)
@@ -363,9 +531,11 @@ class SatadishaModule():
                             phase1Out+=(((candidate.phraseText).lstrip(string.punctuation)).strip())+ '::'+str(position)+"||" 
                 else:
                     phase1Out="nan"
+                    tweetWordList=self.getWords(sentence)
 
                 #print(self.df_out.columns)
-                dict1 = {'tweetID':str(index), 'sentID':str(sen_index), 'hashtags':hashtags, 'user':user, 'TweetSentence':sentence, 'phase1Candidates':phase1Out,'start_time':now,'entry_batch':batch_number,'annotation':annotation,'stanford_candidates':stanford_candidates,'ritter_candidates':ritter_candidates,'calai_candidates':calai_candidates}
+                enumerated_tweetWordList=[(token,idx) for idx,token in enumerate(tweetWordList)]
+                dict1 = {'tweetID':str(index), 'sentID':str(sen_index), 'hashtags':hashtags, 'user':user, 'TweetSentence':sentence, 'tweetwordList': enumerated_tweetWordList, 'phase1Candidates':phase1Out,'start_time':now,'entry_batch':batch_number,'annotation':annotation,'stanford_candidates':stanford_candidates,'ritter_candidates':ritter_candidates,'calai_candidates':calai_candidates}
                 df_holder.append(dict1)
                     #self.df_out.append(outrow)
 
@@ -381,9 +551,9 @@ class SatadishaModule():
                 combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list
                 if not ((candidateText in combined)|(candidateText.isdigit())|(self.is_float(candidateText))):
                     self.CTrie.__setitem__(candidateText.split(),len(candidateText.split()),candidate.features,batch_number)
-            if(index==24):
-            #     # print(sentence)
-                self.printList(ne_List_final)
+            # if(index==371):
+            # #     # print(sentence)
+            #     self.printList(ne_List_final)
 
             #if(userMention_List_final):
             #    print(userMention_List_final)
@@ -447,7 +617,7 @@ class SatadishaModule():
         self.df_out=self.df_out.append(df)
                
 
-        self.df_out.to_csv('tweet_base.csv' ,sep=',', encoding='utf-8')
+        # self.df_out.to_csv('tweet_base.csv' ,sep=',', encoding='utf-8')
     
     def rreplace(self,s, old, new, occurrence):
         if s.endswith(old):
@@ -478,7 +648,9 @@ class SatadishaModule():
 
         wordlist=list(filter(lambda word: word!='', candidate.phraseText.split()))
         pos=candidate.position
-        #print(candidate.phraseText,wordlist,pos)
+
+        # print(candidate.phraseText,wordlist,pos)
+
         start=0
         flag=False
         while(start!=len(pos)):
@@ -628,10 +800,10 @@ class SatadishaModule():
         else:
             final_output=[]
 
-        if(index==24):
-        #     print('here')
-            print(output)
-            print(final_output)
+        # if(index==24):
+        # #     print('here')
+        #     print(output)
+        #     print(final_output)
         
         return final_output
 
@@ -723,7 +895,7 @@ class SatadishaModule():
     # In[307]:
 
 
-    def punct_clause(self,NE_phrase_in):
+    def punct_clause(self,tweet_index,NE_phrase_in):
         
         NE_phrases=self.entity_info_check(NE_phrase_in)
         cap_phrases=NE_phrases.phraseText.strip()
@@ -759,12 +931,22 @@ class SatadishaModule():
         combined=cachedStopWords+prep_list+article_list+day_list+chat_word_list
         splitList=re.split('["‘’“”()/,;:!?…]',cap_phrases)
         splitList=list(filter(lambda word: ((word!="")&(word.lstrip(string.punctuation).rstrip(string.punctuation).strip().lower() not in combined)), splitList))
-        #print("==",splitList)
+
+               
         wordlstU=list(map(lambda word: word.strip().strip(string.punctuation), splitList))
         wordlstU=list(filter(lambda word: word!="", wordlstU))
         wordlst=list(filter(lambda word: ((word.strip().strip(string.punctuation))[0].isupper()|(word.strip().strip(string.punctuation))[0].isdigit()), wordlstU))
 
+        splitList_wo_comma=re.split('["‘’“”()/;:!?…]',cap_phrases)
+        splitList_wo_comma=list(filter(lambda word: ((word!="")&(word.lstrip(string.punctuation).rstrip(string.punctuation).strip().lower() not in combined)), splitList_wo_comma))
+
+        wordlstU_wo_comma=list(map(lambda word: word.strip().strip(string.punctuation), splitList_wo_comma))
+        wordlstU_wo_comma=list(filter(lambda word: word!="", wordlstU_wo_comma))
+        wordlst_wo_comma=list(filter(lambda word: ((word.strip().strip(string.punctuation))[0].isupper()|(word.strip().strip(string.punctuation))[0].isdigit()), wordlstU_wo_comma))
+
         #print(":::",wordlst)
+        # if (tweet_index==159):
+        #     print(cap_phrases,"==",splitList,NE_phrases.features[ne.date_indicator])
         if ((NE_phrases.features[ne.date_indicator]==False)):
             #print("hehe")
             if(len(splitList)>1):
@@ -791,8 +973,29 @@ class SatadishaModule():
                 NE_phrases.set_feature(ne.is_csl,False)
                 final_lst=[NE_phrases]
         else:
-            NE_phrases.set_feature(ne.is_csl,False)
-            final_lst=[NE_phrases]
+            if(len(splitList_wo_comma)>1):
+                if(len(wordlst_wo_comma)>0):
+                    #print("here::")
+                    pos=NE_phrases.position
+                    combined=[]
+                    prev=0
+                    for i in range(len(wordlst_wo_comma)):
+                        word=wordlst_wo_comma[i]
+                        word_len=len(list(filter(lambda individual_word: individual_word!="", re.split('[ ]', word))))
+                        word_pos=pos[(prev):(prev+word_len)]
+                        prev=prev+word_len
+                        combined+=[[word]+word_pos]
+                    
+                    lst_nsw=list(filter(lambda element: (((str(element[0])).strip(string.punctuation).lower() not in combined)& (not (str(element[0])).strip(string.punctuation).isdigit()) & (len(str(element[0]))>1)) ,combined))
+                    #print ("++",lst_nsw)
+                    if(lst_nsw):
+                        final_lst= list(map(lambda element:self.build_custom_NE(str(element[0]),element[1:],NE_phrases,ne.is_csl,True), lst_nsw))
+                        final_lst[0].set_feature(ne.start_of_sentence, NE_phrases.features[ne.start_of_sentence])
+                else:
+                    final_lst=[]
+            else:
+                NE_phrases.set_feature(ne.is_csl,False)
+                final_lst=[NE_phrases]
         
         #check abbreviation
         #print("++",final_lst)
@@ -873,7 +1076,7 @@ class SatadishaModule():
 
             #if not ((phrase[0].isdigit()) & (len(x)==1)):
             if not (phrase1.strip().isdigit()):
-                NE_phrase= ne.NE_candidate(phrase.strip(),x)
+                NE_phrase= ne.NE_candidate(phrase.strip().strip(string.punctuation),x)
                 if 0 in x:
                     NE_phrase.set_feature(ne.start_of_sentence,True)
                 else:
@@ -907,6 +1110,8 @@ class SatadishaModule():
 
     def capCheck2(self,word):
         combined_list=[]+cachedStopWords+prep_list+chat_word_list+article_list+conjoiner
+        p_num=re.compile(r'^[\W]*[0-9]')
+        
         if word.startswith('@'):
             return False
         if word.startswith('#'):
@@ -919,7 +1124,7 @@ class SatadishaModule():
             #     return True
             # else:
             return False
-        elif (word[0].isdigit()):
+        elif word[0].isdigit():
             return True
         else:
             p=re.compile(r'^[\W]*[A-Z]')
@@ -930,20 +1135,25 @@ class SatadishaModule():
                 return False
 
     def capCheck(self,word):
+        # print(word)
         combined_list=[]+cachedStopWords+prep_list+chat_word_list+article_list+conjoiner
+        p_num=re.compile(r'^[\W]*[0-9]')
+        p_punct=re.compile(r'[\W]+')
+
         if word.startswith('@'):
             return False
         if word.startswith('#'):
             return False
         elif "<Hashtag" in word:
             return False
-        #elif (((word.strip('“‘’”')).lstrip(string.punctuation)).rstrip(string.punctuation)).lower() in combined_list:
+        # elif not (((word.strip('“‘’”')).lstrip(string.punctuation)).rstrip(string.punctuation)).lower():
+        #     return True
         elif (((word.strip('“‘’”')).lstrip(string.punctuation)).rstrip(string.punctuation)) in combined_list:
             # if((word=="The")|(word=="THE")):
             #     return True
             # else:
             return True
-        elif word[0].isdigit():
+        elif p_num.match(word):
             return True
         else:
             p=re.compile(r'^[\W]*[A-Z]')
@@ -951,7 +1161,14 @@ class SatadishaModule():
             if l:
                 return True
             else:
-                return False
+                l2= p_punct.match(word)
+                if l2:
+                    return True
+                else:
+                    if (word.strip() in string.punctuation):
+                        return True
+                    else:
+                        return False
 
 
     # In[310]:
@@ -1050,27 +1267,41 @@ class SatadishaModule():
                 #splitting at apostrophe
                 phrase_beg=phrase[:phrase.find(apostrophe)].strip()
                 pos_beg=position[:len(phrase_beg.split())]
-                ret_ne_list.append(self.build_custom_NE(phrase_beg,pos_beg,ne.is_csl,ne_phrase.is_csl))
+                return_ne_beg= self.build_custom_NE(phrase_beg,pos_beg,ne_phrase,ne.is_csl,ne_phrase.features[ne.is_csl])
+                return_ne_beg.set_feature(ne.is_apostrophed,0)
+                ret_ne_list.append(return_ne_beg)
 
                 phrase_end=phrase[phrase.find(apostrophe)+2:].strip()
                 pos_end=position[len(phrase_beg.split()):]
+                return_ne_end= self.build_custom_NE(phrase_end,pos_end,ne_phrase,ne.is_csl,ne_phrase.features[ne.is_csl])
+                ret_ne_list.append(return_ne_end)
                 
                 # ret_ne_list=[,ne_phrase[ne_phrase.find(apostrophe)+2:].strip()]
-                # print(phrase,ret_ne_list)
-                ne_phrase.set_feature(ne.is_apostrophed,phrase.find(apostrophe))
+                # print(phrase,phrase_beg,phrase_end)
+                # ne_phrase.set_feature(ne.is_apostrophed,phrase.find(apostrophe))
         elif (bad_apostrophe in phrase):
             if phrase.endswith(bad_apostrophe):
                 ne_phrase.set_feature(ne.is_apostrophed,0)
                 ret_ne_list.append(ne_phrase)
             else:
-                #print(phrase.find(apostrophe))
+                phrase_beg=phrase[:phrase.find(bad_apostrophe)].strip()
+                pos_beg=position[:len(phrase_beg.split())]
+                return_ne_beg= self.build_custom_NE(phrase_beg,pos_beg,ne_phrase,ne.is_csl,ne_phrase.features[ne.is_csl])
+                return_ne_beg.set_feature(ne.is_apostrophed,0)
+                ret_ne_list.append(return_ne_beg)
+
+                phrase_end=phrase[phrase.find(bad_apostrophe)+2:].strip()
+                pos_end=position[len(phrase_beg.split()):]
+                return_ne_end= self.build_custom_NE(phrase_end,pos_end,ne_phrase,ne.is_csl,ne_phrase.features[ne.is_csl])
+                ret_ne_list.append(return_ne_end)
+
                 # ret_ne_list=[ne_phrase[:ne_phrase.find(bad_apostrophe)].strip(),ne_phrase[ne_phrase.find(bad_apostrophe)+2:].strip()]
-                # print(phrase,ret_ne_list)
-                ne_phrase.set_feature(ne.is_apostrophed,phrase.find(bad_apostrophe))
+                # print(phrase,phrase_beg,phrase_end)
+                # ne_phrase.set_feature(ne.is_apostrophed,phrase.find(bad_apostrophe))
         else:
             ne_phrase.set_feature(ne.is_apostrophed,-1)
             ret_ne_list.append(ne_phrase)
-        return ne_phrase
+        return ret_ne_list
 
 
     # In[314]:
@@ -1246,11 +1477,11 @@ class SatadishaModule():
         
         combined=[]+cachedStopWords+prep_list+chat_word_list+article_list+day_list+conjoiner
         #returns list with position of consecutively capitalized words
-        #print(tweetWordList_cappos, tweetWordList)
+        # print(tweetWordList_cappos, tweetWordList)
         output_unfiltered = self.consecutive_cap(tweet_index,tweetWordList_cappos,tweetWordList)
         #print("==>",output_unfiltered)
-        if(tweet_index==24):
-            print("==>",output_unfiltered)
+        # if(tweet_index==371):
+        #     print("==>",output_unfiltered)
 
         #splitting at quoted units
         output_quoteProcessed=[]
@@ -1281,8 +1512,11 @@ class SatadishaModule():
                                     temp.append(index)
                                 else:
                                     if ((word not in prep_list)&(word not in article_list)&(word not in conjoiner)):
+                                        # if(tweet_index==371):
+                                            # print(word)
                                         temp.append(index)
                                     else:
+
                                         sflag=True
                                     #else:
                                         #if ((index==0)||()):
@@ -1310,7 +1544,7 @@ class SatadishaModule():
                 if(mod_out):
                     output_quoteProcessed.extend(mod_out)
         #'cgl\print("=====>",output_quoteProcessed)
-        # if(tweet_index==589):
+        # if(tweet_index==371):
         #     print("=====>",output_quoteProcessed)
         output= list(filter(lambda element: ((element[0]!=[0])&(element[0]!=[])), output_quoteProcessed))
         
@@ -1328,13 +1562,16 @@ class SatadishaModule():
         # ne_List_pc=self.flatten(list(map(lambda NE_phrase: self.apostrophe_split(NE_phrase), consecutive_cap_phrases)),[])
 
         #implement the punctuation clause
-        ne_List_pc=self.flatten(list(map(lambda NE_phrase: self.punct_clause(NE_phrase), consecutive_cap_phrases)),[])
-        #self.printList(ne_List_pc)
+        ne_List_pc=self.flatten(list(map(lambda NE_phrase: self.punct_clause(tweet_index,NE_phrase), consecutive_cap_phrases)),[])
+        # if(tweet_index==371):
+        #     # print("==>",ne_List_pc)
+        #     self.printList(ne_List_pc)
 
-        ne_List_apostropeCheck= list(map(lambda element: self.apostrope_check(element), ne_List_pc_checked))
+        ##implement apostrophe check
+        ne_List_apostropeCheck= self.flatten(list(map(lambda element: self.apostrope_check(element), ne_List_pc)),[])
 
         #stopword removal and start-of-sentence
-        ne_List_pc_sr= list(map(lambda candidate: self.stopwordReplace(candidate), ne_List_pc))
+        ne_List_pc_sr= list(map(lambda candidate: self.stopwordReplace(candidate), ne_List_apostropeCheck))
         #self.printList(ne_List_pc_sr)
         ne_List_pc_checked= list(filter(lambda candidate: ((candidate.phraseText!="")&(candidate.position!=[0])), ne_List_pc_sr))
 
@@ -1349,8 +1586,7 @@ class SatadishaModule():
         #implement slang check and remove
         ne_List_slangCheck= list(filter(lambda element: not self.slang_remove(element), ne_List_pc_checked))
         
-        #implement apostrophe, tense and punctuation marker with final number check
-        #ne_List_apostropeCheck= list(map(lambda element: self.apostrope_check(element), ne_List_slangCheck))
+        #implement tense and punctuation marker with final number check
         #ne_List_punctuationCheck= list(map(lambda element: self.punctuation_check(element), ne_List_apostropeCheck))
 
         #not just number
