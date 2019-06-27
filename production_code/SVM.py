@@ -19,6 +19,7 @@ class SVM1():
         #train the algorithm once
         self.train = pd.read_csv(train,delimiter=",",sep='\s*,\s*')
 
+        #'''
         self.train['normalized_cap']=self.train['cap']/self.train['cumulative']
         self.train['normalized_capnormalized_substring-cap']=self.train['substring-cap']/self.train['cumulative']
         self.train['normalized_s-o-sCap']=self.train['s-o-sCap']/self.train['cumulative']
@@ -26,15 +27,6 @@ class SVM1():
         self.train['normalized_non-cap']=self.train['non-cap']/self.train['cumulative']
         self.train['normalized_non-discriminative']=self.train['non-discriminative']/self.train['cumulative']
 
-
-        '''self.cols = ['length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative',
-        'normalized_cap',
-        'normalized_capnormalized_substring-cap',
-        'normalized_s-o-sCap',
-        'normalized_all-cap',
-        'normalized_non-cap',
-        'normalized_non-discriminative'
-        ]'''
         self.cols = ['length','normalized_cap',
         'normalized_capnormalized_substring-cap',
         'normalized_s-o-sCap',
@@ -42,17 +34,43 @@ class SVM1():
         'normalized_non-cap',
         'normalized_non-discriminative'
         ]
+        #'''
+
+        '''
+        self.train['cumulative_red']=self.train['cumulative']-self.train['non-discriminative']
+
+        self.train['normalized_cap']=self.train['cap']/self.train['cumulative_red']
+        self.train['normalized_capnormalized_substring-cap']=self.train['substring-cap']/self.train['cumulative_red']
+        self.train['normalized_s-o-sCap']=self.train['s-o-sCap']/self.train['cumulative_red']
+        self.train['normalized_all-cap']=self.train['all-cap']/self.train['cumulative_red']
+        self.train['normalized_non-cap']=self.train['non-cap']/self.train['cumulative_red']
+
+
+        self.cols = ['length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','cumulative_red',
+        'normalized_cap',
+        'normalized_capnormalized_substring-cap',
+        'normalized_s-o-sCap',
+        'normalized_all-cap',
+        'normalized_non-cap'
+        ] '''
+        
+        # print(self.train[(self.train['class']==1)])
+
         self.colsRes = ['class']
 
-        self.trainArr = self.train.as_matrix(self.cols) #training array
-        #print(self.trainArr)
-        self.trainRes = self.train.as_matrix(self.colsRes) # training results
+        # self.trainArr = self.train.as_matrix(self.cols) #training array
+        # #print(self.trainArr)
+        # self.trainRes = self.train.as_matrix(self.colsRes) # training results
+
+        self.trainArr = self.train[self.cols]
+        self.trainRes = self.train[self.colsRes].values
 
         # self.clf = svm.SVC(probability=True)
         # self.clf.fit(self.trainArr, self.trainRes) # fit the data to the algorithm
 
         #--------------only for efficiency experiments
         # self.scaler = StandardScaler()
+
         self.clf = CalibratedClassifierCV(base_estimator=svm.SVC(probability=True), cv=5)
         # self.clf = CalibratedClassifierCV(base_estimator=LinearSVC(penalty='l2', dual=False), cv=5)
         self.clf.fit(self.trainArr, self.trainRes)
@@ -60,29 +78,44 @@ class SVM1():
         # X_train = self.scaler.fit_transform(self.trainArr)
         # self.clf.fit(X_train, self.trainRes)
 
+        # self.clf = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=0)
+        # self.clf.fit(self.trainArr, self.trainRes)
+
       
 
 
 
     def run(self,x_test,z_score_threshold):
     # def run(self,x_test,cumulative_threshold): #for the efficiency_run
+        #'''
         x_test['normalized_cap']=x_test['cap']/x_test['cumulative']
         x_test['normalized_capnormalized_substring-cap']=x_test['substring-cap']/x_test['cumulative']
         x_test['normalized_s-o-sCap']=x_test['s-o-sCap']/x_test['cumulative']
         x_test['normalized_all-cap']=x_test['all-cap']/x_test['cumulative']
         x_test['normalized_non-cap']=x_test['non-cap']/x_test['cumulative']
-        x_test['normalized_non-discriminative']=x_test['non-discriminative']/x_test['cumulative']
+        x_test['normalized_non-discriminative']=x_test['non-discriminative']/x_test['cumulative'] #'''
 
+        '''
+        x_test['cumulative_red']=x_test['cumulative']-x_test['non-discriminative']
 
+        x_test['normalized_cap']=x_test['cap']/x_test['cumulative_red']
+        x_test['normalized_capnormalized_substring-cap']=x_test['substring-cap']/x_test['cumulative_red']
+        x_test['normalized_s-o-sCap']=x_test['s-o-sCap']/x_test['cumulative_red']
+        x_test['normalized_all-cap']=x_test['all-cap']/x_test['cumulative_red']
+        x_test['normalized_non-cap']=x_test['non-cap']/x_test['cumulative_red']
+        '''
 
 
         #setting features
-        testArr= x_test.as_matrix(self.cols)
-        #print(testArr)
-        testRes = x_test.as_matrix(self.colsRes)
+        # testArr= x_test.as_matrix(self.cols)
+        # #print(testArr)
+        # testRes = x_test.as_matrix(self.colsRes)
+
+        testArr = x_test[self.cols]
 
 
         # In[ ]:
+        # print(x_test[(x_test['cumulative_red']==0.0)])
 
 
 

@@ -35,9 +35,9 @@ import adjustText
 
 warnings.filterwarnings("ignore")
 
-thread_processed=0
-stream_count=0
-queue = Queue(1000)
+# thread_processed=0
+# stream_count=0
+# queue = Queue(1000)
 #time_in=datetime.datetime.now()
 #time_out=datetime.datetime.now()
 fieldnames=['candidate','freq','length','cap','start_of_sen','abbrv','all_cap','is_csl','title','has_no','date','is_apostrp','has_inter_punct','ends_verb','ends_adverb','change_in_cap','topic_ind','entry_time','entry_batch','@mention']
@@ -81,7 +81,7 @@ total_time=0
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
 
 # /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 # print(len(tweets_unpartitoned))
 
 #NIST DATA FILES
@@ -98,13 +98,13 @@ total_time=0
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110202.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110203.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110204.csv",sep =',')
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110205.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110205.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110206.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110207.csv",sep =',')
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110208.csv",sep =',')
 
 # print(tweets_unpartitoned.columns.tolist())
-batch_size=100000
+# batch_size=100000
 
 # print(tweets_unpartitoned.head())
 # tweets_unpartitoned=tweets_unpartitoned[400000:600000:]
@@ -184,6 +184,10 @@ sentence_level_arr=[[-1]*20]*20
 
 # #for collecting outputs for 3K with annotations
 # output_df=tweets[['ID', 'HashTags', 'TweetText', 'mentions_other']]
+
+count=0
+batch_size=100000
+
 tweets=tweets_unpartitoned
 length=len(tweets)
 
@@ -196,7 +200,7 @@ max_batch_value=val
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 
 # dir_list=['20110123','20110124','20110125','20110126','20110127','20110128','20110129','20110130','20110131','20110201','20110202','20110203','20110204','20110205','20110206','20110207','20110208']
-# dir_list=['20110205']
+# dir_list=['20110123']
 # read_path="/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/"
 
 # reintroduction_threshold_array=[20,40,60,80,100]
@@ -205,8 +209,10 @@ max_batch_value=val
 
 # val=len(dir_list)
 # print('# of batches: ',(val))
-# max_batch_value=val-1
-# count=0
+
+# max_batch_value=112
+# max_batch_value=13
+
 
 # reintroduction_batch_threshold=range((val+1))
 execution_time_list=[]
@@ -218,30 +224,36 @@ tweets_been_processed_list_inner=[]
 total_time=0
 tweets_been_processed=0
 
+batch_count=0
+
 Phase1= phase1.SatadishaModule()
 Phase2 = phase2.EntityResolver()
 
 complete_tweet_dataframe_grouped_df_sorted_arr= []
 
 
-# for g in range(len(dir_list)):
-#     dir_name=dir_list[g]
+# for list_index in range(len(dir_list)):
+#     dir_name=dir_list[list_index]
 #     full_read_path=read_path+dir_name+'.csv'
-#     tweet_batch=pd.read_csv(full_read_path,sep =',')
-#     print(dir_name,"***",len(tweet_batch))
-#     print('Tweets are in memory...')
+#     tweets=pd.read_csv(full_read_path,sep =',')
+#     length=len(tweets)
+#     print(dir_name,"***",length)
 
-for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
+for dummy_index in range(len([1])):
 
-    tuple_of= Phase1.extract(tweet_batch,g)
-    tweet_base=tuple_of[0]
+    print('Tweets are in memory...')
+
+    for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
+
+        tuple_of= Phase1.extract(tweet_batch,batch_count)
+        tweet_base=tuple_of[0]
     #tweet_base.to_csv('tweet_base.csv' ,sep=',',   encoding='utf-8')
 
     # with open('tweet_base'+str(g)+'.pkl', 'wb') as output:
     #     pickle.dump(tweet_base, output, pickle.HIGHEST_PROTOCOL)
 
-    candidate_base=tuple_of[1]
-    phase2stopwordList=tuple_of[4]
+        candidate_base=tuple_of[1]
+        phase2stopwordList=tuple_of[4]
     # candidateList=candidate_base.displayTrie("",[])
     # print('candidate list post CS:', candidateList)
     # candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
@@ -252,26 +264,26 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
 
 
 
-    print('len of tweet_base = ' , len(tweet_base))
-    elapsedTime= tuple_of[3] - tuple_of[2]
-    total_time+=elapsedTime
-    print(elapsedTime,total_time)
-    print(len(tweet_base))
-    print (g,' ','Produced')
-    print("**********************************************************")
+        print('len of tweet_base = ' , len(tweet_base))
+        elapsedTime= tuple_of[3] - tuple_of[2]
+        total_time+=elapsedTime
+        print(elapsedTime,total_time)
+        print(len(tweet_base))
+        print (batch_count,' ','Produced')
+        print("**********************************************************")
     # if(g==val):
     #     candidateList=candidate_base.displayTrie("",[])
     #     candidateBase=pd.DataFrame(candidateList, columns=fieldnames)
     #     #print(len(candidateBase))
     #     candidateBase.to_csv('candidateBase.csv' ,sep=',', encoding='utf-8')
     #     print('Finished writing Candidate Base')
-    time_in=time.time()
+        time_in=time.time()
 
-    tweets_been_processed=tweets_been_processed+len(tweet_base)
-    print('tweets_been_processed: ',tweets_been_processed)
-    tweets_been_processed_list_inner.append(tweets_been_processed)
-    reintroduction_threshold_dummy=0
-    print(list(tweet_base.columns.values))
+        tweets_been_processed=tweets_been_processed+len(tweet_base)
+        print('tweets_been_processed: ',tweets_been_processed)
+        tweets_been_processed_list_inner.append(tweets_been_processed)
+        reintroduction_threshold_dummy=0
+        print(list(tweet_base.columns.values))
     #phase2_Trie_just_reintroduction_alternate
     # candidate_base_post_Phase2, complete_tweet_dataframe_grouped_df_sorted_arr, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
     # time_out=phase2_output_time
@@ -291,11 +303,11 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
     # time_out=time.time()
 
     # #phase2_Trie_baseline_reintroduction_efficiency
-    reintroduction_threshold_dummy=2
-    candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted,phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
+        reintroduction_threshold_dummy=2
+        candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted,phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
     #taking phase2 output time in phase 2 class due to unrelated index reset operation at the end of last batch
     # time_out=time.time()
-    time_out=phase2_output_time
+        time_out=phase2_output_time
 
     # print('disambiguation status: ',len((candidate_base_post_Phase2[((candidate_base_post_Phase2['batch']<g)&((candidate_base_post_Phase2.status=="g")|(candidate_base_post_Phase2.status=="b")))]).candidate.tolist()))
     
@@ -312,24 +324,24 @@ for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
 
        
 
-    elapsedTime= time_out-time_in
-    total_time+=elapsedTime
-    execution_time_list_inner.append(total_time)
-    print(elapsedTime,total_time)
-    print(g,' ','Consumed')
-    print("**********************************************************")
+        elapsedTime= time_out-time_in
+        total_time+=elapsedTime
+        execution_time_list_inner.append(total_time)
+        print(elapsedTime,total_time)
+        print(batch_count,' ','Consumed')
+        print("**********************************************************")
 
     # candidate_base_post_Phase2.to_csv("candidate_feature_base_20110123.csv",index=False,header=True,mode= 'w', sep=',', encoding='utf-8')
 
     # complete_tweet_dataframe_grouped_df_sorted.to_csv("output_1M_reintroduction_"+str(reintroduction_threshold)+".csv", sep=',', encoding='utf-8')
 
+        batch_count+=1
 
+        print(tweets_been_processed_list_inner)
+        print(execution_time_list_inner)
 
-    print(tweets_been_processed_list_inner)
-    print(execution_time_list_inner)
-
-    tweets_been_processed_list.append(tweets_been_processed_list_inner)
-    execution_time_list.append(execution_time_list_inner)
+        tweets_been_processed_list.append(tweets_been_processed_list_inner)
+        execution_time_list.append(execution_time_list_inner)
 
 # #----------------------------------------------------------------------------comment out when testing efficiency
 # output_df['output_mentions'] = ''

@@ -51,7 +51,7 @@ article_list=["a","an","the"]
 conjoiner=["de"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["nope","gee","hmm","bye","vs","please","retweet","2mrw","2moro","4get","ooh","reppin","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","bye","vs","ouch","omw","qt","dj","dm","congrat","haueheuaeh","ahushaush","jr","please","retweet","2mrw","2moro","4get","ooh","reppin","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 
 #string.punctuation.extend('“','’','”')
 #---------------------Existing Lists--------------------
@@ -264,7 +264,7 @@ class SatadishaModule():
             user=str(row.User)
 
             #userType=str(row['User Type'])
-            
+
             # tweetText=str(row['TweetText'])
             tweetText=str(row.TweetText)
 
@@ -934,14 +934,15 @@ class SatadishaModule():
 
                
         wordlstU=list(map(lambda word: word.strip().strip(string.punctuation), splitList))
-        wordlstU=list(filter(lambda word: word!="", wordlstU))
+        wordlstU=list(filter(lambda word: (word!="")&(not word.isspace()), wordlstU))
+        # print(wordlstU)
         wordlst=list(filter(lambda word: ((word.strip().strip(string.punctuation))[0].isupper()|(word.strip().strip(string.punctuation))[0].isdigit()), wordlstU))
 
         splitList_wo_comma=re.split('["‘’“”()/;:!?…]',cap_phrases)
         splitList_wo_comma=list(filter(lambda word: ((word!="")&(word.lstrip(string.punctuation).rstrip(string.punctuation).strip().lower() not in combined)), splitList_wo_comma))
 
         wordlstU_wo_comma=list(map(lambda word: word.strip().strip(string.punctuation), splitList_wo_comma))
-        wordlstU_wo_comma=list(filter(lambda word: word!="", wordlstU_wo_comma))
+        wordlstU_wo_comma=list(filter(lambda word: (word!="")&(not word.isspace()), wordlstU_wo_comma))
         wordlst_wo_comma=list(filter(lambda word: ((word.strip().strip(string.punctuation))[0].isupper()|(word.strip().strip(string.punctuation))[0].isdigit()), wordlstU_wo_comma))
 
         #print(":::",wordlst)

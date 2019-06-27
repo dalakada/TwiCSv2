@@ -24,6 +24,7 @@ import pickle
 import itertools
 from scipy import spatial
 import ast
+from numba import jit
 
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn import linear_model
@@ -44,7 +45,7 @@ article_list=["a","an","the"]
 conjoiner=["de"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["nope","gee","hmm","bye","vs","retweet","please","2mrw","2moro","4get","ooh","reppin","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","bye","vs","ouch","omw","qt","dj","dm","congrat","jr","haueheuaeh","ahushaush","retweet","please","2mrw","2moro","4get","ooh","reppin","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 string.punctuation=string.punctuation+'…‘’'
 
 
@@ -59,6 +60,7 @@ class EntityResolver ():
         # SET CB
         # print(phase2stopwordList)
         time1=time.time()
+        self.mention_count=0
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         time2=time.time()
         print('time taken:',(time2-time1))
@@ -112,6 +114,7 @@ class EntityResolver ():
 
         # DROP TF
         just_converted_tweets=self.get_complete_tf(untrashed_tweets)
+        self.just_converted_arr.append(len(just_converted_tweets))
         #incomplete tweets at the end of current batch
         incomplete_tweets=self.get_incomplete_tf(untrashed_tweets)
 
@@ -142,11 +145,22 @@ class EntityResolver ():
         phase2_output_time=time.time()
 
         # self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
-        self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
+        # self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
+        # self.just_converted_tweets_df_list.append(just_converted_tweets)
+
+        self.candidates_w_scores=pd.Series(candidate_featureBase_DF.probability.values,index=candidate_featureBase_DF.candidate).to_dict()
+
+        # if(self.counter==1):
+        self.all_mentions_discovered.append(self.mention_count)
+
 
         ####---------------------------------------commenting from here--------------------------------------
         if(self.counter==(max_batch_value+1)):
-            ambiguous_records=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"]
+            print('all_mentions_discovered: ',self.all_mentions_discovered)
+            print('just_converted, non-cumulative:',self.just_converted_arr)
+            print('evicted, non-cumulative:',self.evicted_arr)
+            print('incomplete',self.incomplete_arr)
+            # ambiguous_records=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"]
 
             # ambiguous_records.to_csv("ambiguous_records_new.csv", sep=',', encoding='utf-8')
         #     # self.just_converted_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
@@ -157,11 +171,12 @@ class EntityResolver ():
         #     print(len(list(self.just_converted_tweets.columns.values)))
         #     print(len(list(self.incomplete_tweets.columns.values)))
 
-            combined_frame_list=[self.just_converted_tweets, self.incomplete_tweets]
-            complete_tweet_dataframe = pd.concat(combined_frame_list)
+            # combined_frame_list=self.just_converted_tweets_df_list #[self.just_converted_tweets, self.incomplete_tweets]
+            # combined_frame_list.append(self.incomplete_tweets)
+            # complete_tweet_dataframe = pd.concat(combined_frame_list)
 
-            all_mentions_discovered=self.flatten(complete_tweet_dataframe['only_good_candidates'].tolist(),[])
-            print('total mentions discovered:',len(all_mentions_discovered))
+            # all_mentions_discovered=self.flatten(complete_tweet_dataframe['only_good_candidates'].tolist(),[])
+            # print('total mentions discovered:',len(all_mentions_discovered))
 
         #     print('final tally: ', (len(self.just_converted_tweets)+len(self.incomplete_tweets)), len(complete_tweet_dataframe))
 
@@ -206,6 +221,8 @@ class EntityResolver ():
         self.complete_tweet_dataframe_grouped_df_sorted=pd.DataFrame([], columns=['tweetID', 'TweetSentence', 'tweetwordList','ambiguous_candidates', 'annotation', 'candidates_with_label', 'completeness', 'current_minus_entry', 'entry_batch', 'hashtags', 'index', 'only_good_candidates', 'output_mentions', 'phase1Candidates', 'sentID', 'stanford_candidates', 'user'])
         if(self.counter==0):
             #output_queue
+            self.mention_count=0
+            self.all_mentions_discovered=[]
             self.data_frame_holder_OQ=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
             self.not_reintroduced=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
             self.CandidateBase_dict= {}
@@ -215,17 +232,21 @@ class EntityResolver ():
             self.bad_candidates=[]
             self.ambiguous_candidates=[]
             self.infrequent_candidates=[]
+            self.candidates_w_scores={}
             self.entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.non_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.ambiguous_entity_sketch=[0.0,0.0,0.0,0.0,0.0,0.0]
             self.aggregator_incomplete_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
             self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
             #self.data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
+            self.just_converted_tweets_df_list=[]
             self.raw_tweets_for_others=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized'])
 
             self.accuracy_tuples_prev_batch=[]
             self.accuracy_vals=[]
-            
+            self.just_converted_arr=[]
+            self.evicted_arr=[]
+            self.incomplete_arr=[]
             #frequency_w_decay related information
             self.ambiguous_candidates_reintroduction_dict={}
 
@@ -247,7 +268,10 @@ class EntityResolver ():
 
         # return incomplete_tweets.loc[("False")].loc(values_to_get)
         # return incomplete_tweets.loc[values_to_get]
-        return incomplete_tweets.loc[incomplete_tweets['current_minus_entry']<reintroduction_threshold]
+        tweets_to_return=incomplete_tweets.loc[incomplete_tweets['current_minus_entry']<reintroduction_threshold]
+        self.evicted_arr.append(len(incomplete_tweets)-len(tweets_to_return))
+        self.incomplete_arr.append(len(tweets_to_return))
+        return tweets_to_return
 
     # def calculate_tp_fp_f1_generic(self,raw_tweets_for_others,state_of_art):
 
@@ -428,16 +452,47 @@ class EntityResolver ():
         # # candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] >= z_score_threshold]
 
         #multi-word infrequent candidates ---> to be used for recall correction
-        cumulative_threshold=5
-        multiword_infrequent_candidates_list=candidate_featureBase_DF[(candidate_featureBase_DF['cumulative'] < cumulative_threshold) & (candidate_featureBase_DF.length>1)].candidate.tolist()
+        cumulative_threshold=6
+        multiword_infrequent_candidates_list=candidate_featureBase_DF[(candidate_featureBase_DF['cumulative'] < cumulative_threshold) & (candidate_featureBase_DF.length.astype(int)>1)].candidate.tolist()
         #all infrequent candidates
         all_infrequent= candidate_featureBase_DF[candidate_featureBase_DF['cumulative'] < cumulative_threshold]
         candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['cumulative'] >= cumulative_threshold]
+        
+        # candidate_featureBase_DF['probability']=0.0
+        # try:
+        # mask=candidate_featureBase_DF.apply(lambda row: (row['last-update'] == self.counter)&(((self.counter-row['batch']) <10)|(row['candidate'] in self.ambiguous_candidates)),axis=1)
+        # criteria_1=(candidate_featureBase_DF['last-update'] == self.counter)
+        # criteria_2=((self.counter-candidate_featureBase_DF['batch']) <10)|(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates))
+        # criteria_3=
+        # criteria=criteria_1&criteria_2
+        criteria=(candidate_featureBase_DF['last-update'] == self.counter)&(((self.counter-candidate_featureBase_DF['batch']) <10)|(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates+self.infrequent_candidates)))
+        # mask=candidate_featureBase_DF[criteria]
+        # except ValueError:
+        #     print(row)
+        candidate_featureBase_DF_oldScores=candidate_featureBase_DF[~criteria]
 
+        # candidate_featureBase_DF_oldScores= candidate_featureBase_DF[candidate_featureBase_DF['last-update'] != self.counter]
+
+        if(self.counter>0):
+
+            candidate_featureBase_DF_oldScores['probability']=np.array([self.candidates_w_scores[x] for x in candidate_featureBase_DF_oldScores['candidate'].values])#np.vectorize(lambda x: self.candidates_w_scores[x])
+            # candidate_featureBase_DF_oldScores['probability']=np.array([self.candidates_w_scores[x] for x in candidate_featureBase_DF_oldScores['candidate'].values])
+
+            candidate_featureBase_DF_newScores=self.my_classifier.run(candidate_featureBase_DF[criteria],z_score_threshold)
+            # print(len(candidate_featureBase_DF),len(candidate_featureBase_DF_oldScores),len(candidate_featureBase_DF_newScores))
+
+            # probability_column=[self.candidates_w_scores[candidate] if candidate in self.candidates_w_scores.keys() else candidate_featureBase_DF_wScores[candidate_featureBase_DF_wScores['candidate']==candidate]['probability'].iloc[0] for candidate in candidate_featureBase_DF.candidate.tolist()]
+            # # print(probability_column)
+            # candidate_featureBase_DF['probability']=probability_column
+
+            candidate_featureBase_DF=pd.concat([candidate_featureBase_DF_oldScores,candidate_featureBase_DF_newScores])
+        else:
+            candidate_featureBase_DF=self.my_classifier.run(candidate_featureBase_DF[criteria],z_score_threshold)
+        # print(len(candidate_featureBase_DF))
 
 
         #returns updated candidate_featureBase_DF with ["Z_score"], ["probability"],["class"] attributes.
-        return (self.my_classifier.run(candidate_featureBase_DF,z_score_threshold),multiword_infrequent_candidates_list,all_infrequent)
+        return candidate_featureBase_DF,multiword_infrequent_candidates_list,all_infrequent
 
 
 
@@ -454,38 +509,68 @@ class EntityResolver ():
         flag1=False
         flag2=False
 
+        vectorized_partition_func=np.vectorize(self.get_substring_candidates,otypes=[object])
+
         if(len(ambiguous_bad_candidates)>0):
             ambiguous_bad_candidates['max_column'] =ambiguous_bad_candidates[['cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative']].idxmax(axis=1) 
-            ambiguous_bad_candidates_wFilter= ambiguous_bad_candidates[ambiguous_bad_candidates.max_column=='substring-cap']
+            ambiguous_bad_candidates_wFilter= ambiguous_bad_candidates[(ambiguous_bad_candidates.max_column=='substring-cap')&(not (str(ambiguous_bad_candidates['candidate']) in self.partition_dict.keys()))]
 
             #good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF.status=="g")].candidate.tolist()
             #print(ambiguous_bad_candidates_wFilter.candidate.tolist())
 
-            for candidate in ambiguous_bad_candidates_wFilter.candidate.tolist():
-                #print(candidate)
-                if candidate not in self.partition_dict.keys():
+            ambiguous_bad_candidates_filtered_candidates= ambiguous_bad_candidates_wFilter['candidate'].values
 
-                    substring_candidates=self.get_substring_candidates(candidate.split(),self.good_candidates)
-                    # substring_candidates=self.get_substring_candidates_old(candidate.split(),self.good_candidates,False)
-                    if(len(substring_candidates)>0):
-                        # if(candidate=="science guy on the john oliver"):
-                        #     print(candidate,substring_candidates)
-                        self.partition_dict[candidate]=substring_candidates
+            return_tuple_list=(list(filter(lambda elem: len(elem[1])>0, np.vectorize(self.get_substring_candidates,otypes=[object])(ambiguous_bad_candidates_filtered_candidates))))
+            self.partition_dict.update(return_tuple_list)
+
+            # return_tuple_list=(list(filter(lambda elem: len(elem[1])>0, map(self.get_substring_candidates, ambiguous_bad_candidates_filtered_candidates))))
+            # self.partition_dict.update(return_tuple_list)
+
+            # print(len(ambiguous_bad_candidates_filtered_candidates))
+            # np.vectorize(self.get_substring_candidates,otypes=[object])(ambiguous_bad_candidates_filtered_candidates)
+
+
+            # for candidate in ambiguous_bad_candidates_filtered_candidates:
+            #     ret_list=self.get_substring_candidates(candidate,candidate_featureBase_DF)
+            #     if(ret_list):
+            #         self.partition_dict[candidate]=ret_list
+            #     #print(candidate)
+            #     if candidate not in self.partition_dict.keys():
+
+            #         substring_candidates=self.get_substring_candidates(candidate.split(),self.good_candidates)
+            #         # substring_candidates=self.get_substring_candidates_old(candidate.split(),self.good_candidates,False)
+            #         if(len(substring_candidates)>0):
+            #             # if(candidate=="science guy on the john oliver"):
+            #             #     print(candidate,substring_candidates)
+            #             self.partition_dict[candidate]=substring_candidates
 
             flag1= True
-        if(len(multiword_infrequent_candidates_list)>0):
-            #print(len(ambiguous_bad_candidates_wFilter.candidate.tolist()))
 
-            for candidate in multiword_infrequent_candidates_list:
-                #print(candidate)
-                if candidate not in self.partition_dict.keys():
-                    substring_candidates=self.get_substring_candidates(candidate.split(),self.good_candidates)
-                    # substring_candidates=self.get_substring_candidates_old(candidate.split(),self.good_candidates,False)
-                    if(len(substring_candidates)>0):
-                        # if(candidate=="bill de blasio's 2020"):
-                        #     print(candidate,substring_candidates)
-                        self.partition_dict[candidate]=substring_candidates
+        if(len(multiword_infrequent_candidates_list)>0):
+        #     #print(len(ambiguous_bad_candidates_wFilter.candidate.tolist()))
+            multiWord_infrequent_candidates_to_include=np.array(list(filter(lambda elem: elem not in self.partition_dict.keys(),multiword_infrequent_candidates_list)))
+        #     print(len(multiWord_infrequent_candidates_to_include))
+        #     # multiWord_infrequent_candidates_to_include=np.array([candidate for candidate in multiword_infrequent_candidates_list if not (candidate in self.partition_dict.keys())],dtype=object)
+            return_tuple_list=np.vectorize(self.get_substring_candidates,otypes=[object])(multiWord_infrequent_candidates_to_include)
+            # return_tuple_list=(list(filter(lambda elem: len(elem[1])>0, map(self.get_substring_candidates, multiWord_infrequent_candidates_to_include))))
+            return_tuple_list=(list(filter(lambda elem: len(elem[1])>0, return_tuple_list)))
+            self.partition_dict.update(return_tuple_list)
+
+            # for candidate in multiWord_infrequent_candidates_to_include:
+            #     ret_list=self.get_substring_candidates(candidate,candidate_featureBase_DF)
+            #     if(ret_list):
+            #         self.partition_dict[candidate]=ret_list
+            #     #print(candidate)
+            #     if candidate not in self.partition_dict.keys():
+            #         substring_candidates=self.get_substring_candidates(candidate.split(),self.good_candidates)
+            #         # substring_candidates=self.get_substring_candidates_old(candidate.split(),self.good_candidates,False)
+            #         if(len(substring_candidates)>0):
+            #             # if(candidate=="bill de blasio's 2020"):
+            #             #     print(candidate,substring_candidates)
+            #             self.partition_dict[candidate]=substring_candidates
+
             flag2= True
+
         return (flag1|flag2)
 
 
@@ -882,11 +967,14 @@ class EntityResolver ():
             self.ambiguous_candidates_in_batch=[]
 
         # print(zip(TweetBase.apply(lambda row: self.extract_vectorized(row), axis=1)))
+        # time_cb_in=time.time()
         df_new= TweetBase.filter(['TweetSentence','tweetID','sentID','tweetwordList','phase1Candidates','hashtags','user','entry_batch','annotation','stanford_candidates'])
         # df_new['2nd Iteration Candidates'], df_new['2nd Iteration Candidates Unnormalized']=np.vectorize(self.extract_vectorized,otypes=[object])(df_new['phase1Candidates'].values,df_new['tweetwordList'].values)
         # print(zip(*np.vectorize(self.extract_vectorized,otypes=[object])(df_new['tweetID'].values,df_new['sentID'].values,df_new['entry_batch'].values,df_new['tweetwordList'].values,df_new['phase1Candidates'].values)))
         df_new['2nd Iteration Candidates'], df_new['2nd Iteration Candidates Unnormalized']=zip(*np.vectorize(self.extract_vectorized,otypes=[object])(df_new['tweetID'].values,df_new['sentID'].values,df_new['entry_batch'].values,df_new['tweetwordList'].values,df_new['phase1Candidates'].values))
         # df_new[[]] np.vectorize()
+        # time_cb_out=time.time()
+        # print('df_new',(time_cb_out-time_cb_in))
         # print((len(TweetBase)),(len(df_new)),list(df_new.columns.values))
         # phase2_candidates_holder_extracted=df_new['2nd Iteration Candidates'].tolist()
         # phase2_unnormalized_candidates_holder_extracted=df_new['2nd Iteration Candidates Unnormalized'].tolist()
@@ -966,11 +1054,14 @@ class EntityResolver ():
             # candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted,phase2_unnormalized_candidates_holder_extracted = self.extract(self.incomplete_tweets,CTrie,phase2stopwordList,1)
             self.new_or_old=1
             # df_holder_extracted,phase2_candidates_holder_extracted,phase2_unnormalized_candidates_holder_extracted = zip(self.incomplete_tweets.apply(lambda row: self.extract_vectorized(row), axis=1))
-            print(len(self.incomplete_tweets))
+            # print(len(self.incomplete_tweets))
+            # time_cb_in=time.time()
             df_old= self.incomplete_tweets.filter(['TweetSentence','tweetID','sentID','tweetwordList','phase1Candidates','hashtags','user','entry_batch','annotation','stanford_candidates'])
             # df_new['2nd Iteration Candidates'], df_new['2nd Iteration Candidates Unnormalized']=np.vectorize(self.extract_vectorized,otypes=[object])(df_new['phase1Candidates'].values,df_new['tweetwordList'].values)
             df_old['2nd Iteration Candidates'], df_old['2nd Iteration Candidates Unnormalized']=zip(*np.vectorize(self.extract_vectorized,otypes=[object])(df_old['tweetID'].values,df_old['sentID'].values,df_old['entry_batch'].values,df_old['tweetwordList'].values,df_old['phase1Candidates'].values))
             # print((len(self.incomplete_tweets)),(len(df_old)),list(df_old.columns.values))
+            # time_cb_out=time.time()
+            # print('df_old',(time_cb_out-time_cb_in))
 
             phase2_candidates_holder.extend(df_old['2nd Iteration Candidates'].tolist())
             phase2_unnormalized_candidates_holder.extend(df_old['2nd Iteration Candidates Unnormalized'].tolist())
@@ -979,7 +1070,10 @@ class EntityResolver ():
         #print(len(df_holder))
         # data_frame_holder = pd.DataFrame(df_holder)
         if(self.counter>0):
+            # time_cb_in=time.time()
             data_frame_holder = pd.concat([df_new,df_old])
+            # time_cb_out=time.time()
+            # print('df_concat',(time_cb_out-time_cb_in))
         else:
             data_frame_holder = pd.concat([df_new])
         candidate_featureBase_DF=self.get_candidateFeatureBase()
@@ -988,9 +1082,12 @@ class EntityResolver ():
         print("ambiguous_candidates_in_batch: ",len(self.ambiguous_candidates_in_batch))
 
         #set ['probabilities'] for candidate_featureBase_DF
+        time_cb_in=time.time()
         candidate_featureBase_DF,multiWord_infrequent_candidates,all_infrequent= self.classify_candidate_base(z_score_threshold,candidate_featureBase_DF)
         # set readable labels (a,g,b) for candidate_featureBase_DF based on ['probabilities.']
         candidate_featureBase_DF=self.set_readable_labels(candidate_featureBase_DF)
+        time_cb_out=time.time()
+        print('classify',(time_cb_out-time_cb_in))
 
         # good_to_amb_df=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))]
         # good_to_amb=good_to_amb_df.candidate.tolist()
@@ -1034,9 +1131,11 @@ class EntityResolver ():
         # #-------------------------------------------------------------------commenting to here-------------------------------------------------------------------
 
 
-
+        time_cb_in=time.time()
         correction_flag=self.set_partition_dict(candidate_featureBase_DF,multiWord_infrequent_candidates)
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
+        time_cb_out=time.time()
+        print('partition_dict',(time_cb_out-time_cb_in))
 
         ## commenting out for efficiency
         # if(self.counter>0):
@@ -1452,7 +1551,9 @@ class EntityResolver ():
 
 
     def get_mentions(self,candidates_with_label):
-        return [candidate_tup[0] for candidate_tup in candidates_with_label if ((candidate_tup[1]=='g')|(candidate_tup[0]=='US'))]
+        ret_list= [candidate_tup[0] for candidate_tup in candidates_with_label if ((candidate_tup[1]=='g')|(candidate_tup[0]=='US'))]
+        self.mention_count+=len(ret_list)
+        return ret_list
 
     def completeness_check(self,ambiguous_candidates_list):
         # print(ambiguous_candidates_list)
@@ -1544,8 +1645,8 @@ class EntityResolver ():
         # candidate_featureBase_DF['status'][(candidate_featureBase_DF['probability'] > 0.4) & (candidate_featureBase_DF['probability'] < 0.8)] = 'a'
         # candidate_featureBase_DF['status'][candidate_featureBase_DF['probability']<=0.4]='b'
 
-        candidate_featureBase_DF['status'][candidate_featureBase_DF['probability']>=0.69]='g'
-        candidate_featureBase_DF['status'][(candidate_featureBase_DF['probability'] > 0.4) & (candidate_featureBase_DF['probability'] < 0.69)] = 'a'
+        candidate_featureBase_DF['status'][candidate_featureBase_DF['probability']>=0.65]='g'
+        candidate_featureBase_DF['status'][(candidate_featureBase_DF['probability'] > 0.4) & (candidate_featureBase_DF['probability'] < 0.65)] = 'a'
         candidate_featureBase_DF['status'][candidate_featureBase_DF['probability']<=0.4]='b'
 
         return candidate_featureBase_DF
@@ -1623,47 +1724,73 @@ class EntityResolver ():
         return multislices
 
 
+    #@jit
+    def get_substring_candidates(self,candidate):
+        
+        candidate_words=candidate.split()
+        # good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF['status'] == 'g') & (candidate_featureBase_DF.length.astype(int)<len(candidate_words))].candidate.tolist()
+        length = len(candidate_words)
+        possibilities=[]
+        # print(candidate_words)
 
-    def get_substring_candidates(self,candidate_words,good_candidates):
-        n = len(candidate_words)
-        all_partitions=[]
-        all_partitions_length=[]
-        cuts = list(range(1,n))
-        for k in range(n):
-            # all_partitions_inner=[]
-            partition_list=[]
-            partition_length_list=[]
-            for cutpoints in itertools.combinations(cuts,k):
-                ret_list=self.multiSlice(candidate_words,cutpoints,good_candidates)
-                if(ret_list):
-                    partition_length=sum([len(elem.split()) for elem in ret_list])
-                    # print('==',ret_list,partition_length)
-                    if(partition_length==len(candidate_words)):
-                        return ret_list
-                    partition_list.append(ret_list)
-                    partition_length_list.append(partition_length)
-                    # yield ret_list
-            # print('------')
-            if(partition_length_list):
-                max_index=partition_length_list.index(max(partition_length_list))
-                all_partitions.append(partition_list[max_index])
-                all_partitions_length.append(partition_length_list[max_index])
-        # print(all_partitions)
-        if(all_partitions_length):
-            max_index=all_partitions_length.index(max(all_partitions_length))
-            # print(all_partitions[max_index])
-            return all_partitions[max_index]
-        else:
-            return []
+        for i in range(1,length):
+            comb=itertools.combinations(range(1,length),i)
+            # print(comb)
+            possibilities+= [[candidate_words[0:c[0]]] + [candidate_words[c[i]: c[i+1]] for i in range(len(c)-1)] + [candidate_words[c[-1]:]] for c in comb]
+        possibilities=[[self.normalize(' '.join(substring)) for substring in partition if self.normalize(' '.join(substring)) in self.good_candidates] for partition in possibilities]
+        ret_list= sorted(possibilities, key=len, reverse=True)[0]
+        return (candidate,ret_list)
+
+        # all_partitions=[] 
+        # all_partitions_length=[]
+        # cuts = list(range(1,n))
+        # for k in range(n):
+        #     # all_partitions_inner=[]
+        #     partition_list=[]
+        #     partition_length_list=[]
+        #     for cutpoints in itertools.combinations(cuts,k):
+        #         ret_list=self.multiSlice(candidate_words,cutpoints,self.good_candidates)
+        #         if(ret_list):
+        #             partition_length=sum([len(elem.split()) for elem in ret_list])
+        #             # print('==',ret_list,partition_length)
+        #             if(partition_length==len(candidate_words)):
+        #                 # self.partition_dict[candidate]=ret_list
+        #                 # return ret_list
+        #                 return (candidate,ret_list)
+        #             partition_list.append(ret_list)
+        #             partition_length_list.append(partition_length)
+        #             # yield ret_list
+        #     # print('------')
+        #     if(partition_length_list):
+        #         max_index=partition_length_list.index(max(partition_length_list))
+        #         all_partitions.append(partition_list[max_index])
+        #         all_partitions_length.append(partition_length_list[max_index])
+        # # print(all_partitions)
+        # if(all_partitions_length):
+        #     max_index=all_partitions_length.index(max(all_partitions_length))
+        #     # print(all_partitions[max_index])
+        #     return (candidate,all_partitions[max_index])
+        #     # return all_partitions[max_index]
+        # else:
+        #     return (candidate,[])
+
+            # return []
+        # if(len(substring_candidates)>0):
+        #     self.partition_dict[candidate]=substring_candidates
+        # return
+
+
     
-    def get_substring_candidates_old(self,candidate_words,good_candidates,whole_check_flag):
+    def get_substring_candidates_old(self,whole_check_flag):
+        candidate_words=candidate.split()
+
         substring_candidates=[]
         last_cand=""
         break_flag=False
         start=0
         for i in range(len(candidate_words)):
             curr=' '.join(candidate_words[0:(i+1)])
-            if curr in good_candidates:
+            if curr in self.good_candidates:
                 #print("got: ",curr)
                 last_cand=curr
             else:
@@ -1674,15 +1801,15 @@ class EntityResolver ():
                     if(last_cand!=""):
                         substring_candidates.append(last_cand)
                     else:
-                        substring_candidates.extend(self.get_substring_candidates_old(candidate_words[0:(i+1)],good_candidates,True))
+                        substring_candidates.extend(self.get_substring_candidates_old(candidate_words[0:(i+1)],True))
                 break_flag=True
                 break
         if(break_flag & (len(candidate_words[start:])>0)):
-            substring_candidates.extend(self.get_substring_candidates_old(candidate_words[start:],good_candidates,True))
+            substring_candidates.extend(self.get_substring_candidates_old(candidate_words[start:],True))
         if(whole_check_flag & (not break_flag) & (last_cand!="")):
             substring_candidates.append(last_cand)
 
-        return substring_candidates
+        return (candidate,substring_candidates)
 
     #@profile
     def verify(self, subsequence, CTrie):
@@ -2158,7 +2285,7 @@ class EntityResolver ():
         if(normalized_candidate in self.CandidateBase_dict.keys()):
             feature_list=self.CandidateBase_dict[normalized_candidate]
         else:
-            feature_list=[0]*9
+            feature_list=[0]*10
             feature_list[0]=self.counter
             feature_list[1]=len(normalized_candidate.split())
         feature_to_update=self.check_feature_update(candidate_tuple,non_discriminative_flag)
@@ -2166,6 +2293,7 @@ class EntityResolver ():
         #     print(candidateText,feature_to_update)
         feature_list[feature_to_update]+=1
         feature_list[8]+=1
+        feature_list[9]=self.counter
         self.CandidateBase_dict[normalized_candidate]=feature_list
 
 
@@ -2487,7 +2615,7 @@ class EntityResolver ():
 
     def get_candidateFeatureBase(self):
         #convert the CandidateFeatureBase from a dictionary to dataframe---> CandidateFeatureBaseDF
-        candidateBaseHeaders=['candidate', 'batch', 'length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative']
+        candidateBaseHeaders=['candidate', 'batch', 'length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','last-update']
         candidate_featureBase_DF=pd.DataFrame.from_dict(self.CandidateBase_dict, orient='index')
         candidate_featureBase_DF.columns=candidateBaseHeaders[1:]
         candidate_featureBase_DF.index.name=candidateBaseHeaders[0]
