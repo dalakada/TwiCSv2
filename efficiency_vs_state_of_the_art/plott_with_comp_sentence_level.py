@@ -78,19 +78,31 @@ whole_level=[
 ]
 
 
-tweets_been_processed_list=[173400,
-350484,
-527834,
-682913,
-849446,
-1028661,
-1188145,
-1338782,
-1500195,
-1657711,
-1713105
+# tweets_been_processed_list=[173400,
+# 350484,
+# 527834,
+# 682913,
+# 849446,
+# 1028661,
+# 1188145,
+# 1338782,
+# 1500195,
+# 1657711,
+# 1713105
+# ]
+tweets_been_processed_list=[
+179202,
+358646,
+536083,
+693100,
+859600,
+1038784,
+1199605,
+1351483,
+1528241,
+1693810,
+1751118
 ]
-
 
 fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
 font_axis = fm.FontProperties(fname=fontPath, size=19)

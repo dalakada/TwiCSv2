@@ -22,6 +22,9 @@ warnings.filterwarnings("ignore")
 rc('font',**{'family':'dejavusans','serif':['Times']})
 rc('text', usetex=False)
 csfont = {'fontname':'DejaVu Sans Condensed'}
+
+
+
 whole_level=[
 [
 1126.3322818224,
