@@ -6,6 +6,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn import svm
 from scipy import stats
 
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import LinearSVC
+from sklearn.calibration import CalibratedClassifierCV
+
 class SVM1():
     def __init__(self,train):
 
@@ -40,7 +44,11 @@ class SVM1():
         self.trainArr = self.train.as_matrix(self.cols) #training array
         #print(self.trainArr)
         self.trainRes = self.train.as_matrix(self.colsRes) # training results
+
         self.clf = svm.SVC(probability=True)
+        
+        # self.clf = CalibratedClassifierCV(base_estimator=svm.SVC(probability=True), cv=5)
+
         self.clf.fit(self.trainArr, self.trainRes) # fit the data to the algorithm
 
       

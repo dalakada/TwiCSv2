@@ -200,7 +200,7 @@ sentence_level_arr=[[-1]*20]*20
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 
 # dir_list=['20110123','20110124','20110125','20110126','20110127','20110128','20110129','20110130','20110131','20110201','20110202','20110203','20110204','20110205','20110206','20110207','20110208']
-dir_list=['20110207']
+dir_list=['20110208']
 read_path="/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/"
 
 # reintroduction_threshold_array=[20,40,60,80,100]
