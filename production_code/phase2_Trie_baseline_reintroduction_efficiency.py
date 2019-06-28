@@ -452,7 +452,7 @@ class EntityResolver ():
         # # candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] >= z_score_threshold]
 
         #multi-word infrequent candidates ---> to be used for recall correction
-        cumulative_threshold=6
+        cumulative_threshold=1
         multiword_infrequent_candidates_list=candidate_featureBase_DF[(candidate_featureBase_DF['cumulative'] < cumulative_threshold) & (candidate_featureBase_DF.length.astype(int)>1)].candidate.tolist()
         #all infrequent candidates
         all_infrequent= candidate_featureBase_DF[candidate_featureBase_DF['cumulative'] < cumulative_threshold]
@@ -500,10 +500,10 @@ class EntityResolver ():
     def set_partition_dict(self,candidate_featureBase_DF,multiword_infrequent_candidates_list):
 
         #print(list(self.partition_dict.keys()))
-        # ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="a")|(candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
+        ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="a")|(candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
 
         #when running for efficiency
-        ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
+        # ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
 
         # good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF.status=="g")].candidate.tolist()
         flag1=False
@@ -1476,7 +1476,8 @@ class EntityResolver ():
                         candidate=candidate.lower()
                         candidate_status=self.candidate_status_dict[candidate]
                         # candidate_status=candidate_featureBase_DF.loc[candidate,'status']
-                        if(candidate_status!='b'):
+                        # if(candidate_status!='b'):
+                        if(candidate_status=='g'):
                             corrected_phase2_candidates.append(candidate)
                         else:
                             try:

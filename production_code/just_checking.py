@@ -177,14 +177,17 @@ import re
 
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110208.csv",sep =',')
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110123.csv",sep =',')
+tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110206.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 
 total_count=0
 max_length=0
 fc=0
 # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/20110208_"+str(fc)+".txt","w")
-# f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist-inputs/20110208_"+str(fc)+".txt","w")
-f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist-inputs/20110123_"+str(fc)+".txt","w")
+f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist_inputs/20110206_"+str(fc)+".txt","w")
+
+# f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/tweets_1million_for_others_"+str(fc)+".txt","w")
+
 file_sum=0
 
 for index, row in tweets_unpartitoned.iterrows():
@@ -197,8 +200,8 @@ for index, row in tweets_unpartitoned.iterrows():
         f.close()
         fc+=1
         # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/20110208_"+str(fc)+".txt","w")
-        # f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist-inputs/20110208_"+str(fc)+".txt","w")
-        f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist-inputs/20110123_"+str(fc)+".txt","w")
+        f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist_inputs/20110206_"+str(fc)+".txt","w")
+        # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/tweets_1million_for_others_"+str(fc)+".txt","w")
         f.write(tweet_to_include)
         max_length=1
     total_count+=1

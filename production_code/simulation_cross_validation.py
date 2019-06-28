@@ -81,7 +81,7 @@ total_time=0
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
 
 # /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 # print(len(tweets_unpartitoned))
 
 #NIST DATA FILES
@@ -185,23 +185,23 @@ sentence_level_arr=[[-1]*20]*20
 # #for collecting outputs for 3K with annotations
 # output_df=tweets[['ID', 'HashTags', 'TweetText', 'mentions_other']]
 
-count=0
-batch_size=100000
+# count=0
+# batch_size=100000
 
-tweets=tweets_unpartitoned
-length=len(tweets)
+# tweets=tweets_unpartitoned
+# length=len(tweets)
 
-val=math.ceil(length/batch_size)-1
+# val=math.ceil(length/batch_size)-1
 
-print('# of batches: ',(val+1))
-max_batch_value=val
+# print('# of batches: ',(val+1))
+# max_batch_value=val
 
 # count=0
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 
 # dir_list=['20110123','20110124','20110125','20110126','20110127','20110128','20110129','20110130','20110131','20110201','20110202','20110203','20110204','20110205','20110206','20110207','20110208']
-# dir_list=['20110123']
-# read_path="/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/"
+dir_list=['20110207']
+read_path="/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/"
 
 # reintroduction_threshold_array=[20,40,60,80,100]
 # reintroduction_threshold_array=[20]
@@ -211,6 +211,7 @@ max_batch_value=val
 # print('# of batches: ',(val))
 
 # max_batch_value=112
+max_batch_value=0
 # max_batch_value=13
 
 
@@ -232,16 +233,18 @@ Phase2 = phase2.EntityResolver()
 complete_tweet_dataframe_grouped_df_sorted_arr= []
 
 
-# for list_index in range(len(dir_list)):
-#     dir_name=dir_list[list_index]
-#     full_read_path=read_path+dir_name+'.csv'
-#     tweets=pd.read_csv(full_read_path,sep =',')
-#     length=len(tweets)
-#     print(dir_name,"***",length)
+for list_index in range(len(dir_list)):
+    dir_name=dir_list[list_index]
+    full_read_path=read_path+dir_name+'.csv'
+    tweets=pd.read_csv(full_read_path,sep =',')
+    length=len(tweets)
+    print(dir_name,"***",length)
 
-for dummy_index in range(len([1])):
+    batch_size=length
 
-    print('Tweets are in memory...')
+# for dummy_index in range(len([1])):
+
+#     print('Tweets are in memory...')
 
     for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
 
