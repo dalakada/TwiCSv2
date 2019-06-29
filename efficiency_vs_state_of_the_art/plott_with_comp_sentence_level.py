@@ -340,14 +340,14 @@ tweets_been_processed_list=[
 ]
 
 fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
-font_axis = fm.FontProperties(fname=fontPath, size=19)
+font_axis = fm.FontProperties(fname=fontPath, size=16)
 
 fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
-font_axis2 = fm.FontProperties(fname=fontPath, size=18)
+font_axis2 = fm.FontProperties(fname=fontPath, size=16)
 
 
 fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
-font_legend = fm.FontProperties(fname=fontPath, size=18)
+font_legend = fm.FontProperties(fname=fontPath, size=16)
 
 f, (ax,ax2,ax3) = plt.subplots(3, 1, sharex=True)
 
