@@ -138,22 +138,22 @@ ax2.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,li
 ax4.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS")
 
 
-ax3.plot( tweets_been_processed_list, whole_level[2],marker='>' ,markersize=8,linewidth=1, label="OpenCalais")
-ax4.plot( tweets_been_processed_list, whole_level[2],marker='>' ,markersize=8,linewidth=1, label="OpenCalais")
+ax3.plot( tweets_been_processed_list, whole_level[1],marker='>' ,markersize=8,linewidth=1, label="OpenCalais")
+ax4.plot( tweets_been_processed_list, whole_level[1],marker='>' ,markersize=8,linewidth=1, label="OpenCalais")
 
-ax2.plot( tweets_been_processed_list, whole_level[3],marker='x' ,markersize=8,linewidth=1, label="Twitter NLP")
-ax3.plot( tweets_been_processed_list, whole_level[3],marker='x' ,markersize=8,linewidth=1, label="Twitter NLP")
-ax4.plot( tweets_been_processed_list, whole_level[3],marker='x' ,markersize=8,linewidth=1, label="Twitter NLP")
+ax2.plot( tweets_been_processed_list, whole_level[2],marker='x' ,markersize=8,linewidth=1, label="Twitter NLP")
+ax3.plot( tweets_been_processed_list, whole_level[2],marker='x' ,markersize=8,linewidth=1, label="Twitter NLP")
+ax4.plot( tweets_been_processed_list, whole_level[2],marker='x' ,markersize=8,linewidth=1, label="Twitter NLP")
 
-ax2.plot( tweets_been_processed_list, whole_level[4],marker='p' ,markersize=8,linewidth=1, label="NeuroNER")
-ax3.plot( tweets_been_processed_list, whole_level[4],marker='p' ,markersize=8,linewidth=1, label="NeuroNER")
-ax4.plot( tweets_been_processed_list, whole_level[4],marker='p' ,markersize=8,linewidth=1, label="NeuroNER")
+ax2.plot( tweets_been_processed_list, whole_level[3],marker='p' ,markersize=8,linewidth=1, label="NeuroNER")
+ax3.plot( tweets_been_processed_list, whole_level[3],marker='p' ,markersize=8,linewidth=1, label="NeuroNER")
+ax4.plot( tweets_been_processed_list, whole_level[3],marker='p' ,markersize=8,linewidth=1, label="NeuroNER")
 
-ax4.plot( tweets_been_processed_list, whole_level[5],marker='o' , markersize=8, linewidth=1,label="Stanford NER")
+ax4.plot( tweets_been_processed_list, whole_level[4],marker='o' , markersize=8, linewidth=1,label="Stanford NER")
 
-ax.set_ylim(1500,1800)  # outliers only
-ax2.set_ylim(75, 250)
-ax3.set_ylim(30, 60)
+ax.set_ylim(1300,1850)  # outliers only
+ax2.set_ylim(50, 250)
+ax3.set_ylim(30, 65)
 ax4.set_ylim(0,1)
 
 
@@ -204,29 +204,29 @@ ax2.plot((-d, +d), (1 - d, 1 + d), **kwargs)  # bottom-left diagonal
 ax2.plot((1 - d, 1 + d), (1 - d, 1 + d), **kwargs)  # bottom-right diagonal
 
 
-tick_spacing = 100
+tick_spacing = 250
 ax.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
 
-tick_spacing_ax2 = 25
+tick_spacing_ax2 = 50
 ax2.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing_ax2))
 
 tick_spacing_ax3 = 10
 ax3.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing_ax3))
 
-tick_spacing_x_axis = 400000
+tick_spacing_x_axis = 200000
 ax.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing_x_axis))
 
 plt.tick_params(axis='both', which='major', labelsize=12)
 
 abc=f.text(0.03, 0.5, 'Mention Discovery Throughput',fontproperties=font_axis, ha='center', va='center', rotation='vertical')
 
-ax.text(0.5, 0.48,'TwiCS', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
+ax.text(0.45, 0.48,'TwiCS', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
 
-ax2.text(0.5, 0.64, 'Twitter NLP',ha='center', va='center', transform=ax2.transAxes,FontProperties=font_legend)
+ax2.text(0.25, 0.65, 'Twitter NLP',ha='center', va='center', transform=ax2.transAxes,FontProperties=font_legend)
 
-ax3.text(0.15, -0.05, 'OpenCalais',ha='center', va='center', transform=ax3.transAxes,FontProperties=font_legend)
+ax3.text(0.15, 0.85, 'OpenCalais',ha='center', va='center', transform=ax3.transAxes,FontProperties=font_legend)
 
-ax2.text(0.15, 0.8, 'NeuroNER',ha='center', va='center', transform=ax3.transAxes,FontProperties=font_legend)
+ax2.text(0.5, 0.18, 'NeuroNER',ha='center', va='center', transform=ax2.transAxes,FontProperties=font_legend)
 
 ax4.text(0.8, 0.55, 'Stanford NER',ha='center', va='center', transform=ax4.transAxes,FontProperties=font_legend)
 
