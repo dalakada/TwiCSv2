@@ -124,6 +124,8 @@ class EntityResolver ():
         self.incomplete_tweets=self.remove_tweets_reaching_reintro_threshold(incomplete_tweets,reintroduction_threshold)
         print('incomplete sentences: ', len(self.incomplete_tweets))
 
+        print('mentions discovered:',self.mention_count)
+
 
 
         #recording tp, fp , f1
@@ -511,65 +513,65 @@ class EntityResolver ():
 
         vectorized_partition_func=np.vectorize(self.get_substring_candidates,otypes=[object])
 
-        if(len(ambiguous_bad_candidates)>0):
-            ambiguous_bad_candidates['max_column'] =ambiguous_bad_candidates[['cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative']].idxmax(axis=1) 
-            ambiguous_bad_candidates_wFilter= ambiguous_bad_candidates[(ambiguous_bad_candidates.max_column=='substring-cap')&(not (str(ambiguous_bad_candidates['candidate']) in self.partition_dict.keys()))]
+        # if(len(ambiguous_bad_candidates)>0):
+        #     ambiguous_bad_candidates['max_column'] =ambiguous_bad_candidates[['cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative']].idxmax(axis=1) 
+        #     ambiguous_bad_candidates_wFilter= ambiguous_bad_candidates[(ambiguous_bad_candidates.max_column=='substring-cap')&(not (str(ambiguous_bad_candidates['candidate']) in self.partition_dict.keys()))]
 
-            #good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF.status=="g")].candidate.tolist()
-            #print(ambiguous_bad_candidates_wFilter.candidate.tolist())
+        #     #good_candidates=candidate_featureBase_DF[(candidate_featureBase_DF.status=="g")].candidate.tolist()
+        #     #print(ambiguous_bad_candidates_wFilter.candidate.tolist())
 
-            ambiguous_bad_candidates_filtered_candidates= ambiguous_bad_candidates_wFilter['candidate'].values
+        #     ambiguous_bad_candidates_filtered_candidates= ambiguous_bad_candidates_wFilter['candidate'].values
 
-            return_tuple_list=(list(filter(lambda elem: len(elem[1])>0, np.vectorize(self.get_substring_candidates,otypes=[object])(ambiguous_bad_candidates_filtered_candidates))))
-            self.partition_dict.update(return_tuple_list)
+        #     return_tuple_list=(list(filter(lambda elem: len(elem[1])>0, np.vectorize(self.get_substring_candidates,otypes=[object])(ambiguous_bad_candidates_filtered_candidates))))
+        #     self.partition_dict.update(return_tuple_list)
 
-            # return_tuple_list=(list(filter(lambda elem: len(elem[1])>0, map(self.get_substring_candidates, ambiguous_bad_candidates_filtered_candidates))))
-            # self.partition_dict.update(return_tuple_list)
+        #     # return_tuple_list=(list(filter(lambda elem: len(elem[1])>0, map(self.get_substring_candidates, ambiguous_bad_candidates_filtered_candidates))))
+        #     # self.partition_dict.update(return_tuple_list)
 
-            # print(len(ambiguous_bad_candidates_filtered_candidates))
-            # np.vectorize(self.get_substring_candidates,otypes=[object])(ambiguous_bad_candidates_filtered_candidates)
+        #     # print(len(ambiguous_bad_candidates_filtered_candidates))
+        #     # np.vectorize(self.get_substring_candidates,otypes=[object])(ambiguous_bad_candidates_filtered_candidates)
 
 
-            # for candidate in ambiguous_bad_candidates_filtered_candidates:
-            #     ret_list=self.get_substring_candidates(candidate,candidate_featureBase_DF)
-            #     if(ret_list):
-            #         self.partition_dict[candidate]=ret_list
-            #     #print(candidate)
-            #     if candidate not in self.partition_dict.keys():
+        #     # for candidate in ambiguous_bad_candidates_filtered_candidates:
+        #     #     ret_list=self.get_substring_candidates(candidate,candidate_featureBase_DF)
+        #     #     if(ret_list):
+        #     #         self.partition_dict[candidate]=ret_list
+        #     #     #print(candidate)
+        #     #     if candidate not in self.partition_dict.keys():
 
-            #         substring_candidates=self.get_substring_candidates(candidate.split(),self.good_candidates)
-            #         # substring_candidates=self.get_substring_candidates_old(candidate.split(),self.good_candidates,False)
-            #         if(len(substring_candidates)>0):
-            #             # if(candidate=="science guy on the john oliver"):
-            #             #     print(candidate,substring_candidates)
-            #             self.partition_dict[candidate]=substring_candidates
+        #     #         substring_candidates=self.get_substring_candidates(candidate.split(),self.good_candidates)
+        #     #         # substring_candidates=self.get_substring_candidates_old(candidate.split(),self.good_candidates,False)
+        #     #         if(len(substring_candidates)>0):
+        #     #             # if(candidate=="science guy on the john oliver"):
+        #     #             #     print(candidate,substring_candidates)
+        #     #             self.partition_dict[candidate]=substring_candidates
 
-            flag1= True
+        #     flag1= True
 
-        if(len(multiword_infrequent_candidates_list)>0):
-        #     #print(len(ambiguous_bad_candidates_wFilter.candidate.tolist()))
-            multiWord_infrequent_candidates_to_include=np.array(list(filter(lambda elem: elem not in self.partition_dict.keys(),multiword_infrequent_candidates_list)))
-        #     print(len(multiWord_infrequent_candidates_to_include))
-        #     # multiWord_infrequent_candidates_to_include=np.array([candidate for candidate in multiword_infrequent_candidates_list if not (candidate in self.partition_dict.keys())],dtype=object)
-            return_tuple_list=np.vectorize(self.get_substring_candidates,otypes=[object])(multiWord_infrequent_candidates_to_include)
-            # return_tuple_list=(list(filter(lambda elem: len(elem[1])>0, map(self.get_substring_candidates, multiWord_infrequent_candidates_to_include))))
-            return_tuple_list=(list(filter(lambda elem: len(elem[1])>0, return_tuple_list)))
-            self.partition_dict.update(return_tuple_list)
+        # if(len(multiword_infrequent_candidates_list)>0):
+        # #     #print(len(ambiguous_bad_candidates_wFilter.candidate.tolist()))
+        #     multiWord_infrequent_candidates_to_include=np.array(list(filter(lambda elem: elem not in self.partition_dict.keys(),multiword_infrequent_candidates_list)))
+        # #     print(len(multiWord_infrequent_candidates_to_include))
+        # #     # multiWord_infrequent_candidates_to_include=np.array([candidate for candidate in multiword_infrequent_candidates_list if not (candidate in self.partition_dict.keys())],dtype=object)
+        #     return_tuple_list=np.vectorize(self.get_substring_candidates,otypes=[object])(multiWord_infrequent_candidates_to_include)
+        #     # return_tuple_list=(list(filter(lambda elem: len(elem[1])>0, map(self.get_substring_candidates, multiWord_infrequent_candidates_to_include))))
+        #     return_tuple_list=(list(filter(lambda elem: len(elem[1])>0, return_tuple_list)))
+        #     self.partition_dict.update(return_tuple_list)
 
-            # for candidate in multiWord_infrequent_candidates_to_include:
-            #     ret_list=self.get_substring_candidates(candidate,candidate_featureBase_DF)
-            #     if(ret_list):
-            #         self.partition_dict[candidate]=ret_list
-            #     #print(candidate)
-            #     if candidate not in self.partition_dict.keys():
-            #         substring_candidates=self.get_substring_candidates(candidate.split(),self.good_candidates)
-            #         # substring_candidates=self.get_substring_candidates_old(candidate.split(),self.good_candidates,False)
-            #         if(len(substring_candidates)>0):
-            #             # if(candidate=="bill de blasio's 2020"):
-            #             #     print(candidate,substring_candidates)
-            #             self.partition_dict[candidate]=substring_candidates
+        #     # for candidate in multiWord_infrequent_candidates_to_include:
+        #     #     ret_list=self.get_substring_candidates(candidate,candidate_featureBase_DF)
+        #     #     if(ret_list):
+        #     #         self.partition_dict[candidate]=ret_list
+        #     #     #print(candidate)
+        #     #     if candidate not in self.partition_dict.keys():
+        #     #         substring_candidates=self.get_substring_candidates(candidate.split(),self.good_candidates)
+        #     #         # substring_candidates=self.get_substring_candidates_old(candidate.split(),self.good_candidates,False)
+        #     #         if(len(substring_candidates)>0):
+        #     #             # if(candidate=="bill de blasio's 2020"):
+        #     #             #     print(candidate,substring_candidates)
+        #     #             self.partition_dict[candidate]=substring_candidates
 
-            flag2= True
+        #     flag2= True
 
         return (flag1|flag2)
 

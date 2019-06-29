@@ -177,39 +177,61 @@ import re
 
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110208.csv",sep =',')
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110206.csv",sep =',')
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/20110206.csv",sep =',')
+
+# index_range=range(0,41)
+
+# for dir_index in index_range:
+#     directory='/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/1M_'+str(dir_index)+'_input'
+#     if not os.path.exists(directory):
+#         os.makedirs(directory)
+#     sub_dir=directory+'/deploy'
+#     if not os.path.exists(sub_dir):
+#         os.makedirs(sub_dir)
+
+tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 
 total_count=0
 max_length=0
 fc=0
 # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/20110208_"+str(fc)+".txt","w")
-f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist_inputs/20110206_"+str(fc)+".txt","w")
-
+# f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist_inputs/20110206_"+str(fc)+".txt","w")
+dir_count=0
+dir_text_length=0
+directory='/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/1M_'+str(dir_count)+'_input/deploy/'
 # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/tweets_1million_for_others_"+str(fc)+".txt","w")
+f=open(directory+"tweets_1million_for_others_"+str(fc)+".txt","w")
 
 file_sum=0
 
 for index, row in tweets_unpartitoned.iterrows():
     tweet_to_include= str(row['TweetText'])+' --eosc\n'
-    if(max_length<100000):
+    if(max_length<5000):
         f.write(tweet_to_include)
         max_length+=1
+        dir_text_length+=1
     else:
         file_sum+=max_length
         f.close()
         fc+=1
         # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/20110208_"+str(fc)+".txt","w")
-        f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist_inputs/20110206_"+str(fc)+".txt","w")
-        # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/tweets_1million_for_others_"+str(fc)+".txt","w")
+        # f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist_inputs/20110206_"+str(fc)+".txt","w")
+        if(dir_text_length<25000):
+            f=open(directory+"tweets_1million_for_others_"+str(fc)+".txt","w")
+            dir_text_length+=1
+        else:
+            dir_count+=1
+            directory='/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/1M_'+str(dir_count)+'_input/deploy/'
+            f=open(directory+"tweets_1million_for_others_"+str(fc)+".txt","w")
+            dir_text_length=1
         f.write(tweet_to_include)
         max_length=1
     total_count+=1
-if((len(tweets_unpartitoned)%100000)!=0):
+if((len(tweets_unpartitoned)%5000)!=0):
     file_sum+=max_length
     f.close()
 
-print(str(total_count),len(tweets_unpartitoned),str(file_sum))
+print(str(total_count),len(tweets_unpartitoned),str(file_sum),str(dir_count))
 
 
 #------------------------------commenting everything from here

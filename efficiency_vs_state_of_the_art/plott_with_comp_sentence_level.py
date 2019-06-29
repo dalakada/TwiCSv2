@@ -292,34 +292,49 @@ csfont = {'fontname':'DejaVu Sans Condensed'}
 
 whole_level=[
 [
-1507.485104,
-1380.820815,
-1260.691602,
-1218.449524
+1544.3838415894395,
+1471.9197961065597,
+1414.9828846567912,
+1366.9296488246123,
+1293.8241411955635,
+1259.5325419655237,
+1223.2883729249393
 ], #TwiCS-C
 [
-1579.74237,
-1440.10962,
-1311.670393,
-1266.776985
+1597.6881085833895,
+1562.142999985726,
+1493.2881758329768,
+1439.870040933887,
+1358.9509684312811,
+1321.3338122519517,
+1281.6811098024182
 ], #TwiCS-CE
 [
+527.0307783,
 521.4092022,
+524.3615233,
 521.7318844,
-518.43652,
-518.299068
+517.3489646,
+510.43652,
+510.299068
 ], #TwitterNLP
 [
+119.2457328,
+119.3225615,
 118.5742003,
 122.2119689,
+125.6602219,
 125.890977,
 111.2549642
 ] #NeuroNER
 ]
 
 tweets_been_processed_list=[
+2408748,
 4100185,
+6506668,
 8180959,
+10783618,
 12411229,
 14144886
 ]
@@ -328,7 +343,7 @@ fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
 font_axis = fm.FontProperties(fname=fontPath, size=19)
 
 fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
-font_axis2 = fm.FontProperties(fname=fontPath, size=24)
+font_axis2 = fm.FontProperties(fname=fontPath, size=18)
 
 
 fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
@@ -364,7 +379,7 @@ ax3.plot( tweets_been_processed_list, whole_level[3],marker='p' ,markersize=8,li
 
 
 
-ax.set_ylim(1200,1525)  # outliers only
+ax.set_ylim(1000,1650)  # outliers only
 ax2.set_ylim(500, 550)
 ax3.set_ylim(100, 130)
 
@@ -416,31 +431,33 @@ ax2.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing_ax2))
 tick_spacing_ax3 = 10
 ax3.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing_ax3))
 
-tick_spacing_x_axis = 400000
+tick_spacing_x_axis = 2000000
+labels=['2M','4M','6M','8M','10M','12M','14M']
 ax.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing_x_axis))
+ax.set_xticklabels(labels)
 
 plt.tick_params(axis='both', which='major', labelsize=12)
 
 abc=f.text(0.03, 0.5, 'Tweet Processing Throughput',fontproperties=font_axis, ha='center', va='center', rotation='vertical')
 
-ax.text(0.5, 0.48,'TwiCS-C', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
+ax.text(0.5, 0.45,'TwiCS-C', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
 
-ax.text(0.8, 0.8,'TwiCS-CE', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
+ax.text(0.82, 0.6,'TwiCS-CE', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
 
-ax2.text(0.5, 0.64, 'Twitter NLP',ha='center', va='center', transform=ax2.transAxes,FontProperties=font_legend)
+ax2.text(0.5, 0.62, 'Twitter NLP',ha='center', va='center', transform=ax2.transAxes,FontProperties=font_legend)
 
 ax3.text(0.15, 0.8, 'NeuroNER',ha='center', va='center', transform=ax3.transAxes,FontProperties=font_legend)
 
 
 
 
-plt.xlabel('Tweet (Sentences) in Input Stream D6 (NIST 2011)',fontproperties=font_axis2)
+plt.xlabel('Tweet Sentences in Input Stream D6 (NIST 2011)',fontproperties=font_axis2)
 # plt.ylabel('Tweet Throughput',fontproperties=font_axis)#prop=20)
 ax.grid(True)
 ax2.grid(True)
 ax3.grid(True)
 
-# f.savefig("tweet-processing-throughput-NIST.pdf",dpi=1200,bbox_inches='tight',bbox_extra_artists=[abc])
+f.savefig("tweet-processing-throughput-NIST.pdf",dpi=1200,bbox_inches='tight',bbox_extra_artists=[abc])
 
 plt.show()
 

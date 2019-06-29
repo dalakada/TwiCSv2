@@ -212,7 +212,7 @@ class SatadishaModule():
         self.batch=batch
         #output.csv
         #df_out= DataFrame(columns=('tweetID', 'sentID', 'hashtags', 'user', 'usertype', 'TweetSentence', 'phase1Candidates'))
-        self.df_out= pd.DataFrame(columns=('tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList', 'phase1Candidates','start_time','entry_batch','annotation'))
+        # self.df_out= pd.DataFrame(columns=('tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList', 'phase1Candidates','start_time','entry_batch','annotation'))
         if(self.counter==0):
             #self.df_out= pd.DataFrame(columns=('tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence', 'phase1Candidates','correct_candidates_tweet'))
             #dict1 = {'tweetID':0, 'sentID':0, 'hashtags':'first', 'user':'user', 'TweetSentence':'sentence', 'phase1Candidates':'phase1Out','start_time':'now','entry_batch':'batch_number'}
@@ -613,8 +613,8 @@ class SatadishaModule():
     #@profile
     def append_rows(self,df_holder):
     
-        df = pd.DataFrame(df_holder)
-        self.df_out=self.df_out.append(df)
+        self.df_out = pd.DataFrame(df_holder,columns=('tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList', 'phase1Candidates','start_time','entry_batch','annotation'))
+        # self.df_out=self.df_out.append(df)
                
 
         # self.df_out.to_csv('tweet_base.csv' ,sep=',', encoding='utf-8')

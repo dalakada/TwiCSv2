@@ -186,7 +186,7 @@ sentence_level_arr=[[-1]*20]*20
 # output_df=tweets[['ID', 'HashTags', 'TweetText', 'mentions_other']]
 
 # count=0
-# batch_size=100000
+batch_size=100000
 
 # tweets=tweets_unpartitoned
 # length=len(tweets)
@@ -199,8 +199,8 @@ sentence_level_arr=[[-1]*20]*20
 # count=0
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 
-# dir_list=['20110123','20110124','20110125','20110126','20110127','20110128','20110129','20110130','20110131','20110201','20110202','20110203','20110204','20110205','20110206','20110207','20110208']
-dir_list=['20110208']
+dir_list=['20110123','20110124','20110125','20110126','20110127','20110128','20110129','20110130','20110131','20110201','20110202','20110203','20110204','20110205','20110206','20110207','20110208']
+# dir_list=['20110208']
 read_path="/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/"
 
 # reintroduction_threshold_array=[20,40,60,80,100]
@@ -210,8 +210,8 @@ read_path="/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitt
 # val=len(dir_list)
 # print('# of batches: ',(val))
 
-# max_batch_value=112
-max_batch_value=0
+max_batch_value=112
+# max_batch_value=0
 # max_batch_value=13
 
 
@@ -222,6 +222,7 @@ tweets_been_processed_list=[]
 # for reintroduction_threshold in reintroduction_threshold_array:
 execution_time_list_inner=[]
 tweets_been_processed_list_inner=[]
+tweets_length_list=[]
 total_time=0
 tweets_been_processed=0
 
@@ -238,9 +239,10 @@ for list_index in range(len(dir_list)):
     full_read_path=read_path+dir_name+'.csv'
     tweets=pd.read_csv(full_read_path,sep =',')
     length=len(tweets)
+    tweets_length_list.append(length)
     print(dir_name,"***",length)
 
-    batch_size=length
+    # batch_size=length
 
 # for dummy_index in range(len([1])):
 
@@ -342,6 +344,7 @@ for list_index in range(len(dir_list)):
 
         print(tweets_been_processed_list_inner)
         print(execution_time_list_inner)
+        print(tweets_length_list)
 
         tweets_been_processed_list.append(tweets_been_processed_list_inner)
         execution_time_list.append(execution_time_list_inner)
