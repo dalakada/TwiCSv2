@@ -96,7 +96,7 @@ class EntityResolver ():
         # tp,fp,f1,accuracy calculations.
         # input: tf .[good_candidates],[annotation]
         # output : incomplete tweets.['tp'],['fp'],[f1]
-        self.calculate_tp_fp_f1_for_others(raw_tweets_for_others)
+        # self.calculate_tp_fp_f1_for_others(raw_tweets_for_others)
         #######
         #######
         ######## EXPERIMENT FUNCTION ENDS ###################################
@@ -1297,7 +1297,8 @@ class EntityResolver ():
 
         print(len(input_to_eval_df_sorted),len(raw_tweets_for_others))
 
-        input_to_eval_df_sorted['annotation']=input_to_eval_df_sorted['tweetID'].apply(lambda x: raw_tweets_for_others[raw_tweets_for_others['ID']==x]['mentions_other'].iloc[0])
+        # input_to_eval_df_sorted['annotation']=input_to_eval_df_sorted['tweetID'].apply(lambda x: raw_tweets_for_others[raw_tweets_for_others['ID']==x]['mentions_other'].iloc[0])
+        input_to_eval_df_sorted['annotation']=input_to_eval_df_sorted['tweetID'].apply(lambda x: raw_tweets_for_others[raw_tweets_for_others['ID']==x]['mentions_limited_types'].iloc[0])
         # input_to_eval_df_sorted['annotation']=input_to_eval_df_sorted['tweetID'].apply(lambda x: raw_tweets_for_others[raw_tweets_for_others['ID']==x]['annotation_limited types'].iloc[0])
 
         column_candidates_holder = input_to_eval_df_sorted['only_good_candidates'].tolist()
@@ -1379,14 +1380,14 @@ class EntityResolver ():
 
         print(true_positive_count,false_positive_count,false_negative_count,total_mentions,total_annotation)
 
-        # all_annotations=set(all_annotations)
-        # all_mentions=set(all_mentions)
+        all_annotations=set(all_annotations)
+        all_mentions=set(all_mentions)
         
-        # true_positive_count= len(all_annotations.intersection(all_mentions))
-        # false_positive_count=len(all_mentions-all_annotations)
-        # false_negative_count=len(all_annotations-all_mentions)
-        # total_mentions=len(all_mentions)
-        # total_annotation=len(all_annotations)
+        true_positive_count= len(all_annotations.intersection(all_mentions))
+        false_positive_count=len(all_mentions-all_annotations)
+        false_negative_count=len(all_annotations-all_mentions)
+        total_mentions=len(all_mentions)
+        total_annotation=len(all_annotations)
 
 
         # print(true_positive_count,false_positive_count,false_negative_count,total_mentions,total_annotation)

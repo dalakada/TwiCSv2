@@ -447,9 +447,15 @@ class SatadishaModule():
                     #token_count+=len(tweetWordList)
                     #returns position of words that are capitalized
                     #print(tweetWordList)
+
+                    emoji_list = []
+                    # # data = regex.findall(r'\X', tweetWordList)
+                    for word in tweetWordList:
+                        if any(char in emoji.UNICODE_EMOJI for char in word):
+                            emoji_list.append(word)
                     
 
-                    tweetWordList_cappos = list(map(lambda element : element[0], filter(lambda element : self.capCheck(element[1]), enumerate(tweetWordList))))
+                    tweetWordList_cappos = list(map(lambda element : element[0], filter(lambda element : self.capCheck(element[1])&(element[1] not in emoji_list), enumerate(tweetWordList))))
                     #print(tweetWordList_cappos)
 
                     hashtags_usermentions = list(filter(lambda word: (word.startswith('#'))|(word.startswith('@')), tweetWordList))
@@ -479,11 +485,7 @@ class SatadishaModule():
                         # flags = re.findall(r'[^\w\s,]', tweetText)
                         # print([c for c in tweetWordList if c in emoji.UNICODE_EMOJI],flags) 
 
-                    emoji_list = []
-                    # # data = regex.findall(r'\X', tweetWordList)
-                    for word in tweetWordList:
-                        if any(char in emoji.UNICODE_EMOJI for char in word):
-                            emoji_list.append(word)
+                    
                     # print(emoji_list)
 
                     # print(index,sentence)
@@ -508,7 +510,7 @@ class SatadishaModule():
                                 break
                         tweetWordList_edited=[tweetWordList[index] for index in range(len(tweetWordList)) if index not in initial_elems_to_remove]
 
-                        tweetWordList_justcappos = list(map(lambda element : element[0], filter(lambda element : self.capCheck2(element[1]), enumerate(tweetWordList_edited))))
+                        tweetWordList_justcappos = list(map(lambda element : element[0], filter(lambda element : self.capCheck2(element[1])&(element[1] not in emoji_list), enumerate(tweetWordList_edited))))
 
                         
                         ne_List_allCheck= self.trueEntity_process(index,tweetWordList_justcappos,tweetWordList_edited)

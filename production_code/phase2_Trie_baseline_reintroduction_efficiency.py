@@ -1,4 +1,5 @@
 # coding: utf-8
+import sys
 from nltk.corpus import stopwords
 import pandas  as pd
 import NE_candidate_module as ne
@@ -66,6 +67,8 @@ class EntityResolver ():
         print('time taken:',(time2-time1))
         # candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
 
+        self.df_size.append(self.convert_bytes(sys.getsizeof(data_frame_holder)))
+
         
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='knows'])
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='democrat'])
@@ -123,7 +126,7 @@ class EntityResolver ():
         # self.incomplete_tweets=pd.concat([incomplete_tweets,self.not_reintroduced],ignore_index=True)
         self.incomplete_tweets=self.remove_tweets_reaching_reintro_threshold(incomplete_tweets,reintroduction_threshold)
         print('incomplete sentences: ', len(self.incomplete_tweets))
-
+        print('df_size: ',self.df_size)
         print('mentions discovered:',self.mention_count)
 
 
@@ -158,6 +161,7 @@ class EntityResolver ():
 
         ####---------------------------------------commenting from here--------------------------------------
         if(self.counter==(max_batch_value+1)):
+            print('size: ',self.df_size)
             print('all_mentions_discovered: ',self.all_mentions_discovered)
             print('just_converted, non-cumulative:',self.just_converted_arr)
             print('evicted, non-cumulative:',self.evicted_arr)
@@ -225,6 +229,7 @@ class EntityResolver ():
             #output_queue
             self.mention_count=0
             self.all_mentions_discovered=[]
+            self.df_size=[]
             self.data_frame_holder_OQ=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
             self.not_reintroduced=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
             self.CandidateBase_dict= {}
@@ -259,7 +264,7 @@ class EntityResolver ():
 
             self.number_of_seen_tweets_per_batch=[]
 
-
+    # @profile
     def remove_tweets_reaching_reintro_threshold(self,incomplete_tweets,reintroduction_threshold):
 
         # values_to_get=[]
@@ -274,6 +279,15 @@ class EntityResolver ():
         self.evicted_arr.append(len(incomplete_tweets)-len(tweets_to_return))
         self.incomplete_arr.append(len(tweets_to_return))
         return tweets_to_return
+
+    def convert_bytes(self, num):
+        """
+        this function will convert bytes to MB.... GB... etc
+        """
+        for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+            if num < 1024.0:
+                return "%3.1f %s" % (num, x)
+            num /= 1024.0
 
     # def calculate_tp_fp_f1_generic(self,raw_tweets_for_others,state_of_art):
 
@@ -433,6 +447,7 @@ class EntityResolver ():
     #output candidate_feature_Base with ["Z_score"], ["probability"],["class"]
     # no side effect
     #################################
+    # @profile
     def classify_candidate_base(self,z_score_threshold,candidate_featureBase_DF):
 
         # # #filtering test set based on z_score
@@ -502,7 +517,7 @@ class EntityResolver ():
     def set_partition_dict(self,candidate_featureBase_DF,multiword_infrequent_candidates_list):
 
         #print(list(self.partition_dict.keys()))
-        ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="a")|(candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
+        # ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="a")|(candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
 
         #when running for efficiency
         # ambiguous_bad_candidates=candidate_featureBase_DF[(((candidate_featureBase_DF.status=="b"))&(candidate_featureBase_DF.length.astype(int)>1))]
@@ -511,7 +526,7 @@ class EntityResolver ():
         flag1=False
         flag2=False
 
-        vectorized_partition_func=np.vectorize(self.get_substring_candidates,otypes=[object])
+        # vectorized_partition_func=np.vectorize(self.get_substring_candidates,otypes=[object])
 
         # if(len(ambiguous_bad_candidates)>0):
         #     ambiguous_bad_candidates['max_column'] =ambiguous_bad_candidates[['cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative']].idxmax(axis=1) 
@@ -1567,7 +1582,7 @@ class EntityResolver ():
             # print('False')
             return False
 
-    #@profile
+    # @profile
     def set_completeness_in_tweet_frame(self,data_frame_holder,candidate_featureBase_DF,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag):
         #print(candidate_featureBase_DF.head())
 
@@ -1638,7 +1653,7 @@ class EntityResolver ():
 
 
 
-    #@profile
+    # @profile
     def set_readable_labels(self,candidate_featureBase_DF):
 
         #candidate_featureBase_DF['status'] = candidate_featureBase_DF['probability'].apply(lambda x: set(x).issubset(good_candidates))
@@ -2038,6 +2053,7 @@ class EntityResolver ():
     #         candidateList.append((last_cand,last_cand_pos,last_cand_batch))
     #     return candidateList
 
+    # @profile
     def get_Candidates(self, sequence, CTrie,flag):
         #flag: debug_flag
         candidateList=[]
@@ -2227,7 +2243,7 @@ class EntityResolver ():
 
 
 
-    #@profile
+    # @profile
     def all_capitalized(self,candidate):
         strip_op=candidate
         strip_op=(((strip_op.lstrip(string.punctuation)).rstrip(string.punctuation)).strip())
@@ -2251,7 +2267,7 @@ class EntityResolver ():
 
 
 
-    #@profile
+    # @profile
     def check_feature_update(self, candidate_tuple,non_discriminative_flag):
         #print(candidate_tuple)
         if(non_discriminative_flag):
@@ -2278,7 +2294,7 @@ class EntityResolver ():
             else:
                 return 3
 
-    #@profile
+    # @profile
     def update_Candidatedict(self,candidate_tuple,non_discriminative_flag):
         candidateText=candidate_tuple[0]
 
@@ -2300,6 +2316,7 @@ class EntityResolver ():
         self.CandidateBase_dict[normalized_candidate]=feature_list
 
 
+    # @profile
     def extract_vectorized(self,row_tweetID,row_sentID,row_entry_batch,row_tweetWordList,row_phase1Candidates):
 
         #phase 1 candidates for one sentence
@@ -2615,7 +2632,7 @@ class EntityResolver ():
         # self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets_for_current_batch)
 
 
-
+    # @profile
     def get_candidateFeatureBase(self):
         #convert the CandidateFeatureBase from a dictionary to dataframe---> CandidateFeatureBaseDF
         candidateBaseHeaders=['candidate', 'batch', 'length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','last-update']

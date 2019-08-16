@@ -203,7 +203,8 @@ class SatadishaModule():
             return ''.join(li)
         else:
             return strip_op
-    #@profile
+            
+    # @profile
     def extract(self,batch,batch_number): 
         #df = read_csv('eric_trump.csv', index_col='ID', header=0, encoding='utf-8')
         
@@ -610,7 +611,7 @@ class SatadishaModule():
         return (self.df_out,self.CTrie,time_in,time_out,self.phase2stopWordList)
 
         #return sorted_candidateBase
-    #@profile
+    # @profile
     def append_rows(self,df_holder):
     
         self.df_out = pd.DataFrame(df_holder,columns=('tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList', 'phase1Candidates','start_time','entry_batch','annotation'))

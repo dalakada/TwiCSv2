@@ -209,15 +209,15 @@ sentence_arr=[sentences[ind] for ind in index_list]
 # 9002784
 # ]
 
-tweets_sentences_selected_list=[
-2408748,
-4100185,
-6506668,
-8180959,
-10783618,
-12411229,
-14144886
-]
+# tweets_sentences_selected_list=[
+# 2408748,
+# 4100185,
+# 6506668,
+# 8180959,
+# 10783618,
+# 12411229,
+# 14144886
+# ]
 
 # for num in tweets_selected_list:
 # 	print(mentions_thro[tweets.index(num)],',')
@@ -244,25 +244,27 @@ tweets_sentences_selected_list=[
 # print([mentions_cumulative[index]/calculation_arr_time[index] for index in range(len(calculation_arr_time))])
 
 # ###Twitter NLP
-ritter_thro=[
-122.7426976,
-119.4662436,
-119.2457328,
-121.2426272,
-118.5742003,
-120.6666698,
-118.5096126,
-119.3225615,
-120.6713982,
-122.2119689,
-123.5434402,
-124.7191388,
-125.6602219,
-125.3875695,
-125.890977,
-126.5619919,
-111.2549642
-]
+
+# ritter_thro=[
+# 122.7426976,
+# 119.4662436,
+# 119.2457328,
+# 121.2426272,
+# 118.5742003,
+# 120.6666698,
+# 118.5096126,
+# 119.3225615,
+# 120.6713982,
+# 122.2119689,
+# 123.5434402,
+# 124.7191388,
+# 125.6602219,
+# 125.3875695,
+# 125.890977,
+# 126.5619919,
+# 111.2549642
+# ]
+
 # ritter_mention_thro=[90.01475961,
 # 93.97489671,
 # 96.5508335,
@@ -281,8 +283,8 @@ ritter_thro=[
 # 100.832014,
 # 96.35872038]
 
-for num in tweets_sentences_selected_list:
-	print(ritter_thro[sentence_arr.index(num)],',')
+# for num in tweets_sentences_selected_list:
+# 	print(ritter_thro[sentence_arr.index(num)],',')
 
 # # ###Neuro-NER
 # neuro_mention_thro=[68.48688266,
@@ -305,3 +307,18 @@ for num in tweets_sentences_selected_list:
 
 # for num in tweets_selected_list:
 # 	print(neuro_thro[tweets.index(num)],',')
+
+df_size=['101.3 MB', '110.2 MB', '118.8 MB', '118.8 MB', '120.6 MB', '75.2 MB', '117.8 MB', '119.8 MB', '123.8 MB', '123.5 MB', '124.0 MB', '108.6 MB', '120.7 MB', '120.8 MB', '120.6 MB', '119.8 MB', '120.7 MB', '119.5 MB', '26.2 MB', '113.9 MB', '113.9 MB', '120.5 MB', '118.2 MB']
+
+input_df_size=['31.3 MB', '31.5 MB', '31.1 MB', '31.5 MB', '31.2 MB', '17.2 MB', '31.5 MB', '31.4 MB', '31.5 MB', '31.6 MB', '31.3 MB', '26.6 MB', '31.1 MB', '31.3 MB', '31.4 MB', '31.5 MB', '31.5 MB', '31.5 MB', '3.2 MB', '31.4 MB', '31.3 MB', '31.4 MB', '31.6 MB']
+
+input_size=0
+twics_size=0
+
+for i in range(len(input_df_size)):
+
+	input_size+=float(input_df_size[i][:-3])
+	twics_size+=float(df_size[i][:-3])
+
+print(input_size)
+print((twics_size)/len(df_size))

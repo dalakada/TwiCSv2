@@ -33,12 +33,12 @@ fieldnames=['candidate','freq','length','cap','start_of_sen','abbrv','all_cap','
 
 global total_time
 total_time=0
-Phase1= phase1.SatadishaModule()
-Phase2 = phase2.EntityResolver()
+# Phase1= phase1.SatadishaModule()
+# Phase2 = phase2.EntityResolver()
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/TwiCSv2/production_code/tweets_3k_annotated.csv",sep =',', encoding='utf-8',keep_default_na=False)
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated.csv",sep =',', encoding='utf-8',keep_default_na=False)
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/venezuela.csv",sep =',', encoding='utf-8',keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated.csv",sep =',', encoding='utf-8',keep_default_na=False)
+tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/venezuela.csv",sep =',', encoding='utf-8',keep_default_na=False)
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio.csv",sep =',', keep_default_na=False)
@@ -70,7 +70,7 @@ whole_level=[]
 max_batch_value=112
 test_sets=[]
 
-kf = KFold(n_splits=5,random_state=1000) 
+# kf = KFold(n_splits=5,random_state=1000) 
 
 #  #validation
 # for train_ind,test_ind in kf.split(tweets_unpartitoned):
@@ -209,13 +209,13 @@ Phase2 = phase2.EntityResolver()
 ind=0
 
 acc_holder=[]
-for train_ind,test_ind in kf.split(tweets_unpartitoned):
+# for train_ind,test_ind in kf.split(tweets_unpartitoned):
 # for ind in range(len(test_sets)):
-# for ind in range(len([1])):
+for ind in range(len([1])):
 
 
-    tweets=tweets_unpartitoned.iloc[test_ind]
-    # tweets=tweets_unpartitoned
+    # tweets=tweets_unpartitoned.iloc[test_ind]
+    tweets=tweets_unpartitoned
     # tweets=test_sets[ind]
     z_score=1
         # batch_size_ratio_float= batch_size_ratio/100.0
@@ -259,7 +259,7 @@ for train_ind,test_ind in kf.split(tweets_unpartitoned):
     candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweets)
 
     new_acc_list=Phase2.finish()
-    accuracy_list_stanford,accuracy_list_opencalai,accuracy_list_ritter,accuracy_list_neuroner=Phase2.finish_other_systems()
+    # accuracy_list_stanford,accuracy_list_opencalai,accuracy_list_ritter,accuracy_list_neuroner=Phase2.finish_other_systems()
     time_out=time.time()
     elapsedTime= time_out-time_in
     total_time+=elapsedTime
@@ -297,6 +297,11 @@ print('twics_recall:',twics_recall)
 print(sum(twics_f1)/len(twics_f1))
 print(sum(twics_precision)/len(twics_precision))
 print(sum(twics_recall)/len(twics_recall))
+
+#f= 0.6846846846846847+0.6461538461538461+0.5912408759124088+0.6411764705882353+0.46956521739130436
+#p= 0.6229508196721312+0.6222222222222222+0.6183206106870229+0.6411764705882353+0.43548387096774194
+#r=  0.76+.672+0.5664335664335665+0.6411764705882353+0.5094339622641509
+
 
 # print("Stanford\n",stanford)
 # print("Ritter\n",ritter)

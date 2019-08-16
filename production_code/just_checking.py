@@ -84,7 +84,7 @@ import re
 # tweetWordList_cappos = list(map(lambda element : (element[0],element[1]), filter(lambda element : capCheck(element[1]), enumerate(lst))))
 # print(tweetWordList_cappos)
 #------------------------------------------------ for my PC ------------------------------------------------------
-
+# tweets_unpartitoned_input=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/venezuela.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated_output_backup.csv",sep =',', keep_default_na=False)
 # print(len(tweets_unpartitoned))
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated_output.csv",sep =',', keep_default_na=False)
@@ -92,11 +92,11 @@ import re
 
 
 ################---------TWICS INPUTS
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade.csv",sep =',', keep_default_na=False)
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio.csv",sep =',', keep_default_na=False)
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/pikapika.csv",sep =',', keep_default_na=False)
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/ripcity.csv",sep =',', keep_default_na=False)
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billnye.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned_input=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned_input=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned_input=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/pikapika.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned_input=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/ripcity.csv",sep =',', keep_default_na=False)
+tweets_unpartitoned_input=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billnye.csv",sep =',', keep_default_na=False)
 
 # tweets_unpartitoned=pd.read_csv("deduplicated_test.csv",sep =';')
 
@@ -119,7 +119,7 @@ import re
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/ritter-billdeblasio-output.csv",sep =',', keep_default_na=False)
 
 ################---------OpenCalai OUTPUTS
-
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/opencalai_versions/venezuela_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/opencalai_versions/pikapika_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/opencalai_versions/ripcity_output.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/opencalai_versions/billnye_output.csv",sep =',', keep_default_na=False)
@@ -127,6 +127,7 @@ import re
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/opencalai_versions/billdeblasio_output.csv",sep =',', keep_default_na=False)
 
 ################---------STANFORD OUTPUTS
+# fp= open("/home/satadisha/Desktop/stanford-ner-2016-10-31/stanford_venezuela_mentions.txt","r")
 # fp= open("/home/satadisha/Desktop/stanford-ner-2016-10-31/stanford_roevwade_mentions.txt","r")
 # fp= open("/home/satadisha/Desktop/stanford-ner-2016-10-31/stanford_pikapika_mentions.txt","r")
 # fp= open("/home/satadisha/Desktop/stanford-ner-2016-10-31/stanford_billdeblasio_mentions.txt","r")
@@ -189,49 +190,49 @@ import re
 #     if not os.path.exists(sub_dir):
 #         os.makedirs(sub_dir)
 
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 
-total_count=0
-max_length=0
-fc=0
-# f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/20110208_"+str(fc)+".txt","w")
-# f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist_inputs/20110206_"+str(fc)+".txt","w")
-dir_count=0
-dir_text_length=0
-directory='/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/1M_'+str(dir_count)+'_input/deploy/'
-# f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/tweets_1million_for_others_"+str(fc)+".txt","w")
-f=open(directory+"tweets_1million_for_others_"+str(fc)+".txt","w")
+# total_count=0
+# max_length=0
+# fc=0
+# # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/20110208_"+str(fc)+".txt","w")
+# # f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist_inputs/20110206_"+str(fc)+".txt","w")
+# dir_count=0
+# dir_text_length=0
+# directory='/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/1M_'+str(dir_count)+'_input/deploy/'
+# # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/tweets_1million_for_others_"+str(fc)+".txt","w")
+# f=open(directory+"tweets_1million_for_others_"+str(fc)+".txt","w")
 
-file_sum=0
+# file_sum=0
 
-for index, row in tweets_unpartitoned.iterrows():
-    tweet_to_include= str(row['TweetText'])+' --eosc\n'
-    if(max_length<5000):
-        f.write(tweet_to_include)
-        max_length+=1
-        dir_text_length+=1
-    else:
-        file_sum+=max_length
-        f.close()
-        fc+=1
-        # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/20110208_"+str(fc)+".txt","w")
-        # f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist_inputs/20110206_"+str(fc)+".txt","w")
-        if(dir_text_length<25000):
-            f=open(directory+"tweets_1million_for_others_"+str(fc)+".txt","w")
-            dir_text_length+=1
-        else:
-            dir_count+=1
-            directory='/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/1M_'+str(dir_count)+'_input/deploy/'
-            f=open(directory+"tweets_1million_for_others_"+str(fc)+".txt","w")
-            dir_text_length=1
-        f.write(tweet_to_include)
-        max_length=1
-    total_count+=1
-if((len(tweets_unpartitoned)%5000)!=0):
-    file_sum+=max_length
-    f.close()
+# for index, row in tweets_unpartitoned.iterrows():
+#     tweet_to_include= str(row['TweetText'])+' --eosc\n'
+#     if(max_length<5000):
+#         f.write(tweet_to_include)
+#         max_length+=1
+#         dir_text_length+=1
+#     else:
+#         file_sum+=max_length
+#         f.close()
+#         fc+=1
+#         # f= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/20110208_"+str(fc)+".txt","w")
+#         # f= open("/home/satadisha/Desktop/GitProjects/twitter_nlp-master/nist_inputs/20110206_"+str(fc)+".txt","w")
+#         if(dir_text_length<25000):
+#             f=open(directory+"tweets_1million_for_others_"+str(fc)+".txt","w")
+#             dir_text_length+=1
+#         else:
+#             dir_count+=1
+#             directory='/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/data/1M_'+str(dir_count)+'_input/deploy/'
+#             f=open(directory+"tweets_1million_for_others_"+str(fc)+".txt","w")
+#             dir_text_length=1
+#         f.write(tweet_to_include)
+#         max_length=1
+#     total_count+=1
+# if((len(tweets_unpartitoned)%5000)!=0):
+#     file_sum+=max_length
+#     f.close()
 
-print(str(total_count),len(tweets_unpartitoned),str(file_sum),str(dir_count))
+# print(str(total_count),len(tweets_unpartitoned),str(file_sum),str(dir_count))
 
 
 #------------------------------commenting everything from here
@@ -244,23 +245,23 @@ print(str(total_count),len(tweets_unpartitoned),str(file_sum),str(dir_count))
 # fp= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/output/billdeblasio_input_2019-05-28_13-50-22-975417/mentions_output.txt","r")
 # fp= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/output/pikapika_input_2019-05-28_13-42-00-707381/mentions_output.txt","r")
 # fp= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/output/ripcity_input_2019-05-28_13-38-57-902131/mentions_output.txt","r")
-# fp= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/output/billnye_input_2019-05-28_13-44-47-648703/mentions_output.txt","r")
+fp= open("/home/satadisha/Desktop/GitProjects/NeuroNER-master/neuroner/output/billnye_input_2019-05-28_13-44-47-648703/mentions_output.txt","r")
 
 
 
-# mentions_list = fp.read().split("\n") # Create a list containing all lines
-# fp.close() # Close file
+mentions_list = fp.read().split("\n") # Create a list containing all lines
+fp.close() # Close file
 
-# # print(len(mentions_list),len(tweets_unpartitoned))
+# print(len(mentions_list),len(tweets_unpartitoned))
 
-# output_index=0
+output_index=0
 
-# all_annotations=[]
-# all_outputs=[]
+all_annotations=[]
+all_outputs=[]
 
-# tp_counter_outer=0
-# fn_counter_outer=0
-# fp_counter_outer=0
+tp_counter_outer=0
+fn_counter_outer=0
+fp_counter_outer=0
 
 # #------------------------------commenting to here
 
@@ -268,93 +269,97 @@ print(str(total_count),len(tweets_unpartitoned),str(file_sum),str(dir_count))
 # fn_counter_outer_twics=0
 # fp_counter_outer_twics=0
 
-# for index, row in tweets_unpartitoned.iterrows():
+for index, row in tweets_unpartitoned_input.iterrows():
 
 #     # print(index)
 
-#     all_postitive_reintroduction_counter_inner=0
-#     tp_counter_inner=0
-#     fn_counter_inner=0
-#     fp_counter_inner=0
-#     unrecovered_annotated_mention_list=[]
+    all_postitive_reintroduction_counter_inner=0
+    tp_counter_inner=0
+    fn_counter_inner=0
+    fp_counter_inner=0
+    unrecovered_annotated_mention_list=[]
 
-#     all_postitive_reintroduction_counter_inner_twics=0
-#     tp_counter_inner_twics=0
-#     fn_counter_inner_twics=0
-#     fp_counter_inner_twics=0
-#     unrecovered_annotated_mention_list_twics=[]
+    # all_postitive_reintroduction_counter_inner_twics=0
+    # tp_counter_inner_twics=0
+    # fn_counter_inner_twics=0
+    # fp_counter_inner_twics=0
+    # unrecovered_annotated_mention_list_twics=[]
 
-#     annotated_mention_list=[]
-#     tweet_level_candidate_list=str(row['mentions_other']).split(';')
-#     for tweet_level_candidates in tweet_level_candidate_list:
-#         sentence_level_cand_list= tweet_level_candidates.split(',')
-#         annotated_mention_list.extend(sentence_level_cand_list)
-#     annotated_mention_list=list(map(lambda element: element.lower().strip(),annotated_mention_list))
-#     annotated_mention_list=list(filter(lambda element: (element !=''), annotated_mention_list))
-#     annotated_mention_list_for_twiCS= copy.deepcopy(annotated_mention_list)
+    annotated_mention_list=[]
+    # tweet_level_candidate_list=str(row['mentions_other']).split(';') (tweets_unpartitoned_input[tweets_unpartitoned_input['ID']==row['ID'], 'mentions_limited_types'].loc[0])
+    tweet_level_candidate_list=str(row['mentions_limited_types']).split(';')
+
+    # tweet_level_candidate_list=str(tweets_unpartitoned_input[tweets_unpartitoned_input['ID']==row['ID']]['mentions_limited_types'].iloc[0]).split(';')
+
+    for tweet_level_candidates in tweet_level_candidate_list:
+        sentence_level_cand_list= tweet_level_candidates.split(',')
+        annotated_mention_list.extend(sentence_level_cand_list)
+    annotated_mention_list=list(map(lambda element: element.lower().strip(),annotated_mention_list))
+    annotated_mention_list=list(filter(lambda element: (element !=''), annotated_mention_list))
+    annotated_mention_list_for_twiCS= copy.deepcopy(annotated_mention_list)
 
 
-#     # ritter_candidate_list=str(row['Output']).split(',')
-#     # ritter_mention_list=list(map(lambda element: element.lower().strip(),ritter_candidate_list))
-#     # ritter_mention_list=list(filter(lambda element: (element !=''), ritter_mention_list))
-#     # output_mentions_list_twics_flat= copy.deepcopy(ritter_mention_list)
+    # ritter_candidate_list=str(row['Output']).split(',')
+    # ritter_mention_list=list(map(lambda element: element.lower().strip(),ritter_candidate_list))
+    # ritter_mention_list=list(filter(lambda element: (element !=''), ritter_mention_list))
+    # output_mentions_list_twics_flat= copy.deepcopy(ritter_mention_list)
 
-#     calai_candidate_list=str(row['calai_candidates']).split(',')
-#     calai_candidate_list=list(map(lambda element: element.lower().strip(),calai_candidate_list))
-#     calai_candidate_list=list(filter(lambda element: (element !=''), calai_candidate_list))
-#     output_mentions_list_twics_flat= copy.deepcopy(calai_candidate_list)
+    # calai_candidate_list=str(row['calai_candidates']).split(',')
+    # calai_candidate_list=list(map(lambda element: element.lower().strip(),calai_candidate_list))
+    # calai_candidate_list=list(filter(lambda element: (element !=''), calai_candidate_list))
+    # output_mentions_list_twics_flat= copy.deepcopy(calai_candidate_list)
 
 #     # all_annotations.extend(annotated_mention_list)
 #     # all_outputs.extend(output_mentions_list_twics_flat)
 
-#     # output_mentions_list_twics=ast.literal_eval(row['output_mentions'])
-#     # # print(output_mentions_list_twics)
-#     # # output_mentions_list_twics=[eval(list_str) for list_str in output_mentions_list_twics]
-#     # output_mentions_list_twics_flat = [item.lower() for sublist in output_mentions_list_twics for item in sublist]
-#     # output_mentions_list_twics_flat=list(filter(lambda element: element !='', output_mentions_list_twics_flat))
+    # output_mentions_list_twics=ast.literal_eval(row['output_mentions'])
+    # # print(output_mentions_list_twics)
+    # # output_mentions_list_twics=[eval(list_str) for list_str in output_mentions_list_twics]
+    # output_mentions_list_twics_flat = [item.lower() for sublist in output_mentions_list_twics for item in sublist]
+    # output_mentions_list_twics_flat=list(filter(lambda element: element !='', output_mentions_list_twics_flat))
 
-#     all_postitive_counter_inner_twics=len(output_mentions_list_twics_flat)
+    # all_postitive_counter_inner_twics=len(output_mentions_list_twics_flat)
 
 # #------------------------------commenting from here
 
-    # output_mentions_list= mentions_list[output_index].split(',')
-    # output_mentions_list=list(map(lambda element: element.lower().strip(),output_mentions_list))
-    # output_mentions_list=list(filter(lambda element: element !='', output_mentions_list))
+    output_mentions_list= mentions_list[output_index].split(',')
+    output_mentions_list=list(map(lambda element: element.lower().strip(),output_mentions_list))
+    output_mentions_list=list(filter(lambda element: element !='', output_mentions_list))
 
-    # all_postitive_counter_inner=len(output_mentions_list)
+    all_postitive_counter_inner=len(output_mentions_list)
 
-    # # print(index, annotated_mention_list, output_mentions_list)
-    # all_annotations.extend(annotated_mention_list)
-    # all_outputs.extend(output_mentions_list)
+    # print(index, annotated_mention_list, output_mentions_list)
+    all_annotations.extend(annotated_mention_list)
+    all_outputs.extend(output_mentions_list)
 
-    # while(annotated_mention_list):
-    #     if(len(output_mentions_list)):
-    #         annotated_candidate= annotated_mention_list.pop()
-    #         if(annotated_candidate in output_mentions_list):
-    #             output_mentions_list.pop(output_mentions_list.index(annotated_candidate))
-    #             tp_counter_inner+=1
-    #         else:
-    #             unrecovered_annotated_mention_list.append(annotated_candidate)
-    #     else:
-    #         unrecovered_annotated_mention_list.extend(annotated_mention_list)
-    #         break
+    while(annotated_mention_list):
+        if(len(output_mentions_list)):
+            annotated_candidate= annotated_mention_list.pop()
+            if(annotated_candidate in output_mentions_list):
+                output_mentions_list.pop(output_mentions_list.index(annotated_candidate))
+                tp_counter_inner+=1
+            else:
+                unrecovered_annotated_mention_list.append(annotated_candidate)
+        else:
+            unrecovered_annotated_mention_list.extend(annotated_mention_list)
+            break
 
-    # print(unrecovered_annotated_mention_list)
-    # print('--------------------')
+    print(unrecovered_annotated_mention_list)
+    print('--------------------')
 
     # unrecovered_annotated_mention_list_outer.extend(unrecovered_annotated_mention_list)
-    # fn_counter_inner=len(unrecovered_annotated_mention_list)
-    # fp_counter_inner=all_postitive_counter_inner- tp_counter_inner
+    fn_counter_inner=len(unrecovered_annotated_mention_list)
+    fp_counter_inner=all_postitive_counter_inner- tp_counter_inner
 
-    # tp_counter_outer+=tp_counter_inner
-    # fn_counter_outer+=fn_counter_inner
-    # fp_counter_outer+=fp_counter_inner
+    tp_counter_outer+=tp_counter_inner
+    fn_counter_outer+=fn_counter_inner
+    fp_counter_outer+=fp_counter_inner
 
 # #------------------------------commenting to here
 
 
 # #------------------------------commenting from here
-#     print(index, annotated_mention_list_for_twiCS, output_mentions_list_twics_flat)
+    # print(index, annotated_mention_list_for_twiCS, output_mentions_list_twics_flat)
 
     # all_annotations.extend(annotated_mention_list)
     # all_outputs.extend(output_mentions_list_twics_flat)
@@ -373,14 +378,14 @@ print(str(total_count),len(tweets_unpartitoned),str(file_sum),str(dir_count))
 
     # print(unrecovered_annotated_mention_list_twics)
     # print('===========================')
-    # unrecovered_annotated_mention_list_outer.extend(unrecovered_annotated_mention_list)
+    # # unrecovered_annotated_mention_list_outer.extend(unrecovered_annotated_mention_list)
 
     # fn_counter_inner_twics=len(unrecovered_annotated_mention_list_twics)
     # fp_counter_inner_twics=all_postitive_counter_inner_twics- tp_counter_inner_twics
 
-    # tp_counter_outer+=tp_counter_inner_twics
-    # fn_counter_outer+=fn_counter_inner_twics
-    # fp_counter_outer+=fp_counter_inner_twics
+    # # tp_counter_outer+=tp_counter_inner_twics
+    # # fn_counter_outer+=fn_counter_inner_twics
+    # # fp_counter_outer+=fp_counter_inner_twics
 
     # tp_counter_outer_twics+=tp_counter_inner_twics
     # fn_counter_outer_twics+=fn_counter_inner_twics
@@ -388,7 +393,7 @@ print(str(total_count),len(tweets_unpartitoned),str(file_sum),str(dir_count))
 # #------------------------------commenting to here
 
 
-    # output_index+=1
+    output_index+=1
 
 
 # #------------------------------commenting from here
@@ -396,14 +401,14 @@ print(str(total_count),len(tweets_unpartitoned),str(file_sum),str(dir_count))
 # print('fn_counter_outer: ',fn_counter_outer)
 # print('fp_counter_outer: ',fp_counter_outer)
 
-# all_annotations=set(all_annotations)
-# all_outputs=set(all_outputs)
+all_annotations=set(all_annotations)
+all_outputs=set(all_outputs)
 
-# tp_counter_outer= len(all_annotations.intersection(all_outputs))
-# fp_counter_outer=len(all_outputs-all_annotations)
-# fn_counter_outer=len(all_annotations-all_outputs)
-# total_mentions=len(all_outputs)
-# total_annotation=len(all_annotations)
+tp_counter_outer= len(all_annotations.intersection(all_outputs))
+fp_counter_outer=len(all_outputs-all_annotations)
+fn_counter_outer=len(all_annotations-all_outputs)
+total_mentions=len(all_outputs)
+total_annotation=len(all_annotations)
 
 # print(tp_counter_outer,fp_counter_outer,fn_counter_outer,total_mentions,total_annotation)
 
@@ -452,17 +457,17 @@ print(str(total_count),len(tweets_unpartitoned),str(file_sum),str(dir_count))
 # twics_precision= tp_counter_outer_twics/(tp_counter_outer_twics+fp_counter_outer_twics)
 # twics_recall= tp_counter_outer_twics/(tp_counter_outer_twics+fn_counter_outer_twics)
 
-# twics_precision= tp_counter_outer/(tp_counter_outer+fp_counter_outer)
-# twics_recall= tp_counter_outer/(tp_counter_outer+fn_counter_outer)
+twics_precision= tp_counter_outer/(tp_counter_outer+fp_counter_outer)
+twics_recall= tp_counter_outer/(tp_counter_outer+fn_counter_outer)
 
-# print('twics_precision: ', twics_precision)
-# print('twics_recall: ', twics_recall)
+print('twics_precision: ', twics_precision)
+print('twics_recall: ', twics_recall)
 
 # ritter_f1 = (2*ritter_precision*ritter_recall)/(ritter_precision+ritter_recall)
 # print('ritter_f1: ',ritter_f1)
 
-# twics_f1 = (2*twics_precision*twics_recall)/(twics_precision+twics_recall)
-# print('twics_f1: ',twics_f1)
+twics_f1 = (2*twics_precision*twics_recall)/(twics_precision+twics_recall)
+print('twics_f1: ',twics_f1)
 # #------------------------------commenting to here
 
 #------------------------------commenting everything to here

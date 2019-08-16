@@ -29,11 +29,23 @@ from sklearn.utils import shuffle
 from scipy import spatial
 # from sklearn.decomposition import PCA as sklearnPCA
 # from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+import os
+import sys
 from sklearn.manifold import TSNE
 import adjustText
 # from pandas.tools.plotting import parallel_coordinates
 
 warnings.filterwarnings("ignore")
+
+
+def convert_bytes(num):
+    """
+    this function will convert bytes to MB.... GB... etc
+    """
+    for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+        if num < 1024.0:
+            return "%3.1f %s" % (num, x)
+        num /= 1024.0
 
 # thread_processed=0
 # stream_count=0
@@ -81,7 +93,7 @@ total_time=0
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
 
 # /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 # print(len(tweets_unpartitoned))
 
 #NIST DATA FILES
@@ -199,9 +211,9 @@ batch_size=100000
 # count=0
 #reintroduction_threshold_array=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 
-dir_list=['20110123','20110124','20110125','20110126','20110127','20110128','20110129','20110130','20110131','20110201','20110202','20110203','20110204','20110205','20110206','20110207','20110208']
+# dir_list=['20110123','20110124','20110125','20110126','20110127','20110128','20110129','20110130','20110131','20110201','20110202','20110203','20110204','20110205','20110206','20110207','20110208']
 # dir_list=['20110208']
-read_path="/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/"
+# read_path="/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/"
 
 # reintroduction_threshold_array=[20,40,60,80,100]
 # reintroduction_threshold_array=[20]
@@ -218,6 +230,7 @@ max_batch_value=112
 # reintroduction_batch_threshold=range((val+1))
 execution_time_list=[]
 tweets_been_processed_list=[]
+input_size_arr=[]
 
 # for reintroduction_threshold in reintroduction_threshold_array:
 execution_time_list_inner=[]
@@ -228,6 +241,7 @@ tweets_been_processed=0
 
 batch_count=0
 
+
 Phase1= phase1.SatadishaModule()
 Phase2 = phase2.EntityResolver()
 
@@ -237,10 +251,14 @@ complete_tweet_dataframe_grouped_df_sorted_arr= []
 for list_index in range(len(dir_list)):
     dir_name=dir_list[list_index]
     full_read_path=read_path+dir_name+'.csv'
+    
     tweets=pd.read_csv(full_read_path,sep =',')
     length=len(tweets)
     tweets_length_list.append(length)
     print(dir_name,"***",length)
+
+    # input_file_size = convert_bytes(os.stat(full_read_path).st_size)
+    # input_size_arr.append(copy.deepcopy(input_file_size))
 
     # batch_size=length
 
@@ -249,6 +267,9 @@ for list_index in range(len(dir_list)):
 #     print('Tweets are in memory...')
 
     for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
+        
+        input_size_arr.append(convert_bytes(sys.getsizeof(tweet_batch)))
+
 
         tuple_of= Phase1.extract(tweet_batch,batch_count)
         tweet_base=tuple_of[0]
@@ -342,6 +363,7 @@ for list_index in range(len(dir_list)):
 
         batch_count+=1
 
+        print(input_size_arr)
         print(tweets_been_processed_list_inner)
         print(execution_time_list_inner)
         print(tweets_length_list)
