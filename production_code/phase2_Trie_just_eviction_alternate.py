@@ -1005,6 +1005,42 @@ class EntityResolver ():
     #         else:
 
 
+    def get_nearest_neighbours(self, ambiguous_candidates, candidate_featureBase_DF):
+
+        candidate_featureBase_DF['index_col'] = range(0, len(candidate_featureBase_DF))
+        ambiguous_candidates_index_col= candidate_featureBase_DF[candidate_featureBase_DF['status']=='a']['index_col'].tolist()
+        # print(ambiguous_candidates_index_col)
+        
+        candidate_featureBase_DF_reduced=candidate_featureBase_DF[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']].values
+        # print(type(candidate_featureBase_DF_reduced))
+
+        D = spatial.distance.squareform(spatial.distance.pdist(candidate_featureBase_DF_reduced))
+        # print(type(D))
+        # print(D[:2])
+        # for elem in ambiguous_candidates_index_col:
+        #     print(type(D[elem]), type(D[elem].tolist()))
+
+        D_ambiguous = [D[elem].tolist() for elem in ambiguous_candidates_index_col]
+        # print(len(ambiguous_candidates),len(D_ambiguous))
+
+        # print(D_ambiguous[:2])
+
+        closest = np.argsort(D_ambiguous, axis=1)
+        # print(closest[:5])
+
+        closest_non_ambiguous= [[elem for elem in row if not elem in ambiguous_candidates_index_col] for row in closest]
+        k=10
+        k_closest_non_ambiguous= np.array(closest_non_ambiguous)[:, 0:k]
+        k_closest_non_ambiguous_candidates=[[candidate_featureBase_DF[candidate_featureBase_DF['index_col']==elem]['status'].item() for elem in row] for row in k_closest_non_ambiguous]
+        print(len(ambiguous_candidates),len(k_closest_non_ambiguous_candidates))
+        # print(k_closest_non_ambiguous_candidates)
+
+        ambiguous_candidate_nearest_neighbours = {candidate_featureBase_DF[candidate_featureBase_DF['index_col']==ambiguous_candidates_index_col[ind]].candidate.item():k_closest_non_ambiguous_candidates[ind]  for ind in range(len(ambiguous_candidates_index_col))}
+        print(ambiguous_candidate_nearest_neighbours)
+
+
+
+
 
     def set_cb(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold):
 
