@@ -188,6 +188,8 @@ class EntityResolver ():
         self.my_classifier= svm.SVM1('training.csv')
 
         
+
+        
         # self.step_size=20
         # self.upper_reintroduction_limit=100 + self.step_size
 

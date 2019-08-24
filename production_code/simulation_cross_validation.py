@@ -3,11 +3,11 @@
 import SatadishaModule_final_trie as phase1
 
 # import phase2_Trie_baseline_reintroduction_effectiveness as phase2
-import phase2_Trie_baseline_reintroduction_efficiency as phase2
+# import phase2_Trie_baseline_reintroduction_efficiency as phase2
 # import phase2_Trie_just_reintroduction as phase2 #just reintroduction, eviction without experimental result computation
 # import phase2_Trie_just_reintroduction_alternate as phase2 # testing reintroduction with various thresholds in unified framework
 # import phase2_Trie_reintroduction as phase2
-# import phase2_Trie_just_eviction_alternate as phase2 # testing eviction with various thresholds in unified framework
+import phase2_Trie_just_eviction_alternate as phase2 # testing eviction with various thresholds in unified framework
 
 import datetime
 from threading import Thread
@@ -93,7 +93,7 @@ total_time=0
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/tweets_1million_for_others.csv",sep =',')
 
 # /home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv #---- for my lab PC
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_1million_for_others.csv",sep =',')
 # print(len(tweets_unpartitoned))
 
 #NIST DATA FILES
@@ -215,6 +215,9 @@ batch_size=100000
 # dir_list=['20110208']
 # read_path="/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/"
 
+dir_list=['tweets_1million_for_others']
+read_path="/home/satadisha/Desktop/GitProjects/data/"
+
 # reintroduction_threshold_array=[20,40,60,80,100]
 # reintroduction_threshold_array=[20]
 # reintroduction_threshold_array=[20]
@@ -222,7 +225,7 @@ batch_size=100000
 # val=len(dir_list)
 # print('# of batches: ',(val))
 
-max_batch_value=112
+# max_batch_value=112
 # max_batch_value=0
 # max_batch_value=13
 
@@ -257,6 +260,11 @@ for list_index in range(len(dir_list)):
     tweets_length_list.append(length)
     print(dir_name,"***",length)
 
+    val=math.ceil(length/batch_size)-1
+
+    print('# of batches: ',(val+1))
+    max_batch_value=val
+
     # input_file_size = convert_bytes(os.stat(full_read_path).st_size)
     # input_size_arr.append(copy.deepcopy(input_file_size))
 
@@ -268,7 +276,7 @@ for list_index in range(len(dir_list)):
 
     for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
         
-        input_size_arr.append(convert_bytes(sys.getsizeof(tweet_batch)))
+        # input_size_arr.append(convert_bytes(sys.getsizeof(tweet_batch)))
 
 
         tuple_of= Phase1.extract(tweet_batch,batch_count)
@@ -314,9 +322,9 @@ for list_index in range(len(dir_list)):
     # candidate_base_post_Phase2, complete_tweet_dataframe_grouped_df_sorted_arr, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
     # time_out=phase2_output_time
 
-    #phase2_Trie_just_eviction_alternate
-    # candidate_base_post_Phase2, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
-    # time_out=phase2_output_time
+        #phase2_Trie_just_eviction_alternate
+        candidate_base_post_Phase2, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
+        # time_out=phase2_output_time
 
     # # #phase2_Trie_reintroduction
     # candidate_base_post_Phase2= Phase2.executor(tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)    
@@ -329,9 +337,9 @@ for list_index in range(len(dir_list)):
     # time_out=time.time()
 
     # #phase2_Trie_baseline_reintroduction_efficiency
-        reintroduction_threshold_dummy=2
-        candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted,phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
-    #taking phase2 output time in phase 2 class due to unrelated index reset operation at the end of last batch
+    #     reintroduction_threshold_dummy=2
+    #     candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted,phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
+    # #taking phase2 output time in phase 2 class due to unrelated index reset operation at the end of last batch
     # time_out=time.time()
         time_out=phase2_output_time
 
@@ -363,13 +371,15 @@ for list_index in range(len(dir_list)):
 
         batch_count+=1
 
-        print(input_size_arr)
+        # print(input_size_arr)
         print(tweets_been_processed_list_inner)
         print(execution_time_list_inner)
         print(tweets_length_list)
 
         tweets_been_processed_list.append(tweets_been_processed_list_inner)
         execution_time_list.append(execution_time_list_inner)
+
+    # candidate_base_post_Phase2.to_csv("/home/satadisha/Desktop/GitProjects/data/candidate_base_1.03M.csv", sep=',', encoding='utf-8',index=False)
 
 # #----------------------------------------------------------------------------comment out when testing efficiency
 # output_df['output_mentions'] = ''

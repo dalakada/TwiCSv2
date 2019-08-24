@@ -1,0 +1,47 @@
+precision for eviction at batch 1 for threshold 10 :0.44
+precision for eviction at batch 2 for threshold 10 :0.18181818181818182
+precision for eviction at batch 3 for threshold 10 :0.2714285714285714
+precision for eviction at batch 4 for threshold 10 :0.3069306930693069
+precision for eviction at batch 5 for threshold 10 :0.4
+precision for eviction at batch 6 for threshold 10 :0.39416058394160586
+precision for eviction at batch 7 for threshold 10 :0.5159574468085106
+precision for eviction at batch 8 for threshold 10 :0.6590038314176245
+precision for eviction at batch 9 for threshold 10 :0.7468354430379747
+precision for eviction at batch 10 for threshold 10 :0.840531561461794
+
+precision for eviction at batch 1 for threshold 20 :0.45454545454545453
+precision for eviction at batch 2 for threshold 20 :0.1724137931034483
+precision for eviction at batch 3 for threshold 20 :0.26229508196721313
+precision for eviction at batch 4 for threshold 20 :0.30434782608695654
+precision for eviction at batch 5 for threshold 20 :0.39805825242718446
+precision for eviction at batch 6 for threshold 20 :0.371900826446281
+precision for eviction at batch 7 for threshold 20 :0.514792899408284
+precision for eviction at batch 8 for threshold 20 :0.6582278481012658
+precision for eviction at batch 9 for threshold 20 :0.7411347517730497
+precision for eviction at batch 10 for threshold 20 :0.8351648351648352
+
+precision for eviction at batch 1 for threshold 30 :0.46153846153846156
+precision for eviction at batch 2 for threshold 30 :0.18518518518518517
+precision for eviction at batch 3 for threshold 30 :0.21153846153846154
+precision for eviction at batch 4 for threshold 30 :0.27848101265822783
+precision for eviction at batch 5 for threshold 30 :0.391304347826087
+precision for eviction at batch 6 for threshold 30 :0.3611111111111111
+precision for eviction at batch 7 for threshold 30 :0.4827586206896552
+precision for eviction at batch 8 for threshold 30 :0.6456310679611651
+precision for eviction at batch 9 for threshold 30 :0.7213114754098361
+precision for eviction at batch 10 for threshold 30 :0.8212765957446808
+
+precision for eviction at batch 1 for threshold 40 :0.42424242424242425
+precision for eviction at batch 2 for threshold 40 :0.21739130434782608
+precision for eviction at batch 3 for threshold 40 :0.18181818181818182
+precision for eviction at batch 4 for threshold 40 :0.3076923076923077
+precision for eviction at batch 5 for threshold 40 :0.4025974025974026
+precision for eviction at batch 6 for threshold 40 :0.3548387096774194
+precision for eviction at batch 7 for threshold 40 :0.48
+precision for eviction at batch 8 for threshold 40 :0.630057803468208
+precision for eviction at batch 9 for threshold 40 :0.7101449275362319
+precision for eviction at batch 10 for threshold 40 :0.803030303030303
+
+incomplete tweets:  [[8337, 15035, 19067, 38703, 44513, 51101, 56984, 62626, 68257, 70056, 70756], [8337, 15035, 19124, 38826, 45531, 53117, 59915, 65986, 72706, 79247, 81237], [8337, 15100, 20282, 41197, 48167, 55763, 62800, 69046, 75853, 82994, 85088], [8337, 15103, 20413, 41779, 49196, 56811, 64089, 70503, 77401, 84740, 87226], [8337, 15428, 20785, 42520, 50006, 57771, 65381, 71962, 78971, 86443, 89289]]
+
+
