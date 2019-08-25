@@ -327,6 +327,7 @@ class EntityResolver ():
             self.baseline_effectiveness=0
 
             #frequency_w_decay related information
+            self.self.ambiguous_candidates_prev_vector={}
             self.ambiguous_candidates_non_ambiguous_neighbour_dict={}
             self.ambiguous_candidates_ambiguous_neighbour_dict={}
             self.ambiguous_candidates_transition_dict={}
@@ -1096,6 +1097,7 @@ class EntityResolver ():
         candidate_featureBase_DF_ambiguous=candidate_featureBase_DF[candidate_featureBase_DF['status']=='a']
         
         candidate_featureBase_DF_reduced=candidate_featureBase_DF[reduced_cols].values
+        self.ambiguous_candidates_prev_vector={}
         # print(type(candidate_featureBase_DF_reduced))
 
         # candidate_featureBase_DF_non_ambiguous_reduced=candidate_featureBase_DF_non_ambiguous_reduced[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']].values
@@ -1134,7 +1136,7 @@ class EntityResolver ():
         #     for neighbour in ambiguous_candidate_nearest_non_ambiguous_neighbours[candidate]:
         #         print(neighbour)
 
-        k_closest_ambiguous = np.array(closest_ambiguous)[:, 0:k]
+        k_closest_ambiguous = np.array(closest_ambiguous)[:, 1:(k+1)]
         k_closest_ambiguous_candidates = [[candidate_featureBase_DF.loc[candidate_featureBase_DF['index_col']==elem,reduced_cols].values.tolist()[0] for elem in row] for row in k_closest_ambiguous]
         # ambiguous_candidate_nearest_ambiguous_neighbours = {candidate_featureBase_DF[candidate_featureBase_DF['index_col']==ambiguous_candidates_index_col[ind]].candidate.item():k_closest_ambiguous_candidates[ind]  for ind in range(len(ambiguous_candidates_index_col))}
 
@@ -1149,19 +1151,30 @@ class EntityResolver ():
 
         for ind in range(len(ambiguous_candidates_index_col)):
             candidate=candidate_featureBase_DF[candidate_featureBase_DF['index_col']==ambiguous_candidates_index_col[ind]].candidate.item()
+            candidate_vector=candidate_featureBase_DF.loc[candidate_featureBase_DF['index_col']==ambiguous_candidates_index_col[ind],reduced_cols].values.tolist()[0]
+
             ambiguous_neighbours_list=k_closest_ambiguous_candidates[ind]
+            ambiguous_neighbours_distance_list=[spatial.distance.euclidean(candidate_vector, neighbour) for neighbour in ambiguous_neighbours_list]
             non_ambiguous_neighbours_list=k_closest_non_ambiguous_candidates[ind]
-            self.ambiguous_candidates_non_ambiguous_neighbour_dict[candidate]=non_ambiguous_neighbours_list
-            self.ambiguous_candidates_ambiguous_neighbour_dict[candidate]=ambiguous_neighbours_list
+            non_ambiguous_neighbours_distance_list=[spatial.distance.euclidean(candidate_vector, neighbour) for neighbour in non_ambiguous_neighbours_list]
+
+            # print(ambiguous_neighbours_distance_list)
+            # print(non_ambiguous_neighbours_distance_list)
+
+            self.ambiguous_candidates_prev_vector[candidate]=candidate_vector
+
+            self.ambiguous_candidates_non_ambiguous_neighbour_dict[candidate]=(non_ambiguous_neighbours_list,non_ambiguous_neighbours_distance_list)
+            self.ambiguous_candidates_ambiguous_neighbour_dict[candidate]=(ambiguous_neighbours_list,ambiguous_neighbours_distance_list)
+
             if(candidate in self.ambiguous_candidates_history_dict.keys()):
                 self.ambiguous_candidates_history_dict[candidate]+=1
             else:
                 self.ambiguous_candidates_history_dict[candidate]=1
-
+        # print('dict_lengths: ', len(self.ambiguous_candidates_non_ambiguous_neighbour_dict),len(self.ambiguous_candidates_ambiguous_neighbour_dict))
         return
 
 
-    def get_transition_activity(self, ambiguous_candidate_record_list, partial_derivatives_arr):
+    def get_transition_activity(self, ambiguous_candidate_record):
 
         active_distances=0
         inactive_distances=0
@@ -1169,29 +1182,44 @@ class EntityResolver ():
         active_transitions=0
         inactive_transitions=0
 
-        candidate=ambiguous_candidate_record_list[0]
-        candidate_vector=ambiguous_candidate_record_list[1:]
+        # print(ambiguous_candidate_record)
+        # print(ambiguous_candidate_record[0],ambiguous_candidate_record[1:-1],ambiguous_candidate_record[-1])
 
-        knn_active= self.ambiguous_candidates_non_ambiguous_neighbour_dict[candidate]
+        candidate=ambiguous_candidate_record[0]
+        candidate_vector=ambiguous_candidate_record[1:-1]
+        candidate_vector_prev=self.ambiguous_candidates_prev_vector[candidate]
+        partial_derivatives_arr=ambiguous_candidate_record[-1]
+
+        knn_active= self.ambiguous_candidates_non_ambiguous_neighbour_dict[candidate][0]
+        knn_prev_active_distance=self.ambiguous_candidates_non_ambiguous_neighbour_dict[candidate][1]
         knn_inactive= self.ambiguous_candidates_ambiguous_neighbour_dict[candidate]
+        knn_prev_inactive_distance=self.ambiguous_candidates_ambiguous_neighbour_dict[candidate][1]
 
         for p_active in knn_active:
             euclidean_distance=spatial.distance.euclidean(candidate_vector, p_active)
             displacement_vector=np.subtract(p_active,candidate_vector)
-            unit_vector=np.divide(displacement_vector,np.linalg.norm(displacement_vector))
+            displacement_vector_magnitude=np.linalg.norm(displacement_vector)
+            # print(candidate_vector, p_active)
+            # print(displacement_vector,displacement_vector_magnitude)
+            unit_vector=np.divide(displacement_vector,displacement_vector_magnitude)
             directional_derivative=np.dot(partial_derivatives_arr,unit_vector)
             active_transitions+=euclidean_distance*directional_derivative
             active_distances+=euclidean_distance
         active_transition_score=(active_transitions/active_distances)
+        # print('=================================================')
 
         for p_inactive in knn_inactive:
             euclidean_distance=spatial.distance.euclidean(candidate_vector, p_inactive)
             displacement_vector=np.subtract(p_inactive,candidate_vector)
-            unit_vector=np.divide(displacement_vector,np.linalg.norm(displacement_vector))
+            displacement_vector_magnitude=np.linalg.norm(displacement_vector)
+            # print(candidate_vector, p_inactive)
+            # print(displacement_vector,displacement_vector_magnitude)
+            unit_vector=np.divide(displacement_vector,displacement_vector_magnitude)
             directional_derivative=np.dot(partial_derivatives_arr,unit_vector)
             inactive_transitions+=euclidean_distance*directional_derivative
             inactive_distances+=euclidean_distance
         inactive_transition_score=(inactive_transitions/inactive_distances)
+        # print('=================================================')
         
         if candidate in self.ambiguous_candidates_transition_dict.keys():
             transition= self.ambiguous_candidates_transition_dict[candidate] + (active_transition_score-inactive_transition_score)
@@ -1296,8 +1324,11 @@ class EntityResolver ():
             
             #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!not used
             # ambiguous_candidates_in_batch_freq_w_decay=self.frequencies_w_decay(ambiguous_candidates_in_batch_w_Count,candidate_featureBase_DF)
-            ambiguous_candidate_records_list, partial_derivatives_array=self.my_classifier.get_partial_derivatives(ambiguous_candidate_records_before_classification)
-            transition_activity_list= np.vectorize(self.get_transition_activity,otypes=[object])(ambiguous_candidate_records_list,partial_derivatives_array)
+            ambiguous_candidate_records_list =self.my_classifier.get_partial_derivatives(ambiguous_candidate_records_before_classification)
+            # print('transition function input length: ',len(ambiguous_candidate_records_list))
+            # for elem in ambiguous_candidate_records_list:
+            #     print(elem)
+            transition_activity_list= np.vectorize(self.get_transition_activity,signature='(m)->()')(ambiguous_candidate_records_list)
             print(transition_activity_list)
                                   
 

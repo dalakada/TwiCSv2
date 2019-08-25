@@ -43,7 +43,8 @@ class SVM1():
         'normalized_s-o-sCap',
         'normalized_all-cap',
         'normalized_non-cap',
-        'normalized_non-discriminative'
+        'normalized_non-discriminative',
+        'partial_derivatives'
         ]
 
         self.h=1e-5
@@ -293,7 +294,7 @@ class SVM1():
         x_ambiguous['normalized_non-cap']=x_ambiguous['non-cap']/x_ambiguous['cumulative']
         x_ambiguous['normalized_non-discriminative']=x_ambiguous['non-discriminative']/x_ambiguous['cumulative']
 
-        ambiguous_candidate_records_list= x_ambiguous[self.return_cols].values.tolist()
+        
 
         dataframe_len= len(x_ambiguous)
 
@@ -319,14 +320,18 @@ class SVM1():
         
         partial_grad_list=[partial_grad_1,partial_grad_2,partial_grad_3,partial_grad_4,partial_grad_5,partial_grad_6]
         partial_grad_restacked=np.stack(partial_grad_list, axis=1)
+        x_ambiguous['partial_derivatives']=partial_grad_restacked.tolist()
 
         # print(len(partial_grad_1),len(partial_grad_2),len(partial_grad_3),len(partial_grad_4),len(partial_grad_5),len(partial_grad_6),len(partial_grad_restacked))
 
         # for elem in range(len(partial_grad_1)):
         #     print(partial_grad_1[elem],partial_grad_2[elem],partial_grad_3[elem],partial_grad_4[elem],partial_grad_5[elem],partial_grad_6[elem])
         #     print(partial_grad_restacked[elem])
+        ambiguous_candidate_records_list= x_ambiguous[self.return_cols].values.tolist()
+        # for elem in ambiguous_candidate_records_list:
+        #     print(elem)
 
-        return ambiguous_candidate_records_list, partial_grad_restacked
+        return ambiguous_candidate_records_list
 
 
     def run(self,x_test,z_score_threshold):
