@@ -1,7 +1,9 @@
  
 # coding: utf-8
 import pandas as pd
-# import numpy as np
+import time
+import numexpr
+import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
 from sklearn import svm
@@ -10,8 +12,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import LinearSVC
 from sklearn.calibration import CalibratedClassifierCV
 
-import autograd.numpy as np
-from autograd import elementwise_grad, grad
+# import autograd.numpy as np
+# from autograd import elementwise_grad, grad
 
 from scipy import stats
 
@@ -38,13 +40,22 @@ class SVM1():
         'normalized_non-discriminative'
         ]
 
-        self.return_cols = ['candidate','normalized_cap',
+        # self.return_cols = ['candidate','normalized_cap',
+        # 'normalized_capnormalized_substring-cap',
+        # 'normalized_s-o-sCap',
+        # 'normalized_all-cap',
+        # 'normalized_non-cap',
+        # 'normalized_non-discriminative',
+        # 'partial_derivatives']
+
+        self.return_cols = ['candidate','cumulative','batch_updation','age_decayed_freq','normalized_cap',
         'normalized_capnormalized_substring-cap',
         'normalized_s-o-sCap',
         'normalized_all-cap',
         'normalized_non-cap',
         'normalized_non-discriminative',
-        'partial_derivatives'
+        'partial_derivatives_good',
+        'partial_derivatives_bad'
         ]
 
         self.h=1e-5
@@ -201,137 +212,276 @@ class SVM1():
         # return self.partial_grad_1(x_point)
         # func=self.clf.predict_proba(x_ambiguous_arr)[elem]
 
-        x_ambiguous['normalized_cap_plus_delta']=x_ambiguous['normalized_cap']+self.h
-        # plus_delta=self.clf.predict_proba(x_ambiguous_arr)[:, 1]
-        x_ambiguous['normalized_cap_minus_delta']=x_ambiguous['normalized_cap']-2*self.h
+        x_ambiguous['normalized_cap_plus_delta']=x_ambiguous['normalized_cap'].values+self.h
+        x_ambiguous['normalized_cap_minus_delta']=x_ambiguous['normalized_cap'].values-2*self.h
 
-        plus_delta_arr= x_ambiguous[self.grad1_cols_plus].values
+        plus_delta_arr= x_ambiguous[self.grad1_cols_plus].values.tolist()
         # plus_delta=self.clf.predict_proba(plus_delta_arr)[:,1]
 
-        minus_delta_arr= x_ambiguous[self.grad1_cols_minus].values
+        minus_delta_arr= x_ambiguous[self.grad1_cols_minus].values.tolist()
 
-        return np.concatenate([plus_delta_arr,minus_delta_arr], axis=0)
+        # return np.concatenate([plus_delta_arr,minus_delta_arr], axis=0)
+        return plus_delta_arr+minus_delta_arr
         # minus_delta=self.clf.predict_proba(minus_delta_arr)[:,1]
 
         # return np.divide(np.subtract(plus_delta,minus_delta),(2*self.h))
 
     def partial_grad_2(self,x_ambiguous):
 
-        x_ambiguous['normalized_capnormalized_substring-cap_plus_delta']=x_ambiguous['normalized_capnormalized_substring-cap']+self.h
-        x_ambiguous['normalized_capnormalized_substring-cap_minus_delta']=x_ambiguous['normalized_capnormalized_substring-cap']-2*self.h
+        x_ambiguous['normalized_capnormalized_substring-cap_plus_delta']=x_ambiguous['normalized_capnormalized_substring-cap'].values+self.h
+        x_ambiguous['normalized_capnormalized_substring-cap_minus_delta']=x_ambiguous['normalized_capnormalized_substring-cap'].values-2*self.h
 
-        plus_delta_arr= x_ambiguous[self.grad2_cols_plus].values
-        # plus_delta=self.clf.predict_proba(plus_delta_arr)
-
-        minus_delta_arr= x_ambiguous[self.grad2_cols_minus].values
+        plus_delta_arr= x_ambiguous[self.grad2_cols_plus].values.tolist()
+        minus_delta_arr= x_ambiguous[self.grad2_cols_minus].values.tolist()
         # minus_delta=self.clf.predict_proba(minus_delta_arr)
 
         # return np.divide(np.subtract(plus_delta,minus_delta),(2*self.h))
-        return np.concatenate([plus_delta_arr,minus_delta_arr], axis=0)
+        # return np.concatenate([plus_delta_arr,minus_delta_arr], axis=0)
+        return plus_delta_arr+minus_delta_arr
       
     def partial_grad_3(self,x_ambiguous):
 
-        x_ambiguous['normalized_s-o-sCap_plus_delta']=x_ambiguous['normalized_s-o-sCap']+self.h
-        x_ambiguous['normalized_s-o-sCap_minus_delta']=x_ambiguous['normalized_s-o-sCap']-2*self.h
+        x_ambiguous['normalized_s-o-sCap_plus_delta']=x_ambiguous['normalized_s-o-sCap'].values+self.h
+        x_ambiguous['normalized_s-o-sCap_minus_delta']=x_ambiguous['normalized_s-o-sCap'].values-2*self.h
 
-        plus_delta_arr= x_ambiguous[self.grad3_cols_plus].values
-        # plus_delta=self.clf.predict_proba(plus_delta_arr)
-
-        minus_delta_arr= x_ambiguous[self.grad3_cols_minus].values
+        plus_delta_arr= x_ambiguous[self.grad3_cols_plus].values.tolist()
+        minus_delta_arr= x_ambiguous[self.grad3_cols_minus].values.tolist()
         # minus_delta=self.clf.predict_proba(minus_delta_arr)
 
         # return np.divide(np.subtract(plus_delta,minus_delta),(2*self.h))
-        return np.concatenate([plus_delta_arr,minus_delta_arr], axis=0)
+        # return np.concatenate([plus_delta_arr,minus_delta_arr], axis=0)
+        return plus_delta_arr+minus_delta_arr
 
     def partial_grad_4(self,x_ambiguous):
 
-        x_ambiguous['normalized_all-cap_plus_delta']=x_ambiguous['normalized_all-cap']+self.h
-        x_ambiguous['normalized_all-cap_minus_delta']=x_ambiguous['normalized_all-cap']-2*self.h
+        x_ambiguous['normalized_all-cap_plus_delta']=x_ambiguous['normalized_all-cap'].values+self.h
+        x_ambiguous['normalized_all-cap_minus_delta']=x_ambiguous['normalized_all-cap'].values-2*self.h
 
-        plus_delta_arr= x_ambiguous[self.grad4_cols_plus].values
-        # plus_delta=self.clf.predict_proba(plus_delta_arr)
-
-        minus_delta_arr= x_ambiguous[self.grad4_cols_minus].values
+        plus_delta_arr= x_ambiguous[self.grad4_cols_plus].values.tolist()
+        minus_delta_arr= x_ambiguous[self.grad4_cols_minus].values.tolist()
         # minus_delta=self.clf.predict_proba(minus_delta_arr)
 
         # return np.divide(np.subtract(plus_delta,minus_delta),(2*self.h))
-        return np.concatenate([plus_delta_arr,minus_delta_arr], axis=0)
+        # return np.concatenate([plus_delta_arr,minus_delta_arr], axis=0)
+        return plus_delta_arr+minus_delta_arr
 
     def partial_grad_5(self,x_ambiguous):
 
-        x_ambiguous['normalized_non-cap_plus_delta']=x_ambiguous['normalized_non-cap']+self.h
-        x_ambiguous['normalized_non-cap_minus_delta']=x_ambiguous['normalized_non-cap']-2*self.h
+        x_ambiguous['normalized_non-cap_plus_delta']=x_ambiguous['normalized_non-cap'].values+self.h
+        x_ambiguous['normalized_non-cap_minus_delta']=x_ambiguous['normalized_non-cap'].values-2*self.h
 
-        plus_delta_arr= x_ambiguous[self.grad5_cols_plus].values
-        # plus_delta=self.clf.predict_proba(plus_delta_arr)
-
-        minus_delta_arr= x_ambiguous[self.grad5_cols_minus].values
+        plus_delta_arr= x_ambiguous[self.grad5_cols_plus].values.tolist()
+        minus_delta_arr= x_ambiguous[self.grad5_cols_minus].values.tolist()
         # minus_delta=self.clf.predict_proba(minus_delta_arr)
 
         # return np.divide(np.subtract(plus_delta,minus_delta),(2*self.h))
-        return np.concatenate([plus_delta_arr,minus_delta_arr], axis=0)
+        # return np.concatenate([plus_delta_arr,minus_delta_arr], axis=0)
+        return plus_delta_arr+minus_delta_arr
 
     def partial_grad_6(self,x_ambiguous):
 
-        x_ambiguous['normalized_non-discriminative_plus_delta']=x_ambiguous['normalized_non-discriminative']+self.h
-        x_ambiguous['normalized_non-discriminative_minus_delta']=x_ambiguous['normalized_non-discriminative']-2*self.h
+        x_ambiguous['normalized_non-discriminative_plus_delta']=x_ambiguous['normalized_non-discriminative'].values+self.h
+        x_ambiguous['normalized_non-discriminative_minus_delta']=x_ambiguous['normalized_non-discriminative'].values-2*self.h
 
-        plus_delta_arr= x_ambiguous[self.grad6_cols_plus].values
-        # plus_delta=self.clf.predict_proba(plus_delta_arr)
-
-        minus_delta_arr= x_ambiguous[self.grad6_cols_minus].values
+        plus_delta_arr= x_ambiguous[self.grad6_cols_plus].values.tolist()
+        minus_delta_arr= x_ambiguous[self.grad6_cols_minus].values.tolist()
         # minus_delta=self.clf.predict_proba(minus_delta_arr)
 
         # return np.divide(np.subtract(plus_delta,minus_delta),(2*self.h))
-        return np.concatenate([plus_delta_arr,minus_delta_arr], axis=0)
+        # return np.concatenate([plus_delta_arr,minus_delta_arr], axis=0)
+        return plus_delta_arr+minus_delta_arr
 
+    def normalizing_df(self,a,b):
+        # return (row[i]/row[-1] for i in range(len(row)-1))
+        expr = 'a/b'
+        return numexpr.evaluate(expr)
+        # return_row
 
-    def get_partial_derivatives(self,x_ambiguous):
-        x_ambiguous['normalized_cap']=x_ambiguous['cap']/x_ambiguous['cumulative']
-        x_ambiguous['normalized_capnormalized_substring-cap']=x_ambiguous['substring-cap']/x_ambiguous['cumulative']
-        x_ambiguous['normalized_s-o-sCap']=x_ambiguous['s-o-sCap']/x_ambiguous['cumulative']
-        x_ambiguous['normalized_all-cap']=x_ambiguous['all-cap']/x_ambiguous['cumulative']
-        x_ambiguous['normalized_non-cap']=x_ambiguous['non-cap']/x_ambiguous['cumulative']
-        x_ambiguous['normalized_non-discriminative']=x_ambiguous['non-discriminative']/x_ambiguous['cumulative']
+    def column_ops(self,cap,substring_cap,s_o_sCap,all_cap,non_cap,non_discriminative,cumulative):
+        norm_cap= (cap/cumulative)
+        norm_substring_cap=(substring_cap/cumulative)
+        norm_s_o_sCap= (s_o_sCap/cumulative)
+        norm_all_cap= (all_cap/cumulative)
+        norm_non_cap= (non_cap/cumulative)
+        norm_non_discriminative= (non_discriminative/cumulative)
 
+        normalized_cap_plus_delta= norm_cap+self.h
+        normalized_cap_minus_delta= norm_cap-self.h
+
+        normalized_substring_plus_delta=norm_substring_cap+self.h
+        normalized_substring_minus_delta=norm_substring_cap-self.h
+
+        normalized_sos_cap_plus_delta=norm_s_o_sCap+self.h
+        normalized_sos_cap_minus_delta=norm_s_o_sCap-self.h
+
+        normalized_all_cap_plus_delta=norm_all_cap+self.h
+        normalized_all_cap_minus_delta=norm_all_cap-self.h
+
+        normalized_non_cap_plus_delta=norm_non_cap+self.h
+        normalized_non_cap_minus_delta=norm_non_cap-self.h
+
+        normalized_discriminative_plus_delta=norm_non_discriminative+self.h
+        normalized_discriminative_minus_delta=norm_non_discriminative-self.h
+
+        return norm_cap,norm_substring_cap,norm_s_o_sCap,norm_all_cap,norm_non_cap,norm_non_discriminative,normalized_cap_plus_delta,normalized_cap_minus_delta,normalized_substring_plus_delta,normalized_substring_minus_delta,normalized_sos_cap_plus_delta,normalized_sos_cap_minus_delta,normalized_all_cap_plus_delta,normalized_all_cap_minus_delta,normalized_non_cap_plus_delta,normalized_non_cap_minus_delta,normalized_discriminative_plus_delta,normalized_discriminative_minus_delta
+
+    def get_partial_derivatives(self,x_ambiguous,dataframe_len):
+
+        time00=time.time()
+
+        # x_ambiguous['normalized_cap']=x_ambiguous['cap'].values/x_ambiguous['cumulative'].values 
+        # x_ambiguous['normalized_capnormalized_substring-cap']=x_ambiguous['substring-cap'].values/x_ambiguous['cumulative'].values 
+        # x_ambiguous['normalized_s-o-sCap']=x_ambiguous['s-o-sCap'].values/x_ambiguous['cumulative'].values 
+        # x_ambiguous['normalized_all-cap']=x_ambiguous['all-cap'].values/x_ambiguous['cumulative'].values 
+        # x_ambiguous['normalized_non-cap']=x_ambiguous['non-cap'].values/x_ambiguous['cumulative'].values 
+        # x_ambiguous['normalized_non-discriminative']=x_ambiguous['non-discriminative'].values/x_ambiguous['cumulative'].values
+
+        # x_ambiguous['normalized_cap_plus_delta']=x_ambiguous['normalized_cap'].values+self.h
+        # x_ambiguous['normalized_cap_minus_delta']=x_ambiguous['normalized_cap'].values-2*self.h
+
+        # x_ambiguous['normalized_capnormalized_substring-cap_plus_delta']=x_ambiguous['normalized_capnormalized_substring-cap'].values+self.h
+        # x_ambiguous['normalized_capnormalized_substring-cap_minus_delta']=x_ambiguous['normalized_capnormalized_substring-cap'].values-2*self.h
+
+        # x_ambiguous['normalized_s-o-sCap_plus_delta']=x_ambiguous['normalized_s-o-sCap'].values+self.h
+        # x_ambiguous['normalized_s-o-sCap_minus_delta']=x_ambiguous['normalized_s-o-sCap'].values-2*self.h
+
+        # x_ambiguous['normalized_all-cap_plus_delta']=x_ambiguous['normalized_all-cap'].values+self.h
+        # x_ambiguous['normalized_all-cap_minus_delta']=x_ambiguous['normalized_all-cap'].values-2*self.h
+
+        # x_ambiguous['normalized_non-cap_plus_delta']=x_ambiguous['normalized_non-cap'].values+self.h
+        # x_ambiguous['normalized_non-cap_minus_delta']=x_ambiguous['normalized_non-cap'].values-2*self.h
+
+        # x_ambiguous['normalized_non-discriminative_plus_delta']=x_ambiguous['normalized_non-discriminative'].values+self.h
+        # x_ambiguous['normalized_non-discriminative_minus_delta']=x_ambiguous['normalized_non-discriminative'].values-2*self.h
+
+        # x_ambiguous['normalized_cap_plus_delta']=x_ambiguous['normalized_cap'].apply(lambda x: x+self.h)
+        # x_ambiguous['normalized_cap_minus_delta']=x_ambiguous['normalized_cap'].apply(lambda x: x-2*self.h)
+
+        # x_ambiguous['normalized_capnormalized_substring-cap_plus_delta']=x_ambiguous['normalized_capnormalized_substring-cap'].apply(lambda x: x+self.h)
+        # x_ambiguous['normalized_capnormalized_substring-cap_minus_delta']=x_ambiguous['normalized_capnormalized_substring-cap'].apply(lambda x: x-2*self.h)
+
+        # x_ambiguous['normalized_s-o-sCap_plus_delta']=x_ambiguous['normalized_s-o-sCap'].apply(lambda x: x+self.h)
+        # x_ambiguous['normalized_s-o-sCap_minus_delta']=x_ambiguous['normalized_s-o-sCap'].apply(lambda x: x-2*self.h)
+
+        # x_ambiguous['normalized_all-cap_plus_delta']=x_ambiguous['normalized_all-cap'].apply(lambda x: x+self.h)
+        # x_ambiguous['normalized_all-cap_minus_delta']=x_ambiguous['normalized_all-cap'].apply(lambda x: x-2*self.h)
+
+        # x_ambiguous['normalized_non-cap_plus_delta']=x_ambiguous['normalized_non-cap'].apply(lambda x: x+self.h)
+        # x_ambiguous['normalized_non-cap_minus_delta']=x_ambiguous['normalized_non-cap'].apply(lambda x: x-2*self.h)
+
+        # x_ambiguous['normalized_non-discriminative_plus_delta']=x_ambiguous['normalized_non-discriminative'].apply(lambda x: x+self.h)
+        # x_ambiguous['normalized_non-discriminative_minus_delta']=x_ambiguous['normalized_non-discriminative'].apply(lambda x: x-2*self.h)
+
+        x_ambiguous=x_ambiguous.filter(['candidate','batch','length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','batch_updation','age_decayed_freq'])
+        x_ambiguous['normalized_cap'], x_ambiguous['normalized_capnormalized_substring-cap'], x_ambiguous['normalized_s-o-sCap'],x_ambiguous['normalized_all-cap'],x_ambiguous['normalized_non-cap'],x_ambiguous['normalized_non-discriminative'],x_ambiguous['normalized_cap_plus_delta'],x_ambiguous['normalized_cap_minus_delta'],x_ambiguous['normalized_capnormalized_substring-cap_plus_delta'],x_ambiguous['normalized_capnormalized_substring-cap_minus_delta'],x_ambiguous['normalized_s-o-sCap_plus_delta'],x_ambiguous['normalized_s-o-sCap_minus_delta'],x_ambiguous['normalized_all-cap_plus_delta'],x_ambiguous['normalized_all-cap_minus_delta'],x_ambiguous['normalized_non-cap_plus_delta'],x_ambiguous['normalized_non-cap_minus_delta'],x_ambiguous['normalized_non-discriminative_plus_delta'],x_ambiguous['normalized_non-discriminative_minus_delta']=zip(*np.vectorize(self.column_ops,otypes=[object])(x_ambiguous['cap'].values,x_ambiguous['substring-cap'].values,x_ambiguous['s-o-sCap'].values,x_ambiguous['all-cap'].values,x_ambiguous['non-cap'].values,x_ambiguous['non-discriminative'].values,x_ambiguous['cumulative'].values))
+
+        # x_ambiguous_list=x_ambiguous[['cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative']].values.tolist()
+        # x_ambiguous['normalized_cap'],x_ambiguous['normalized_capnormalized_substring-cap'],x_ambiguous['normalized_s-o-sCap'],x_ambiguous['normalized_all-cap'],x_ambiguous['normalized_non-cap'],x_ambiguous['normalized_non-discriminative']=zip(*np.vectorize(self.normalizing_df,signature='(m)->()')(x_ambiguous[['cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative']].values))
+        # x_ambiguous.iloc[:,['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']] = a[:,:-1]/a[:,-1,None]
+        
+        # x_ambiguous['normalized_cap'] = self.normalizing_df(x_ambiguous['cap'],x_ambiguous['cumulative'])
+        # x_ambiguous['normalized_capnormalized_substring-cap'] = self.normalizing_df(x_ambiguous['substring-cap'],x_ambiguous['cumulative'])
+        # x_ambiguous['normalized_s-o-sCap'] = self.normalizing_df(x_ambiguous['s-o-sCap'],x_ambiguous['cumulative'])
+        # x_ambiguous['normalized_all-cap'] = self.normalizing_df(x_ambiguous['all-cap'],x_ambiguous['cumulative'])
+        # x_ambiguous['normalized_non-cap'] = self.normalizing_df(x_ambiguous['non-cap'],x_ambiguous['cumulative'])
+        # x_ambiguous['normalized_non-discriminative'] = self.normalizing_df(x_ambiguous['non-discriminative'],x_ambiguous['cumulative'])
+
+        # x_ambiguous[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']] = x_ambiguous[['cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative']].div(x_ambiguous['cumulative'].values,axis=0)
         
 
-        dataframe_len= len(x_ambiguous)
+        # dataframe_len= len(x_ambiguous)
 
         # partial_grad_list=[self.partial_grad_1(x_ambiguous),self.partial_grad_2(x_ambiguous),self.partial_grad_3(x_ambiguous),self.partial_grad_4(x_ambiguous),self.partial_grad_5(x_ambiguous),self.partial_grad_6(x_ambiguous)]
         # partial_grad_restacked=np.stack(partial_grad_list, axis=1)
 
-        elementwise_del_list=[self.partial_grad_1(x_ambiguous),self.partial_grad_2(x_ambiguous),self.partial_grad_3(x_ambiguous),self.partial_grad_4(x_ambiguous),self.partial_grad_5(x_ambiguous),self.partial_grad_6(x_ambiguous)]
-        elementwise_del_list_concatenated=np.concatenate(elementwise_del_list, axis=0)
+        time0=time.time()
 
+        print('for pre-prep:', (time0-time00))
+
+        # elementwise_del_list=[self.partial_grad_1(x_ambiguous),self.partial_grad_2(x_ambiguous),self.partial_grad_3(x_ambiguous),self.partial_grad_4(x_ambiguous),self.partial_grad_5(x_ambiguous),self.partial_grad_6(x_ambiguous)]
+        # elementwise_del_list_concatenated=np.concatenate(elementwise_del_list, axis=0)
+
+        # elementwise_del_list_concatenated=self.partial_grad_1(x_ambiguous)+self.partial_grad_2(x_ambiguous)+self.partial_grad_3(x_ambiguous)+self.partial_grad_4(x_ambiguous)+self.partial_grad_5(x_ambiguous)+self.partial_grad_6(x_ambiguous)
+        elementwise_del_list_concatenated=x_ambiguous[self.grad1_cols_plus].values.tolist()+x_ambiguous[self.grad1_cols_minus].values.tolist()+x_ambiguous[self.grad2_cols_plus].values.tolist()+x_ambiguous[self.grad2_cols_minus].values.tolist()+x_ambiguous[self.grad3_cols_plus].values.tolist()+x_ambiguous[self.grad3_cols_minus].values.tolist()+x_ambiguous[self.grad4_cols_plus].values.tolist()+x_ambiguous[self.grad4_cols_minus].values.tolist()+x_ambiguous[self.grad5_cols_plus].values.tolist()+x_ambiguous[self.grad5_cols_minus].values.tolist()+x_ambiguous[self.grad6_cols_plus].values.tolist()+x_ambiguous[self.grad6_cols_minus].values.tolist()
         # for elem in elementwise_del_list:
         #     print(len(elem))
-        # print(len(elementwise_del_list_concatenated))
+        print(len(elementwise_del_list_concatenated))
 
-        elementwise_del_list_concatenated_output=self.clf.decision_function(elementwise_del_list_concatenated)
+        time1=time.time()
+
+        print('for prep: ',(time1-time0))
+
+        elementwise_del_list_concatenated_output=self.clf.predict_proba(elementwise_del_list_concatenated)
+
+        time2=time.time()
+
+        print('for predict_proba: ',(time2-time1))
+
+        elementwise_del_list_concatenated_output_good=elementwise_del_list_concatenated_output[:, 1]
+        elementwise_del_list_concatenated_output_bad=elementwise_del_list_concatenated_output[:, 0]
         # print(elementwise_del_list_concatenated_output)
 
-        partial_grad_1=np.divide(np.subtract(elementwise_del_list_concatenated_output[(0*dataframe_len):(1*dataframe_len)],elementwise_del_list_concatenated_output[(1*dataframe_len):(2*dataframe_len)]),(2*self.h))
-        partial_grad_2=np.divide(np.subtract(elementwise_del_list_concatenated_output[(2*dataframe_len):(3*dataframe_len)],elementwise_del_list_concatenated_output[(3*dataframe_len):(4*dataframe_len)]),(2*self.h))
-        partial_grad_3=np.divide(np.subtract(elementwise_del_list_concatenated_output[(4*dataframe_len):(5*dataframe_len)],elementwise_del_list_concatenated_output[(5*dataframe_len):(6*dataframe_len)]),(2*self.h))
-        partial_grad_4=np.divide(np.subtract(elementwise_del_list_concatenated_output[(6*dataframe_len):(7*dataframe_len)],elementwise_del_list_concatenated_output[(7*dataframe_len):(8*dataframe_len)]),(2*self.h))
-        partial_grad_5=np.divide(np.subtract(elementwise_del_list_concatenated_output[(8*dataframe_len):(9*dataframe_len)],elementwise_del_list_concatenated_output[(9*dataframe_len):(10*dataframe_len)]),(2*self.h))
-        partial_grad_6=np.divide(np.subtract(elementwise_del_list_concatenated_output[(10*dataframe_len):(11*dataframe_len)],elementwise_del_list_concatenated_output[(11*dataframe_len):(12*dataframe_len)]),(2*self.h))
+        partial_grad_1=np.divide(np.subtract(elementwise_del_list_concatenated_output_good[(0*dataframe_len):(1*dataframe_len)],elementwise_del_list_concatenated_output_good[(1*dataframe_len):(2*dataframe_len)]),(2*self.h))
+        partial_grad_2=np.divide(np.subtract(elementwise_del_list_concatenated_output_good[(2*dataframe_len):(3*dataframe_len)],elementwise_del_list_concatenated_output_good[(3*dataframe_len):(4*dataframe_len)]),(2*self.h))
+        partial_grad_3=np.divide(np.subtract(elementwise_del_list_concatenated_output_good[(4*dataframe_len):(5*dataframe_len)],elementwise_del_list_concatenated_output_good[(5*dataframe_len):(6*dataframe_len)]),(2*self.h))
+        partial_grad_4=np.divide(np.subtract(elementwise_del_list_concatenated_output_good[(6*dataframe_len):(7*dataframe_len)],elementwise_del_list_concatenated_output_good[(7*dataframe_len):(8*dataframe_len)]),(2*self.h))
+        partial_grad_5=np.divide(np.subtract(elementwise_del_list_concatenated_output_good[(8*dataframe_len):(9*dataframe_len)],elementwise_del_list_concatenated_output_good[(9*dataframe_len):(10*dataframe_len)]),(2*self.h))
+        partial_grad_6=np.divide(np.subtract(elementwise_del_list_concatenated_output_good[(10*dataframe_len):(11*dataframe_len)],elementwise_del_list_concatenated_output_good[(11*dataframe_len):(12*dataframe_len)]),(2*self.h))
         
-        partial_grad_list=[partial_grad_1,partial_grad_2,partial_grad_3,partial_grad_4,partial_grad_5,partial_grad_6]
-        partial_grad_restacked=np.stack(partial_grad_list, axis=1)
-        x_ambiguous['partial_derivatives']=partial_grad_restacked.tolist()
+        # partial_grad_list=[partial_grad_1,partial_grad_2,partial_grad_3,partial_grad_4,partial_grad_5,partial_grad_6]
+        # partial_grad_restacked=np.stack(partial_grad_list, axis=1)
+        # x_ambiguous['partial_derivatives_good']=partial_grad_restacked.tolist()
 
+        zipped= zip(partial_grad_1,partial_grad_2,partial_grad_3,partial_grad_4,partial_grad_5,partial_grad_6)
+        x_ambiguous['partial_derivatives_good']=list(zipped)
+
+        time3=time.time()
+        print('for partial_derivatives_good: ',(time3-time2))
+
+        partial_grad_1=np.divide(np.subtract(elementwise_del_list_concatenated_output_bad[(0*dataframe_len):(1*dataframe_len)],elementwise_del_list_concatenated_output_bad[(1*dataframe_len):(2*dataframe_len)]),(2*self.h))
+        partial_grad_2=np.divide(np.subtract(elementwise_del_list_concatenated_output_bad[(2*dataframe_len):(3*dataframe_len)],elementwise_del_list_concatenated_output_bad[(3*dataframe_len):(4*dataframe_len)]),(2*self.h))
+        partial_grad_3=np.divide(np.subtract(elementwise_del_list_concatenated_output_bad[(4*dataframe_len):(5*dataframe_len)],elementwise_del_list_concatenated_output_bad[(5*dataframe_len):(6*dataframe_len)]),(2*self.h))
+        partial_grad_4=np.divide(np.subtract(elementwise_del_list_concatenated_output_bad[(6*dataframe_len):(7*dataframe_len)],elementwise_del_list_concatenated_output_bad[(7*dataframe_len):(8*dataframe_len)]),(2*self.h))
+        partial_grad_5=np.divide(np.subtract(elementwise_del_list_concatenated_output_bad[(8*dataframe_len):(9*dataframe_len)],elementwise_del_list_concatenated_output_bad[(9*dataframe_len):(10*dataframe_len)]),(2*self.h))
+        partial_grad_6=np.divide(np.subtract(elementwise_del_list_concatenated_output_bad[(10*dataframe_len):(11*dataframe_len)],elementwise_del_list_concatenated_output_bad[(11*dataframe_len):(12*dataframe_len)]),(2*self.h))
+        
+        # partial_grad_list=[partial_grad_1,partial_grad_2,partial_grad_3,partial_grad_4,partial_grad_5,partial_grad_6]
+        # partial_grad_restacked=np.stack(partial_grad_list, axis=1)
+        # x_ambiguous['partial_derivatives_bad']=partial_grad_restacked.tolist()
+
+        
+
+        zipped= zip(partial_grad_1,partial_grad_2,partial_grad_3,partial_grad_4,partial_grad_5,partial_grad_6)
+        x_ambiguous['partial_derivatives_bad']=list(zipped)
+
+        time4=time.time()
+        print('for partial_derivatives_bad: ',(time4-time3))
+
+        # elementwise_del_list_concatenated_output=self.clf.decision_function(elementwise_del_list_concatenated)
+
+        # partial_grad_1=np.divide(np.subtract(elementwise_del_list_concatenated_output[(0*dataframe_len):(1*dataframe_len)],elementwise_del_list_concatenated_output[(1*dataframe_len):(2*dataframe_len)]),(2*self.h))
+        # partial_grad_2=np.divide(np.subtract(elementwise_del_list_concatenated_output[(2*dataframe_len):(3*dataframe_len)],elementwise_del_list_concatenated_output[(3*dataframe_len):(4*dataframe_len)]),(2*self.h))
+        # partial_grad_3=np.divide(np.subtract(elementwise_del_list_concatenated_output[(4*dataframe_len):(5*dataframe_len)],elementwise_del_list_concatenated_output[(5*dataframe_len):(6*dataframe_len)]),(2*self.h))
+        # partial_grad_4=np.divide(np.subtract(elementwise_del_list_concatenated_output[(6*dataframe_len):(7*dataframe_len)],elementwise_del_list_concatenated_output[(7*dataframe_len):(8*dataframe_len)]),(2*self.h))
+        # partial_grad_5=np.divide(np.subtract(elementwise_del_list_concatenated_output[(8*dataframe_len):(9*dataframe_len)],elementwise_del_list_concatenated_output[(9*dataframe_len):(10*dataframe_len)]),(2*self.h))
+        # partial_grad_6=np.divide(np.subtract(elementwise_del_list_concatenated_output[(10*dataframe_len):(11*dataframe_len)],elementwise_del_list_concatenated_output[(11*dataframe_len):(12*dataframe_len)]),(2*self.h))
+
+        # zipped= zip(partial_grad_1,partial_grad_2,partial_grad_3,partial_grad_4,partial_grad_5,partial_grad_6)
+        # x_ambiguous['partial_derivatives']=list(zipped)
         # print(len(partial_grad_1),len(partial_grad_2),len(partial_grad_3),len(partial_grad_4),len(partial_grad_5),len(partial_grad_6),len(partial_grad_restacked))
 
         # for elem in range(len(partial_grad_1)):
         #     print(partial_grad_1[elem],partial_grad_2[elem],partial_grad_3[elem],partial_grad_4[elem],partial_grad_5[elem],partial_grad_6[elem])
         #     print(partial_grad_restacked[elem])
-        ambiguous_candidate_records_list= x_ambiguous[self.return_cols].values.tolist()
+
+        # ambiguous_candidate_records_list= x_ambiguous[self.return_cols].values.tolist()
+        # time5=time.time()
+        # print('end: ',(time5-time4),(time5-time00))
+
         # for elem in ambiguous_candidate_records_list:
         #     print(elem)
 
-        return ambiguous_candidate_records_list
+        return x_ambiguous[self.return_cols]
 
 
     def run(self,x_test,z_score_threshold):

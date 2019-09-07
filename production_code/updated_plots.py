@@ -102,33 +102,33 @@ import matplotlib.colors as colors
 
 # #EXPERIMENT 2: reintroduction threshold for global variants experiment
 
-fig1 = plt.figure()
-plt.hold(True)
-plt.xticks(np.arange(20, 120, 20.0))
+# fig1 = plt.figure()
+# plt.hold(True)
+# plt.xticks(np.arange(20, 120, 20.0))
 
-reintroduction_threshold_arr=[20,40,60,80,100]
+# reintroduction_threshold_arr=[20,40,60,80,100]
 
-colours=['r','b','g','k','y']
+# colours=['r','b','g','k','y']
 
-line_style_patterns=[':','-.','--','-','+']
+# line_style_patterns=[':','-.','--','-','+']
 
-# combined_ranking_all_sketches_effectiveness_old= [[0.36363636363636365, 0.8181818181818182, 1.0, 1.0, 1.0], [0.4117647058823529, 0.8235294117647058, 1.0, 1.0, 1.0], [0.5806451612903226, 0.8387096774193549, 1.0, 1.0, 1.0], [0.55, 0.825, 1.0, 1.0, 1.0], [0.6129032258064516, 0.8387096774193549, 1.0, 1.0, 1.0], [0.6265060240963856, 0.8192771084337349, 0.9879518072289156, 1.0, 1.0], [0.631578947368421, 0.8333333333333334, 0.9912280701754386, 1.0, 1.0], [0.6068965517241379, 0.8068965517241379, 0.9862068965517241, 1.0, 1.0], [0.6022099447513812, 0.7955801104972375, 0.9834254143646409, 1.0, 1.0], [0.5951219512195122, 0.7853658536585366, 0.975609756097561, 1.0, 1.0], [0.6041666666666666, 0.7791666666666667, 0.975, 1.0, 1.0], [0.6066666666666667, 0.7766666666666666, 0.9733333333333334, 1.0, 1.0], [0.6264367816091954, 0.7873563218390804, 0.9741379310344828, 1.0, 1.0], [0.630272952853598, 0.7965260545905707, 0.9776674937965261, 1.0, 1.0], [0.6382978723404256, 0.8063829787234043, 0.9787234042553191, 1.0, 1.0], [0.6384180790960452, 0.8060263653483992, 0.9698681732580038, 1.0, 1.0], [0.6389351081530782, 0.8069883527454242, 0.9717138103161398, 1.0, 1.0], [0.6435045317220544, 0.8111782477341389, 0.972809667673716, 1.0, 1.0], [0.6508379888268156, 0.8212290502793296, 0.9748603351955307, 1.0, 1.0], [0.6529032258064517, 0.8206451612903226, 0.9754838709677419, 1.0, 1.0]]
-combined_ranking_all_sketches_effectiveness= [[0.2727272727272727, 0.9090909090909091, 1.0, 1.0, 1.0], [0.5, 0.9166666666666666, 1.0, 1.0, 1.0], [0.5588235294117647, 0.9117647058823529, 1.0, 1.0, 1.0], [0.5681818181818182, 0.9090909090909091, 1.0, 1.0, 1.0], [0.6081081081081081, 0.9054054054054054, 1.0, 1.0, 1.0], [0.6263736263736264, 0.9120879120879121, 1.0, 1.0, 1.0], [0.680327868852459, 0.9180327868852459, 1.0, 1.0, 1.0], [0.6845637583892618, 0.9060402684563759, 1.0, 1.0, 1.0], [0.6839378238341969, 0.9015544041450777, 1.0, 1.0, 1.0], [0.6774193548387096, 0.8940092165898618, 1.0, 1.0, 1.0], [0.689922480620155, 0.8992248062015504, 1.0, 1.0, 1.0], [0.6910828025477707, 0.8949044585987261, 1.0, 1.0, 1.0], [0.7016129032258065, 0.8978494623655914, 1.0, 1.0, 1.0], [0.7102803738317757, 0.8995327102803738, 1.0, 1.0, 1.0], [0.7025948103792415, 0.8962075848303394, 1.0, 1.0, 1.0], [0.6982456140350877, 0.8912280701754386, 1.0, 1.0, 1.0], [0.702660406885759, 0.8951486697965572, 1.0, 1.0, 1.0], [0.7012987012987013, 0.898989898989899, 1.0, 1.0, 1.0], [0.7059602649006622, 0.9033112582781457, 1.0, 1.0, 1.0], [0.7058096415327565, 0.9060568603213844, 1.0, 1.0, 1.0]]
-for index in range(len(combined_ranking_all_sketches_effectiveness)):
-	colour_string=colours[int(index/5)]
-	pattern_string=line_style_patterns[int(index%5)]
+# # combined_ranking_all_sketches_effectiveness_old= [[0.36363636363636365, 0.8181818181818182, 1.0, 1.0, 1.0], [0.4117647058823529, 0.8235294117647058, 1.0, 1.0, 1.0], [0.5806451612903226, 0.8387096774193549, 1.0, 1.0, 1.0], [0.55, 0.825, 1.0, 1.0, 1.0], [0.6129032258064516, 0.8387096774193549, 1.0, 1.0, 1.0], [0.6265060240963856, 0.8192771084337349, 0.9879518072289156, 1.0, 1.0], [0.631578947368421, 0.8333333333333334, 0.9912280701754386, 1.0, 1.0], [0.6068965517241379, 0.8068965517241379, 0.9862068965517241, 1.0, 1.0], [0.6022099447513812, 0.7955801104972375, 0.9834254143646409, 1.0, 1.0], [0.5951219512195122, 0.7853658536585366, 0.975609756097561, 1.0, 1.0], [0.6041666666666666, 0.7791666666666667, 0.975, 1.0, 1.0], [0.6066666666666667, 0.7766666666666666, 0.9733333333333334, 1.0, 1.0], [0.6264367816091954, 0.7873563218390804, 0.9741379310344828, 1.0, 1.0], [0.630272952853598, 0.7965260545905707, 0.9776674937965261, 1.0, 1.0], [0.6382978723404256, 0.8063829787234043, 0.9787234042553191, 1.0, 1.0], [0.6384180790960452, 0.8060263653483992, 0.9698681732580038, 1.0, 1.0], [0.6389351081530782, 0.8069883527454242, 0.9717138103161398, 1.0, 1.0], [0.6435045317220544, 0.8111782477341389, 0.972809667673716, 1.0, 1.0], [0.6508379888268156, 0.8212290502793296, 0.9748603351955307, 1.0, 1.0], [0.6529032258064517, 0.8206451612903226, 0.9754838709677419, 1.0, 1.0]]
+# combined_ranking_all_sketches_effectiveness= [[0.2727272727272727, 0.9090909090909091, 1.0, 1.0, 1.0], [0.5, 0.9166666666666666, 1.0, 1.0, 1.0], [0.5588235294117647, 0.9117647058823529, 1.0, 1.0, 1.0], [0.5681818181818182, 0.9090909090909091, 1.0, 1.0, 1.0], [0.6081081081081081, 0.9054054054054054, 1.0, 1.0, 1.0], [0.6263736263736264, 0.9120879120879121, 1.0, 1.0, 1.0], [0.680327868852459, 0.9180327868852459, 1.0, 1.0, 1.0], [0.6845637583892618, 0.9060402684563759, 1.0, 1.0, 1.0], [0.6839378238341969, 0.9015544041450777, 1.0, 1.0, 1.0], [0.6774193548387096, 0.8940092165898618, 1.0, 1.0, 1.0], [0.689922480620155, 0.8992248062015504, 1.0, 1.0, 1.0], [0.6910828025477707, 0.8949044585987261, 1.0, 1.0, 1.0], [0.7016129032258065, 0.8978494623655914, 1.0, 1.0, 1.0], [0.7102803738317757, 0.8995327102803738, 1.0, 1.0, 1.0], [0.7025948103792415, 0.8962075848303394, 1.0, 1.0, 1.0], [0.6982456140350877, 0.8912280701754386, 1.0, 1.0, 1.0], [0.702660406885759, 0.8951486697965572, 1.0, 1.0, 1.0], [0.7012987012987013, 0.898989898989899, 1.0, 1.0, 1.0], [0.7059602649006622, 0.9033112582781457, 1.0, 1.0, 1.0], [0.7058096415327565, 0.9060568603213844, 1.0, 1.0, 1.0]]
+# for index in range(len(combined_ranking_all_sketches_effectiveness)):
+# 	colour_string=colours[int(index/5)]
+# 	pattern_string=line_style_patterns[int(index%5)]
 
-	plt.plot(reintroduction_threshold_arr,combined_ranking_all_sketches_effectiveness[index],colour_string+pattern_string, label='batch '+str(index))
+# 	plt.plot(reintroduction_threshold_arr,combined_ranking_all_sketches_effectiveness[index],colour_string+pattern_string, label='batch '+str(index))
 
-plt.ylabel('Candidate Disambiguation Recall')
-plt.xlabel('percent reintroduction threshold value')
-lgd=plt.legend(bbox_to_anchor=(1.1,1.01), loc=9, prop={'size': 6}, borderaxespad=0.)
-plt.setp(plt.gca().get_legend().get_texts(), fontsize='12')
+# plt.ylabel('Candidate Disambiguation Recall')
+# plt.xlabel('percent reintroduction threshold value')
+# lgd=plt.legend(bbox_to_anchor=(1.1,1.01), loc=9, prop={'size': 6}, borderaxespad=0.)
+# plt.setp(plt.gca().get_legend().get_texts(), fontsize='12')
 
-plt.title('Disambiguation Effectiveness for combined sketch based\n ranking with different Reintroduction Thresholds')
-plt.savefig('candidate-disambiguation-recall-reintroduction-threshold.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+# plt.title('Disambiguation Effectiveness for combined sketch based\n ranking with different Reintroduction Thresholds')
+# plt.savefig('candidate-disambiguation-recall-reintroduction-threshold.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
-plt.show()
+# plt.show()
 
 
 
@@ -282,8 +282,8 @@ plt.show()
 # 				   [79916, 164168, 244303, 323740, 406608, 491034, 552207, 627310, 700637, 784351, 875632, 957452, 1046517, 1115264, 1184807, 1257508, 1333623, 1409983, 1483922, 1557220, 1608395], 
 # 				   [79916, 164021, 244145, 323342, 406209, 490622, 551795, 626462, 699689, 783343, 874611, 956298, 1045292, 1114033, 1183562, 1255581, 1331650, 1407789, 1481537, 1554630, 1605759], 
 # 				   [79916, 163738, 243861, 323048, 405899, 489537, 550709, 625301, 698493, 781377, 872617, 954291, 1042888, 1111606, 1180934, 1251965, 1327998, 1403744, 1477406, 1550456, 1601549]]
-# #120--> baseline same as 100, Ritter has no concept of completion
-# # data to plot
+#120--> baseline same as 100, Ritter has no concept of completion
+# data to plot
 # n_groups = 5
 
 # # emd_recall_arr=[,0.77,0.81,0.835,0.86,0.87,0.87]
@@ -348,6 +348,146 @@ plt.show()
 
 
 # plt.savefig('performance-eviction-threshold-all-system-variants.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+ 
+# # plt.tight_layout()
+# plt.show()
+
+
+# # EXPERIMENT 5: recall,fpr reintroduction ranking 
+
+# fig, ax = plt.subplots(nrows=1, ncols=2,figsize=(7,4))
+
+# # fig1 = plt.figure()
+# # plt.hold(True)
+
+# bottom_m_percentage=[60,70,80,90]
+
+# batch_values= [1,2,3,4,5,6,7,8,9,10]
+
+# eviction_ranking_recall=  [[0.6578947368421053, 0.625, 0.6611570247933884, 0.6208791208791209, 0.6311787072243346, 0.6326530612244898, 0.6475409836065574, 0.6223628691983122, 0.6393129770992366, 0.6108527131782946],
+# [0.7894736842105263, 0.7222222222222222, 0.743801652892562, 0.7197802197802198, 0.7376425855513308, 0.7278911564625851, 0.7295081967213115, 0.7215189873417721, 0.7347328244274809, 0.710077519379845],
+# [0.8947368421052632, 0.8194444444444444, 0.8099173553719008, 0.8186813186813187, 0.8288973384030418, 0.8197278911564626, 0.825136612021858, 0.810126582278481, 0.8244274809160306, 0.8108527131782945],
+# [0.9736842105263158, 0.9166666666666666, 0.9090909090909091, 0.9065934065934066, 0.9201520912547528, 0.9149659863945578, 0.9098360655737705, 0.9008438818565401, 0.9103053435114504, 0.9038759689922481]]
+
+# eviction_ranking_fpr= [[0.24242424242424243, 0.15764705882352941, 0.15087912087912088, 0.19858156028368795, 0.12978260869565217, 0.1267605633802817, 0.11567164179104478, 0.10060975609756098, 0.08144444444444445, 0.07511764705882353],
+# [0.2631578947368421, 0.15864406779661017, 0.16981132075471697, 0.19631901840490798, 0.09813084112149532, 0.14056224899598393, 0.16025641025641027, 0.10443864229765012, 0.0895347721822542, 0.07521052631578947],
+# [0.22727272727272727, 0.1623529411764706, 0.19672131147540983, 0.2074468085106383, 0.11382113821138211, 0.15140845070422534, 0.1564245810055866, 0.1232876712328767, 0.1, 0.07811764705882353],
+# [0.2633061224489796, 0.16257894736842105, 0.21323529411764705, 0.22009569377990432, 0.12681159420289856, 0.16199376947040497, 0.18159203980099503, 0.13387423935091278, 0.1154562383612663, 0.08555555555555555]]
+
+
+
+# ind=0
+# for col in ax:
+# 	index=0
+# 	if(ind==0):
+# 		array_list= eviction_ranking_recall
+# 	else:
+# 		array_list= eviction_ranking_fpr
+# 	for array in array_list:
+# 		# array_to_plot= eviction_ranking_precision_ent_nonEnt_single_sketch[array_index]
+# 		col.plot(batch_values,array,label='bottom '+str(bottom_m_percentage[index])+' percentage',linestyle=':')
+# 		index+=1
+# 	# plt.ylabel('ranking function top-k effectiveness')
+# 	col.set_xticks(np.arange(1, 10, 1.0))
+# 	if(ind==0):
+# 		col.set_ylabel('Recall in Inactive Candidate Identification')
+# 		col.yaxis.label.set_size(10)
+# 	else:
+# 		col.set_ylabel('False Positive Rate in Inactive Candidate Identification')
+# 		col.yaxis.label.set_size(8)
+# 	col.set_xlabel('# of batches since start of stream')
+# 	lgd=col.legend(bbox_to_anchor=(0.88, 1), loc=9, prop={'size': 6}, borderaxespad=0.)
+# 	ind+=1
+# plt.tight_layout()
+# plt.suptitle('Inactive candidates ranking bottom-m percent effectiveness with distance based rankers', size=8)
+# plt.savefig('inactive-bottom-m-combination.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+# plt.show()
+
+
+# # EXPERIMENT 6: reintroduction ranking vs transition function
+
+# percent_evicted= [0.625, 0.7058823529411765, 0.6274509803921569, 0.6483050847457628, 0.7207792207792207, 0.7275280898876404, 0.7053571428571429, 0.6916058394160584, 0.695, 0.8255131964809385]
+
+# recall_tf= [0.8108108108108109, 0.7763157894736842, 0.7355371900826446, 0.8144329896907216, 0.8065693430656934, 0.8415841584158416, 0.8121546961325967, 0.7706611570247934, 0.764367816091954, 0.8707692307692307]
+# recall_sketch= [0.7027027027027027, 0.7361111111111112, 0.6779661016949152, 0.6758241758241759, 0.7404562737642585, 0.7482993197278912, 0.7349726775956285, 0.7130801687763713, 0.7090076335877863, 0.8087596899224806]
+
+# false_positive_rate_sketch= [0.24242424242424243, 0.12764705882352941, 0.16789473684210525, 0.19607843137254902, 0.0990990990990991, 0.14285714285714285, 0.15772870662460567, 0.10817941952506596, 0.08393285371702638, 0.07609929078014184]
+# false_positive_rate_tf=  [0.08571428571428572, 0.04838709677419355, 0.08247422680412371, 0.036585365853658534, 0.034934497816593885, 0.05555555555555555, 0.049375, 0.04046938775510204, 0.03083720930232558, 0.008756567425569177]
+
+# n_groups = 10
+
+# # emd_recall_arr=[,0.77,0.81,0.835,0.86,0.87,0.87]
+#  #baseline and 100% should be same
+
+# # incomplete_arr=[float(arr[-1]/tweets[-1]) for arr in incomplete_tweets]
+# # complete_arr=[float(arr[-1]/tweets[-1]) for arr in converted_tweets]
+# # print(complete_arr)
+
+
+# # create plot
+# fig, ax1 = plt.subplots()
+
+# index = np.arange(n_groups)
+
+# bar_width = 0.15
+# inter_bar= 0.05
+# opacity = 0.6
+
+# rects1 = ax1.bar(index, percent_evicted, bar_width,
+# alpha=opacity,
+# color='b',
+# # ax=ax1,
+# label='eviction percentage')
+
+# rects2 = ax1.bar(index + bar_width + inter_bar, recall_sketch, bar_width,
+# alpha=opacity,
+# color='g',
+# # ax=ax1,
+# hatch="\\",
+# label='recall w distance based rankers')
+
+# rects3 = ax1.bar(index + 2*bar_width + inter_bar, recall_tf, bar_width,
+# alpha=opacity,
+# color='g',
+# # ax=ax1,
+# hatch="O",
+# label='recall w transition function')
+
+
+# rects4 = ax1.bar(index + 3*bar_width + 2*inter_bar, false_positive_rate_sketch, bar_width,
+# alpha=opacity,
+# color='r',
+# hatch="\\",
+# label='fpr w distance based rankers')
+
+# rects5 = ax1.bar(index + 4*bar_width + 2*inter_bar, false_positive_rate_tf, bar_width,
+# alpha=opacity,
+# color='r',
+# hatch="O",
+# label='fpr w transition function')
+
+
+ 
+# ax1.set_xlabel('# of batches since start')
+# ax1.set_ylabel('Ranking Effectiveness (percentage)')
+# # ax2.set_ylabel('Efficiency estimates')
+# plt.title('Inactive Candidate Identification with Different Ranking Functions')
+# # ax1.set_xticks(index + 1.0*bar_width, ('20', '40', '60', '80', '100'))
+# ax1.set_xticks(index+ 2.0*bar_width+ 2.0*inter_bar)
+# ax1.set_xticklabels(['1','2','3','4','5','6','7','8','9','10'])
+
+# for tick in ax1.get_xticklabels():
+#         tick.set_rotation(45)
+
+
+# lines, labels = ax1.get_legend_handles_labels()
+# # lines2, labels2 = ax2.get_legend_handles_labels()
+
+
+# lgd=ax1.legend(lines, labels, bbox_to_anchor=(0.5,1.005), ncol=3, loc=9, prop={'size': 6}, framealpha=0.3, borderaxespad=0.)
+
+
+# plt.savefig('transition-vs-distance.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
  
 # # plt.tight_layout()
 # plt.show()

@@ -24,7 +24,7 @@ from scipy import spatial
 import ast
 # from numba import jit
 import gc
-
+from sklearn.neighbors import KDTree
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn import linear_model
 from sklearn.cluster import KMeans, MeanShift
@@ -44,7 +44,7 @@ prep_list=["in","at","of","on","&;"] #includes common conjunction as well
 article_list=["a","an","the"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["nope","gee","hmm","please","4get","ooh","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","please","4get","ooh","idk","oops","yup","lmao","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fuck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 string.punctuation=string.punctuation+'…‘’'
 
 
@@ -195,13 +195,15 @@ class EntityResolver ():
         self.entity_level_arr=[]
         self.mention_level_arr=[]
         self.sentence_level_arr=[]
-        self.decay_factor=2**(-1/2)
-        self.decay_base_staggering=2
+        self.decay_base=0.8
         self.my_classifier= svm.SVM1('training.csv')
 
         self.p_punct=re.compile(r'[\W]+')
+        self.knn_parameter=10
+        self.RQ_capacity=10000
 
-        self.eviction_threshold_array=[0,10,20,30,40]
+        # self.eviction_threshold_array=[0,10,20,30,40] # for distance based ranking
+        self.eviction_threshold_array=[0,60,70,80,90,100]
         # self.eviction_threshold_array=[0]
         # self.eviction_threshold_array=[10]
         # self.eviction_threshold_array=[20]
@@ -278,7 +280,30 @@ class EntityResolver ():
         self.bottom_m_precision_arr_all_sketch_combined=[]
         self.bottom_m_recall_arr_all_sketch_combined=[]
 
-        self.bottom_m_combined=[[] for elem in self.eviction_threshold_array[1:]]
+        # self.bottom_m_combined=[[] for elem in self.eviction_threshold_array[1:]]
+        # self.transition_function_eviction=[[] for elem in self.eviction_threshold_array[1:]]
+
+        # self.bottom_m_combined_for_ranking=[[] for elem in self.eviction_threshold_array_for_candidate_ranking[1:]]
+        # self.transition_function_eviction_for_ranking=[[] for elem in self.eviction_threshold_array_for_candidate_ranking[1:]]
+
+        # self.bottom_m_combined_for_ranking_recall_60=[]
+        # self.bottom_m_combined_for_ranking_recall_70=[]
+        # self.bottom_m_combined_for_ranking_recall_80=[]
+        # self.bottom_m_combined_for_ranking_recall_90=[]
+        # self.transition_function_eviction_for_ranking_recall=[]
+        # self.transition_function2_eviction_for_ranking_recall=[]
+        # self.eviction_for_ranking_recall_transition_rate=[]
+
+        # self.bottom_m_combined_for_ranking_fpr_60=[]
+        # self.bottom_m_combined_for_ranking_fpr_70=[]
+        # self.bottom_m_combined_for_ranking_fpr_80=[]
+        # self.bottom_m_combined_for_ranking_fpr_90=[]
+        # self.transition_function_eviction_for_ranking_fpr=[]
+        # self.transition_function2_eviction_for_ranking_fpr=[]
+        # self.eviction_for_ranking_fpr_transition_rate=[]
+
+        # self.transition_function_percent_evicted=[]
+        # self.transition_function2_percent_evicted=[]
 
         # self.batch_specific_reintroduction_effectiveness= [0,0,0,0,0,0,0,0,0]
         self.batch_specific_reintroduction_effectiveness=0
@@ -299,10 +324,10 @@ class EntityResolver ():
         if(self.counter==0):
             #output_queue
             self.data_frame_holder_OQ=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
-            self.incomplete_tweets=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates','eviction_status'])
-            self.incomplete_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates','eviction_status']) for i in range(len(self.eviction_threshold_array))]
+            self.incomplete_tweets=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates','fifo_score','lfu_score','inactivity_period','eviction_status'])
+            self.incomplete_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates','fifo_score','lfu_score','inactivity_period','eviction_status']) for i in range(len(self.eviction_threshold_array))]
 
-            self.evicted_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized' ,'eviction_status']) for i in range(len(self.eviction_threshold_array))]
+            self.evicted_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','inactivity_period' ,'eviction_status']) for i in range(len(self.eviction_threshold_array))]
             
             self.CandidateBase_dict= {}
             self.ambiguous_candidate_distanceDict_prev={}
@@ -327,7 +352,9 @@ class EntityResolver ():
             self.baseline_effectiveness=0
 
             #frequency_w_decay related information
-            self.self.ambiguous_candidates_prev_vector={}
+            self.percent_ambiguous_remaining_ambiguous=[]
+            self.ambiguous_candidates_prev_vector={}
+            self.ambiguous_candidates_prev_derivative={}
             self.ambiguous_candidates_non_ambiguous_neighbour_dict={}
             self.ambiguous_candidates_ambiguous_neighbour_dict={}
             self.ambiguous_candidates_transition_dict={}
@@ -335,11 +362,11 @@ class EntityResolver ():
 
             self.aggregator_incomplete_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
             # self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
-            self.just_converted_tweets_arr=[pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized','eviction_status'])  for i in range(len(self.eviction_threshold_array))]
+            self.just_converted_tweets_arr=[pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','inactivity_period','eviction_status'])  for i in range(len(self.eviction_threshold_array))]
 
             #self.data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized'])
             self.raw_tweets_for_others=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized'])
-            self.ambiguous_candidate_records_old=pd.DataFrame([],columns=['candidate', 'batch', 'length', 'cap', 'substring-cap', 's-o-sCap','all-cap', 'non-cap', 'non-discriminative', 'cumulative', 'evictionFlag','Z_ScoreUnweighted', 'normalized_cap','normalized_capnormalized_substring-cap', 'normalized_s-o-sCap','normalized_all-cap', 'normalized_non-cap', 'normalized_non-discriminative', 'probability', 'status'])
+            # self.ambiguous_candidate_records_old=pd.DataFrame([],columns=['candidate', 'batch', 'length', 'cap', 'substring-cap', 's-o-sCap','all-cap', 'non-cap', 'non-discriminative', 'cumulative', 'evictionFlag','Z_ScoreUnweighted', 'normalized_cap','normalized_capnormalized_substring-cap', 'normalized_s-o-sCap','normalized_all-cap', 'normalized_non-cap', 'normalized_non-discriminative', 'probability', 'status'])
             self.accuracy_tuples_prev_batch=[]
             self.accuracy_vals=[]
             
@@ -513,10 +540,9 @@ class EntityResolver ():
 
         # #filtering test set based on z_score
         mert1=candidate_featureBase_DF['cumulative'].as_matrix()
-        #frequency_array = np.array(list(map(lambda val: val[0], sortedCandidateDB.values())))
         zscore_array1=stats.zscore(mert1)
-
         candidate_featureBase_DF['Z_ScoreUnweighted']=zscore_array1
+
         z_score_threshold=candidate_featureBase_DF[candidate_featureBase_DF['cumulative']==10].Z_ScoreUnweighted.tolist()[0]
         print(z_score_threshold)
         #candidate_featureBase_DF.to_csv("cf_new_with_z_score.csv", sep=',', encoding='utf-8')
@@ -835,6 +861,7 @@ class EntityResolver ():
           euclidean_similarity_dict[row['candidate']]=1-euclidean_distance_amb
 
         euclidean_distance_dict_sorted= OrderedDict(sorted(euclidean_distance_dict.items(), key=lambda x: x[1], reverse=True))
+        # print('euclidean_distance_dict_sorted: ', euclidean_distance_dict_sorted)
         euclidean_similarity_dict_sorted= OrderedDict(sorted(euclidean_similarity_dict.items(), key=lambda x: x[1]))
         # euclidean_distance_dict_sorted_final= { key:value for key, value in euclidean_distance_dict_sorted.items() if value < reintroduction_threshold }
         return euclidean_similarity_dict_sorted
@@ -874,6 +901,7 @@ class EntityResolver ():
           candidate_distance_array=euclidean_distance_amb
           euclidean_distance_dict[row['candidate']]=candidate_distance_array
         euclidean_distance_dict_sorted= OrderedDict(sorted(euclidean_distance_dict.items(), key=lambda x: x[1], reverse=True))
+        # print('euclidean_distance_dict_sorted: ', euclidean_distance_dict_sorted)
         return euclidean_distance_dict_sorted
 
     # def get_reintroduced_tweets(self,candidates_to_reintroduce):
@@ -883,14 +911,42 @@ class EntityResolver ():
     #     # #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
     #     return self.incomplete_tweets
 
+    def set_inactive_sentences_fifo_score(self,row):
+        if((all(x in candidate_for_eviction for x in row['ambiguous_candidates']))& (row['eviction_status']==0)):
+            return (self.counter-row['entry_batch'])
+        else:
+            return row['fifo_score']
+
+
     def tweets_to_evict(self,candidate_for_eviction,candidates_not_for_eviction, threshold_index):
-        self.incomplete_tweets_arr[threshold_index].loc[self.incomplete_tweets_arr[threshold_index].apply(lambda row:((all(x in candidate_for_eviction for x in row['ambiguous_candidates']))& (row['eviction_status']==0)) ,axis=1), ['eviction_status']] = 1
+        # self.incomplete_tweets_arr[threshold_index].loc[self.incomplete_tweets_arr[threshold_index].apply(lambda row:((all(x in candidate_for_eviction for x in row['ambiguous_candidates']))& (row['eviction_status']==0)) ,axis=1), ['eviction_status']] = 1
+
+        # not_evicted_tweets= self.incomplete_tweets_arr[threshold_index][self.incomplete_tweets_arr[threshold_index]['eviction_status']==0]
+
+        # self.evicted_tweets_arr[threshold_index]= self.incomplete_tweets_arr[threshold_index][self.incomplete_tweets_arr[threshold_index]['eviction_status']==1]
+
+        # print('tallying, evicted, not-evicted, total, all-incomplete',len(self.evicted_tweets_arr[threshold_index]),len(not_evicted_tweets),len(self.evicted_tweets_arr[threshold_index])+len(not_evicted_tweets),len(self.incomplete_tweets_arr[threshold_index]))
+        
+        
+        # self.incomplete_tweets_arr[threshold_index]['fifo_score']=self.incomplete_tweets_arr[threshold_index].apply(lambda row: set_inactive_sentences_fifo_score(row),axis=1)
+
+        self.incomplete_tweets_arr[threshold_index]['fifo_score'] = self.incomplete_tweets_arr[threshold_index].apply(lambda row: (self.counter-row['entry_batch']) if ((all(x in candidate_for_eviction for x in row['ambiguous_candidates']))& (row['eviction_status']==0)) else row['fifo_score'], axis=1)
+        # self.incomplete_tweets_arr[threshold_index].nlargest((len(self.incomplete_tweets_arr[threshold_index])-self.RQ_capacity), 'fifo_score')['eviction_status'] = 1
+
+        tweets_to_consider_eviction=self.incomplete_tweets_arr[threshold_index][self.incomplete_tweets_arr[threshold_index].eviction_status==0]
+        tweets_to_consider_eviction['fifo_rank'] = tweets_to_consider_eviction['fifo_score'].rank(ascending=1,method='first')
+        # eviction_capacity=len(self.incomplete_tweets_arr[threshold_index])-self.RQ_capacity
+        id_list=list(tweets_to_consider_eviction.loc[tweets_to_consider_eviction.fifo_rank>self.RQ_capacity,['tweetID', 'sentID']].itertuples(index=False, name=None))
+
+        # self.incomplete_tweets_arr[threshold_index]['fifo_rank'] = self.incomplete_tweets_arr[threshold_index]['fifo_score'].rank(ascending=1,method='first')
+        self.incomplete_tweets_arr[threshold_index].loc[self.incomplete_tweets_arr[threshold_index][['tweetID', 'sentID']].apply(tuple,1).isin(id_list),'eviction_status']=1
 
         not_evicted_tweets= self.incomplete_tweets_arr[threshold_index][self.incomplete_tweets_arr[threshold_index]['eviction_status']==0]
 
         self.evicted_tweets_arr[threshold_index]= self.incomplete_tweets_arr[threshold_index][self.incomplete_tweets_arr[threshold_index]['eviction_status']==1]
 
         print('tallying, evicted, not-evicted, total, all-incomplete',len(self.evicted_tweets_arr[threshold_index]),len(not_evicted_tweets),len(self.evicted_tweets_arr[threshold_index])+len(not_evicted_tweets),len(self.incomplete_tweets_arr[threshold_index]))
+
         return not_evicted_tweets
 
 
@@ -1091,53 +1147,68 @@ class EntityResolver ():
 
         candidate_featureBase_DF['index_col'] = range(0, len(candidate_featureBase_DF))
         ambiguous_candidates_index_col= candidate_featureBase_DF[candidate_featureBase_DF['status']=='a']['index_col'].tolist()
+
         # print(ambiguous_candidates_index_col)
 
         candidate_featureBase_DF_non_ambiguous=candidate_featureBase_DF[candidate_featureBase_DF['status']!='a']
+        # status_column_index=(list(candidate_featureBase_DF_non_ambiguous.columns.values)).index('status')
         candidate_featureBase_DF_ambiguous=candidate_featureBase_DF[candidate_featureBase_DF['status']=='a']
+        # probability_column_index=(list(candidate_featureBase_DF_ambiguous.columns.values)).index('probability')
         
-        candidate_featureBase_DF_reduced=candidate_featureBase_DF[reduced_cols].values
+        candidate_featureBase_DF_non_ambiguous_reduced=candidate_featureBase_DF_non_ambiguous[reduced_cols].values.tolist()
+        status_column_list=candidate_featureBase_DF_non_ambiguous['status'].values.tolist()
+
+        candidate_featureBase_DF_ambiguous_reduced=candidate_featureBase_DF_ambiguous[reduced_cols].values.tolist()
+        probability_column_list=candidate_featureBase_DF_ambiguous['probability'].values.tolist()
+        ambiguous_candidates=candidate_featureBase_DF_ambiguous['candidate'].tolist()
+
+        self.ambiguous_candidates_prev_vector.clear()
+        self.ambiguous_candidates_non_ambiguous_neighbour_dict.clear()
+        self.ambiguous_candidates_ambiguous_neighbour_dict.clear()
+
+
         self.ambiguous_candidates_prev_vector={}
+        self.ambiguous_candidates_non_ambiguous_neighbour_dict={}
+        self.ambiguous_candidates_ambiguous_neighbour_dict={}
+
+        self.knn_parameter=10
+
+
         # print(type(candidate_featureBase_DF_reduced))
 
-        # candidate_featureBase_DF_non_ambiguous_reduced=candidate_featureBase_DF_non_ambiguous_reduced[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']].values
-        # candidate_featureBase_DF_ambiguous_reduced=candidate_featureBase_DF_ambiguous_reduced[['normalized_cap','normalized_capnormalized_substring-cap','normalized_s-o-sCap','normalized_all-cap','normalized_non-cap','normalized_non-discriminative']].values
-
+        
         # A[spatial.KDTree(A).query(pt)[1]]
         # distance,index = spatial.KDTree(A).query(pt)
 
+        non_ambiguous_tree=KDTree(candidate_featureBase_DF_non_ambiguous_reduced,metric='euclidean')
+        ambiguous_tree=KDTree(candidate_featureBase_DF_ambiguous_reduced, metric='euclidean')
 
-        D = spatial.distance.squareform(spatial.distance.pdist(candidate_featureBase_DF_reduced))
-        # print(type(D))
-        # print(D[:2])
-        # for elem in ambiguous_candidates_index_col:
-        #     print(type(D[elem]), type(D[elem].tolist()))
+        nearest_non_ambiguous_dist, nearest_non_ambiguous_ind = non_ambiguous_tree.query(candidate_featureBase_DF_ambiguous_reduced, k=self.knn_parameter)
+        # print(nearest_non_ambiguous_dist)
+        # print(nearest_non_ambiguous_ind)
 
-        D_ambiguous = [D[elem].tolist() for elem in ambiguous_candidates_index_col]
-        # print(len(ambiguous_candidates),len(D_ambiguous))
+        nearest_ambiguous_dist, nearest_ambiguous_ind = ambiguous_tree.query(candidate_featureBase_DF_ambiguous_reduced, k=(self.knn_parameter+1))
+
+        # closest = np.argsort(D_ambiguous, axis=1)
+        # # print(closest[:5])
+
+        # closest_non_ambiguous= [[elem for elem in row if not elem in ambiguous_candidates_index_col] for row in closest]
+        # closest_ambiguous= [[elem for elem in row if elem in ambiguous_candidates_index_col] for row in closest]
 
 
-        # print(D_ambiguous[:2])
-
-        closest = np.argsort(D_ambiguous, axis=1)
-        # print(closest[:5])
-
-        closest_non_ambiguous= [[elem for elem in row if not elem in ambiguous_candidates_index_col] for row in closest]
-        closest_ambiguous= [[elem for elem in row if elem in ambiguous_candidates_index_col] for row in closest]
-
-        k=10
-
-        k_closest_non_ambiguous= np.array(closest_non_ambiguous)[:, 0:k]
-        k_closest_non_ambiguous_candidates=[[candidate_featureBase_DF.loc[candidate_featureBase_DF['index_col']==elem,reduced_cols].values.tolist()[0] for elem in row] for row in k_closest_non_ambiguous]
-        # ambiguous_candidate_nearest_non_ambiguous_neighbours = {candidate_featureBase_DF[candidate_featureBase_DF['index_col']==ambiguous_candidates_index_col[ind]].candidate.item():k_closest_non_ambiguous_candidates[ind]  for ind in range(len(ambiguous_candidates_index_col))}
+        # k_closest_non_ambiguous= np.array(closest_non_ambiguous)[:, 0:self.knn_parameter]
+        # # k_closest_non_ambiguous_candidates=[[(candidate_featureBase_DF.loc[candidate_featureBase_DF['index_col']==elem,reduced_cols].values.tolist()[0],candidate_featureBase_DF.loc[candidate_featureBase_DF['index_col']==elem,'status'].values.tolist()[0])
+        # #                                             for elem in row] for row in k_closest_non_ambiguous]
+        # k_closest_non_ambiguous_candidates=[[candidate_featureBase_DF.loc[candidate_featureBase_DF['index_col']==elem,reduced_cols].values.tolist()[0] for elem in row] for row in k_closest_non_ambiguous]
+        # # ambiguous_candidate_nearest_non_ambiguous_neighbours = {candidate_featureBase_DF[candidate_featureBase_DF['index_col']==ambiguous_candidates_index_col[ind]].candidate.item():k_closest_non_ambiguous_candidates[ind]  for ind in range(len(ambiguous_candidates_index_col))}
         
-        # for candidate in ambiguous_candidate_nearest_non_ambiguous_neighbours.keys():
-        #     print(candidate+': ')
-        #     for neighbour in ambiguous_candidate_nearest_non_ambiguous_neighbours[candidate]:
-        #         print(neighbour)
+        # # for candidate in ambiguous_candidate_nearest_non_ambiguous_neighbours.keys():
+        # #     print(candidate+': ')
+        # #     for neighbour in ambiguous_candidate_nearest_non_ambiguous_neighbours[candidate]:
+        # #         print(neighbour)
 
-        k_closest_ambiguous = np.array(closest_ambiguous)[:, 1:(k+1)]
-        k_closest_ambiguous_candidates = [[candidate_featureBase_DF.loc[candidate_featureBase_DF['index_col']==elem,reduced_cols].values.tolist()[0] for elem in row] for row in k_closest_ambiguous]
+        # k_closest_ambiguous = np.array(closest_ambiguous)[:, 1:(self.knn_parameter+1)]
+        # k_closest_ambiguous_candidates = [[candidate_featureBase_DF.loc[candidate_featureBase_DF['index_col']==elem,reduced_cols].values.tolist()[0] for elem in row] for row in k_closest_ambiguous]
         # ambiguous_candidate_nearest_ambiguous_neighbours = {candidate_featureBase_DF[candidate_featureBase_DF['index_col']==ambiguous_candidates_index_col[ind]].candidate.item():k_closest_ambiguous_candidates[ind]  for ind in range(len(ambiguous_candidates_index_col))}
 
         # for candidate in ambiguous_candidate_nearest_non_ambiguous_neighbours.keys():
@@ -1149,87 +1220,307 @@ class EntityResolver ():
         #         print(neighbour)
         #     print('==========end of amb neighbours==========')
 
-        for ind in range(len(ambiguous_candidates_index_col)):
-            candidate=candidate_featureBase_DF[candidate_featureBase_DF['index_col']==ambiguous_candidates_index_col[ind]].candidate.item()
-            candidate_vector=candidate_featureBase_DF.loc[candidate_featureBase_DF['index_col']==ambiguous_candidates_index_col[ind],reduced_cols].values.tolist()[0]
+        for ind in range(len(ambiguous_candidates)):
+            candidate=ambiguous_candidates[ind]
+            self.ambiguous_candidates_prev_vector[candidate]=candidate_featureBase_DF_ambiguous_reduced[ind]
 
-            ambiguous_neighbours_list=k_closest_ambiguous_candidates[ind]
-            ambiguous_neighbours_distance_list=[spatial.distance.euclidean(candidate_vector, neighbour) for neighbour in ambiguous_neighbours_list]
-            non_ambiguous_neighbours_list=k_closest_non_ambiguous_candidates[ind]
-            non_ambiguous_neighbours_distance_list=[spatial.distance.euclidean(candidate_vector, neighbour) for neighbour in non_ambiguous_neighbours_list]
+            non_ambiguous_neighbours_list=[(candidate_featureBase_DF_non_ambiguous_reduced[elem],status_column_list[elem]) for elem in nearest_non_ambiguous_ind[ind]]
+            ambiguous_neighbours_list=[(candidate_featureBase_DF_ambiguous_reduced[elem],probability_column_list[elem]) for elem in nearest_ambiguous_ind[ind][1:]]
 
-            # print(ambiguous_neighbours_distance_list)
-            # print(non_ambiguous_neighbours_distance_list)
+            non_ambiguous_distance_list=nearest_non_ambiguous_dist[ind]
+            ambiguous_distance_list=nearest_ambiguous_dist[ind][1:]
 
-            self.ambiguous_candidates_prev_vector[candidate]=candidate_vector
+            # print(len(non_ambiguous_neighbours_list),len(non_ambiguous_distance_list))
+            # print(non_ambiguous_neighbours_list)
+            # print(non_ambiguous_distance_list)
 
-            self.ambiguous_candidates_non_ambiguous_neighbour_dict[candidate]=(non_ambiguous_neighbours_list,non_ambiguous_neighbours_distance_list)
-            self.ambiguous_candidates_ambiguous_neighbour_dict[candidate]=(ambiguous_neighbours_list,ambiguous_neighbours_distance_list)
+            self.ambiguous_candidates_non_ambiguous_neighbour_dict[candidate]=(non_ambiguous_neighbours_list,non_ambiguous_distance_list)
+            self.ambiguous_candidates_ambiguous_neighbour_dict[candidate]=(ambiguous_neighbours_list,ambiguous_distance_list)
 
             if(candidate in self.ambiguous_candidates_history_dict.keys()):
                 self.ambiguous_candidates_history_dict[candidate]+=1
             else:
                 self.ambiguous_candidates_history_dict[candidate]=1
-        # print('dict_lengths: ', len(self.ambiguous_candidates_non_ambiguous_neighbour_dict),len(self.ambiguous_candidates_ambiguous_neighbour_dict))
+
+
+        # for ind in range(len(ambiguous_candidates_index_col)):
+        #     candidate=candidate_featureBase_DF[candidate_featureBase_DF['index_col']==ambiguous_candidates_index_col[ind]].candidate.item()
+        #     candidate_vector=candidate_featureBase_DF.loc[candidate_featureBase_DF['index_col']==ambiguous_candidates_index_col[ind],reduced_cols].values.tolist()[0]
+
+        #     ambiguous_neighbours_list=k_closest_ambiguous_candidates[ind]
+        #     ambiguous_neighbours_distance_list=[spatial.distance.euclidean(candidate_vector, neighbour) for neighbour in ambiguous_neighbours_list]
+        #     non_ambiguous_neighbours_list=k_closest_non_ambiguous_candidates[ind]
+        #     non_ambiguous_neighbours_distance_list=[spatial.distance.euclidean(candidate_vector, neighbour) for neighbour in non_ambiguous_neighbours_list]
+
+        #     # print(ambiguous_neighbours_distance_list)
+        #     # print(non_ambiguous_neighbours_distance_list)
+
+        #     self.ambiguous_candidates_prev_vector[candidate]=candidate_vector
+
+        #     self.ambiguous_candidates_non_ambiguous_neighbour_dict[candidate]=(non_ambiguous_neighbours_list,non_ambiguous_neighbours_distance_list)
+        #     self.ambiguous_candidates_ambiguous_neighbour_dict[candidate]=(ambiguous_neighbours_list,ambiguous_neighbours_distance_list)
+
+        #     if(candidate in self.ambiguous_candidates_history_dict.keys()):
+        #         self.ambiguous_candidates_history_dict[candidate]+=1
+        #     else:
+        #         self.ambiguous_candidates_history_dict[candidate]=1
+
+        print('dict_lengths: ', len(self.ambiguous_candidates_non_ambiguous_neighbour_dict),len(self.ambiguous_candidates_ambiguous_neighbour_dict))
         return
 
-
-    def get_transition_activity(self, ambiguous_candidate_record):
+    # def get_transition_activity(self, candidate,cap,substring_cap,s_o_sCap,all_cap,non_cap,non_discriminative,partial_derivatives_arr):
+    def get_transition_activity(self, candidate,cap,substring_cap,s_o_sCap,all_cap,non_cap,non_discriminative,partial_derivatives_arr_good,partial_derivatives_arr_bad):
 
         active_distances=0
         inactive_distances=0
 
-        active_transitions=0
-        inactive_transitions=0
+        # active_transitions=0
+        # inactive_transitions=0
+
+        cumulative_transition=0
 
         # print(ambiguous_candidate_record)
         # print(ambiguous_candidate_record[0],ambiguous_candidate_record[1:-1],ambiguous_candidate_record[-1])
 
-        candidate=ambiguous_candidate_record[0]
-        candidate_vector=ambiguous_candidate_record[1:-1]
+        # candidate=ambiguous_candidate_record[0]
+        candidate_vector=[cap,substring_cap,s_o_sCap,all_cap,non_cap,non_discriminative]
+
         candidate_vector_prev=self.ambiguous_candidates_prev_vector[candidate]
-        partial_derivatives_arr=ambiguous_candidate_record[-1]
+
+        # print(candidate,candidate_vector_prev,candidate_vector)
+        # print(partial_derivatives_arr_good)
+        # print(partial_derivatives_arr_bad)
+
+        # partial_derivatives_arr_good=ambiguous_candidate_record[-2]
+        # partial_derivatives_arr_bad=ambiguous_candidate_record[-1]
+
+        displacement_vector=np.subtract(candidate_vector,candidate_vector_prev)
+
+        if(np.count_nonzero(displacement_vector)==0):
+            if(candidate in self.ambiguous_candidates_prev_derivative.keys()):
+                directional_derivative_good=self.ambiguous_candidates_prev_derivative[candidate][0]
+                directional_derivative_bad=self.ambiguous_candidates_prev_derivative[candidate][1]
+            else:
+                displacement_vector=candidate_vector_prev
+                displacement_vector_magnitude=np.linalg.norm(displacement_vector)
+                unit_vector=np.divide(displacement_vector,displacement_vector_magnitude)
+
+                directional_derivative_good=np.dot(partial_derivatives_arr_good,unit_vector)
+                directional_derivative_bad=np.dot(partial_derivatives_arr_bad,unit_vector)
+                # directional_derivative=max(directional_derivative_good,directional_derivative_bad)
+
+                # directional_derivative=np.dot(partial_derivatives_arr,unit_vector)
+
+                self.ambiguous_candidates_prev_derivative[candidate]=(directional_derivative_good,directional_derivative_bad)
+        else:
+            displacement_vector_magnitude=np.linalg.norm(displacement_vector)
+            unit_vector=np.divide(displacement_vector,displacement_vector_magnitude)
+            
+            directional_derivative_good=np.dot(partial_derivatives_arr_good,unit_vector)
+            directional_derivative_bad=np.dot(partial_derivatives_arr_bad,unit_vector)
+            # directional_derivative=max(directional_derivative_good,directional_derivative_bad)
+
+            # directional_derivative=np.dot(partial_derivatives_arr,unit_vector)
+
+            self.ambiguous_candidates_prev_derivative[candidate]=(directional_derivative_good,directional_derivative_bad)
+
+        # print('derivatives: ', directional_derivative_good,directional_derivative_bad,directional_derivative)
 
         knn_active= self.ambiguous_candidates_non_ambiguous_neighbour_dict[candidate][0]
         knn_prev_active_distance=self.ambiguous_candidates_non_ambiguous_neighbour_dict[candidate][1]
-        knn_inactive= self.ambiguous_candidates_ambiguous_neighbour_dict[candidate]
+
+        knn_inactive= self.ambiguous_candidates_ambiguous_neighbour_dict[candidate][0]
         knn_prev_inactive_distance=self.ambiguous_candidates_ambiguous_neighbour_dict[candidate][1]
 
-        for p_active in knn_active:
-            euclidean_distance=spatial.distance.euclidean(candidate_vector, p_active)
-            displacement_vector=np.subtract(p_active,candidate_vector)
-            displacement_vector_magnitude=np.linalg.norm(displacement_vector)
-            # print(candidate_vector, p_active)
-            # print(displacement_vector,displacement_vector_magnitude)
-            unit_vector=np.divide(displacement_vector,displacement_vector_magnitude)
-            directional_derivative=np.dot(partial_derivatives_arr,unit_vector)
-            active_transitions+=euclidean_distance*directional_derivative
-            active_distances+=euclidean_distance
-        active_transition_score=(active_transitions/active_distances)
-        # print('=================================================')
+        active_transition=0
+        inactive_transition=0
 
-        for p_inactive in knn_inactive:
-            euclidean_distance=spatial.distance.euclidean(candidate_vector, p_inactive)
-            displacement_vector=np.subtract(p_inactive,candidate_vector)
-            displacement_vector_magnitude=np.linalg.norm(displacement_vector)
-            # print(candidate_vector, p_inactive)
-            # print(displacement_vector,displacement_vector_magnitude)
-            unit_vector=np.divide(displacement_vector,displacement_vector_magnitude)
-            directional_derivative=np.dot(partial_derivatives_arr,unit_vector)
-            inactive_transitions+=euclidean_distance*directional_derivative
-            inactive_distances+=euclidean_distance
-        inactive_transition_score=(inactive_transitions/inactive_distances)
-        # print('=================================================')
+        for elem in range(len(knn_active)):
+            p_active=knn_active[elem][0]
+            active_distance_del=knn_prev_active_distance[elem]-np.linalg.norm(np.subtract(candidate_vector,p_active))
+
+            # active_displacement_vector_required=np.subtract(p_active,candidate_vector_prev)
+            # active_unit_vector_required=np.divide(active_displacement_vector_required,np.linalg.norm(active_displacement_vector_required))
+            # scalar_projection=np.dot(displacement_vector,active_unit_vector_required)
+
+            neighbour_status=knn_active[elem][1]
+
+            # if(scalar_projection==np.nan):
+            # print('HERE: ', p_active,candidate_vector_prev,active_displacement_vector_required,active_unit_vector_required,scalar_projection)
+            # if(active_distance_del>0):
+            if(neighbour_status=='g'):
+                active_transition+=active_distance_del*directional_derivative_good
+                # active_transition+=scalar_projection*directional_derivative_good
+            else:
+                active_transition+=active_distance_del*directional_derivative_bad
+                # active_transition+=scalar_projection*directional_derivative_bad
+            # else:
+            #     if(neighbour_status=='g'):
+            #         inactive_transition+=active_distance_del*directional_derivative_bad
+            #     else:
+            #         inactive_transition+=active_distance_del*directional_derivative_good
+
+        # active_distances=[(knn_prev_active_distance[elem]-np.linalg.norm(np.subtract(candidate_vector,knn_active[elem][0]))) for elem in range(len(knn_active))]
+        # # print('=================================================')
+        # max_displacement=max(active_distances)
+        # max_index=active_distances.index(max(active_distances))
+        # neighbour_status=knn_active[max_index][1]
+        # if(max_displacement>0):
+        #     if(neighbour_status=='g'):
+        #         active_transition=max_displacement*directional_derivative_good
+        #     else:
+        #         active_transition=max_displacement*directional_derivative_bad
+        # else:
+        #     if(neighbour_status=='g'):
+        #         active_transition=max_displacement*directional_derivative_bad
+        #     else:
+        #         active_transition=max_displacement*directional_derivative_good
+
+        
+        for elem in range(len(knn_inactive)):
+            p_inactive=knn_inactive[elem][0]
+            inactive_distance_del=knn_prev_inactive_distance[elem]-np.linalg.norm(np.subtract(candidate_vector,p_inactive))
+            neighbour_probability=knn_inactive[elem][1]
+            # if(inactive_distance_del>0):
+            if((0.75-neighbour_probability)>(neighbour_probability-0.4)):
+                inactive_transition+=inactive_distance_del*directional_derivative_good
+            else:
+                inactive_transition+=inactive_distance_del*directional_derivative_bad
+            # else:
+            #     if((0.75-neighbour_probability)>(neighbour_probability-0.4)):
+            #         inactive_transition+=inactive_distance_del*directional_derivative_bad
+            #     else:
+            #         inactive_transition+=inactive_distance_del*directional_derivative_good
+
+
+        # inactive_distances=[(knn_prev_inactive_distance[elem]-np.linalg.norm(np.subtract(candidate_vector,knn_inactive[elem][0]))) for elem in range(len(knn_inactive))]
+        # # print('=================================================')
+        # max_displacement=max(inactive_distances)
+        # max_index=inactive_distances.index(max(inactive_distances))
+        # neighbour_probability=knn_inactive[max_index][1]
+        # if(max_displacement>0):
+        #     if((0.75-neighbour_probability)>(neighbour_probability-0.4)):
+        #         inactive_transition=max_displacement*directional_derivative_good
+        #     else:
+        #         inactive_transition=max_displacement*directional_derivative_bad
+        # else:
+        #     if((0.75-neighbour_probability)>(neighbour_probability-0.4)):
+        #         inactive_transition=max_displacement*directional_derivative_bad
+        #     else:
+        #         inactive_transition=max_displacement*directional_derivative_good
+
+        # net_displacement=(max(active_distances)-min(inactive_distances))
+        # net_displacement=(max(active_distances)-max(inactive_distances))
+        # net_displacement=(sum(active_distances)-sum(inactive_distances))
+        # print('distances: ', active_distances,inactive_distances,net_displacement)
+
+        # if((directional_derivative<0)&(net_displacement<0)):
+        #     # print('here')
+        #     net_transition=((net_displacement*(-1.0))*directional_derivative)/(self.knn_parameter*1.0)
+        # else:
+        #     net_transition=((net_displacement*(1.0))*directional_derivative)/(self.knn_parameter*1.0)
+
+        # net_transition=(net_displacement*directional_derivative)
+        # net_transition=(active_transition-inactive_transition)
+        net_transition=(active_transition-inactive_transition)
+        # net_transition=active_transition
         
         if candidate in self.ambiguous_candidates_transition_dict.keys():
-            transition= self.ambiguous_candidates_transition_dict[candidate] + (active_transition_score-inactive_transition_score)
+            # transition= self.ambiguous_candidates_transition_dict[candidate] + (active_transition_score-inactive_transition_score)
+            cumulative_transition= self.ambiguous_candidates_transition_dict[candidate] + net_transition
         else:
-            transition= (active_transition_score-inactive_transition_score)
-        self.ambiguous_candidates_transition_dict[candidate]=transition
+            cumulative_transition= net_transition
+        self.ambiguous_candidates_transition_dict[candidate]=cumulative_transition
 
-        activity=transition/self.ambiguous_candidates_history_dict[candidate]
-        print(candidate,activity)
-        return activity
+        self.transition_activity_dict2[candidate]=net_transition
+
+        transition_induced_probability=net_transition + self.ambiguous_candidate_probability_dict[candidate]
+
+        # activity=cumulative_transition/self.ambiguous_candidates_history_dict[candidate]
+        # print('==========================')
+        # return (candidate,activity)
+        return transition_induced_probability
+
+    # def get_transition_ordered_dict(self,ambiguous_candidate_records):
+
+    #     ambiguous_candidate_records=ambiguous_candidate_records.filter(self.my_classifier.return_cols)
+    #     ambiguous_candidate_records['transition_activity_cumulative']= np.vectorize(self.get_transition_activity,otypes=[float])(ambiguous_candidate_records['candidate'].values,ambiguous_candidate_records['normalized_cap'].values,ambiguous_candidate_records['normalized_capnormalized_substring-cap'].values,ambiguous_candidate_records['normalized_s-o-sCap'].values,ambiguous_candidate_records['normalized_all-cap'].values,ambiguous_candidate_records['normalized_non-cap'].values,ambiguous_candidate_records['normalized_non-discriminative'].values,ambiguous_candidate_records['partial_derivatives'].values)        
+    #     # ambiguous_candidate_records['transition_activity_cumulative']= np.vectorize(self.get_transition_activity,otypes=[float])(ambiguous_candidate_records['candidate'].values,ambiguous_candidate_records['normalized_cap'].values,ambiguous_candidate_records['normalized_capnormalized_substring-cap'].values,ambiguous_candidate_records['normalized_s-o-sCap'].values,ambiguous_candidate_records['normalized_all-cap'].values,ambiguous_candidate_records['normalized_non-cap'].values,ambiguous_candidate_records['normalized_non-discriminative'].values,ambiguous_candidate_records['partial_derivatives_good'].values,ambiguous_candidate_records['partial_derivatives_bad'].values)
+    #     # transition_activity_dict={ambiguous_candidate_records_list[elem][0]:transition_activity_list[elem] for elem in range(len(ambiguous_candidate_records_list))}
+    #     transition_activity_dict=pd.Series(ambiguous_candidate_records.transition_activity_cumulative.values,index=ambiguous_candidate_records.candidate).to_dict()
+                
+    #     transition_activity_dict_sorted= OrderedDict(sorted(transition_activity_dict.items(), key=lambda x: x[1], reverse=True))
+
+    #     # print(transition_activity_dict_sorted)
+    #     return transition_activity_dict_sorted
+    def sort_by_age(self, inactive_candidates_records_transition_function):
+        #function parameter
+        eviction_age_parameter=5
+        # inactive_candidates_list=inactive_candidates_records_transition_function.candidate.tolist()
+        candidate_eviction_ordered=inactive_candidates_records_transition_function[((self.counter-inactive_candidates_records_transition_function['batch'])>=eviction_age_parameter)].candidate.tolist()
+        # print('candidate_records_to_evict: ', len(candidate_records_to_evict))
+        return candidate_eviction_ordered
+
+    def sort_by_freq(self, inactive_candidates_records_transition_function):
+        # cumulative_matrix=candidate_featureBase_DF['cumulative'].as_matrix()
+        # zscore_array1=stats.zscore(cumulative_matrix)
+        # candidate_featureBase_DF['Z_ScoreUnweighted']=zscore_array1
+
+        # z_score_unique=candidate_featureBase_DF.Z_ScoreUnweighted.unique()
+
+        # #function parameter
+        # z_score_cutoff_threshold=20
+        # cutoff_value=int((z_score_cutoff_threshold/100)*len(z_score_unique))
+        # print(cutoff_value)
+
+        # z_score_unique_post_cutoff=np.argpartition(z_score_unique, cutoff_value)[:cutoff_value]
+        # print(z_score_unique_post_cutoff)
+        # z_score_cutoff_threshold_value=z_score_unique[z_score_unique_post_cutoff[-1]]
+        # print(z_score_cutoff_threshold_value)
+
+        # inactive_candidates_list=inactive_candidates_records_transition_function.candidate.tolist()
+        # inactive_candidates_records=candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(inactive_candidates_list)]
+
+        # candidate_eviction_ordered=inactive_candidates_records_transition_function.nsmallest(len(inactive_candidates_records_transition_function), 'cumulative').candidate.tolist()
+
+        inactive_candidates_dict=pd.Series(inactive_candidates_records_transition_function.cumulative.values,index=inactive_candidates_records_transition_function.candidate).to_dict()
+        candidate_eviction_ordered= list(OrderedDict(sorted(inactive_candidates_dict.items(), key=lambda x: x[1])).keys())
+
+        # candidates_to_evict=inactive_candidates_records_transition_function[inactive_candidates_records_transition_function].candidate.tolist()
+        print('candidates_to_evict: ', len(candidate_eviction_ordered))
+        return candidate_eviction_ordered
+
+    def sort_by_relative_updation(self, inactive_candidates_records_transition_function):
+
+        inactive_candidates_records_transition_function['relative_updation']=inactive_candidates_records_transition_function['batch_updation']/inactive_candidates_records_transition_function['cumulative']
+
+        #function parameter
+        # cutoff_threshold=20
+        # cutoff_value=int((cutoff_threshold/100)*len(inactive_candidates_records))
+        # print(cutoff_value)
+
+        # candidate_records_eviction_ordered=inactive_candidates_records.nsmallest(len(inactive_candidates_records), 'relative_updation')
+        # print('candidates_to_evict: \n', candidate_records_eviction_ordered)
+
+        inactive_candidates_dict=pd.Series(inactive_candidates_records_transition_function.relative_updation.values,index=inactive_candidates_records_transition_function.candidate).to_dict()
+        candidate_eviction_ordered= list(OrderedDict(sorted(inactive_candidates_dict.items(), key=lambda x: x[1])).keys())
+
+        # candidate_eviction_ordered=inactive_candidates_records_transition_function.nsmallest(len(inactive_candidates_records_transition_function), 'relative_updation').candidate.tolist()
+        # print(candidate_eviction_ordered)
+        return candidate_eviction_ordered
+
+    def sort_by_age_decayed_freq(self, inactive_candidates_records_transition_function):
+
+        #function parameter
+        # cutoff_threshold=20
+        # cutoff_value=int((cutoff_threshold/100)*len(inactive_candidates_records))
+        # print(cutoff_value)
+
+        # candidate_eviction_ordered=inactive_candidates_records_transition_function.nsmallest(len(inactive_candidates_records_transition_function), 'age_decayed_freq').candidate.tolist()
+        inactive_candidates_dict=pd.Series(inactive_candidates_records_transition_function.age_decayed_freq.values,index=inactive_candidates_records_transition_function.candidate).to_dict()
+        candidate_eviction_ordered= list(OrderedDict(sorted(inactive_candidates_dict.items(), key=lambda x: x[1])).keys())
+        # print('candidates_to_evict: ', len(candidate_eviction_ordered))
+        return candidate_eviction_ordered
 
 
     def set_cb(self,TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold):
@@ -1241,11 +1532,11 @@ class EntityResolver ():
         # df_holder=[]
 
 
-        data_frame_holder_outer=[pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','eviction_status']) for elem in self.eviction_threshold_array]
+        data_frame_holder_outer=[pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','inactivity_period','eviction_status']) for elem in self.eviction_threshold_array]
         
         phase2_candidates_holder_outer=[[] for elem in range(len(self.eviction_threshold_array))]
         phase2_unnormalized_candidates_holder_outer=[[] for elem in range(len(self.eviction_threshold_array))]
-        df_holder_outer=[pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','eviction_status']) for elem in self.eviction_threshold_array]
+        df_holder_outer=[pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','inactivity_period','eviction_status']) for elem in self.eviction_threshold_array]
 
         self.phase2stopwordList=phase2stopwordList
         self.number_of_seen_tweets_per_batch.append(len(TweetBase))
@@ -1260,7 +1551,7 @@ class EntityResolver ():
 
         # candidate_featureBase_DF,df_holder_extracted_first,phase2_candidates_holder_extracted_first= self.extract(TweetBase,CTrie,phase2stopwordList,0)
         df_holder_extracted_first= TweetBase.filter(['TweetSentence','tweetID','sentID','tweetwordList','phase1Candidates','hashtags','user','entry_batch','annotation','stanford_candidates'])
-        df_holder_extracted_first['2nd Iteration Candidates'], df_holder_extracted_first['2nd Iteration Candidates Unnormalized'], df_holder_extracted_first['eviction_status']=zip(*np.vectorize(self.extract_vectorized,otypes=[object])(df_holder_extracted_first['tweetID'].values,df_holder_extracted_first['sentID'].values,df_holder_extracted_first['entry_batch'].values,df_holder_extracted_first['tweetwordList'].values,df_holder_extracted_first['phase1Candidates'].values))
+        df_holder_extracted_first['2nd Iteration Candidates'], df_holder_extracted_first['2nd Iteration Candidates Unnormalized'], df_holder_extracted_first['fifo_score'], df_holder_extracted_first['lfu_score'], df_holder_extracted_first['inactivity_period'], df_holder_extracted_first['eviction_status']=zip(*np.vectorize(self.extract_vectorized,otypes=[object])(df_holder_extracted_first['tweetID'].values,df_holder_extracted_first['sentID'].values,df_holder_extracted_first['entry_batch'].values,df_holder_extracted_first['tweetwordList'].values,df_holder_extracted_first['phase1Candidates'].values))
         phase2_candidates_holder_extracted_first=df_holder_extracted_first['2nd Iteration Candidates'].tolist()
         phase2_unnormalized_candidates_holder_extracted_first=df_holder_extracted_first['2nd Iteration Candidates Unnormalized'].tolist()
 
@@ -1316,6 +1607,7 @@ class EntityResolver ():
         self.evicted_candidates_batchwise_progression[self.counter]=[[] for i in range(10)]
         self.all_estimates[self.counter]=[[0,0,0,0,0,0,0] for i in range(10)]
         # print(self.batchwise_reintroduction_eviction_estimates[self.counter])
+        whole_list=[]
 
         if(self.counter>0):
 
@@ -1324,13 +1616,39 @@ class EntityResolver ():
             
             #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!not used
             # ambiguous_candidates_in_batch_freq_w_decay=self.frequencies_w_decay(ambiguous_candidates_in_batch_w_Count,candidate_featureBase_DF)
-            ambiguous_candidate_records_list =self.my_classifier.get_partial_derivatives(ambiguous_candidate_records_before_classification)
+            time11=time.time()
+            ambiguous_candidate_records =self.my_classifier.get_partial_derivatives(ambiguous_candidate_records_before_classification,len(ambiguous_candidate_list_before_classification))
+            time22=time.time()
+            print('get_partial_derivatives: ', (time22-time11))
             # print('transition function input length: ',len(ambiguous_candidate_records_list))
             # for elem in ambiguous_candidate_records_list:
             #     print(elem)
-            transition_activity_list= np.vectorize(self.get_transition_activity,signature='(m)->()')(ambiguous_candidate_records_list)
-            print(transition_activity_list)
-                                  
+            ambiguous_candidate_records['transition_induced_probability']= np.vectorize(self.get_transition_activity,otypes=[float])(ambiguous_candidate_records['candidate'].values,ambiguous_candidate_records['normalized_cap'].values,ambiguous_candidate_records['normalized_capnormalized_substring-cap'].values,ambiguous_candidate_records['normalized_s-o-sCap'].values,ambiguous_candidate_records['normalized_all-cap'].values,ambiguous_candidate_records['normalized_non-cap'].values,ambiguous_candidate_records['normalized_non-discriminative'].values,ambiguous_candidate_records['partial_derivatives_good'].values,ambiguous_candidate_records['partial_derivatives_bad'].values)
+            # ambiguous_candidate_records['transition_activity_cumulative']= np.vectorize(self.get_transition_activity,otypes=[float])(ambiguous_candidate_records['candidate'].values,ambiguous_candidate_records['normalized_cap'].values,ambiguous_candidate_records['normalized_capnormalized_substring-cap'].values,ambiguous_candidate_records['normalized_s-o-sCap'].values,ambiguous_candidate_records['normalized_all-cap'].values,ambiguous_candidate_records['normalized_non-cap'].values,ambiguous_candidate_records['normalized_non-discriminative'].values,ambiguous_candidate_records['partial_derivatives'].values)
+            
+            # self.transition_activity_dict=ambiguous_candidate_records.set_index('candidate').to_dict()['transition_activity_cumulative']
+            # transition_activity_dict_sorted=OrderedDict(sorted(transition_activity_dict.items(), key=lambda x: x[1], reverse=True))
+            # candidates_to_evict_transition_function=list(transition_activity_dict_sorted.keys())
+
+            # transition_induced_prob_dict2={candidate: self.ambiguous_candidate_probability_dict[candidate]+self.transition_activity_dict2[candidate] for candidate in self.transition_activity_dict2.keys()}
+            # evicted_candidates_list=[candidate for candidate in transition_induced_prob_dict2.keys() if ((transition_induced_prob_dict2[candidate]>0.4)&(transition_induced_prob_dict2[candidate]<0.75))]
+            # candidates_for_eviction_transition_function=ambiguous_candidate_records.candidate.tolist()
+
+            # inactive_candidates_list_transition_function=ambiguous_candidate_records[ambiguous_candidate_records['transition_induced_probability'].between(0.4, 0.75, inclusive=False)].candidate.tolist()
+            inactive_candidates_records_transition_function=ambiguous_candidate_records[ambiguous_candidate_records['transition_induced_probability'].between(0.4, 0.75, inclusive=False)]
+            # candidates_to_evict_transition_function=list((OrderedDict(sorted(self.transition_activity_dict.items(), key=lambda x: x[1], reverse=True))).keys())
+            time3=time.time()
+            print('get_transition_ordered_dict: ',(time3-time22))
+
+            # candidate_eviction_ordered=self.sort_by_age(inactive_candidates_records_transition_function)
+            # candidate_eviction_ordered=self.sort_by_freq(inactive_candidates_records_transition_function)
+            candidate_eviction_ordered=self.sort_by_relative_updation(inactive_candidates_records_transition_function)
+            # candidate_eviction_ordered=self.sort_by_age_decayed_freq(inactive_candidates_records_transition_function,candidate_featureBase_DF)
+
+            
+            time4=time.time()
+            # print(transition_activity_dict_sorted)
+            print('candidate_eviction_ordering: ',(time4-time3))
 
             #with single sketch for entity/non-entity class-- cosine
             cosine_distance_dict=self.get_cosine_distance(ambiguous_candidate_inBatch_records,self.entity_sketch,self.non_entity_sketch,reintroduction_threshold)
@@ -1404,20 +1722,26 @@ class EntityResolver ():
             rank_dict_eviction_candidates={candidate: min(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in list(ranking_score_dict_eviction.keys())}
             rank_dict_ordered_eviction_candidates=OrderedDict(sorted(rank_dict_eviction_candidates.items(), key=lambda x: x[1]))
             rank_dict_ordered_list_eviction_candidates=list(rank_dict_ordered_eviction_candidates.keys())
+            whole_list=rank_dict_ordered_list_eviction_candidates
 
             # not_evicted_tweets=[]
 
             #first threshold is zero and all tweets get reintroduced, nothing is evicted:
-            first_eviction_cutoff=int(self.eviction_threshold_array[0]/100*(len(ambiguous_candidate_records_before_classification)))
-            rank_dict_ordered_list_eviction_candidates_first_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-first_eviction_cutoff):]
+            # first_eviction_cutoff=int(self.eviction_threshold_array[0]/100*(len(ambiguous_candidate_records_before_classification)))
+            # rank_dict_ordered_list_eviction_candidates_first_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-first_eviction_cutoff):]
+            # rank_dict_ordered_list_candidates_first_cutoff_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_first_cutoff]
+            
+            first_eviction_cutoff=int(self.eviction_threshold_array[0]/100*(len(candidate_eviction_ordered)))
+            rank_dict_ordered_list_eviction_candidates_first_cutoff=candidate_eviction_ordered[:first_eviction_cutoff]
             rank_dict_ordered_list_candidates_first_cutoff_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_first_cutoff]
+
             not_evicted_tweets=self.tweets_to_evict(rank_dict_ordered_list_eviction_candidates_first_cutoff,rank_dict_ordered_list_candidates_first_cutoff_post_eviction, 0)
 
             self.new_or_old=1
             
             # candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(not_evicted_tweets,CTrie,phase2stopwordList,1)
             df_holder_extracted= not_evicted_tweets.filter(['TweetSentence','tweetID','sentID','tweetwordList','phase1Candidates','hashtags','user','entry_batch','annotation','stanford_candidates'])
-            df_holder_extracted['2nd Iteration Candidates'], df_holder_extracted['2nd Iteration Candidates Unnormalized'], df_holder_extracted['eviction_status']=zip(*np.vectorize(self.extract_vectorized,otypes=[object])(df_holder_extracted['tweetID'].values,df_holder_extracted['sentID'].values,df_holder_extracted['entry_batch'].values,df_holder_extracted['tweetwordList'].values,df_holder_extracted['phase1Candidates'].values))
+            df_holder_extracted['2nd Iteration Candidates'], df_holder_extracted['2nd Iteration Candidates Unnormalized'], df_holder_extracted['fifo_score'], df_holder_extracted['lfu_score'], df_holder_extracted['inactivity_period'], df_holder_extracted['eviction_status']=zip(*np.vectorize(self.extract_vectorized,otypes=[object])(df_holder_extracted['tweetID'].values,df_holder_extracted['sentID'].values,df_holder_extracted['entry_batch'].values,df_holder_extracted['tweetwordList'].values,df_holder_extracted['phase1Candidates'].values))
 
             phase2_candidates_holder_extracted=df_holder_extracted['2nd Iteration Candidates'].tolist()
             phase2_unnormalized_candidates_holder_extracted=df_holder_extracted['2nd Iteration Candidates Unnormalized'].tolist()
@@ -1431,18 +1755,34 @@ class EntityResolver ():
                 eviction_threshold= self.eviction_threshold_array[elem]
                 print('eviction threshold: ',eviction_threshold)
 
-                real_eviction_cutoff= int(eviction_threshold/100*(len(ambiguous_candidate_records_before_classification)))
-                rank_dict_ordered_list_eviction_candidates_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-real_eviction_cutoff):]
+                # real_eviction_cutoff= int(eviction_threshold/100*(len(ambiguous_candidate_records_before_classification)))
+                # rank_dict_ordered_list_eviction_candidates_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-real_eviction_cutoff):]
+                # rank_dict_ordered_list_candidates_cutoff_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
+                
+                real_eviction_cutoff=int(eviction_threshold/100*(len(candidate_eviction_ordered)))
+                rank_dict_ordered_list_eviction_candidates_cutoff=candidate_eviction_ordered[:real_eviction_cutoff]
                 rank_dict_ordered_list_candidates_cutoff_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
+
                 not_evicted_tweets=self.tweets_to_evict(rank_dict_ordered_list_eviction_candidates_cutoff,rank_dict_ordered_list_candidates_cutoff_post_eviction, elem)
                 
                 df_holder_extracted_elem,phase2_candidates_holder_extracted_elem,phase2_unnormalized_candidates_holder_extracted_elem=self.get_output_aligned(eviction_threshold,df_holder_extracted,phase2_candidates_holder_extracted,phase2_unnormalized_candidates_holder_extracted,not_evicted_tweets)
                 
-                self.bottom_m_combined[(elem-1)].append(rank_dict_ordered_list_candidates_cutoff_post_eviction)
+                # self.bottom_m_combined[(elem-1)].append(rank_dict_ordered_list_eviction_candidates_cutoff)
 
                 phase2_candidates_holder_outer[elem].extend(phase2_candidates_holder_extracted_elem)
                 phase2_unnormalized_candidates_holder_outer[elem].extend(phase2_unnormalized_candidates_holder_extracted_elem)
                 df_holder_outer[elem]=df_holder_extracted_elem
+
+            # for elem in range(1,len(self.eviction_threshold_array_for_candidate_ranking)):
+            #     eviction_threshold= self.eviction_threshold_array_for_candidate_ranking[elem]
+            #     real_eviction_cutoff= int(eviction_threshold/100*(len(ambiguous_candidate_records_before_classification)))
+
+            #     rank_dict_ordered_list_eviction_candidates_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-real_eviction_cutoff):]
+            #     self.bottom_m_combined_for_ranking[(elem-1)].append(rank_dict_ordered_list_eviction_candidates_cutoff)
+
+                # print('eviction threshold for candidate ranking: ',eviction_threshold,real_eviction_cutoff,len(rank_dict_ordered_list_eviction_candidates_cutoff),len(candidates_to_evict_transition_function_cutoff))
+
+
 
 
 
@@ -1531,8 +1871,6 @@ class EntityResolver ():
         self.ambiguous_candidates=ambiguous_candidate_records.candidate.tolist()
         self.bad_candidates=non_entity_candidate_records.candidate.tolist()
         self.all_infrequent_candidates=all_infrequent.candidate.tolist()
-
-        self.candidate_status_dict=pd.Series(candidate_featureBase_DF.status.values,index=candidate_featureBase_DF.candidate).to_dict()
 
         ambiguous_turned_good=list(filter(lambda element: element in self.good_candidates, self.ambiguous_candidates_in_batch))
         ambiguous_turned_bad=list(filter(lambda element: element in self.bad_candidates, self.ambiguous_candidates_in_batch))
@@ -1637,12 +1975,16 @@ class EntityResolver ():
 
         all_ambiguous_remaining_ambiguous = candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (candidate_featureBase_DF['candidate'].isin(ambiguous_candidate_records_before_classification.candidate.tolist()))].candidate.tolist()
         # new_ambiguous_candidates = candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.ambiguous_candidates)) & (candidate_featureBase_DF['batch']==self.counter)].candidate.tolist()
-        # print('print length of all_ambiguous_remaining_ambiguous', len(all_ambiguous_remaining_ambiguous))
+        
 
-        all_ambiguous_remaining_ambiguous_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(all_ambiguous_remaining_ambiguous)]
-        all_ambiguous_remaining_ambiguous_records_grouped_df= all_ambiguous_remaining_ambiguous_records.groupby('batch')
+        # all_ambiguous_remaining_ambiguous_records= candidate_featureBase_DF[candidate_featureBase_DF['candidate'].isin(all_ambiguous_remaining_ambiguous)]
+        # all_ambiguous_remaining_ambiguous_records_grouped_df= all_ambiguous_remaining_ambiguous_records.groupby('batch')
 
+        time4=time.time()
         self.get_nearest_neighbours(candidate_featureBase_DF)
+        time5=time.time()
+
+        print('get_nearest_neighbours: ', (time5-time4))
 
         # for key, item in all_ambiguous_remaining_ambiguous_records_grouped_df:
         #     all_ambiguous_remaining_ambiguous_records_grouped_df_key= all_ambiguous_remaining_ambiguous_records_grouped_df.get_group(key)
@@ -1651,16 +1993,142 @@ class EntityResolver ():
         #         list_to_edit[2]=len(all_ambiguous_remaining_ambiguous_records_grouped_df_key)
         #         self.all_estimates[key][(self.counter-key)-1]=list_to_edit
 
-        # if(self.counter== 10):
-        #     for elem in range(1,len(self.eviction_threshold_array)):
-        #         eviction_threhold=self.eviction_threshold_array[elem]
-        #         evicted_candidates_threshold_arr=self.bottom_m_combined[(elem-1)]
-        #         for batch in range(len(evicted_candidates_threshold_arr)):
-        #             evicted_candidates_list=evicted_candidates_threshold_arr[batch]
-        #             evicted_candidates_remaining_ambiguous= [candidate for candidate in evicted_candidates_list if candidate in self.ambiguous_candidates]
-        #             print('precision for eviction at batch '+str(batch+1)+' for threshold '+str(eviction_threhold)+' :'+str(len(evicted_candidates_remaining_ambiguous)/len(evicted_candidates_list)))
+        
+
+        # if(self.counter> 0):
+        #     # true_list=[candidate for candidate in self.transition_activity_dict.keys() if candidate in all_ambiguous_remaining_ambiguous]
+        #     # false_list=[candidate for candidate in self.transition_activity_dict.keys() if candidate not in all_ambiguous_remaining_ambiguous]
+
+        #     # transition_induced_prob_dict={candidate: self.ambiguous_candidate_probability_dict[candidate]+self.transition_activity_dict[candidate] for candidate in self.transition_activity_dict.keys()}
+
+            
+        #     # for candidate in true_list:
+        #     #     print(candidate+' derivative: '+str(self.ambiguous_candidates_prev_derivative[candidate])+' transition: '+str(self.transition_activity_dict[candidate])+' transition induced probability: '+str(transition_induced_prob_dict[candidate])+' status: '+str(True))
+        #     # print('=====================================================')
+        #     # for candidate in false_list:
+        #     #     print(candidate+' derivative: '+str(self.ambiguous_candidates_prev_derivative[candidate])+' transition: '+str(self.transition_activity_dict[candidate])+' transition induced probability: '+str(transition_induced_prob_dict[candidate])+' status: '+str(False))
+            
+
+        #     percent=(len(all_ambiguous_remaining_ambiguous)*100/len(ambiguous_candidate_records_before_classification))
+        #     print('print length of all_ambiguous_remaining_ambiguous', len(all_ambiguous_remaining_ambiguous),percent)
+        #     self.percent_ambiguous_remaining_ambiguous.append(percent)
+
+        #     for elem in range(1,len(self.eviction_threshold_array_for_candidate_ranking)):
+        #         eviction_threhold=self.eviction_threshold_array_for_candidate_ranking[elem]
+
+        #         if(eviction_threhold>50):
+        #             evicted_candidates_list=self.bottom_m_combined_for_ranking[(elem-1)][-1]
+        #             evicted_candidates_remaining_ambiguous= [candidate for candidate in evicted_candidates_list if candidate in all_ambiguous_remaining_ambiguous]
+        #             false_positives= [candidate for candidate in evicted_candidates_list if candidate not in all_ambiguous_remaining_ambiguous]
+        #             # self.bottom_m_combined_for_ranking_recall.append(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous))
+        #             print('recall for eviction at batch '+str(self.counter)+' for threshold '+str(eviction_threhold)+' :'+str(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous)))
+        #             print('fpr for eviction at batch '+str(self.counter)+' for threshold '+str(eviction_threhold)+' :'+str(len(false_positives)/len(evicted_candidates_list)))
+                    
+        #             if(eviction_threhold==60):
+        #                 self.bottom_m_combined_for_ranking_recall_60.append(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous))
+        #                 self.bottom_m_combined_for_ranking_fpr_60.append(len(false_positives)/len(evicted_candidates_list))
+        #             if(eviction_threhold==70):
+        #                 self.bottom_m_combined_for_ranking_recall_70.append(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous))
+        #                 self.bottom_m_combined_for_ranking_fpr_70.append(len(false_positives)/len(evicted_candidates_list))
+        #             if(eviction_threhold==80):
+        #                 self.bottom_m_combined_for_ranking_recall_80.append(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous))
+        #                 self.bottom_m_combined_for_ranking_fpr_80.append(len(false_positives)/len(evicted_candidates_list))
+        #             if(eviction_threhold==90):
+        #                 self.bottom_m_combined_for_ranking_recall_90.append(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous))
+        #                 self.bottom_m_combined_for_ranking_fpr_90.append(len(false_positives)/len(evicted_candidates_list))
+
+        #             # evicted_candidates_list=self.transition_function_eviction_for_ranking[(elem-1)][-1]
+        #             # evicted_candidates_remaining_ambiguous= [candidate for candidate in evicted_candidates_list if candidate in all_ambiguous_remaining_ambiguous]
+        #             # # self.transition_function_eviction_for_ranking_recall.append(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous))
+        #             # print('recall for eviction w_transition at batch '+str(self.counter)+' for threshold '+str(eviction_threhold)+' :'+str(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous)))
+
+            # evicted_candidates_list=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-len(all_ambiguous_remaining_ambiguous)):]
+            # evicted_candidates_remaining_ambiguous= [candidate for candidate in evicted_candidates_list if candidate in all_ambiguous_remaining_ambiguous]
+            # print('recall for eviction at batch '+str(self.counter)+' for threshold '+str(percent)+' :'+str(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous)))
+
+            # evicted_candidates_list=[candidate for candidate in transition_induced_prob_dict.keys() if ((transition_induced_prob_dict[candidate]>0.4)&(transition_induced_prob_dict[candidate]<0.75))]
+            # evicted_candidates_remaining_ambiguous= [candidate for candidate in evicted_candidates_list if candidate in all_ambiguous_remaining_ambiguous]
+            # false_positives= [candidate for candidate in evicted_candidates_list if candidate not in all_ambiguous_remaining_ambiguous]
+            # print('recall for eviction w_transition at batch '+str(self.counter)+' :'+str(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous)))
+            # print('fpr for eviction w_transition at batch '+str(self.counter)+' for threshold '+str(eviction_threhold)+' :'+str(len(false_positives)/len(evicted_candidates_list)))
+            # print('percent evicted w_transition : '+str(len(evicted_candidates_list)/len(transition_induced_prob_dict.keys())))
+            # self.transition_function_eviction_for_ranking_recall.append(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous))
+            # self.transition_function_eviction_for_ranking_fpr.append(len(false_positives)/len(evicted_candidates_list))
+            # self.transition_function_percent_evicted.append(len(evicted_candidates_list)/len(transition_induced_prob_dict.keys()))
+
+        #     evicted_candidates_list=inactive_candidates_list_transition_function
+        #     evicted_candidates_remaining_ambiguous= [candidate for candidate in evicted_candidates_list if candidate in all_ambiguous_remaining_ambiguous]
+        #     false_positives= [candidate for candidate in evicted_candidates_list if candidate not in all_ambiguous_remaining_ambiguous]
+        #     total_evicted= len(evicted_candidates_list)
+        #     print('recall for eviction w_transition2 at batch '+str(self.counter)+' :'+str(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous)))
+        #     print('fpr for eviction w_transition2 at batch '+str(self.counter)+' :'+str(len(false_positives)/len(evicted_candidates_list)))
+        #     print('percent evicted w_transition2 : '+str(len(evicted_candidates_list)/len(candidates_for_eviction_transition_function)))
+        #     self.transition_function2_eviction_for_ranking_recall.append(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous))
+        #     self.transition_function2_eviction_for_ranking_fpr.append(len(false_positives)/len(evicted_candidates_list))
+        #     self.transition_function2_percent_evicted.append(len(evicted_candidates_list)/len(candidates_for_eviction_transition_function))
 
 
+
+        #     evicted_candidates_list=whole_list[(len(whole_list)-total_evicted):]
+        #     evicted_candidates_remaining_ambiguous= [candidate for candidate in evicted_candidates_list if candidate in all_ambiguous_remaining_ambiguous]
+        #     false_positives= [candidate for candidate in evicted_candidates_list if candidate not in all_ambiguous_remaining_ambiguous]
+        #     print('recall for eviction at batch '+str(self.counter)+' :'+str(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous)))
+        #     print('fpr for eviction at batch '+str(self.counter)+' :'+str(len(false_positives)/len(evicted_candidates_list)))
+        #     self.eviction_for_ranking_recall_transition_rate.append(len(evicted_candidates_remaining_ambiguous)/len(all_ambiguous_remaining_ambiguous))
+        #     self.eviction_for_ranking_fpr_transition_rate.append(len(false_positives)/len(evicted_candidates_list))
+
+
+        # if(self.counter==10):
+        #     print('for threshold 60: ')
+        #     print('recall: ',self.bottom_m_combined_for_ranking_recall_60)
+        #     print('false positive rate: ',self.bottom_m_combined_for_ranking_fpr_60)
+
+        #     print('for threshold 70: ')
+        #     print('recall: ',self.bottom_m_combined_for_ranking_recall_70)
+        #     print('false positive rate: ',self.bottom_m_combined_for_ranking_fpr_70)
+
+        #     print('for threshold 80: ')
+        #     print('recall: ',self.bottom_m_combined_for_ranking_recall_80)
+        #     print('false positive rate: ',self.bottom_m_combined_for_ranking_fpr_80)
+
+        #     print('for threshold 90: ')
+        #     print('recall: ',self.bottom_m_combined_for_ranking_recall_90)
+        #     print('false positive rate: ',self.bottom_m_combined_for_ranking_fpr_90)
+
+        #     print('for transition function: ')
+        #     print('recall: ',self.transition_function_eviction_for_ranking_recall)
+        #     print('false positive rate: ',self.transition_function_eviction_for_ranking_fpr)
+        #     print('percent evicted: ',self.transition_function_percent_evicted)
+
+        #     print('for transition function2: ')
+        #     print('recall: ',self.transition_function2_eviction_for_ranking_recall)
+        #     print('false positive rate: ',self.transition_function2_eviction_for_ranking_fpr)
+        #     print('percent evicted: ',self.transition_function2_percent_evicted)
+
+        #     print('for reintroduction ranking function with same eviction rate: ')
+        #     print('recall: ',self.eviction_for_ranking_recall_transition_rate)
+        #     print('false positive rate: ',self.eviction_for_ranking_fpr_transition_rate)
+
+            #     print('percentage of all_ambiguous_remaining_ambiguous: ',self.percent_ambiguous_remaining_ambiguous)
+            #     evicted_candidates_threshold_arr=self.bottom_m_combined_for_ranking[(elem-1)]
+            #     evicted_candidates_transition_threshold_arr=self.transition_function_eviction_for_ranking[(elem-1)]
+            #     for batch in range(len(evicted_candidates_threshold_arr)):
+            #         evicted_candidates_list=evicted_candidates_threshold_arr[batch]
+            #         evicted_candidates_remaining_ambiguous= [candidate for candidate in evicted_candidates_list if candidate in all_ambiguous_remaining_ambiguous]
+            #         print('precision for eviction at batch '+str(batch+1)+' for threshold '+str(eviction_threhold)+' :'+str(len(evicted_candidates_remaining_ambiguous)/len(evicted_candidates_list)))
+            #         # print('recall for eviction at batch '+str(batch+1)+' for threshold '+str(eviction_threhold)+' :'+str(self.bottom_m_combined_for_ranking_recall[batch]))
+
+            #         evicted_candidates_list=evicted_candidates_transition_threshold_arr[batch]
+            #         evicted_candidates_remaining_ambiguous= [candidate for candidate in evicted_candidates_list if candidate in all_ambiguous_remaining_ambiguous]
+            #         print('precision for eviction w_transition at batch '+str(batch+1)+' for threshold '+str(eviction_threhold)+' :'+str(len(evicted_candidates_remaining_ambiguous)/len(evicted_candidates_list)))
+            #         # print('recall for eviction w_transition at batch '+str(batch+1)+' for threshold '+str(eviction_threhold)+' :'+str(self.transition_function_eviction_for_ranking_recall[batch]))
+            #         print('\n')
+            #     print('=====================================')
+
+        self.maintenance_Candidatedict()
+        self.candidate_status_dict=pd.Series(candidate_featureBase_DF.status.values,index=candidate_featureBase_DF.candidate).to_dict()
+        self.ambiguous_candidate_probability_dict=pd.Series(ambiguous_candidate_records.probability.values,index=ambiguous_candidate_records.candidate).to_dict()
+        self.transition_activity_dict2={}
 
         #     self.arr1_eviction=[0,0,0,0,0,0,0]
         #     self.arr2_eviction=[0,0,0,0,0,0,0]
@@ -3615,7 +4083,7 @@ class EntityResolver ():
         if(normalized_candidate in self.CandidateBase_dict.keys()):
             feature_list=self.CandidateBase_dict[normalized_candidate]
         else:
-            feature_list=[0]*10
+            feature_list=[0]*12
             feature_list[0]=self.counter
             feature_list[1]=len(normalized_candidate.split())
             feature_list[-1]=0
@@ -3624,7 +4092,14 @@ class EntityResolver ():
         #     print(candidateText,feature_to_update)
         feature_list[feature_to_update]+=1
         feature_list[8]+=1
+        feature_list[9]+=1
+        feature_list[10]+=1
         self.CandidateBase_dict[normalized_candidate]=feature_list
+
+    def maintenance_Candidatedict(self):
+        for key, value in self.CandidateBase_dict.items():
+            value[9]=0
+            value[10]=value[10]*self.decay_base
 
 
     def extract_vectorized(self,row_tweetID,row_sentID,row_entry_batch,row_tweetWordList,row_phase1Candidates):
@@ -3712,6 +4187,10 @@ class EntityResolver ():
         phase2_candidates=[self.normalize(e[0]) for e in ne_candidate_list]
         phase2_candidates_unnormalized=[e[0] for e in ne_candidate_list]
         eviction_status=0
+        fifo_score=0
+        lfu_score=0
+        inactivity_period=0
+        
 
         if(self.new_or_old==0):
             #self.ambiguous_candidates_in_batch=[]
@@ -3732,7 +4211,7 @@ class EntityResolver ():
         # return df_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder
         
         # print(dict1,phase2_candidates,phase2_candidates_unnormalized)
-        return phase2_candidates,phase2_candidates_unnormalized,eviction_status
+        return phase2_candidates,phase2_candidates_unnormalized,fifo_score,lfu_score,inactivity_period,eviction_status
 
 
     #@profile
@@ -3742,10 +4221,10 @@ class EntityResolver ():
         if(self.counter==0):
             #output_queue
             self.data_frame_holder_OQ=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
-            self.incomplete_tweets=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates','eviction_status'])
-            self.incomplete_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates','eviction_status']) for i in range(len(self.eviction_threshold_array))]
+            self.incomplete_tweets=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates','fifo_score','lfu_score','inactivity_period','eviction_status'])
+            self.incomplete_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates','fifo_score','lfu_score','inactivity_period','eviction_status']) for i in range(len(self.eviction_threshold_array))]
 
-            self.evicted_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','eviction_status']) for i in range(len(self.eviction_threshold_array))]
+            self.evicted_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','fifo_score','lfu_score','inactivity_period','eviction_status']) for i in range(len(self.eviction_threshold_array))]
             
             self.CandidateBase_dict= {}
             self.ambiguous_candidate_distanceDict_prev={}
@@ -3775,7 +4254,7 @@ class EntityResolver ():
 
             self.aggregator_incomplete_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             # self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
-            self.just_converted_tweets_arr=[pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','eviction_status'])  for i in range(len(self.eviction_threshold_array))]
+            self.just_converted_tweets_arr=[pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','fifo_score','lfu_score','inactivity_period','eviction_status'])  for i in range(len(self.eviction_threshold_array))]
 
             #self.data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
             self.raw_tweets_for_others=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
@@ -3918,12 +4397,15 @@ class EntityResolver ():
             #     if candidate in self.ambiguous_candidates:
             #         print(candidate)
             phase2_candidates_holder.append(phase2_candidates)
+            fifo_score=0
+            lfu_score=0
+            inactivity_period=0
             eviction_status=0
 
             #print(phase1Candidates,"====",phase2_candidates)
             # if((tweetID=="9423")|(tweetID=="14155")):
             #     print(phase1Candidates,"====",phase2_candidates)
-            dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'annotation':annotation,'stanford_candidates':stanford,'eviction_status':eviction_status}
+            dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'annotation':annotation,'stanford_candidates':stanford,'fifo_score':fifo_score,'lfu_score':lfu_score,'inactivity_period':inactivity_period,'eviction_status':eviction_status}
 
             df_holder.append(dict1)
             #-------------------------------------------------------------------END of 1st iteration: RESCAN+CANDIDATE_UPDATION-----------------------------------------------------------
@@ -3935,7 +4417,7 @@ class EntityResolver ():
 
 
         #convert the CandidateFeatureBase from a dictionary to dataframe---> CandidateFeatureBaseDF
-        candidateBaseHeaders=['candidate', 'batch', 'length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','evictionFlag']
+        candidateBaseHeaders=['candidate', 'batch', 'length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','batch_updation','age_decayed_freq','evictionFlag']
         candidate_featureBase_DF=pd.DataFrame.from_dict(self.CandidateBase_dict, orient='index')
         candidate_featureBase_DF.columns=candidateBaseHeaders[1:]
         candidate_featureBase_DF.index.name=candidateBaseHeaders[0]
@@ -3951,7 +4433,7 @@ class EntityResolver ():
 
 
     def get_candidateFeatureBase(self):
-        candidateBaseHeaders=['candidate', 'batch', 'length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','evictionFlag']
+        candidateBaseHeaders=['candidate', 'batch', 'length','cap','substring-cap','s-o-sCap','all-cap','non-cap','non-discriminative','cumulative','batch_updation','age_decayed_freq','evictionFlag']
         candidate_featureBase_DF=pd.DataFrame.from_dict(self.CandidateBase_dict, orient='index')
         candidate_featureBase_DF.columns=candidateBaseHeaders[1:]
         candidate_featureBase_DF.index.name=candidateBaseHeaders[0]
