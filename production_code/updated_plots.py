@@ -250,9 +250,9 @@ import matplotlib.colors as colors
 # ax1.set_ylabel('Effectiveness estimates')
 # ax2.set_ylabel('Efficiency estimates')
 # plt.title('EMD Performance estimates for different reintroduction variants')
-# # ax1.set_xticks(index + 1.0*bar_width, ('20', '40', '60', '80', '100'))
+# # ax1.set_xticks(index + 1.0*bar_width, ('20,40,60,80,100'))
 # ax1.set_xticks(index+ 1.0*bar_width)
-# ax1.set_xticklabels(['0','20', '40', '60', '80', '100','dynamic', 'baseline', 'ritter'])
+# ax1.set_xticklabels(['0','20,40,60,80,100','dynamic,baseline,ritter'])
 
 # for tick in ax1.get_xticklabels():
 #         tick.set_rotation(45)
@@ -332,9 +332,9 @@ import matplotlib.colors as colors
 # ax1.set_ylabel('Effectiveness estimates')
 # ax2.set_ylabel('Efficiency estimates')
 # plt.title('EMD Performance estimates for different Eviction variants')
-# # ax1.set_xticks(index + 1.0*bar_width, ('20', '40', '60', '80', '100'))
+# # ax1.set_xticks(index + 1.0*bar_width, ('20,40,60,80,100'))
 # ax1.set_xticks(index+ 1.0*bar_width)
-# ax1.set_xticklabels(['baseline(0)','10','20','30', '40'])
+# ax1.set_xticklabels(['baseline(0)','10','20','30,40'])
 
 # for tick in ax1.get_xticklabels():
 #         tick.set_rotation(45)
@@ -472,7 +472,7 @@ import matplotlib.colors as colors
 # ax1.set_ylabel('Ranking Effectiveness (percentage)')
 # # ax2.set_ylabel('Efficiency estimates')
 # plt.title('Inactive Candidate Identification with Different Ranking Functions')
-# # ax1.set_xticks(index + 1.0*bar_width, ('20', '40', '60', '80', '100'))
+# # ax1.set_xticks(index + 1.0*bar_width, ('20,40,60,80,100'))
 # ax1.set_xticks(index+ 2.0*bar_width+ 2.0*inter_bar)
 # ax1.set_xticklabels(['1','2','3','4','5','6','7','8','9','10'])
 
@@ -491,3 +491,222 @@ import matplotlib.colors as colors
  
 # # plt.tight_layout()
 # plt.show()
+
+
+# # EXPERIMENT 7: Baseline vs variants--- recall, memory comparison
+
+# # just eviction-- LRU (75%)
+# memory_0= [88.1,96.6,103.0,98.4,102.7,105.0,98.1,110.1,119.0,133.1,141.5,136.2,140.3,133.6,136.9,141.0,155.0,154.7,154.4,158.3,136.3]
+# memory_60= [88.1,96.2,100.5,93.8,95.3,95.8,86.7,96.9,95.7,103.0,110.4,103.9,106.8,99.7,101.2,104.0,116.8,115.6,115.1,117.9,95.0]
+# memory_70= [88.1,96.0,100.0,92.9,94.9,95.4,86.3,96.6,91.0,101.4,108.0,101.5,104.0,96.5,98.5,101.9,113.5,107.2,104.6,107.2,83.7]
+# memory_80= [88.1,96.0,99.7,91.9,93.8,94.0,84.6,94.5,88.5,98.0,104.1,97.0,99.3,92.1,91.4,91.9,103.9,100.9,99.5,102.0,76.5]
+# memory_90= [88.1,95.7,99.4,91.6,93.6,93.8,84.2,94.0,87.3,96.8,100.0,94.2,93.7,86.2,87.8,88.7,101.5,98.4,95.2,97.0,70.3]
+# memory_100= [88.1,95.6,99.3,91.4,92.7,92.9,83.8,90.9,86.1,95.4,98.7,92.7,92.4,84.6,85.9,86.5,98.2,94.7,91.9,93.4,67.1]
+
+# emd_rate_60= [1.0, 0.999789954744795, 0.9949579621136424, 0.9920552665055998, 0.9897470239813414, 0.9909921271611771, 0.9846018094255977, 0.9796791382438733, 0.9670698779175961, 0.9644760772649879, 0.9660660339083259, 0.9671498662523381, 0.9699099074801677, 0.9721502987718088, 0.9736564643885567, 0.9752105114439107, 0.9768485719887589, 0.9778720220547873, 0.9788663477842349, 0.979675932996568, 0.9795306433721576]
+# emd_rate_70= [1.0, 0.9997390346829271, 0.9942263231168658, 0.9892926344833324, 0.9888695170247895, 0.9903055016453323, 0.9839362980130338, 0.9790207247142408, 0.9642019160656401, 0.963506203050213, 0.9645804142541058, 0.9660272674429816, 0.9686374073361227, 0.9709108499698498, 0.972669410296361, 0.9741264010549119, 0.9745271550879028, 0.9742661619221495, 0.9740358204993452, 0.9749003679828947, 0.9740779256794232]
+# emd_rate_80= [1.0, 0.9997326696751937, 0.9922780729883063, 0.9866825191599103, 0.9872674895218742, 0.9885959442385346, 0.981812189702646, 0.9765708139063062, 0.9595507280905041, 0.9579787489783163, 0.9595836041886933, 0.9614707559566608, 0.9648787508412844, 0.967522428784638, 0.9683775604264726, 0.9679513987001978, 0.9684404069450798, 0.9681075740140608, 0.9684242321154933, 0.9694764384327444, 0.968560038824182]
+# emd_rate_90= [1.0, 0.9988479336002394, 0.9917011233794196, 0.9860655197873085, 0.9867219342100706, 0.9882666442462417, 0.9810913961919139, 0.9753803103730755, 0.9575021839105354, 0.9560771323555012, 0.9565535433914057, 0.9581484144497062, 0.960691023970323, 0.9631654095698376, 0.9648300798616493, 0.9643524536121315, 0.9649059974293619, 0.9639910056804089, 0.9641329726010783, 0.9651691366954156, 0.9627662229617304]
+# emd_rate_100= [1.0, 0.9988479336002394, 0.9917011233794196, 0.9860655197873085, 0.9867219342100706, 0.9882666442462417, 0.9810913961919139, 0.9753803103730755, 0.9575021839105354, 0.9560771323555012, 0.9565535433914057, 0.9581484144497062, 0.960691023970323, 0.9631654095698376, 0.9648300798616493, 0.9643524536121315, 0.9649059974293619, 0.9639910056804089, 0.9641329726010783, 0.9651691366954156, 0.9627662229617304]
+
+# eviction-- LRU (75%), reintroduction (80%)
+# memory_0= [88.1 ,98.3 ,105.5 ,102.3 ,108.4 ,114.0 ,108.0 ,122.3 ,131.3 ,146.2 ,153.4 ,149.9 ,155.9 ,149.2 ,153.0 ,158.3 ,172.1 ,171.7 ,172.5 ,175.5 ,150.8]
+# memory_60= [88.1 ,95.9 ,101.2 ,93.0 ,95.4 ,98.0 ,88.5 ,98.0 ,90.1 ,104.5 ,106.0 ,99.4 ,100.3 ,93.7 ,94.2 ,98.9 ,110.2 ,110.7 ,108.7 ,109.8 ,88.9]
+# memory_70=  [88.1 ,95.9 ,100.2 ,91.7 ,94.0 ,96.6 ,88.5 ,97.4 ,89.6 ,104.0 ,105.8 ,99.2 ,99.8 ,93.2 ,94.1 ,98.5 ,106.3 ,102.9 ,103.2 ,103.4 ,79.1]
+# memory_80= [88.1 ,94.9 ,99.4 ,89.9 ,93.2 ,94.5 ,86.6 ,92.1 ,84.9 ,99.0 ,103.2 ,95.2 ,95.9 ,91.1 ,87.7 ,93.1 ,102.3 ,98.8 ,98.1 ,99.0 ,72.0]
+# memory_90= [88.1 ,94.8 ,99.1 ,88.6 ,93.0 ,94.0 ,84.5 ,89.5 ,81.7 ,95.6 ,98.1 ,92.1 ,91.8 ,84.0 ,85.8 ,89.1 ,100.7 ,96.6 ,93.8 ,93.0 ,67.8]
+# memory_100= [88.1 ,94.6 ,98.5 ,88.3 ,92.3 ,93.8 ,84.1 ,88.0 ,81.1 ,94.5 ,97.0 ,89.8 ,90.0 ,82.7 ,84.1 ,85.7 ,96.6 ,91.8 ,90.3 ,90.2 ,64.7]
+
+# emd_rate_60= [1.0, 0.9955682986063379, 0.990849936386496, 0.9859760525079374, 0.9814677362140765, 0.9797349678672086, 0.9762759650801297, 0.9749518572194318, 0.9544057079877023, 0.957045766743439, 0.9585293366313808, 0.9607005541025503, 0.9603084207751387, 0.9618164886884669, 0.9625928160775046, 0.961207233518093, 0.9633955955530894, 0.9654227858961079, 0.9647775995287785, 0.9638056207638112, 0.964510688392468]
+# emd_rate_70= [1.0, 0.9949922428860392, 0.990155970887719, 0.9818898870965446, 0.9786239563119096, 0.9774527064722035, 0.9741260641788505, 0.9726092394433304, 0.9523286471597596, 0.9552124902891226, 0.9567972386120785, 0.9590741051684932, 0.9584164235450225, 0.9600960773016802, 0.9613063810529492, 0.959734432561448, 0.957763805601994, 0.9569466174301814, 0.9587696819488996, 0.95817721325476, 0.9564682178088937]
+# emd_rate_80= [1.0, 0.9853302173955736, 0.9843857762775177, 0.9766220083431809, 0.9754165064432183, 0.9747429738952768, 0.9713773727901648, 0.9584364018979175, 0.9396436063015405, 0.9418753612103398, 0.9462255216543405, 0.9491887676838969, 0.9492074423603044, 0.9510530360908405, 0.9511688959286636, 0.9541935739165599, 0.9536004025128506, 0.9531931944580689, 0.9539709834176489, 0.9536314179500485, 0.951912138414258]
+# emd_rate_90= [1.0, 0.9853302173955736, 0.9833191256034716, 0.9723792303202016, 0.9750975499971681, 0.9741826726850745, 0.9694815711732095, 0.9559508447320879, 0.9349281168543194, 0.937773212212468, 0.9401071034710496, 0.9448288030872648, 0.9442882495620026, 0.9469684908143547, 0.9483906991166758, 0.9500174207452604, 0.9507706800790039, 0.9497415417049768, 0.949924151111866, 0.9496353809133925, 0.9478901956567263]
+# emd_rate_100= [1.0, 0.9845512329556241, 0.9806589245248264, 0.9713220951919929, 0.9743254965436449, 0.9736585978462214, 0.9685513468366849, 0.9523892716046932, 0.9310078984448241, 0.9339780384113433, 0.9358640863806005, 0.9388466584514157, 0.9400009838385597, 0.9423776726797068, 0.9438724627478587, 0.9442275564340459, 0.9446767853924947, 0.9433054396783778, 0.9442746360850598, 0.9439584653218658, 0.9429315682534651]
+
+# eviction-- age decayed freq, LRU (75%), reintroduction (80%)
+
+memory_0= [88.1 ,98.3 ,105.5 ,102.3 ,108.4 ,114.0 ,108.0 ,122.3 ,131.3 ,146.2 ,153.4 ,149.9 ,155.9 ,149.2 ,153.0 ,158.3 ,172.1 ,171.7 ,172.5 ,175.5 ,150.8]
+memory_60= [88.1 ,95.1 ,100.4 ,94.4 ,95.6 ,95.2 ,87.6 ,97.1 ,87.7 ,100.2 ,104.8 ,108.4 ,110.6 ,105.8 ,96.7 ,108.2 ,109.8 ,110.6 ,119.6 ,107.8 ,95.8 ]
+memory_70=  [88.1 ,94.9 ,100.2 ,94.1 ,95.5 ,96.4 ,87.3 ,96.8 ,87.4 ,99.7 ,104.1 ,107.9 ,109.9 ,105.4 ,92.2 ,106.8 ,108.7 ,108.8 ,117.2 ,105.9 ,92.8 ]
+memory_80= [88.1 ,95.4 ,99.6 ,93.2 ,95.3 ,95.0 ,86.8 ,96.4 ,86.4 ,99.3 ,103.7 ,107.0 ,108.5 ,104.1 ,91.1 ,105.5 ,107.6 ,106.4 ,114.1 ,103.6 ,90.6 ]
+memory_90= [88.1 ,94.6 ,99.1 ,91.9 ,95.4 ,96.4 ,86.7 ,95.0 ,83.3 ,96.0 ,100.0 ,104.2 ,104.9 ,100.9 ,88.9 ,101.4 ,102.7 ,101.6 ,109.3 ,98.7 ,82.4 ]
+memory_100= [88.1 ,94.4 ,98.0 ,89.4 ,91.3 ,92.1 ,81.8 ,87.5 ,80.8 ,93.1 ,95.9 ,89.6 ,89.6 ,83.1 ,83.2 ,84.8 ,96.1 ,91.8 ,90.0 ,90.2 ,64.1 ]
+
+emd_rate_60= [1.0, 0.9947337251730484, 0.9922153285281871, 0.994379793705369, 0.9891860058948682, 0.9884074287756441, 0.9864016469447304, 0.9831699981429756, 0.9651523849756105, 0.9653396623527831, 0.9662221712464384, 0.9797058953216632, 0.9817976646060249, 0.9817619065696886, 0.9723015413923427, 0.9832273683157836, 0.974650886747661, 0.9766551263634682, 0.9818429490730094, 0.9743190055509132, 0.9804079711870088]
+emd_rate_70= [1.0, 0.9945745270222941, 0.9919853838821345, 0.9940665933545846, 0.9887847391621897, 0.9908810400846494, 0.9882072462165358, 0.984818346635627, 0.9664359499283298, 0.9666300127542347, 0.966910344328005, 0.9803356078310331, 0.9820895888529094, 0.9821169765899432, 0.9722443089489058, 0.9831792524300881, 0.9745278243262114, 0.9763080209860238, 0.9811866793285726, 0.9736535304427825, 0.9794535998539639]
+emd_rate_80= [1.0, 0.9980195750046168, 0.990639162499791, 0.9918915909185818, 0.9882622263663998, 0.9877253754213198, 0.9840367159785965, 0.981121527890784, 0.9623902831786195, 0.9635567231733996, 0.9645983242381804, 0.9773689316107412, 0.9781020017662644, 0.9781587274647777, 0.9685160240621544, 0.9795413140920107, 0.9713971512358609, 0.9718632795917519, 0.9762046828169634, 0.9696455389735533, 0.975922078877576]
+emd_rate_90= [1.0, 0.9944853760578717, 0.9906642473702694, 0.9903464691880455, 0.9873586545151168, 0.9897341626977546, 0.9855233047783515, 0.9790634853476943, 0.958090069792716, 0.9591599122296359, 0.9604526850823393, 0.975282750562194, 0.9746933568835247, 0.9761868606227347, 0.9670392226198968, 0.9752467354315004, 0.9663856304985338, 0.9674372786286567, 0.9729065262549917, 0.9660167890068991, 0.970274282850676]
+emd_rate_100= [1.0, 0.993453772040984, 0.987315417161396, 0.9855231837859658, 0.98371549899972, 0.9856558573667602, 0.9785220882850848, 0.9720871997411653, 0.9510241440192372, 0.9531609438465378, 0.9532404500893418, 0.9553813549980158, 0.958188597782357, 0.960573828883048, 0.9602714861834749, 0.960553464768322, 0.9597262952101662, 0.9591458600350528, 0.9595160258932411, 0.9583194842892359, 0.9570491254835192]
+
+
+cumulative_memory_0=[sum(memory_0[0:(i+1)]) for i in range(len(memory_0))]
+cumulative_memory_60=[sum(memory_60[0:(i+1)]) for i in range(len(memory_60))]
+cumulative_memory_70=[sum(memory_70[0:(i+1)]) for i in range(len(memory_70))]
+cumulative_memory_80=[sum(memory_80[0:(i+1)]) for i in range(len(memory_80))]
+cumulative_memory_90=[sum(memory_90[0:(i+1)]) for i in range(len(memory_90))]
+cumulative_memory_100=[sum(memory_100[0:(i+1)]) for i in range(len(memory_100))]
+
+memory_percent_0=[cumulative_memory_0[i]/cumulative_memory_0[i] for i in range(len(cumulative_memory_0))]
+memory_percent_60=[cumulative_memory_60[i]/cumulative_memory_0[i] for i in range(len(cumulative_memory_0))]
+memory_percent_70=[cumulative_memory_70[i]/cumulative_memory_0[i] for i in range(len(cumulative_memory_0))]
+memory_percent_80=[cumulative_memory_80[i]/cumulative_memory_0[i] for i in range(len(cumulative_memory_0))]
+memory_percent_90=[cumulative_memory_90[i]/cumulative_memory_0[i] for i in range(len(cumulative_memory_0))]
+memory_percent_100=[cumulative_memory_100[i]/cumulative_memory_0[i] for i in range(len(cumulative_memory_0))]
+
+print(memory_percent_0)
+print(memory_percent_60)
+print(memory_percent_70)
+print(memory_percent_80)
+print(memory_percent_90)
+print(memory_percent_100)
+
+
+memory_percent_0=[memory_percent_0[i] for i in range(len(memory_percent_0)) if (i%2==0)]
+memory_percent_60=[memory_percent_60[i] for i in range(len(memory_percent_60)) if (i%2==0)]
+memory_percent_70=[memory_percent_70[i] for i in range(len(memory_percent_70)) if (i%2==0)]
+memory_percent_80=[memory_percent_80[i] for i in range(len(memory_percent_80)) if (i%2==0)]
+memory_percent_90=[memory_percent_90[i] for i in range(len(memory_percent_90)) if (i%2==0)]
+memory_percent_100=[memory_percent_100[i] for i in range(len(memory_percent_100)) if (i%2==0)]
+
+# emd_rate_0= ['88.1,96.6,103.0,98.4,102.7,105.0,98.1,110.1,119.0,133.1,141.5,136.2,140.3,133.6,136.9,141.0,155.0,154.7,154.4,158.3,136.3 ']
+
+emd_rate_60=[emd_rate_60[i] for i in range(len(emd_rate_60)) if (i%2==0)]
+emd_rate_70=[emd_rate_70[i] for i in range(len(emd_rate_70)) if (i%2==0)]
+emd_rate_80=[emd_rate_80[i] for i in range(len(emd_rate_80)) if (i%2==0)]
+emd_rate_90=[emd_rate_90[i] for i in range(len(emd_rate_90)) if (i%2==0)]
+emd_rate_100=[emd_rate_100[i] for i in range(len(emd_rate_100)) if (i%2==0)]
+
+# n_groups = 21
+n_groups = 11
+
+# emd_recall_arr=[,0.77,0.81,0.835,0.86,0.87,0.87]
+ #baseline and 100% should be same
+
+# incomplete_arr=[float(arr[-1]/tweets[-1]) for arr in incomplete_tweets]
+# complete_arr=[float(arr[-1]/tweets[-1]) for arr in converted_tweets]
+# print(complete_arr)
+
+
+# create plot
+fig, ax1 = plt.subplots(2)
+
+index = np.arange(n_groups)
+
+# print(len(index),len(memory_percent_0))
+# print(len(index),len(memory_percent_0))
+
+bar_width = 0.1
+inter_bar= 0.025
+opacity = 0.6
+
+rects1 = ax1[0].bar(index, memory_percent_0, bar_width,
+alpha=opacity,
+color='b',
+# ax=ax1,
+label='memory-baseline')
+
+rects2 = ax1[1].bar(index, memory_percent_0, bar_width,
+alpha=opacity,
+color='b',
+# ax=ax1,
+label='emd-baseline')
+
+rects3 = ax1[0].bar(index + bar_width + inter_bar, memory_percent_60, bar_width,
+alpha=opacity,
+color='g',
+# ax=ax1,
+hatch="\\",
+label='memory-60%-threshold')
+
+# rects3 = ax1[1].bar(index + 2*bar_width + inter_bar, emd_rate_60, bar_width,
+rects4 = ax1[1].bar(index + bar_width + inter_bar, emd_rate_60, bar_width,
+alpha=opacity,
+color='g',
+# ax=ax1,
+hatch="\\",
+label='emd-60%-threshold')
+
+
+rects5 = ax1[0].bar(index + 2*bar_width + 2*inter_bar, memory_percent_70, bar_width,
+alpha=opacity,
+color='r',
+hatch="O",
+label='memory-70%-threshold')
+
+# rects5 = ax1[1].bar(index + 4*bar_width + 2*inter_bar, emd_rate_70, bar_width,
+rects6 = ax1[1].bar(index + 2*bar_width + 2*inter_bar, emd_rate_60, bar_width,
+alpha=opacity,
+color='r',
+hatch="O",
+label='emd-70%-threshold')
+
+rects7 = ax1[0].bar(index + 3*bar_width + 3*inter_bar, memory_percent_80, bar_width,
+alpha=opacity,
+color='k',
+hatch="\\",
+label='memory-80%-threshold')
+
+rects8 = ax1[1].bar(index + 3*bar_width + 3*inter_bar, emd_rate_80, bar_width,
+alpha=opacity,
+color='k',
+hatch="\\",
+label='emd-80%-threshold')
+
+rects9 = ax1[0].bar(index + 4*bar_width + 4*inter_bar, memory_percent_90, bar_width,
+alpha=opacity,
+color='y',
+hatch="O",
+label='memory-90%-threshold')
+
+rects10 = ax1[1].bar(index + 4*bar_width + 4*inter_bar, emd_rate_90, bar_width,
+alpha=opacity,
+color='y',
+hatch="O",
+label='emd-90%-threshold')
+
+rects11 = ax1[0].bar(index + 5*bar_width + 5*inter_bar, memory_percent_100, bar_width,
+alpha=opacity,
+color='c',
+hatch="\\",
+label='memory-100%-threshold')
+
+rects12 = ax1[1].bar(index + 5*bar_width + 5*inter_bar, emd_rate_100, bar_width,
+alpha=opacity,
+color='c',
+hatch="\\",
+label='emd-100%-threshold')
+
+ 
+ax1[0].set_xlabel('# of batches since start')
+ax1[0].set_ylabel('% Memory consumption of baseline')
+
+ax1[1].set_xlabel('# of batches since start')
+ax1[1].set_ylabel('% Mention Discovery rate of baseline')
+# ax2.set_ylabel('Efficiency estimates')
+
+# plt.title('Comparing Memory Consumption and recall upon Eviction with Different Candidate Selection Thresholds')
+ax1[0].set_title('Comparing Memory Consumption and recall upon Eviction with Different Candidate Selection Thresholds w Reintroduction')
+
+# ax1.set_xticks(index + 1.0*bar_width, ('20,40,60,80,100'))
+ax1[0].set_xticks(index+ 3.0*bar_width+ 3.0*inter_bar)
+ax1[1].set_xticks(index+ 2.5*bar_width+ 2.0*inter_bar)
+# ax1.set_xticklabels(['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21'])
+ax1[0].set_xticklabels(['1','3','5','7','9','11','13','15','17','19','21'])
+ax1[1].set_xticklabels(['1','3','5','7','9','11','13','15','17','19','21'])
+
+for tick in ax1[0].get_xticklabels():
+        tick.set_rotation(45)
+lines, labels = ax1[0].get_legend_handles_labels()
+lgd0=ax1[0].legend(lines, labels, bbox_to_anchor=(0.5,1.005), ncol=6, loc=9, prop={'size': 6}, framealpha=0.3, borderaxespad=0.)
+
+for tick in ax1[1].get_xticklabels():
+        tick.set_rotation(45)
+lines, labels = ax1[1].get_legend_handles_labels()
+# lines2, labels2 = ax2.get_legend_handles_labels()
+lgd1=ax1[1].legend(lines, labels, bbox_to_anchor=(0.5,1.005), ncol=6, loc=9, prop={'size': 6}, framealpha=0.3, borderaxespad=0.)
+
+
+# plt.savefig('eviction-memory-recall-comparison.png', dpi = 900, bbox_extra_artists=(lgd,), bbox_inches='tight')
+ 
+# plt.tight_layout()
+plt.show()

@@ -37,8 +37,8 @@ total_time=0
 # Phase2 = phase2.EntityResolver()
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/TwiCSv2/production_code/tweets_3k_annotated.csv",sep =',', encoding='utf-8',keep_default_na=False)
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated.csv",sep =',', encoding='utf-8',keep_default_na=False)
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/venezuela.csv",sep =',', encoding='utf-8',keep_default_na=False)
+tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated.csv",sep =',', encoding='utf-8',keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/venezuela.csv",sep =',', encoding='utf-8',keep_default_na=False)
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio.csv",sep =',', keep_default_na=False)
@@ -207,15 +207,20 @@ Phase1= phase1.SatadishaModule()
 Phase2 = phase2.EntityResolver()
 
 ind=0
-
+batch_count=0
 acc_holder=[]
 # for train_ind,test_ind in kf.split(tweets_unpartitoned):
 # for ind in range(len(test_sets)):
-for ind in range(len([1])):
+# for ind in range(len([1])):
+for g, tweet_batch in tweets_unpartitoned.groupby(np.arange(length) //batch_size):
+        
+    # input_size_arr.append(convert_bytes(sys.getsizeof(tweet_batch)))
+    # print('input_size_arr: ',input_size_arr)
+    #tweet_base.to_csv('tweet_base
 
 
     # tweets=tweets_unpartitoned.iloc[test_ind]
-    tweets=tweets_unpartitoned
+    # tweets=tweets_unpartitoned
     # tweets=test_sets[ind]
     z_score=1
         # batch_size_ratio_float= batch_size_ratio/100.0
@@ -229,10 +234,10 @@ for ind in range(len([1])):
     execution_time_list=[]
     tweets_been_processed_list=[]
     tweets_been_processed=0
-    batch_size=500
+    # batch_size=600
 
     
-    tuple_of= Phase1.extract(tweets,ind)
+    tuple_of= Phase1.extract(tweet_batch,batch_count)
     ind+=1
 
 
@@ -256,7 +261,7 @@ for ind in range(len([1])):
     # phase2TweetBase=Phase2.executor(tweet_base,candidate_base,phase2stopwordList,best_z_scores[counter],tweet_base)
     reintroduction_threshold_dummy=0  
     # # #phase2_Trie_baseline_reintroduction_effectiveness
-    candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweets)
+    candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_batch)
 
     new_acc_list=Phase2.finish()
     # accuracy_list_stanford,accuracy_list_opencalai,accuracy_list_ritter,accuracy_list_neuroner=Phase2.finish_other_systems()
@@ -273,6 +278,7 @@ for ind in range(len([1])):
 
     # level_holder.append(execution_time_list)
     acc_holder.append(new_acc_list)
+    batch_count+=1
 
     # stanford.append(accuracy_list_stanford)
     # opencalai.append(accuracy_list_opencalai)

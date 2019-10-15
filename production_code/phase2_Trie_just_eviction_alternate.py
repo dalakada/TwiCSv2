@@ -10,6 +10,7 @@ import math
 from itertools import groupby
 from operator import itemgetter
 from collections import Iterable, OrderedDict
+import sys
 from scipy import stats
 import SVM as svm
 import statistics
@@ -60,8 +61,9 @@ class EntityResolver ():
         # for j in range(self.counter+1):
         #     print(len(self.entity_level_arr[j]),self.entity_level_arr[j])
         #print(self.entity_level_arr)
-        self.mention_count=0
+        
 
+        
         candidate_featureBase_DF,data_frame_holder_outer,phase2_candidates_holder_outer,phase2_unnormalized_candidates_holder_outer,correction_flag=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold_dummy)
         print('here 1')
 
@@ -70,11 +72,15 @@ class EntityResolver ():
         #     print(len(self.entity_level_arr[j]),self.entity_level_arr[j])
         #print(self.entity_level_arr)
 
+
         # SET TF 
         for elem in range(len(self.eviction_threshold_array)):
 
 
             print('for threshold:', self.eviction_threshold_array[elem])
+
+            self.mention_count=0
+            self.converted_tweet_mention_count=0
 
 
             data_frame_holder_inner= data_frame_holder_outer[elem]
@@ -82,19 +88,41 @@ class EntityResolver ():
             phase2_unnormalized_candidates_holder_inner= phase2_unnormalized_candidates_holder_outer[elem]
 
             # print(len(data_frame_holder_inner),len(phase2_candidates_holder_inner),len(phase2_unnormalized_candidates_holder_inner))
+            # print('total length:',len(data_frame_holder_inner),len(data_frame_holder_inner.columns.tolist()))
 
             untrashed_tweets=self.set_tf(data_frame_holder_inner,
                 candidate_featureBase_DF,
                 phase2_candidates_holder_inner,phase2_unnormalized_candidates_holder_inner,correction_flag)
             # print(untrashed_tweets.head())
+            # print('total length:',len(untrashed_tweets),len(untrashed_tweets.columns.tolist()))
+            # print(untrashed_tweets.columns.tolist())
             print('here 2')
 
-            # untrashed_tweets=self.set_column_for_candidates_in_incomplete_tweets(candidate_featureBase_DF,all_processed_tweets)
-            # print('here 3')
+            # if(elem==0):
+            #     self.input_memory_array.append(self.convert_bytes(sys.getsizeof(untrashed_tweets[untrashed_tweets.entry_batch==self.counter])))
+            # print('incoming batch memory consumption: ', self.input_memory_array)
 
-        # DROP TF
+            self.memory_consumption_array[elem].append(self.convert_bytes(sys.getsizeof(untrashed_tweets)))
+            print('phase II memory consumption: ', self.memory_consumption_array[elem])
+
+            # DROP TF
             just_converted_tweets_inner=self.get_complete_tf(untrashed_tweets)
             # print(just_converted_tweets_inner.head())
+
+            if(self.counter==0):
+                total_mentions=self.mention_count
+                
+            else:
+                total_mentions= self.mention_count+sum(self.converted_tweets_mentions_discovered_array[elem])
+            print('total mentions discovered: ', total_mentions)
+            self.converted_tweets_mentions_discovered_array[elem].append(self.converted_tweet_mention_count)
+            self.mentions_discovered_array[elem].append(total_mentions)
+
+            if(elem>0):
+                percent_recall=self.mentions_discovered_array[elem][-1]/self.mentions_discovered_array[0][-1]
+                self.percent_recall[elem-1].append(percent_recall)
+                print('mention discovery % to baseline:',self.percent_recall[elem-1])
+
             print('here 4')
             #incomplete tweets at the end of current batch
             incomplete_tweets_inner=self.get_incomplete_tf(untrashed_tweets)
@@ -108,8 +136,17 @@ class EntityResolver ():
             # print(list(incomplete_tweets_inner.columns.values))
             # print(list(self.evicted_tweets_arr[elem].columns.values))
 
-            print('incomplete by end of batch: ',len(incomplete_tweets_inner),'evicted: ',len(self.evicted_tweets_arr[elem]),'tally: ',str(len(incomplete_tweets_inner)+len(self.evicted_tweets_arr[elem])))
-            self.incomplete_tweets_arr[elem]=pd.concat([incomplete_tweets_inner,self.evicted_tweets_arr[elem]],ignore_index=True) #default axis=0, concat rows
+            print('incomplete by end of batch: ',len(incomplete_tweets_inner),' not-reintroduced: ',len(self.not_reintroduced_arr[elem]),' evicted: ',len(self.evicted_tweets_arr[elem]),'tally: ',str(len(incomplete_tweets_inner)+len(self.not_reintroduced_arr[elem])+len(self.evicted_tweets_arr[elem])))
+            
+            # # when only with eviction
+            # self.incomplete_tweets_arr[elem]=pd.concat([incomplete_tweets_inner,self.evicted_tweets_arr[elem]],ignore_index=True) #default axis=0, concat rows
+
+            # when with reintroduction on top of eviction
+            if(elem>0):
+                self.incomplete_tweets_arr[elem]=pd.concat([incomplete_tweets_inner,self.not_reintroduced_arr[elem],self.evicted_tweets_arr[elem]],ignore_index=True)
+            else:
+                self.incomplete_tweets_arr[elem]=pd.concat([incomplete_tweets_inner,self.evicted_tweets_arr[elem]],ignore_index=True)
+
             # print(self.incomplete_tweets_arr[elem].head())
             # print(self.incomplete_tweets_arr[elem][self.incomplete_tweets_arr[elem]['tweetID']=='1108'])
             print('here 5')
@@ -127,7 +164,7 @@ class EntityResolver ():
             else:
                 elem_to_append=self.converted_tweets_estimates_array[elem][-1]+len(just_converted_tweets_inner)
                 self.converted_tweets_estimates_array[elem].append(elem_to_append)
-            print("converted tweets: ",self.converted_tweets_estimates_array[elem])
+            # print("converted tweets: ",self.converted_tweets_estimates_array[elem])
 
 
 
@@ -136,11 +173,11 @@ class EntityResolver ():
 
 
             # #printing incomplete sentence estimates here
-            print('printing the converted, incomplete and final tally estimates now:')
-            print(self.converted_tweets_estimates_array[elem][-1],len(self.incomplete_tweets_arr[elem]),(self.converted_tweets_estimates_array[elem][-1]+len(self.incomplete_tweets_arr[elem])))
+            # print('printing the converted, incomplete and final tally estimates now:')
+            # print(self.converted_tweets_estimates_array[elem][-1],len(self.incomplete_tweets_arr[elem]),(self.converted_tweets_estimates_array[elem][-1]+len(self.incomplete_tweets_arr[elem])))
 
             self.incomplete_tweets_estimates_array[elem].append(len(self.incomplete_tweets_arr[elem]))
-            print("incomplete tweets: ",self.incomplete_tweets_estimates_array)
+            # print("incomplete tweets: ",self.incomplete_tweets_estimates_array)
 
             # self.converted_tweets_estimates_array[elem].append(len(self.just_converted_tweets_arr[elem]))
             # print("converted tweets: ",self.converted_tweets_estimates_array)
@@ -188,7 +225,14 @@ class EntityResolver ():
         #return self.entity_level_arr, self.mention_level_arr
         return candidate_featureBase_DF, phase2_output_time
 
-
+    def convert_bytes(self, num):
+        """
+        this function will convert bytes to MB.... GB... etc
+        """
+        for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+            if num < 1024.0:
+                return "%3.1f %s" % (num, x)
+            num /= 1024.0
 
     def __init__(self):
         self.counter=0
@@ -200,9 +244,11 @@ class EntityResolver ():
 
         self.p_punct=re.compile(r'[\W]+')
         self.knn_parameter=10
-        self.RQ_capacity=10000
+        self.IQ_capacity=50000
 
+        
         # self.eviction_threshold_array=[0,10,20,30,40] # for distance based ranking
+        self.reintroduction_threshold=80
         self.eviction_threshold_array=[0,60,70,80,90,100]
         # self.eviction_threshold_array=[0]
         # self.eviction_threshold_array=[10]
@@ -321,13 +367,23 @@ class EntityResolver ():
         self.incomplete_tweets_estimates_array=[[] for i in range(len(self.eviction_threshold_array))]
         self.converted_tweets_estimates_array=[[] for i in range(len(self.eviction_threshold_array))]
 
+        self.input_memory_array= []
+        self.memory_consumption_array= [[] for i in range(len(self.eviction_threshold_array))]
+        self.converted_tweets_mentions_discovered_array=[[] for i in range(len(self.eviction_threshold_array))]
+
+        self.mentions_discovered_array= [[] for i in range(len(self.eviction_threshold_array))]
+        self.percent_recall= [[] for i in range(len(self.eviction_threshold_array)-1)]
+
+        # self.lfu_check=[[] for i in range(len(self.eviction_threshold_array))]
+
         if(self.counter==0):
             #output_queue
-            self.data_frame_holder_OQ=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
-            self.incomplete_tweets=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates','fifo_score','lfu_score','inactivity_period','eviction_status'])
-            self.incomplete_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates','fifo_score','lfu_score','inactivity_period','eviction_status']) for i in range(len(self.eviction_threshold_array))]
+            # self.data_frame_holder_OQ=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
+            self.incomplete_tweets=pd.DataFrame([], columns=['entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates','fifo_score','lfu_score','activity_period','eviction_status'])
+            self.incomplete_tweets_arr=[pd.DataFrame([], columns=['entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates','fifo_score','lfu_score','activity_period','eviction_status']) for i in range(len(self.eviction_threshold_array))]
 
-            self.evicted_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','inactivity_period' ,'eviction_status']) for i in range(len(self.eviction_threshold_array))]
+            self.evicted_tweets_arr=[pd.DataFrame([], columns=['entry_batch', 'tweetID', 'sentID', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','activity_period' ,'eviction_status']) for i in range(len(self.eviction_threshold_array))]
+            self.not_reintroduced_arr=[pd.DataFrame([], columns=['entry_batch', 'tweetID', 'sentID', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','activity_period' ,'eviction_status']) for i in range(len(self.eviction_threshold_array))]
             
             self.CandidateBase_dict= {}
             self.ambiguous_candidate_distanceDict_prev={}
@@ -360,12 +416,12 @@ class EntityResolver ():
             self.ambiguous_candidates_transition_dict={}
             self.ambiguous_candidates_history_dict={}
 
-            self.aggregator_incomplete_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
+            self.aggregator_incomplete_tweets=pd.DataFrame([], columns=['entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
             # self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
-            self.just_converted_tweets_arr=[pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','inactivity_period','eviction_status'])  for i in range(len(self.eviction_threshold_array))]
+            self.just_converted_tweets_arr=[pd.DataFrame([], columns=['entry_batch', 'tweetID', 'sentID', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','activity_period','eviction_status'])  for i in range(len(self.eviction_threshold_array))]
 
             #self.data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized'])
-            self.raw_tweets_for_others=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized'])
+            self.raw_tweets_for_others=pd.DataFrame([], columns=['entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized'])
             # self.ambiguous_candidate_records_old=pd.DataFrame([],columns=['candidate', 'batch', 'length', 'cap', 'substring-cap', 's-o-sCap','all-cap', 'non-cap', 'non-discriminative', 'cumulative', 'evictionFlag','Z_ScoreUnweighted', 'normalized_cap','normalized_capnormalized_substring-cap', 'normalized_s-o-sCap','normalized_all-cap', 'normalized_non-cap', 'normalized_non-discriminative', 'probability', 'status'])
             self.accuracy_tuples_prev_batch=[]
             self.accuracy_vals=[]
@@ -911,14 +967,31 @@ class EntityResolver ():
     #     # #     print('i:',len(self.incomplete_tweets[self.incomplete_tweets['entry_batch']==i]))
     #     return self.incomplete_tweets
 
-    def set_inactive_sentences_fifo_score(self,row):
-        if((all(x in candidate_for_eviction for x in row['ambiguous_candidates']))& (row['eviction_status']==0)):
-            return (self.counter-row['entry_batch'])
+    def set_lfu_score(self,row):
+        if(row['eviction_status']==0):
+            if (all(x in candidate_for_eviction for x in row['ambiguous_candidates'])):
+                print(row['lfu_score'])
+                val=row['lfu_score']+1
+                if(val>1):
+                    print(row['tweetID'],row['sentID'])
+                return val
+            else:
+                val=row['lfu_score']
+                return val
         else:
-            return row['fifo_score']
+            return row['lfu_score']
+
+    def set_activity_period(self,row,candidate_for_eviction):
+        if(row['eviction_status']==0):
+            if (all(x in candidate_for_eviction for x in row['ambiguous_candidates'])):
+                return row['activity_period']
+            else:
+                return self.counter
+        else:
+            return row['activity_period']
 
 
-    def tweets_to_evict(self,candidate_for_eviction,candidates_not_for_eviction, threshold_index):
+    def tweets_to_evict(self,candidate_for_eviction,candidates_for_reintroduction, threshold_index):
         # self.incomplete_tweets_arr[threshold_index].loc[self.incomplete_tweets_arr[threshold_index].apply(lambda row:((all(x in candidate_for_eviction for x in row['ambiguous_candidates']))& (row['eviction_status']==0)) ,axis=1), ['eviction_status']] = 1
 
         # not_evicted_tweets= self.incomplete_tweets_arr[threshold_index][self.incomplete_tweets_arr[threshold_index]['eviction_status']==0]
@@ -930,13 +1003,50 @@ class EntityResolver ():
         
         # self.incomplete_tweets_arr[threshold_index]['fifo_score']=self.incomplete_tweets_arr[threshold_index].apply(lambda row: set_inactive_sentences_fifo_score(row),axis=1)
 
-        self.incomplete_tweets_arr[threshold_index]['fifo_score'] = self.incomplete_tweets_arr[threshold_index].apply(lambda row: (self.counter-row['entry_batch']) if ((all(x in candidate_for_eviction for x in row['ambiguous_candidates']))& (row['eviction_status']==0)) else row['fifo_score'], axis=1)
-        # self.incomplete_tweets_arr[threshold_index].nlargest((len(self.incomplete_tweets_arr[threshold_index])-self.RQ_capacity), 'fifo_score')['eviction_status'] = 1
+        print('candidate_for_eviction: ',len(candidate_for_eviction))
 
-        tweets_to_consider_eviction=self.incomplete_tweets_arr[threshold_index][self.incomplete_tweets_arr[threshold_index].eviction_status==0]
-        tweets_to_consider_eviction['fifo_rank'] = tweets_to_consider_eviction['fifo_score'].rank(ascending=1,method='first')
-        # eviction_capacity=len(self.incomplete_tweets_arr[threshold_index])-self.RQ_capacity
-        id_list=list(tweets_to_consider_eviction.loc[tweets_to_consider_eviction.fifo_rank>self.RQ_capacity,['tweetID', 'sentID']].itertuples(index=False, name=None))
+        # #FIFO
+        # self.incomplete_tweets_arr[threshold_index]['fifo_score'] = self.incomplete_tweets_arr[threshold_index].apply(lambda row: (self.counter-row['entry_batch']) if ((all(x in candidate_for_eviction for x in row['ambiguous_candidates']))& (row['eviction_status']==0)) else row['fifo_score'], axis=1)
+        # # self.incomplete_tweets_arr[threshold_index].nlargest((len(self.incomplete_tweets_arr[threshold_index])-self.RQ_capacity), 'fifo_score')['eviction_status'] = 1
+        # tweets_to_consider_eviction=self.incomplete_tweets_arr[threshold_index][(self.incomplete_tweets_arr[threshold_index].eviction_status==0)&(self.incomplete_tweets_arr[threshold_index].fifo_score>0)]
+        # tweets_to_consider_eviction['fifo_rank'] = tweets_to_consider_eviction['fifo_score'].rank(ascending=1,method='first')
+
+        #LFU
+        # self.incomplete_tweets_arr[threshold_index]['lfu_score'] = self.incomplete_tweets_arr[threshold_index].apply(lambda row: (1+row['lfu_score']) if ((all(x in candidate_for_eviction for x in row['ambiguous_candidates']))& (row['eviction_status']==0)) else row['lfu_score'], axis=1)
+        # # self.incomplete_tweets_arr[threshold_index].nlargest((len(self.incomplete_tweets_arr[threshold_index])-self.RQ_capacity), 'fifo_score')['eviction_status'] = 1
+        # tweets_to_consider_eviction=self.incomplete_tweets_arr[threshold_index][(self.incomplete_tweets_arr[threshold_index].eviction_status==0)&(self.incomplete_tweets_arr[threshold_index].lfu_score>0)]
+        # tweets_to_consider_eviction['lfu_rank'] = tweets_to_consider_eviction['lfu_score'].rank(ascending=1,method='first')
+
+        # print(tweets_to_consider_eviction[['lfu_score','lfu_rank']])
+        # if(len(self.lfu_check[threshold_index])>0):
+        #     print('lfu check:')
+        #     print(tweets_to_consider_eviction.loc[tweets_to_consider_eviction[['tweetID', 'sentID']].apply(tuple,1).isin(self.lfu_check[threshold_index]),'lfu_score'])
+
+
+        #LRU
+        self.incomplete_tweets_arr[threshold_index]['activity_period'] = self.incomplete_tweets_arr[threshold_index].apply(lambda row: self.set_activity_period(row,candidate_for_eviction), axis=1)
+        # self.incomplete_tweets_arr[threshold_index].nlargest((len(self.incomplete_tweets_arr[threshold_index])-self.RQ_capacity), 'fifo_score')['eviction_status'] = 1
+        tweets_to_consider_eviction=self.incomplete_tweets_arr[threshold_index][(self.incomplete_tweets_arr[threshold_index].eviction_status==0)&(self.incomplete_tweets_arr[threshold_index].activity_period!=self.counter)]
+        tweets_to_consider_eviction['lru_score']=self.counter-tweets_to_consider_eviction['activity_period']
+        tweets_to_consider_eviction['lru_rank'] = tweets_to_consider_eviction['lru_score'].rank(ascending=1,method='first')
+
+        # print(tweets_to_consider_eviction.lru_score.unique())
+        
+
+        eviction_capacity=75
+        RQ_capacity=int((100-eviction_capacity)/100*len(tweets_to_consider_eviction))
+
+        # #FIFO
+        # id_list=list(tweets_to_consider_eviction.loc[tweets_to_consider_eviction.fifo_rank>RQ_capacity,['tweetID', 'sentID']].itertuples(index=False, name=None))
+
+        #LFU
+        # id_list=list(tweets_to_consider_eviction.loc[tweets_to_consider_eviction.lfu_rank>RQ_capacity,['tweetID', 'sentID']].itertuples(index=False, name=None))
+        # self.lfu_check[threshold_index]=list(tweets_to_consider_eviction.loc[tweets_to_consider_eviction.lfu_rank<=RQ_capacity,['tweetID', 'sentID']].itertuples(index=False, name=None))
+        
+        # #LRU
+        id_list=list(tweets_to_consider_eviction.loc[tweets_to_consider_eviction.lru_rank>RQ_capacity,['tweetID', 'sentID']].itertuples(index=False, name=None))
+
+        print('tweets_to_consider_eviction: ', len(tweets_to_consider_eviction), len(id_list))
 
         # self.incomplete_tweets_arr[threshold_index]['fifo_rank'] = self.incomplete_tweets_arr[threshold_index]['fifo_score'].rank(ascending=1,method='first')
         self.incomplete_tweets_arr[threshold_index].loc[self.incomplete_tweets_arr[threshold_index][['tweetID', 'sentID']].apply(tuple,1).isin(id_list),'eviction_status']=1
@@ -947,7 +1057,17 @@ class EntityResolver ():
 
         print('tallying, evicted, not-evicted, total, all-incomplete',len(self.evicted_tweets_arr[threshold_index]),len(not_evicted_tweets),len(self.evicted_tweets_arr[threshold_index])+len(not_evicted_tweets),len(self.incomplete_tweets_arr[threshold_index]))
 
-        return not_evicted_tweets
+        # return not_evicted_tweets
+
+        # when with reintroduction on top of eviction
+
+        if(threshold_index>0):
+            reintroduced_tweets=(not_evicted_tweets[not_evicted_tweets.apply(lambda row:any(x in candidates_for_reintroduction for x in row['ambiguous_candidates']) ,axis=1)])
+            self.not_reintroduced_arr[threshold_index]=(not_evicted_tweets[not_evicted_tweets.apply(lambda row:all(x not in candidates_for_reintroduction for x in row['ambiguous_candidates']) ,axis=1)])
+            print("reintroduced tweets: ", len(reintroduced_tweets), " not-reintroduced tweets: ", len(self.not_reintroduced_arr[threshold_index]), "tally: ",str(len(reintroduced_tweets)+len(self.not_reintroduced_arr[threshold_index])), len(not_evicted_tweets))
+            return reintroduced_tweets
+        else:
+            return not_evicted_tweets
 
 
     # def get_reintroduced_tweets(self,candidates_to_reintroduce,candidates_to_reintroduce1):
@@ -970,27 +1090,35 @@ class EntityResolver ():
     #     return reintroduced_tweets_reintroduction_eviction
 
 
-    def get_output_aligned(self,reintroduction_threshold, df_extracted, phase2_candidates_holder_extracted, phase2_unnormalized_candidates_holder_extracted, not_evicted_tweets):
+    def get_output_aligned(self,reintroduction_threshold, df_extracted, phase2_candidates_holder_extracted, phase2_unnormalized_candidates_holder_extracted, reintroduced_tweets):
         # df_holder_extracted_elem=[]
-        phase2_candidates_holder_extracted_elem=[]
-        phase2_unnormalized_candidates_holder_extracted_elem=[]
+        # phase2_candidates_holder_extracted_elem=[]
+        # phase2_unnormalized_candidates_holder_extracted_elem=[]
 
         # id_tuple_list=[]
         # return_tuple_list=[]
         # return_candidate_list=[]
 
 
-        # if(reintroduction_threshold!=0):
-        id_tuple_list= [tuple(r) for r in not_evicted_tweets[['tweetID', 'sentID']].values]
-        # df_extracted=pd.DataFrame(df_holder_extracted)
-        df_holder_extracted_elem=df_extracted[df_extracted[['tweetID','sentID']].apply(tuple, 1).isin(id_tuple_list)]
-        # df_holder_extracted_elem=df_extracted_to_return.to_dict('records')
+
+        # # if(reintroduction_threshold!=0):
+        # id_tuple_list= [tuple(r) for r in reintroduced_tweets[['tweetID', 'sentID']].values]
+        # # df_extracted=pd.DataFrame(df_holder_extracted)
+        # df_holder_extracted_elem= reintroduced_tweets.filter(['TweetSentence','tweetID','sentID','tweetwordList','phase1Candidates','hashtags','user','entry_batch','annotation','stanford_candidates','lfu_score', 'activity_period'])
+        # vals= df_extracted.loc[df_extracted[['tweetID', 'sentID']].apply(tuple, 1).isin(id_tuple_list), ['2nd Iteration Candidates','2nd Iteration Candidates Unnormalized','fifo_score', 'eviction_status']].values
+        # # df_holder_extracted_elem.loc[df_holder_extracted_elem[['tweetID', 'sentID']].isin(df_extracted[['tweetID', 'sentID']]), ['lfu_score', 'activity_period']] = reintroduced_tweets[['lfu_score', 'activity_period']].values
+        # # df_holder_extracted_elem=df_extracted_to_return.to_dict('records')
+        # df_holder_extracted_elem['2nd Iteration Candidates'],df_holder_extracted_elem['2nd Iteration Candidates Unnormalized'],df_holder_extracted_elem['fifo_score'],df_holder_extracted_elem['eviction_status']=vals.T
+        df_holder_extracted_elem=pd.merge(left=reintroduced_tweets.filter(['TweetSentence','tweetID','sentID','tweetwordList','phase1Candidates','hashtags','user','entry_batch','annotation','stanford_candidates','lfu_score', 'activity_period']), 
+                right=df_extracted.filter(['tweetID', 'sentID', '2nd Iteration Candidates','2nd Iteration Candidates Unnormalized','fifo_score', 'eviction_status']), 
+                left_on=['tweetID', 'sentID'], right_on = ['tweetID', 'sentID'], how='left')
         phase2_candidates_holder_extracted_elem=df_holder_extracted_elem['2nd Iteration Candidates'].tolist()
         phase2_unnormalized_candidates_holder_extracted_elem= df_holder_extracted_elem['2nd Iteration Candidates Unnormalized'].tolist()
+        # print(df_holder_extracted_elem.columns.tolist(),len(df_holder_extracted_elem.columns.tolist()))
         # del df_extracted_to_return
         # gc.collect()
 
-        print('tallying output alignment:',len(df_holder_extracted_elem),len(phase2_candidates_holder_extracted_elem),len(phase2_unnormalized_candidates_holder_extracted_elem),len(not_evicted_tweets))
+        print('tallying output alignment:',len(df_extracted),len(df_holder_extracted_elem),len(reintroduced_tweets))
         return df_holder_extracted_elem, phase2_candidates_holder_extracted_elem, phase2_unnormalized_candidates_holder_extracted_elem
         
     #NOTE: with simple eviction
@@ -1130,14 +1258,23 @@ class EntityResolver ():
 
         return ret_value
 
-    # def ambiguous_candidates_info_dict_update(ambiguous_candidates, candidate_featureBase_DF, entity_sketches, non_entity_sketches):
+    def get_reintroduced_union(self, reintroduced_tweets_arr):
 
-    #     for candidate in ambiguous_candidates:
-    #         if(candidate not in self.ambiguous_candidates_info_dict):
-    #             distance_arr=[]
-    #             directional_derivative_arr=[]
-                
-    #         else:
+        reintroduced_tweets_concat_list=[]
+        # reintroduced_tweets_concat_list.append(reintroduced_tweets_arr[0])
+        reintroduced_tweets=reintroduced_tweets_arr[0]
+        id_tuple_list= [tuple(r) for r in reintroduced_tweets[['tweetID', 'sentID']].values]
+
+        for elem in range(1,len(reintroduced_tweets_arr)):
+            reintroduced_tweets_arr_elem= reintroduced_tweets_arr[elem]
+
+            # select rows whose (tweetID, sentID) are not already in the existing union
+            reintroduced_tweets_to_include=reintroduced_tweets_arr_elem[~reintroduced_tweets_arr_elem[['tweetID','sentID']].apply(tuple, 1).isin(id_tuple_list)]
+            id_tuple_list_to_include= [tuple(r) for r in reintroduced_tweets_to_include[['tweetID', 'sentID']].values]
+            id_tuple_list.extend(id_tuple_list_to_include)
+            reintroduced_tweets=pd.concat([reintroduced_tweets,reintroduced_tweets_to_include],ignore_index=True)
+
+        return reintroduced_tweets
 
 
 
@@ -1532,11 +1669,11 @@ class EntityResolver ():
         # df_holder=[]
 
 
-        data_frame_holder_outer=[pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','inactivity_period','eviction_status']) for elem in self.eviction_threshold_array]
+        data_frame_holder_outer=[pd.DataFrame([], columns=['entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','activity_period','eviction_status']) for elem in self.eviction_threshold_array]
         
         phase2_candidates_holder_outer=[[] for elem in range(len(self.eviction_threshold_array))]
         phase2_unnormalized_candidates_holder_outer=[[] for elem in range(len(self.eviction_threshold_array))]
-        df_holder_outer=[pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','inactivity_period','eviction_status']) for elem in self.eviction_threshold_array]
+        df_holder_outer=[pd.DataFrame([], columns=['entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','fifo_score','lfu_score','activity_period','eviction_status']) for elem in self.eviction_threshold_array]
 
         self.phase2stopwordList=phase2stopwordList
         self.number_of_seen_tweets_per_batch.append(len(TweetBase))
@@ -1551,7 +1688,9 @@ class EntityResolver ():
 
         # candidate_featureBase_DF,df_holder_extracted_first,phase2_candidates_holder_extracted_first= self.extract(TweetBase,CTrie,phase2stopwordList,0)
         df_holder_extracted_first= TweetBase.filter(['TweetSentence','tweetID','sentID','tweetwordList','phase1Candidates','hashtags','user','entry_batch','annotation','stanford_candidates'])
-        df_holder_extracted_first['2nd Iteration Candidates'], df_holder_extracted_first['2nd Iteration Candidates Unnormalized'], df_holder_extracted_first['fifo_score'], df_holder_extracted_first['lfu_score'], df_holder_extracted_first['inactivity_period'], df_holder_extracted_first['eviction_status']=zip(*np.vectorize(self.extract_vectorized,otypes=[object])(df_holder_extracted_first['tweetID'].values,df_holder_extracted_first['sentID'].values,df_holder_extracted_first['entry_batch'].values,df_holder_extracted_first['tweetwordList'].values,df_holder_extracted_first['phase1Candidates'].values))
+        df_holder_extracted_first['2nd Iteration Candidates'], df_holder_extracted_first['2nd Iteration Candidates Unnormalized'], df_holder_extracted_first['fifo_score'], df_holder_extracted_first['eviction_status']=zip(*np.vectorize(self.extract_vectorized,otypes=[object])(df_holder_extracted_first['tweetID'].values,df_holder_extracted_first['sentID'].values,df_holder_extracted_first['entry_batch'].values,df_holder_extracted_first['tweetwordList'].values,df_holder_extracted_first['phase1Candidates'].values))
+        df_holder_extracted_first['lfu_score']=0
+        df_holder_extracted_first['activity_period']=self.counter
         phase2_candidates_holder_extracted_first=df_holder_extracted_first['2nd Iteration Candidates'].tolist()
         phase2_unnormalized_candidates_holder_extracted_first=df_holder_extracted_first['2nd Iteration Candidates Unnormalized'].tolist()
 
@@ -1642,8 +1781,11 @@ class EntityResolver ():
 
             # candidate_eviction_ordered=self.sort_by_age(inactive_candidates_records_transition_function)
             # candidate_eviction_ordered=self.sort_by_freq(inactive_candidates_records_transition_function)
-            candidate_eviction_ordered=self.sort_by_relative_updation(inactive_candidates_records_transition_function)
-            # candidate_eviction_ordered=self.sort_by_age_decayed_freq(inactive_candidates_records_transition_function,candidate_featureBase_DF)
+
+            # ranked ascending, smaller values more ideal to be evicted
+            # candidate_eviction_ordered=self.sort_by_relative_updation(inactive_candidates_records_transition_function)
+
+            candidate_eviction_ordered=self.sort_by_age_decayed_freq(inactive_candidates_records_transition_function)
 
             
             time4=time.time()
@@ -1719,10 +1861,10 @@ class EntityResolver ():
             # for candidate in cosine_distance_dict_wAmb.keys():
             #     print(candidate,cosine_distance_dict_wAmb[candidate])
 
-            rank_dict_eviction_candidates={candidate: min(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in list(ranking_score_dict_eviction.keys())}
-            rank_dict_ordered_eviction_candidates=OrderedDict(sorted(rank_dict_eviction_candidates.items(), key=lambda x: x[1]))
-            rank_dict_ordered_list_eviction_candidates=list(rank_dict_ordered_eviction_candidates.keys())
-            whole_list=rank_dict_ordered_list_eviction_candidates
+            # rank_dict_eviction_candidates={candidate: min(ranking_score_dict_eviction[candidate],ranking_score_dict_wAmb_eviction[candidate]) for candidate in list(ranking_score_dict_eviction.keys())}
+            # rank_dict_ordered_eviction_candidates=OrderedDict(sorted(rank_dict_eviction_candidates.items(), key=lambda x: x[1]))
+            # rank_dict_ordered_list_eviction_candidates=list(rank_dict_ordered_eviction_candidates.keys())
+            # whole_list=rank_dict_ordered_list_eviction_candidates
 
             # not_evicted_tweets=[]
 
@@ -1731,26 +1873,63 @@ class EntityResolver ():
             # rank_dict_ordered_list_eviction_candidates_first_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-first_eviction_cutoff):]
             # rank_dict_ordered_list_candidates_first_cutoff_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_first_cutoff]
             
+            print('eviction threshold: ',self.eviction_threshold_array[0])
             first_eviction_cutoff=int(self.eviction_threshold_array[0]/100*(len(candidate_eviction_ordered)))
             rank_dict_ordered_list_eviction_candidates_first_cutoff=candidate_eviction_ordered[:first_eviction_cutoff]
             rank_dict_ordered_list_candidates_first_cutoff_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_first_cutoff]
 
-            not_evicted_tweets=self.tweets_to_evict(rank_dict_ordered_list_eviction_candidates_first_cutoff,rank_dict_ordered_list_candidates_first_cutoff_post_eviction, 0)
-
-            self.new_or_old=1
             
-            # candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(not_evicted_tweets,CTrie,phase2stopwordList,1)
-            df_holder_extracted= not_evicted_tweets.filter(['TweetSentence','tweetID','sentID','tweetwordList','phase1Candidates','hashtags','user','entry_batch','annotation','stanford_candidates'])
-            df_holder_extracted['2nd Iteration Candidates'], df_holder_extracted['2nd Iteration Candidates Unnormalized'], df_holder_extracted['fifo_score'], df_holder_extracted['lfu_score'], df_holder_extracted['inactivity_period'], df_holder_extracted['eviction_status']=zip(*np.vectorize(self.extract_vectorized,otypes=[object])(df_holder_extracted['tweetID'].values,df_holder_extracted['sentID'].values,df_holder_extracted['entry_batch'].values,df_holder_extracted['tweetwordList'].values,df_holder_extracted['phase1Candidates'].values))
 
-            phase2_candidates_holder_extracted=df_holder_extracted['2nd Iteration Candidates'].tolist()
-            phase2_unnormalized_candidates_holder_extracted=df_holder_extracted['2nd Iteration Candidates Unnormalized'].tolist()
-
-            phase2_candidates_holder_outer[0].extend(phase2_candidates_holder_extracted)
-            phase2_unnormalized_candidates_holder_outer[0].extend(phase2_unnormalized_candidates_holder_extracted)
-            df_holder_outer[0]=df_holder_extracted
+            reintroduced_tweets=self.tweets_to_evict(rank_dict_ordered_list_eviction_candidates_first_cutoff,rank_dict_ordered_list_candidates_first_cutoff_post_eviction, 0)
 
 
+            # for reintroduction on top of eviction
+            reintroduced_tweets_arr=[]
+            reintroduced_tweets_arr.append(reintroduced_tweets)
+
+            # # for only eviction
+            # self.new_or_old=1
+            # # candidate_featureBase_DF,df_holder_extracted,phase2_candidates_holder_extracted = self.extract(not_evicted_tweets,CTrie,phase2stopwordList,1)
+            # df_holder_extracted= reintroduced_tweets.filter(['TweetSentence','tweetID','sentID','tweetwordList','phase1Candidates','hashtags','user','entry_batch','annotation','stanford_candidates'])
+            # df_holder_extracted['2nd Iteration Candidates'], df_holder_extracted['2nd Iteration Candidates Unnormalized'], df_holder_extracted['fifo_score'], df_holder_extracted['eviction_status']=zip(*np.vectorize(self.extract_vectorized,otypes=[object])(df_holder_extracted['tweetID'].values,df_holder_extracted['sentID'].values,df_holder_extracted['entry_batch'].values,df_holder_extracted['tweetwordList'].values,df_holder_extracted['phase1Candidates'].values))
+
+            # phase2_candidates_holder_extracted=df_holder_extracted['2nd Iteration Candidates'].tolist()
+            # phase2_unnormalized_candidates_holder_extracted=df_holder_extracted['2nd Iteration Candidates Unnormalized'].tolist()
+
+            # df_holder_extracted_elem,phase2_candidates_holder_extracted_elem,phase2_unnormalized_candidates_holder_extracted_elem=self.get_output_aligned(self.eviction_threshold_array[0],df_holder_extracted,phase2_candidates_holder_extracted,phase2_unnormalized_candidates_holder_extracted,reintroduced_tweets)
+
+            # phase2_candidates_holder_outer[0].extend(phase2_candidates_holder_extracted_elem)
+            # phase2_unnormalized_candidates_holder_outer[0].extend(phase2_unnormalized_candidates_holder_extracted_elem)
+            # df_holder_outer[0]=df_holder_extracted_elem
+
+
+            # for elem in range(1,len(self.eviction_threshold_array)):
+            #     eviction_threshold= self.eviction_threshold_array[elem]
+            #     print('eviction threshold: ',eviction_threshold)
+
+            #     # real_eviction_cutoff= int(eviction_threshold/100*(len(ambiguous_candidate_records_before_classification)))
+            #     # rank_dict_ordered_list_eviction_candidates_cutoff=rank_dict_ordered_list_eviction_candidates[(len(rank_dict_ordered_list_eviction_candidates)-real_eviction_cutoff):]
+            #     # rank_dict_ordered_list_candidates_cutoff_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
+                
+            #     real_eviction_cutoff=int(eviction_threshold/100*(len(candidate_eviction_ordered)))
+            #     rank_dict_ordered_list_eviction_candidates_cutoff=candidate_eviction_ordered[:real_eviction_cutoff]
+            #     rank_dict_ordered_list_candidates_cutoff_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
+
+
+            #     reintroduced_tweets=self.tweets_to_evict(rank_dict_ordered_list_eviction_candidates_cutoff,rank_dict_ordered_list_candidates_cutoff_post_eviction, elem)
+                
+            #     df_holder_extracted_elem,phase2_candidates_holder_extracted_elem,phase2_unnormalized_candidates_holder_extracted_elem=self.get_output_aligned(eviction_threshold,df_holder_extracted,phase2_candidates_holder_extracted,phase2_unnormalized_candidates_holder_extracted,reintroduced_tweets)
+                
+            #     # self.bottom_m_combined[(elem-1)].append(rank_dict_ordered_list_eviction_candidates_cutoff)
+
+            #     phase2_candidates_holder_outer[elem].extend(phase2_candidates_holder_extracted_elem)
+            #     phase2_unnormalized_candidates_holder_outer[elem].extend(phase2_unnormalized_candidates_holder_extracted_elem)
+            #     df_holder_outer[elem]=df_holder_extracted_elem
+
+
+
+            # for reintroduction on top of eviction
+            
             for elem in range(1,len(self.eviction_threshold_array)):
                 eviction_threshold= self.eviction_threshold_array[elem]
                 print('eviction threshold: ',eviction_threshold)
@@ -1763,12 +1942,26 @@ class EntityResolver ():
                 rank_dict_ordered_list_eviction_candidates_cutoff=candidate_eviction_ordered[:real_eviction_cutoff]
                 rank_dict_ordered_list_candidates_cutoff_post_eviction = [candidate for candidate in self.ambiguous_candidates_in_batch if candidate not in rank_dict_ordered_list_eviction_candidates_cutoff]
 
-                not_evicted_tweets=self.tweets_to_evict(rank_dict_ordered_list_eviction_candidates_cutoff,rank_dict_ordered_list_candidates_cutoff_post_eviction, elem)
-                
-                df_holder_extracted_elem,phase2_candidates_holder_extracted_elem,phase2_unnormalized_candidates_holder_extracted_elem=self.get_output_aligned(eviction_threshold,df_holder_extracted,phase2_candidates_holder_extracted,phase2_unnormalized_candidates_holder_extracted,not_evicted_tweets)
-                
-                # self.bottom_m_combined[(elem-1)].append(rank_dict_ordered_list_eviction_candidates_cutoff)
+                rank_dict_reintroduction_candidates={candidate: min(ranking_score_dict[candidate],ranking_score_dict_wAmb[candidate]) for candidate in rank_dict_ordered_list_candidates_cutoff_post_eviction}
+                rank_dict_ordered_reintroduction_candidates=OrderedDict(sorted(rank_dict_reintroduction_candidates.items(), key=lambda x: x[1]))
+                rank_dict_ordered_list_reintroduction_candidates=list(rank_dict_ordered_reintroduction_candidates.keys())
+                real_cutoff= int((self.reintroduction_threshold/100)*(len(rank_dict_ordered_list_reintroduction_candidates)))
+                rank_dict_ordered_list_reintroduction_candidates_cutoff=rank_dict_ordered_list_reintroduction_candidates[0:real_cutoff]
 
+                reintroduced_tweets=self.tweets_to_evict(rank_dict_ordered_list_eviction_candidates_cutoff,rank_dict_ordered_list_reintroduction_candidates_cutoff, elem)
+                reintroduced_tweets_arr.append(reintroduced_tweets)
+
+            reintroduced_tweets_union=self.get_reintroduced_union(reintroduced_tweets_arr)
+            self.new_or_old=1
+            df_holder_extracted= reintroduced_tweets_union.filter(['TweetSentence','tweetID','sentID','tweetwordList','phase1Candidates','hashtags','user','entry_batch','annotation','stanford_candidates'])
+            df_holder_extracted['2nd Iteration Candidates'], df_holder_extracted['2nd Iteration Candidates Unnormalized'], df_holder_extracted['fifo_score'], df_holder_extracted['eviction_status']=zip(*np.vectorize(self.extract_vectorized,otypes=[object])(df_holder_extracted['tweetID'].values,df_holder_extracted['sentID'].values,df_holder_extracted['entry_batch'].values,df_holder_extracted['tweetwordList'].values,df_holder_extracted['phase1Candidates'].values))
+
+            phase2_candidates_holder_extracted=df_holder_extracted['2nd Iteration Candidates'].tolist()
+            phase2_unnormalized_candidates_holder_extracted=df_holder_extracted['2nd Iteration Candidates Unnormalized'].tolist()
+
+            for elem in range(len(self.eviction_threshold_array)):
+                reintroduced_tweets=reintroduced_tweets_arr[elem]
+                df_holder_extracted_elem,phase2_candidates_holder_extracted_elem,phase2_unnormalized_candidates_holder_extracted_elem=self.get_output_aligned(eviction_threshold,df_holder_extracted,phase2_candidates_holder_extracted,phase2_unnormalized_candidates_holder_extracted,reintroduced_tweets)
                 phase2_candidates_holder_outer[elem].extend(phase2_candidates_holder_extracted_elem)
                 phase2_unnormalized_candidates_holder_outer[elem].extend(phase2_unnormalized_candidates_holder_extracted_elem)
                 df_holder_outer[elem]=df_holder_extracted_elem
@@ -1825,7 +2018,7 @@ class EntityResolver ():
         #print(len(df_holder))
         for elem in range(len(self.eviction_threshold_array)):
             data_frame_holder_outer[elem] = pd.concat([df_holder_extracted_first,df_holder_outer[elem]])
-            print(len(data_frame_holder_outer[elem]))
+            print('phase II total queue length:', len(data_frame_holder_outer[elem]))
         #print(len(self.incomplete_tweets),len(data_frame_holder),len(candidate_featureBase_DF))
         
         print("ambiguous_candidates_in_batch: ",len(self.ambiguous_candidates_in_batch))
@@ -1995,7 +2188,9 @@ class EntityResolver ():
 
         
 
-        # if(self.counter> 0):
+        if(self.counter> 0):
+            eviction_ordered_candidates_remaining_ambiguous= [candidate for candidate in candidate_eviction_ordered if candidate in all_ambiguous_remaining_ambiguous]
+            print('percent eviction ordered remaining ambiguous: ',len(eviction_ordered_candidates_remaining_ambiguous)/len(candidate_eviction_ordered))
         #     # true_list=[candidate for candidate in self.transition_activity_dict.keys() if candidate in all_ambiguous_remaining_ambiguous]
         #     # false_list=[candidate for candidate in self.transition_activity_dict.keys() if candidate not in all_ambiguous_remaining_ambiguous]
 
@@ -3412,8 +3607,12 @@ class EntityResolver ():
         return corrected_phase2_candidates
 
     def label_check(self,corrected_phase2_candidates):
+        
+        # try:
         candidate_with_label=[(candidate,self.candidate_status_dict[candidate]) if candidate in self.candidate_status_dict.keys() else (candidate,"na") for candidate in corrected_phase2_candidates]
         # ambiguous_candidates=[candidate for candidate in corrected_phase2_candidates if candidate in self.ambiguous_candidates]
+        # except TypeError:
+        #     print(corrected_phase2_candidates)
         return candidate_with_label
 
     def get_ambiguous(self,candidates_with_label):
@@ -3425,9 +3624,11 @@ class EntityResolver ():
         return ambiguous_in_tweet
 
 
-    def get_mentions(self,candidates_with_label):
+    def get_mentions(self,candidates_with_label,completeness_flag):
         ret_list= [candidate_tup[0] for candidate_tup in candidates_with_label if ((candidate_tup[1]=='g')|(candidate_tup[0]=='US'))]
         self.mention_count+=len(ret_list)
+        if(completeness_flag):
+            self.converted_tweet_mention_count+=len(ret_list)
         return ret_list
 
     def completeness_check(self,ambiguous_candidates_list):
@@ -3465,8 +3666,8 @@ class EntityResolver ():
         # print(data_frame_holder['candidates_with_label'].head())
         data_frame_holder['ambiguous_candidates']=np.vectorize(self.get_ambiguous,otypes=[object])(data_frame_holder['candidates_with_label'].values)
 
-        data_frame_holder['only_good_candidates']=np.vectorize(self.get_mentions,otypes=[object])(data_frame_holder['candidates_with_label'].values)
         data_frame_holder['completeness']=np.vectorize(self.completeness_check)(data_frame_holder['ambiguous_candidates'].values)
+        data_frame_holder['only_good_candidates']=np.vectorize(self.get_mentions,otypes=[object])(data_frame_holder['candidates_with_label'].values,data_frame_holder['completeness'].values)
         data_frame_holder["current_minus_entry"]=self.counter-data_frame_holder['entry_batch']
         
         # truth_vals=[False if any(x in self.ambiguous_candidates for x in list1) else True for list1 in phase2_candidates_holder]
@@ -4093,13 +4294,13 @@ class EntityResolver ():
         feature_list[feature_to_update]+=1
         feature_list[8]+=1
         feature_list[9]+=1
-        feature_list[10]+=1
+        feature_list[10]+=1*(self.decay_base**(self.counter-feature_list[0]))
         self.CandidateBase_dict[normalized_candidate]=feature_list
 
     def maintenance_Candidatedict(self):
         for key, value in self.CandidateBase_dict.items():
             value[9]=0
-            value[10]=value[10]*self.decay_base
+            # value[10]=value[10]*self.decay_base
 
 
     def extract_vectorized(self,row_tweetID,row_sentID,row_entry_batch,row_tweetWordList,row_phase1Candidates):
@@ -4188,12 +4389,11 @@ class EntityResolver ():
         phase2_candidates_unnormalized=[e[0] for e in ne_candidate_list]
         eviction_status=0
         fifo_score=0
-        lfu_score=0
-        inactivity_period=0
         
 
         if(self.new_or_old==0):
             #self.ambiguous_candidates_in_batch=[]
+            
             self.ambiguous_candidates_in_batch.extend(list(filter(lambda candidate: candidate in self.ambiguous_candidates, phase2_candidates)))
 
         # phase2_candidates_holder.append(phase2_candidates)
@@ -4211,7 +4411,7 @@ class EntityResolver ():
         # return df_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder
         
         # print(dict1,phase2_candidates,phase2_candidates_unnormalized)
-        return phase2_candidates,phase2_candidates_unnormalized,fifo_score,lfu_score,inactivity_period,eviction_status
+        return phase2_candidates,phase2_candidates_unnormalized,fifo_score,eviction_status
 
 
     #@profile
@@ -4221,10 +4421,10 @@ class EntityResolver ():
         if(self.counter==0):
             #output_queue
             self.data_frame_holder_OQ=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
-            self.incomplete_tweets=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates','fifo_score','lfu_score','inactivity_period','eviction_status'])
-            self.incomplete_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates','fifo_score','lfu_score','inactivity_period','eviction_status']) for i in range(len(self.eviction_threshold_array))]
+            self.incomplete_tweets=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates','fifo_score','lfu_score','activity_period','eviction_status'])
+            self.incomplete_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates','fifo_score','lfu_score','activity_period','eviction_status']) for i in range(len(self.eviction_threshold_array))]
 
-            self.evicted_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','fifo_score','lfu_score','inactivity_period','eviction_status']) for i in range(len(self.eviction_threshold_array))]
+            self.evicted_tweets_arr=[pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','fifo_score','lfu_score','activity_period','eviction_status']) for i in range(len(self.eviction_threshold_array))]
             
             self.CandidateBase_dict= {}
             self.ambiguous_candidate_distanceDict_prev={}
@@ -4254,7 +4454,7 @@ class EntityResolver ():
 
             self.aggregator_incomplete_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
             # self.just_converted_tweets=pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','annotation','stanford_candidates'])
-            self.just_converted_tweets_arr=[pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','fifo_score','lfu_score','inactivity_period','eviction_status'])  for i in range(len(self.eviction_threshold_array))]
+            self.just_converted_tweets_arr=[pd.DataFrame([], columns=['index', 'entry_batch', 'tweetID', 'sentID', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates','fifo_score','lfu_score','activity_period','eviction_status'])  for i in range(len(self.eviction_threshold_array))]
 
             #self.data_frame_holder=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
             self.raw_tweets_for_others=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates'])
@@ -4399,13 +4599,12 @@ class EntityResolver ():
             phase2_candidates_holder.append(phase2_candidates)
             fifo_score=0
             lfu_score=0
-            inactivity_period=0
             eviction_status=0
 
             #print(phase1Candidates,"====",phase2_candidates)
             # if((tweetID=="9423")|(tweetID=="14155")):
             #     print(phase1Candidates,"====",phase2_candidates)
-            dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'annotation':annotation,'stanford_candidates':stanford,'fifo_score':fifo_score,'lfu_score':lfu_score,'inactivity_period':inactivity_period,'eviction_status':eviction_status}
+            dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'annotation':annotation,'stanford_candidates':stanford,'fifo_score':fifo_score,'lfu_score':lfu_score,'eviction_status':eviction_status}
 
             df_holder.append(dict1)
             #-------------------------------------------------------------------END of 1st iteration: RESCAN+CANDIDATE_UPDATION-----------------------------------------------------------

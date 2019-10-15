@@ -111,18 +111,20 @@ class EntityResolver ():
 
         #all incomplete_tweets---> incomplete_tweets at the end of current batch + incomplete_tweets not reintroduced
         # self.incomplete_tweets=incomplete_tweets #without reintroduction--- when everything is reintroduced, just incomplete_tweets
-        self.incomplete_tweets=pd.concat([incomplete_tweets,self.not_reintroduced],ignore_index=True)
+        # self.incomplete_tweets=pd.DataFrame([], columns=['index','entry_batch', 'tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized','annotation','stanford_candidates'])
+        # self.incomplete_tweets=pd.concat([incomplete_tweets,self.not_reintroduced],ignore_index=True)
+        self.incomplete_tweets=pd.concat([incomplete_tweets],ignore_index=True)
 
 
 
-        #recording tp, fp , f1
-        #self.accuracy_tuples_prev_batch.append((just_converted_tweets.tp.sum(), just_converted_tweets.total_mention.sum(),just_converted_tweets.fp.sum(),just_converted_tweets.fn.sum()))
+        # #recording tp, fp , f1
+        # #self.accuracy_tuples_prev_batch.append((just_converted_tweets.tp.sum(), just_converted_tweets.total_mention.sum(),just_converted_tweets.fp.sum(),just_converted_tweets.fn.sum()))
 
 
-        #operations for getting ready for next batch.
-        # self.incomplete_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
-        self.incomplete_tweets.drop(['2nd Iteration Candidates','2nd Iteration Candidates Unnormalized'], axis=1, inplace=True)
-        self.counter=self.counter+1
+        # #operations for getting ready for next batch.
+        # # self.incomplete_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
+        # self.incomplete_tweets.drop(['2nd Iteration Candidates','2nd Iteration Candidates Unnormalized'], axis=1, inplace=True)
+        # self.counter=self.counter+1
 
         self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
         self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
@@ -153,7 +155,7 @@ class EntityResolver ():
             complete_tweet_dataframe_grouped_df['tweetID']=complete_tweet_dataframe_grouped_df['tweetID'].astype(int)
             self.complete_tweet_dataframe_grouped_df_sorted=(complete_tweet_dataframe_grouped_df.sort_values(by='tweetID', ascending=True)).reset_index(drop=True)
 
-            print('524: ',self.complete_tweet_dataframe_grouped_df_sorted[(self.complete_tweet_dataframe_grouped_df_sorted.tweetID==524)]['output_mentions'])
+            # print('524: ',self.complete_tweet_dataframe_grouped_df_sorted[(self.complete_tweet_dataframe_grouped_df_sorted.tweetID==524)]['output_mentions'])
 
             print(list(self.complete_tweet_dataframe_grouped_df_sorted.columns.values))
             # print(self.complete_tweet_dataframe_grouped_df_sorted.head(5))
@@ -173,6 +175,9 @@ class EntityResolver ():
         self.counter=0
         self.decay_factor=2**(-1/2)
         self.decay_base_staggering=2
+        self.true_positive_count=0
+        self.false_positive_count=0
+        self.false_negative_count=0
 
         self.my_classifier= svm.SVM1('/home/satadisha/Desktop/GitProjects/TwiCSv2/production_code/training.csv')
         self.complete_tweet_dataframe_grouped_df_sorted=pd.DataFrame([], columns=['tweetID', 'TweetSentence', 'ambiguous_candidates', 'annotation', 'candidates_with_label', 'completeness', 'current_minus_entry', 'entry_batch', 'hashtags', 'index', 'only_good_candidates', 'output_mentions', 'phase1Candidates', 'sentID', 'stanford_candidates', 'user'])
@@ -1297,8 +1302,8 @@ class EntityResolver ():
 
         print(len(input_to_eval_df_sorted),len(raw_tweets_for_others))
 
-        # input_to_eval_df_sorted['annotation']=input_to_eval_df_sorted['tweetID'].apply(lambda x: raw_tweets_for_others[raw_tweets_for_others['ID']==x]['mentions_other'].iloc[0])
-        input_to_eval_df_sorted['annotation']=input_to_eval_df_sorted['tweetID'].apply(lambda x: raw_tweets_for_others[raw_tweets_for_others['ID']==x]['mentions_limited_types'].iloc[0])
+        input_to_eval_df_sorted['annotation']=input_to_eval_df_sorted['tweetID'].apply(lambda x: raw_tweets_for_others[raw_tweets_for_others['ID']==x]['mentions_other'].iloc[0])
+        # input_to_eval_df_sorted['annotation']=input_to_eval_df_sorted['tweetID'].apply(lambda x: raw_tweets_for_others[raw_tweets_for_others['ID']==x]['mentions_limited_types'].iloc[0])
         # input_to_eval_df_sorted['annotation']=input_to_eval_df_sorted['tweetID'].apply(lambda x: raw_tweets_for_others[raw_tweets_for_others['ID']==x]['annotation_limited types'].iloc[0])
 
         column_candidates_holder = input_to_eval_df_sorted['only_good_candidates'].tolist()
@@ -1374,57 +1379,63 @@ class EntityResolver ():
 
             # print(tp_counter_inner,fp_counter_inner,fn_counter_inner)
 
-            true_positive_count+=tp_counter_inner
-            false_positive_count+=fp_counter_inner
-            false_negative_count+=fn_counter_inner
+            self.true_positive_count+=tp_counter_inner
+            self.false_positive_count+=fp_counter_inner
+            self.false_negative_count+=fn_counter_inner
 
-        print(true_positive_count,false_positive_count,false_negative_count,total_mentions,total_annotation)
+        print(self.true_positive_count,self.false_positive_count,self.false_negative_count,total_mentions,total_annotation)
 
-        all_annotations=set(all_annotations)
-        all_mentions=set(all_mentions)
+        precision=(self.true_positive_count)/(self.true_positive_count+self.false_positive_count)
+        recall=(self.true_positive_count)/(self.true_positive_count+self.false_negative_count)
+        f_measure=2*(precision*recall)/(precision+recall)
+
+        # all_annotations=set(all_annotations)
+        # all_mentions=set(all_mentions)
         
-        true_positive_count= len(all_annotations.intersection(all_mentions))
-        false_positive_count=len(all_mentions-all_annotations)
-        false_negative_count=len(all_annotations-all_mentions)
-        total_mentions=len(all_mentions)
-        total_annotation=len(all_annotations)
+        # true_positive_count= len(all_annotations.intersection(all_mentions))
+        # false_positive_count=len(all_mentions-all_annotations)
+        # false_negative_count=len(all_annotations-all_mentions)
+        # total_mentions=len(all_mentions)
+        # total_annotation=len(all_annotations)
 
 
         # print(true_positive_count,false_positive_count,false_negative_count,total_mentions,total_annotation)
 
 
-        true_positive_count_IPQ=true_positive_count
-        false_positive_count_IPQ = false_positive_count
-        false_negative_count_IPQ= false_negative_count
-        total_mention_count_IPQ=total_mentions
+        # true_positive_count_IPQ=true_positive_count
+        # false_positive_count_IPQ = false_positive_count
+        # false_negative_count_IPQ= false_negative_count
+        # total_mention_count_IPQ=total_mentions
 
 
-        tp_count=0
-        tm_count=0
-        fp_count=0
-        fn_count=0
+        # tp_count=0
+        # tm_count=0
+        # fp_count=0
+        # fn_count=0
 
-        for idx,tup in enumerate(self.accuracy_tuples_prev_batch):
-            # print(idx,tup)
-            tp_count+=tup[0]
-            tm_count+=tup[1]
-            fp_count+=tup[2]
-            fn_count+=tup[3]
+        # for idx,tup in enumerate(self.accuracy_tuples_prev_batch):
+        #     # print(idx,tup)
+        #     tp_count+=tup[0]
+        #     tm_count+=tup[1]
+        #     fp_count+=tup[2]
+        #     fn_count+=tup[3]
 
 
 
-        tp_count+=true_positive_count_IPQ
-        tm_count+=total_mention_count_IPQ
-        fp_count+=false_positive_count_IPQ
-        fn_count+=false_negative_count_IPQ
+        # tp_count+=true_positive_count_IPQ
+        # tm_count+=total_mention_count_IPQ
+        # fp_count+=false_positive_count_IPQ
+        # fn_count+=false_negative_count_IPQ
 
-        precision=(tp_count)/(tp_count+fp_count)
-        recall=(tp_count)/(tp_count+fn_count)
-        f_measure=2*(precision*recall)/(precision+recall)
+        # precision=(tp_count)/(tp_count+fp_count)
+        # recall=(tp_count)/(tp_count+fn_count)
+        # f_measure=2*(precision*recall)/(precision+recall)
 
 
 
         self.accuracy_vals=(z_score_threshold,f_measure,precision,recall)
+
+        print(f_measure)
 
         # print('z_score:', z_score_threshold , 'precision: ',precision,'recall: ',recall,'f measure: ',f_measure)
         # print('trupe positive: ',tp_count, 'false positive: ',fp_count,'false negative: ', fn_count,'total mentions: ', tm_count)

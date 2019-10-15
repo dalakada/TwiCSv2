@@ -125,6 +125,27 @@ class EntityResolver ():
         # self.incomplete_tweets=incomplete_tweets #without reintroduction--- when everything is reintroduced, just incomplete_tweets
         # self.incomplete_tweets=pd.concat([incomplete_tweets,self.not_reintroduced],ignore_index=True)
         self.incomplete_tweets=self.remove_tweets_reaching_reintro_threshold(incomplete_tweets,reintroduction_threshold)
+
+        self.set_ambiguous_rescan_tracker(self.incomplete_tweets)
+
+
+        for candidate in self.candidate_status_dict.keys():
+            candidate_record=[]
+            if candidate not in self.candidate_rescan_tracker.keys():
+                candidate_record=[self.counter,-1,0]
+            else:
+                candidate_record= self.candidate_rescan_tracker[candidate]
+            if(self.candidate_status_dict[candidate]!='a'):
+                if(candidate_record[1]==-1):
+                    candidate_record[1]=self.counter
+            else:
+                candidate_record[2]=len(self.ambiguous_rescan_tracker[candidate])
+            self.candidate_rescan_tracker[candidate]=candidate_record
+
+            # print(candidate,candidate_record)
+
+
+
         print('incomplete sentences: ', len(self.incomplete_tweets))
         print('df_size: ',self.df_size)
         print('mentions discovered:',self.mention_count)
@@ -161,11 +182,33 @@ class EntityResolver ():
 
         ####---------------------------------------commenting from here--------------------------------------
         if(self.counter==(max_batch_value+1)):
-            print('size: ',self.df_size)
+
+            # expected_revisits=[]
+            # for candidate in self.candidate_rescan_tracker.keys():
+            #     # print(candidate,self.candidate_rescan_tracker[candidate])
+            #     if(self.candidate_rescan_tracker[candidate][0]==self.candidate_rescan_tracker[candidate][1]):
+            #         if(self.candidate_rescan_tracker[candidate][2]!=0):
+            #             print(candidate,self.candidate_rescan_tracker[candidate],self.candidate_status_dict[candidate])
+            #         expected_revisits.append(self.candidate_rescan_tracker[candidate][2])
+            #     else:
+            #         expected_revisits.append(self.candidate_rescan_tracker[candidate][2])
+
+            # print('size: ',self.df_size)
             print('all_mentions_discovered: ',self.all_mentions_discovered)
             print('just_converted, non-cumulative:',self.just_converted_arr)
             print('evicted, non-cumulative:',self.evicted_arr)
             print('incomplete',self.incomplete_arr)
+
+            # print('tally: ',len(candidate_featureBase_DF),len(self.candidate_rescan_tracker))
+
+            
+            # expected_revisits_arr=np.array(expected_revisits)
+            # mean=expected_revisits_arr.mean()
+            # standard_dev=expected_revisits_arr.std()
+            # print('mean: ',mean)
+            # print('standard deviation: ',standard_dev)
+            # print('rescan_overhead:', len(candidate_featureBase_DF)*mean)
+
             # ambiguous_records=candidate_featureBase_DF[candidate_featureBase_DF.status=="a"]
 
             # ambiguous_records.to_csv("ambiguous_records_new.csv", sep=',', encoding='utf-8')
@@ -249,11 +292,16 @@ class EntityResolver ():
             self.just_converted_tweets_df_list=[]
             self.raw_tweets_for_others=pd.DataFrame([], columns=['index','entry_batch','tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList','phase1Candidates', '2nd Iteration Candidates', '2nd Iteration Candidates Unnormalized'])
 
+            self.candidate_rescan_tracker={}
+            self.ambiguous_rescan_tracker={}
+
             self.accuracy_tuples_prev_batch=[]
             self.accuracy_vals=[]
             self.just_converted_arr=[]
             self.evicted_arr=[]
             self.incomplete_arr=[]
+            self.percent_incomplete=[]
+            self.rescan_expected_arr=[]
             #frequency_w_decay related information
             self.ambiguous_candidates_reintroduction_dict={}
 
@@ -279,6 +327,30 @@ class EntityResolver ():
         self.evicted_arr.append(len(incomplete_tweets)-len(tweets_to_return))
         self.incomplete_arr.append(len(tweets_to_return))
         return tweets_to_return
+
+    def set_ambiguous_rescan_tracker(self,incomplete_tweets):
+        for index, row in incomplete_tweets.iterrows():
+
+
+            sentID=str(row['sentID'])
+            tweetID=str(row['tweetID'])
+            
+
+            ambiguous_candidates_in_sentence=list(row['ambiguous_candidates'])
+
+            # print(tweetID,sentID,ambiguous_candidates_in_sentence)
+
+            for candidate in ambiguous_candidates_in_sentence:
+                if(candidate not in self.ambiguous_rescan_tracker.keys()):
+                    ambiguous_candidate_rescan_record=[(tweetID,sentID)]
+                else:
+                    ambiguous_candidate_rescan_record=self.ambiguous_rescan_tracker[candidate]
+                    ambiguous_candidate_rescan_record.append((tweetID,sentID))
+                self.ambiguous_rescan_tracker[candidate]=ambiguous_candidate_rescan_record
+
+
+
+
 
     def convert_bytes(self, num):
         """
@@ -469,12 +541,13 @@ class EntityResolver ():
         # # candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['Z_ScoreUnweighted'] >= z_score_threshold]
 
         #multi-word infrequent candidates ---> to be used for recall correction
-        cumulative_threshold=1
+        cumulative_threshold=10
         multiword_infrequent_candidates_list=candidate_featureBase_DF[(candidate_featureBase_DF['cumulative'] < cumulative_threshold) & (candidate_featureBase_DF.length.astype(int)>1)].candidate.tolist()
         #all infrequent candidates
         all_infrequent= candidate_featureBase_DF[candidate_featureBase_DF['cumulative'] < cumulative_threshold]
         candidate_featureBase_DF = candidate_featureBase_DF[candidate_featureBase_DF['cumulative'] >= cumulative_threshold]
-        
+
+                
         # candidate_featureBase_DF['probability']=0.0
         # try:
         # mask=candidate_featureBase_DF.apply(lambda row: (row['last-update'] == self.counter)&(((self.counter-row['batch']) <10)|(row['candidate'] in self.ambiguous_candidates)),axis=1)
@@ -1103,6 +1176,9 @@ class EntityResolver ():
         candidate_featureBase_DF,multiWord_infrequent_candidates,all_infrequent= self.classify_candidate_base(z_score_threshold,candidate_featureBase_DF)
         # set readable labels (a,g,b) for candidate_featureBase_DF based on ['probabilities.']
         candidate_featureBase_DF=self.set_readable_labels(candidate_featureBase_DF)
+
+        
+
         time_cb_out=time.time()
         print('classify',(time_cb_out-time_cb_in))
 

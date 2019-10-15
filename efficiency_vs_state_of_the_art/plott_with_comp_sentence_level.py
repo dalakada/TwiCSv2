@@ -23,7 +23,7 @@ rc('font',**{'family':'dejavusans','serif':['Times']})
 rc('text', usetex=False)
 csfont = {'fontname':'DejaVu Sans Condensed'}
 
-###################################### 1.03M plots ######################################
+# ###################################### 1.03M plots ######################################
 # whole_level=[
 # [
 # 1504.8556637058,
@@ -167,15 +167,15 @@ csfont = {'fontname':'DejaVu Sans Condensed'}
 
 # print("BITTI BITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTI")
 
-# ax.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
-# ax3.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
-# ax2.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
-# ax4.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
+# ax.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
+# ax3.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
+# ax2.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
+# ax4.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
 
-# ax.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiCS-CE")
-# ax3.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiCS-CE")
-# ax2.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiCS-CE")
-# ax4.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiCS-CE")
+# ax.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
+# ax3.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
+# ax2.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
+# ax4.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
 
 
 # ax3.plot( tweets_been_processed_list, whole_level[2],marker='>' ,markersize=8,linewidth=1, label="OpenCalais")
@@ -260,9 +260,9 @@ csfont = {'fontname':'DejaVu Sans Condensed'}
 
 # abc=f.text(0.03, 0.5, 'Tweet Processing Throughput',fontproperties=font_axis, ha='center', va='center', rotation='vertical')
 
-# ax.text(0.5, 0.48,'TwiCS-C', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
+# ax.text(0.5, 0.48,'TwiLight-C', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
 
-# ax.text(0.8, 0.8,'TwiCS-CE', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
+# ax.text(0.8, 0.8,'TwiLight-CE', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
 
 # ax2.text(0.5, 0.64, 'Twitter NLP',ha='center', va='center', transform=ax2.transAxes,FontProperties=font_legend)
 
@@ -298,7 +298,7 @@ whole_level=[
 1366.9296488246123,
 1293.8241411955635,
 1259.5325419655237,
-1223.2883729249393
+1243.2883729249393
 ], #TwiCS-C
 [
 1597.6881085833895,
@@ -307,7 +307,7 @@ whole_level=[
 1439.870040933887,
 1358.9509684312811,
 1321.3338122519517,
-1281.6811098024182
+1301.6811098024182
 ], #TwiCS-CE
 [
 527.0307783,
@@ -361,13 +361,13 @@ matplotlib.rcParams.update(params)
 
 print("BITTI BITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTI")
 
-ax.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
-ax3.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
-ax2.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
+ax.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
+ax3.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
+ax2.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
 
-ax.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiCS-CE")
-ax3.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiCS-CE")
-ax2.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiCS-CE")
+ax.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
+ax3.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
+ax2.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
 
 
 
@@ -440,9 +440,9 @@ plt.tick_params(axis='both', which='major', labelsize=12)
 
 abc=f.text(0.03, 0.5, 'Tweet Processing Throughput',fontproperties=font_axis, ha='center', va='center', rotation='vertical')
 
-ax.text(0.5, 0.45,'TwiCS-C', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
+ax.text(0.5, 0.45,'TwiLight-C', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
 
-ax.text(0.82, 0.6,'TwiCS-CE', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
+ax.text(0.82, 0.6,'TwiLight-CE', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
 
 ax2.text(0.5, 0.62, 'Twitter NLP',ha='center', va='center', transform=ax2.transAxes,FontProperties=font_legend)
 
@@ -451,7 +451,7 @@ ax3.text(0.15, 0.8, 'NeuroNER',ha='center', va='center', transform=ax3.transAxes
 
 
 
-plt.xlabel('Tweet Sentences in Input Stream D6 (NIST 2011)',fontproperties=font_axis2)
+plt.xlabel('Tweet Sentences in Input Stream D6',fontproperties=font_axis2)
 # plt.ylabel('Tweet Throughput',fontproperties=font_axis)#prop=20)
 ax.grid(True)
 ax2.grid(True)

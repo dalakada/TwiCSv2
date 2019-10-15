@@ -3,11 +3,11 @@
 import SatadishaModule_final_trie as phase1
 
 # import phase2_Trie_baseline_reintroduction_effectiveness as phase2
-# import phase2_Trie_baseline_reintroduction_efficiency as phase2
+import phase2_Trie_baseline_reintroduction_efficiency as phase2
 # import phase2_Trie_just_reintroduction as phase2 #just reintroduction, eviction without experimental result computation
 # import phase2_Trie_just_reintroduction_alternate as phase2 # testing reintroduction with various thresholds in unified framework
 # import phase2_Trie_reintroduction as phase2
-import phase2_Trie_just_eviction_alternate as phase2 # testing eviction with various thresholds in unified framework
+# import phase2_Trie_just_eviction_alternate as phase2 # testing eviction with various thresholds in unified framework
 
 import datetime
 from threading import Thread
@@ -199,6 +199,7 @@ sentence_level_arr=[[-1]*20]*20
 
 # count=0
 batch_size=100000
+# batch_size= 50000
 
 # tweets=tweets_unpartitoned
 # length=len(tweets)
@@ -277,7 +278,7 @@ for list_index in range(len(dir_list)):
     for g, tweet_batch in tweets.groupby(np.arange(length) //batch_size):
         
         # input_size_arr.append(convert_bytes(sys.getsizeof(tweet_batch)))
-
+        # print('input_size_arr: ',input_size_arr)
 
         tuple_of= Phase1.extract(tweet_batch,batch_count)
         tweet_base=tuple_of[0]
@@ -323,7 +324,7 @@ for list_index in range(len(dir_list)):
     # time_out=phase2_output_time
 
         #phase2_Trie_just_eviction_alternate
-        candidate_base_post_Phase2, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
+        # candidate_base_post_Phase2, phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
         # time_out=phase2_output_time
 
     # # #phase2_Trie_reintroduction
@@ -336,9 +337,9 @@ for list_index in range(len(dir_list)):
     # #taking phase2 output time in phase 2 class due to unrelated index reset operation at the end of last batch
     # time_out=time.time()
 
-    # #phase2_Trie_baseline_reintroduction_efficiency
-    #     reintroduction_threshold_dummy=2
-    #     candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted,phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
+    #phase2_Trie_baseline_reintroduction_efficiency
+        reintroduction_threshold_dummy=2
+        candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted,phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
     # #taking phase2 output time in phase 2 class due to unrelated index reset operation at the end of last batch
     # time_out=time.time()
         time_out=phase2_output_time
