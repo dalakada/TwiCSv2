@@ -37,9 +37,13 @@ class SVM1():
         ]
         self.colsRes = ['class']
 
-        self.trainArr = self.train.as_matrix(self.cols) #training array
-        #print(self.trainArr)
-        self.trainRes = self.train.as_matrix(self.colsRes) # training results
+        # self.trainArr = self.train.as_matrix(self.cols) #training array
+        # #print(self.trainArr)
+        # self.trainRes = self.train.as_matrix(self.colsRes) # training results
+
+        self.trainArr = self.train[self.cols]
+        self.trainRes = self.train[self.colsRes].values
+        
         self.clf = svm.SVC(probability=True)
         self.clf.fit(self.trainArr, self.trainRes) # fit the data to the algorithm
 
@@ -59,14 +63,14 @@ class SVM1():
 
 
         #setting features
-        testArr= x_test.as_matrix(self.cols)
-        #print(testArr)
-        testRes = x_test.as_matrix(self.colsRes)
+        # testArr= x_test.as_matrix(self.cols)
+        # #print(testArr)
+        # testRes = x_test.as_matrix(self.colsRes)
 
 
         # In[ ]:
 
-
+        testArr = x_test[self.cols]
 
 
         # In[65]:

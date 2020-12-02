@@ -35,10 +35,19 @@ global total_time
 total_time=0
 # Phase1= phase1.SatadishaModule()
 # Phase2 = phase2.EntityResolver()
+## tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/TwiCSv2/production_code/tweets_3k_annotated.csv",sep =',', encoding='utf-8',keep_default_na=False)
 
-# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/TwiCSv2/production_code/tweets_3k_annotated.csv",sep =',', encoding='utf-8',keep_default_na=False)
-tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated.csv",sep =',', encoding='utf-8',keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated.csv",sep =',', encoding='utf-8',keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/TwiCSv2/data/tweets_3k_annotated.csv",sep =',',keep_default_na=False)
+
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/wnut17test.csv",sep =',',keep_default_na=False)
+
+
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/venezuela.csv",sep =',', encoding='utf-8',keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/venezuela.csv",sep =',', keep_default_na=False)
+
+tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/covid_2K.csv",sep =',',keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/covid.csv",sep =',',keep_default_na=False)
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billdeblasio.csv",sep =',', keep_default_na=False)
@@ -46,10 +55,19 @@ tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/ripcity.csv",sep =',', keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/billnye.csv",sep =',', keep_default_na=False)
 
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/pikapika.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/ripcity.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/billnye.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/roevwade.csv",sep =',', keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/billdeblasio.csv",sep =',', keep_default_na=False)
+
 # tweets=tweets[:1000:]
 print('Tweets are in memory...')
-batch_size=600
+# batch_size=600
 length=len(tweets_unpartitoned)
+print(length)
+
+batch_size=len(tweets_unpartitoned)
 val=math.ceil(length/batch_size)-1
 
 
@@ -261,11 +279,11 @@ for g, tweet_batch in tweets_unpartitoned.groupby(np.arange(length) //batch_size
     # phase2TweetBase=Phase2.executor(tweet_base,candidate_base,phase2stopwordList,best_z_scores[counter],tweet_base)
     reintroduction_threshold_dummy=0  
     # # #phase2_Trie_baseline_reintroduction_effectiveness
-    candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_batch)
+    candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted,time_out= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_batch)
 
     new_acc_list=Phase2.finish()
     # accuracy_list_stanford,accuracy_list_opencalai,accuracy_list_ritter,accuracy_list_neuroner=Phase2.finish_other_systems()
-    time_out=time.time()
+    # time_out=time.time()
     elapsedTime= time_out-time_in
     total_time+=elapsedTime
     execution_time_list.append(total_time)

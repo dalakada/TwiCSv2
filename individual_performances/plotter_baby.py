@@ -47,20 +47,19 @@ incomplete_tweets=[6441,
 10493,
 11848,
 9244]
-# incomplete_tweets=[6474, 9725, 7185, 17494, 18634, 10266, 11500, 10715, 12395, 13307, 9641]
-tweets_been_processed_list=[179202, 358646, 536083, 693100, 859600, 1038784, 1199605, 1351483, 1528241, 1693810, 1751118]
+incomplete_tweets=[6474, 9725, 7185, 17494, 18634, 10266, 11500, 10715, 12395, 13307, 9641]
+#tweets_been_processed_list=[179202, 358646, 536083, 693100, 859600, 1038784, 1199605, 1351483, 1528241, 1693810, 1751118]
 
 # percent_incomplete= [ (sum(incomplete_tweets[0:(i+1)])/tweets_been_processed_list[i])*100 for i in range(len(tweets_been_processed_list))]
-percent_incomplete= [3.594267921116952, 4.498307523295952, 4.254378519744144, 4.367046602221902, 4.513959981386692, 4.5951805187603965, 4.790326815910237, 5.013011632406771, 5.119807674313148, 5.318837413877589, 5.47266169384359]
+# percent_incomplete= [3.594267921116952, 4.498307523295952, 4.254378519744144, 4.367046602221902, 4.513959981386692, 4.5951805187603965, 4.790326815910237, 5.013011632406771, 5.119807674313148, 5.318837413877589, 5.47266169384359]
 
-iteration=[1,2,3,4,5,6,7,8,9,10,11]
+# iteration=[1,2,3,4,5,6,7,8,9,10,11]
 
-print(percent_incomplete)
+# print(percent_incomplete)
 
-fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
-font_axis = fm.FontProperties(fname=fontPath, size=24)
 
-fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
+fontPath = "/Users/satadisha/Downloads/abyssinica-sil/AbyssinicaSIL-R.ttf"
+font_axis = fm.FontProperties(fname=fontPath, size=16)
 font_legend = fm.FontProperties(fname=fontPath, size=10)
 
 fig, ax = plt.subplots()
@@ -73,31 +72,34 @@ matplotlib.rcParams.update(params)
 
 print("BITTI BITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTI")
 
-plt.plot( iteration, percent_incomplete,marker='s' ,markersize=8,linewidth=1)
+# plt.plot( iteration, percent_incomplete,marker='s' ,markersize=8,linewidth=1)
 
 # plt.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="Weak Tagger + Forward Scan(wClassifier)+ Rescan ")
 # plt.plot( tweets_been_processed_list, whole_level[1],marker='o' ,markersize=8,linewidth=1, label="Weak Tagger + Forward Scan(wClassifier)")
 # plt.plot( tweets_been_processed_list, whole_level[2],marker='>' ,markersize=8,linewidth=1, label="Weak Tagger + Forward Scan(w/oClassifier)")
 # plt.plot( tweets_been_processed_list, whole_level[3],marker='x' ,markersize=8,linewidth=1, label="Weak Tagger")
 
+plt.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="Phase I + Phase II(wClassifier)+ Rescan ")
+plt.plot( tweets_been_processed_list, whole_level[1],marker='o' ,markersize=8,linewidth=1, label="Phase I + Phase II(wClassifier)")
+plt.plot( tweets_been_processed_list, whole_level[2],marker='>' ,markersize=8,linewidth=1, label="Phase I + Phase II(w/oClassifier)")
+plt.plot( tweets_been_processed_list, whole_level[3],marker='x' ,markersize=8,linewidth=1, label="Phase I")
 
-tick_spacing = 1.0
-ax.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
+# plt.grid(True)
+# tick_spacing = 1.0
+# ax.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
 plt.tick_params(axis='both', which='major', labelsize=12)
 
-# plt.xlabel('Tweets in Input Stream',fontproperties=font_axis)
-# plt.ylabel('F1 Score',fontproperties=font_axis)#prop=20)
+plt.xlabel('Tweets in Input Stream',fontproperties=font_axis)
+plt.ylabel('F1 Score',fontproperties=font_axis)#prop=20)
 
-plt.xlabel('Iteration',fontproperties=font_axis)
-plt.ylabel('% Incomplete Tweet Sentences',fontproperties=font_axis)#prop=20)
 
 plt.grid(True)
-plt.ylim((1,7))
-# plt.legend(loc="upper right",ncol=1,frameon=False,prop=font_legend)
+plt.ylim((0.4,1.0))
+plt.legend(loc="upper right",ncol=1,frameon=False,prop=font_legend)
 # plt.legend(loc="upper left", bbox_to_anchor=[0, 1],
 #            ncol=2,frameon=False,prop=font)
-# fig.savefig("system-variants.pdf",dpi=1200,bbox_inches='tight')
-fig.savefig("percent-incomplete.pdf",dpi=1200,bbox_inches='tight')
+fig.savefig("system-variants-TwiCS.pdf",dpi=1200,bbox_inches='tight')
+# fig.savefig("percent-incomplete.pdf",dpi=1200,bbox_inches='tight')
 plt.show()
 
     # thefile = open('time_'+str(batch_size)+'.txt', 'w')

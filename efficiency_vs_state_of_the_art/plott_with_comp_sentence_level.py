@@ -19,11 +19,11 @@ import matplotlib
 from matplotlib import rc
 import matplotlib.font_manager as fm
 warnings.filterwarnings("ignore")
-rc('font',**{'family':'dejavusans','serif':['Times']})
-rc('text', usetex=False)
-csfont = {'fontname':'DejaVu Sans Condensed'}
+# rc('font',**{'family':'dejavusans','serif':['Times']})
+# rc('text', usetex=False)
+# csfont = {'fontname':'DejaVu Sans Condensed'}
 
-# ###################################### 1.03M plots ######################################
+# # ###################################### 1.03M plots ######################################
 # whole_level=[
 # [
 # 1504.8556637058,
@@ -89,19 +89,33 @@ csfont = {'fontname':'DejaVu Sans Condensed'}
 # 290.0621321868
 
 # ], #Twitter NLP
+# # [
+# # 100,
+# # 88,
+# # 91,
+# # 90,
+# # 90.59,
+# # 92.053,
+# # 93.284,
+# # 94.133,
+# # 93.79,
+# # 94.89,
+# # 95.4
+# # ], #NeuroNER
 # [
-# 100,
-# 88,
-# 91,
-# 90,
-# 90.59,
-# 92.053,
-# 93.284,
-# 94.133,
-# 93.79,
-# 94.89,
-# 95.4
-# ], #NeuroNER
+# 300.6560403,
+# 287.3597756,
+# 291.1624117,
+# 288.7675,
+# 289.6825076,
+# 287.9537011,
+# 283.5546099,
+# 279.1268333,
+# 277.1008342,
+# 274.955837,
+# 274.2830957
+# ], #Gaguilar et al.
+
 # [
 # 0.7847898245,
 # 0.7890123589,
@@ -144,14 +158,17 @@ csfont = {'fontname':'DejaVu Sans Condensed'}
 # 1751118
 # ]
 
-# fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
+# fontPath = "/Users/satadisha/Downloads/abyssinica-sil/AbyssinicaSIL-R.ttf"
 # font_axis = fm.FontProperties(fname=fontPath, size=19)
 
-# fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
+# # fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
+# font_axis = fm.FontProperties(fname=fontPath, size=19)
+
+# # fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
 # font_axis2 = fm.FontProperties(fname=fontPath, size=24)
 
 
-# fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
+# # fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
 # font_legend = fm.FontProperties(fname=fontPath, size=18)
 
 
@@ -165,17 +182,17 @@ csfont = {'fontname':'DejaVu Sans Condensed'}
 #    }
 # matplotlib.rcParams.update(params)
 
-# print("BITTI BITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTI")
+# # print("BITTI BITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTI")
 
-# ax.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
-# ax3.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
-# ax2.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
-# ax4.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
+# ax.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
+# ax3.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
+# ax2.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
+# ax4.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
 
-# ax.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
-# ax3.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
-# ax2.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
-# ax4.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
+# ax.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiCS-CE")
+# ax3.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiCS-CE")
+# ax2.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiCS-CE")
+# ax4.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiCS-CE")
 
 
 # ax3.plot( tweets_been_processed_list, whole_level[2],marker='>' ,markersize=8,linewidth=1, label="OpenCalais")
@@ -186,10 +203,14 @@ csfont = {'fontname':'DejaVu Sans Condensed'}
 # ax4.plot( tweets_been_processed_list, whole_level[3],marker='x' ,markersize=8,linewidth=1, label="Twitter NLP")
 
 
-# ax3.plot( tweets_been_processed_list, whole_level[4],marker='p' ,markersize=8,linewidth=1, label="NeuroNER")
-# ax4.plot( tweets_been_processed_list, whole_level[4],marker='p' ,markersize=8,linewidth=1, label="NeuroNER")
+# ax2.plot( tweets_been_processed_list, whole_level[4],marker='p' ,markersize=8,linewidth=1, label="Gaguilar et al.")
+# ax3.plot( tweets_been_processed_list, whole_level[4],marker='p' ,markersize=8,linewidth=1, label="Gaguilar et al.")
+# ax4.plot( tweets_been_processed_list, whole_level[4],marker='p' ,markersize=8,linewidth=1, label="Gaguilar et al.")
 
 # ax4.plot( tweets_been_processed_list, whole_level[5],marker='o' , markersize=8, linewidth=1,label="Stanford NER")
+
+
+
 
 # ax.set_ylim(1200,1525)  # outliers only
 # ax2.set_ylim(260, 310)
@@ -208,9 +229,9 @@ csfont = {'fontname':'DejaVu Sans Condensed'}
 # ax.xaxis.tick_top()
 # ax2.xaxis.tick_top()
 # ax.tick_params(labeltop='off')  # don't put tick labels at the top
-# ax.tick_params(labelbottom='off',axis='both', which='major', labelsize=12)
-# ax2.tick_params(labeltop='off',axis='both', which='major', labelsize=12)
-# ax3.tick_params(labeltop='off',axis='both', which='major', labelsize=12)  # don't put tick labels at the top
+# ax.tick_params(bottom='off',axis='both', which='major', labelsize=12)
+# ax2.tick_params(top='off',axis='both', which='major', labelsize=12)
+# ax3.tick_params(top='off',axis='both', which='major', labelsize=12)  # don't put tick labels at the top
 #   # don't put tick labels at the top
 # # ax2.xaxis.tick_bottom()
 # ax3.xaxis.tick_bottom()
@@ -253,22 +274,27 @@ csfont = {'fontname':'DejaVu Sans Condensed'}
 # tick_spacing_ax3 = 10
 # ax3.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing_ax3))
 
+# # tick_spacing_x_axis = 400000
+# # ax.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing_x_axis))
+
 # tick_spacing_x_axis = 400000
+# labels=['0','400K','800K','1.2M','1.6M']
 # ax.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing_x_axis))
+# ax.set_xticklabels(labels)
 
 # plt.tick_params(axis='both', which='major', labelsize=12)
 
 # abc=f.text(0.03, 0.5, 'Tweet Processing Throughput',fontproperties=font_axis, ha='center', va='center', rotation='vertical')
 
-# ax.text(0.5, 0.48,'TwiLight-C', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
+# ax.text(0.5, 0.48,'TwiCS-C', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
 
-# ax.text(0.8, 0.8,'TwiLight-CE', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
+# ax.text(0.8, 0.8,'TwiCS-CE', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
 
-# ax2.text(0.5, 0.64, 'Twitter NLP',ha='center', va='center', transform=ax2.transAxes,FontProperties=font_legend)
+# ax2.text(0.80, 0.84, 'Twitter NLP',ha='center', va='center', transform=ax2.transAxes,FontProperties=font_legend)
 
 # ax3.text(0.15, -0.05, 'OpenCalais',ha='center', va='center', transform=ax3.transAxes,FontProperties=font_legend)
 
-# ax3.text(0.15, 0.8, 'NeuroNER',ha='center', va='center', transform=ax3.transAxes,FontProperties=font_legend)
+# ax2.text(0.65, 0.11, 'Gaguilar et al.',ha='center', va='center', transform=ax2.transAxes,FontProperties=font_legend)
 
 # ax4.text(0.8, 0.55, 'Stanford NER',ha='center', va='center', transform=ax4.transAxes,FontProperties=font_legend)
 
@@ -284,11 +310,12 @@ csfont = {'fontname':'DejaVu Sans Condensed'}
 # # plt.legend(loc="lower right",ncol=4,frameon=False,prop=font_legend)
 # # plt.legend(loc="upper left", bbox_to_anchor=[0, 1],
 # #            ncol=2,frameon=False,prop=font)
-# f.savefig("tweet-processing-throughput.pdf",dpi=1200,bbox_inches='tight',bbox_extra_artists=[abc])
+# f.savefig("tweet-processing-throughput-w-gaguilar.pdf",dpi=1200,bbox_inches='tight',bbox_extra_artists=[abc])
 
-# plt.show()
+# # plt.show()
+# # ((1544/527)+(1471/521)+(1414/524)+(1366/521)+(1293/517)+(1259/510)+(1243/510))/7
 
-###################################### NIST plots ######################################
+##################################### NIST plots ######################################
 
 whole_level=[
 [
@@ -318,15 +345,24 @@ whole_level=[
 510.43652,
 510.299068
 ], #TwitterNLP
+# [
+# 119.2457328,
+# 119.3225615,
+# 118.5742003,
+# 122.2119689,
+# 125.6602219,
+# 125.890977,
+# 111.2549642
+# ] #NeuroNER
 [
-119.2457328,
-119.3225615,
-118.5742003,
-122.2119689,
-125.6602219,
-125.890977,
-111.2549642
-] #NeuroNER
+315.7460943,
+295.9976864,
+278.2922682,
+279.7490325,
+270.836901,
+274.333813,
+272.0863275
+] #Gaguilar et al.
 ]
 
 tweets_been_processed_list=[
@@ -339,14 +375,14 @@ tweets_been_processed_list=[
 14144886
 ]
 
-fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
+fontPath = "/Users/satadisha/Downloads/abyssinica-sil/AbyssinicaSIL-R.ttf"
 font_axis = fm.FontProperties(fname=fontPath, size=16)
 
-fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
+# fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
 font_axis2 = fm.FontProperties(fname=fontPath, size=16)
 
 
-fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
+# fontPath = "/usr/share/fonts/truetype/abyssinica/AbyssinicaSIL-R.ttf"
 font_legend = fm.FontProperties(fname=fontPath, size=16)
 
 f, (ax,ax2,ax3) = plt.subplots(3, 1, sharex=True)
@@ -361,9 +397,9 @@ matplotlib.rcParams.update(params)
 
 print("BITTI BITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTIBITTI")
 
-ax.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
-ax3.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
-ax2.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiLight-C")
+ax.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
+ax3.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
+ax2.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="TwiCS-C")
 
 ax.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
 ax3.plot( tweets_been_processed_list, whole_level[1],marker='s' ,markersize=8,linewidth=1, label="TwiLight-CE")
@@ -375,28 +411,30 @@ ax2.plot( tweets_been_processed_list, whole_level[2],marker='x' ,markersize=8,li
 ax3.plot( tweets_been_processed_list, whole_level[2],marker='x' ,markersize=8,linewidth=1, label="Twitter NLP")
 
 
-ax3.plot( tweets_been_processed_list, whole_level[3],marker='p' ,markersize=8,linewidth=1, label="NeuroNER")
+# ax3.plot( tweets_been_processed_list, whole_level[3],marker='p' ,markersize=8,linewidth=1, label="NeuroNER")
+ax3.plot( tweets_been_processed_list, whole_level[3],marker='p' ,markersize=8,linewidth=1, label="Gaguilar et al.")
 
 
 
 ax.set_ylim(1000,1650)  # outliers only
 ax2.set_ylim(500, 550)
-ax3.set_ylim(100, 130)
+ax3.set_ylim(250, 350)
 
 
-
+ax.spines['top'].set_visible(False)
 ax.spines['bottom'].set_visible(False)
 ax2.spines['top'].set_visible(False)
 ax2.spines['bottom'].set_visible(False)
 ax3.spines['top'].set_visible(False)
 
 
-ax.xaxis.tick_top()
-ax2.xaxis.tick_top()
-ax.tick_params(labeltop='off')  # don't put tick labels at the top
-ax.tick_params(labelbottom='off',axis='both', which='major', labelsize=12)
-ax2.tick_params(labeltop='off',axis='both', which='major', labelsize=12)
-ax3.tick_params(labeltop='off',axis='both', which='major', labelsize=12)  # don't put tick labels at the top
+# ax.xaxis.tick_top()
+# ax2.xaxis.tick_top()
+
+# ax.tick_params(labeltop='off')  # don't put tick labels at the top
+ax.tick_params(top='off',bottom='off',axis='both', which='major', labelsize=12)
+ax2.tick_params(top='off',bottom='off',axis='both', which='major', labelsize=12)
+ax3.tick_params(top='off',axis='both', which='major', labelsize=12)  # don't put tick labels at the top
   # don't put tick labels at the top
 # ax2.xaxis.tick_bottom()
 ax3.xaxis.tick_bottom()
@@ -428,11 +466,11 @@ ax.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
 tick_spacing_ax2 = 25
 ax2.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing_ax2))
 
-tick_spacing_ax3 = 10
+tick_spacing_ax3 = 50
 ax3.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing_ax3))
 
 tick_spacing_x_axis = 2000000
-labels=['2M','4M','6M','8M','10M','12M','14M']
+labels=['0','2M','4M','6M','8M','10M','12M','14M']
 ax.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing_x_axis))
 ax.set_xticklabels(labels)
 
@@ -440,24 +478,25 @@ plt.tick_params(axis='both', which='major', labelsize=12)
 
 abc=f.text(0.03, 0.5, 'Tweet Processing Throughput',fontproperties=font_axis, ha='center', va='center', rotation='vertical')
 
-ax.text(0.5, 0.45,'TwiLight-C', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
+ax.text(0.5, 0.45,'TwiCS-C', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
 
-ax.text(0.82, 0.6,'TwiLight-CE', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
+ax.text(0.82, 0.6,'TwiCS-CE', ha='center', va='center', transform=ax.transAxes,FontProperties=font_legend)
 
 ax2.text(0.5, 0.62, 'Twitter NLP',ha='center', va='center', transform=ax2.transAxes,FontProperties=font_legend)
 
-ax3.text(0.15, 0.8, 'NeuroNER',ha='center', va='center', transform=ax3.transAxes,FontProperties=font_legend)
+ax3.text(0.15, 0.8, 'Gaguilar et al.',ha='center', va='center', transform=ax3.transAxes,FontProperties=font_legend)
 
 
 
 
-plt.xlabel('Tweet Sentences in Input Stream D6',fontproperties=font_axis2)
+plt.xlabel('Tweet Sentences in Input Stream D6 (NIST 2011)',fontproperties=font_axis)
+
 # plt.ylabel('Tweet Throughput',fontproperties=font_axis)#prop=20)
 ax.grid(True)
 ax2.grid(True)
 ax3.grid(True)
 
-f.savefig("tweet-processing-throughput-NIST.pdf",dpi=1200,bbox_inches='tight',bbox_extra_artists=[abc])
+f.savefig("tweet-processing-throughput-NIST-gaguilar.pdf",dpi=1200,bbox_inches='tight',bbox_extra_artists=[abc])
 
 plt.show()
 

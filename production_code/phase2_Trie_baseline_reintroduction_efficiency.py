@@ -25,7 +25,7 @@ import pickle
 import itertools
 from scipy import spatial
 import ast
-from numba import jit
+# from numba import jit
 
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn import linear_model
@@ -64,10 +64,10 @@ class EntityResolver ():
         self.mention_count=0
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         time2=time.time()
-        print('time taken:',(time2-time1))
+        # print('time taken:',(time2-time1))
         # candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
 
-        self.df_size.append(self.convert_bytes(sys.getsizeof(data_frame_holder)))
+        # self.df_size.append(self.convert_bytes(sys.getsizeof(data_frame_holder)))
 
         
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='knows'])
@@ -79,7 +79,7 @@ class EntityResolver ():
             candidate_featureBase_DF,
             phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag)
         time2=time.time()
-        print('time taken:',(time2-time1))
+        # print('time taken:',(time2-time1))
         # print('untrashed_tweets: ', len(untrashed_tweets))
         # untrashed_tweets.to_csv("phase2output.csv", sep=',', encoding='utf-8')
 
@@ -147,7 +147,7 @@ class EntityResolver ():
 
 
         print('incomplete sentences: ', len(self.incomplete_tweets))
-        print('df_size: ',self.df_size)
+        # print('df_size: ',self.df_size)
         print('mentions discovered:',self.mention_count)
 
 
@@ -568,14 +568,17 @@ class EntityResolver ():
             candidate_featureBase_DF_oldScores['probability']=np.array([self.candidates_w_scores[x] for x in candidate_featureBase_DF_oldScores['candidate'].values])#np.vectorize(lambda x: self.candidates_w_scores[x])
             # candidate_featureBase_DF_oldScores['probability']=np.array([self.candidates_w_scores[x] for x in candidate_featureBase_DF_oldScores['candidate'].values])
 
-            candidate_featureBase_DF_newScores=self.my_classifier.run(candidate_featureBase_DF[criteria],z_score_threshold)
+            if(len(candidate_featureBase_DF[criteria])>0):
+                candidate_featureBase_DF_newScores=self.my_classifier.run(candidate_featureBase_DF[criteria],z_score_threshold)
             # print(len(candidate_featureBase_DF),len(candidate_featureBase_DF_oldScores),len(candidate_featureBase_DF_newScores))
 
             # probability_column=[self.candidates_w_scores[candidate] if candidate in self.candidates_w_scores.keys() else candidate_featureBase_DF_wScores[candidate_featureBase_DF_wScores['candidate']==candidate]['probability'].iloc[0] for candidate in candidate_featureBase_DF.candidate.tolist()]
             # # print(probability_column)
             # candidate_featureBase_DF['probability']=probability_column
 
-            candidate_featureBase_DF=pd.concat([candidate_featureBase_DF_oldScores,candidate_featureBase_DF_newScores])
+                candidate_featureBase_DF=pd.concat([candidate_featureBase_DF_oldScores,candidate_featureBase_DF_newScores])
+            else:
+                candidate_featureBase_DF=pd.concat([candidate_featureBase_DF_oldScores])
         else:
             candidate_featureBase_DF=self.my_classifier.run(candidate_featureBase_DF[criteria],z_score_threshold)
         # print(len(candidate_featureBase_DF))
@@ -1159,7 +1162,8 @@ class EntityResolver ():
 
         #print(len(df_holder))
         # data_frame_holder = pd.DataFrame(df_holder)
-        if(self.counter>0):
+        print(len(self.incomplete_tweets))
+        if((self.counter>0)&(len(self.incomplete_tweets)>0)):
             # time_cb_in=time.time()
             data_frame_holder = pd.concat([df_new,df_old])
             # time_cb_out=time.time()
@@ -1180,7 +1184,7 @@ class EntityResolver ():
         
 
         time_cb_out=time.time()
-        print('classify',(time_cb_out-time_cb_in))
+        # print('classify',(time_cb_out-time_cb_in))
 
         # good_to_amb_df=candidate_featureBase_DF[(candidate_featureBase_DF['candidate'].isin(self.good_candidates)&(candidate_featureBase_DF["status"]=="a"))]
         # good_to_amb=good_to_amb_df.candidate.tolist()
@@ -1228,7 +1232,7 @@ class EntityResolver ():
         correction_flag=self.set_partition_dict(candidate_featureBase_DF,multiWord_infrequent_candidates)
         # candidate_featureBase_DF.to_csv("cf_new.csv", sep=',', encoding='utf-8')
         time_cb_out=time.time()
-        print('partition_dict',(time_cb_out-time_cb_in))
+        # print('partition_dict',(time_cb_out-time_cb_in))
 
         ## commenting out for efficiency
         # if(self.counter>0):

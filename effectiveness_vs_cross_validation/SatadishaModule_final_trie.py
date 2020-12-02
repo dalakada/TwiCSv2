@@ -38,20 +38,22 @@ import ast
 
 #---------------------Existing Lists--------------------
 cachedStopWords = stopwords.words("english")
-tempList=["i","and","or","other","another","across","unlike","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always","although"]
+tempList=["i","and","or","other","another","across","unlike","anytime","were","you","then","still","till","nor","perhaps","probably","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always","although"]
 for item in tempList:
     if item not in cachedStopWords:
         cachedStopWords.append(item)
 cachedStopWords.remove("don")
-cachedStopWords.remove("your")
-cachedStopWords.remove("up")
+# cachedStopWords.remove("your")
+# cachedStopWords.remove("up")
 cachedTitles = ["mr.","mr","mrs.","mrs","miss","ms","sen.","dr","dr.","prof.","president","congressman"]
-prep_list=["in","at","of","on","v."] #includes common conjunction as well
+prep_list=["of","&;","v.","de"]  #includes common conjunction as well
+# prep_list=[]
+# article_list=[]
 article_list=["a","an","the"]
 conjoiner=["de"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["nope","gee","hmm","bye","vs","ouch","omw","qt","dj","dm","congrat","haueheuaeh","ahushaush","jr","please","retweet","2mrw","2moro","4get","ooh","reppin","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","pls","bye","vs","ouch","am","pm","omw","http","https","tv","tmw","og","psst","b.s","thanku","em","ip","qft","ima","icymi","bdsm","ah","ive","qt","dj","dm","pts","pt","yrs","congrat","haueheuaeh","ahushaush","jr","please","retweet","2mrw","2moro","4get","ooh","reppin","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 
 #string.punctuation.extend('“','’','”')
 #---------------------Existing Lists--------------------
@@ -77,6 +79,7 @@ class SatadishaModule():
         self.my_sentence_tokenizer._params.abbrev_types.add('c.j')
         self.my_sentence_tokenizer._params.abbrev_types.add('u.s')
         self.my_sentence_tokenizer._params.abbrev_types.add('u.s.a')
+        self.my_sentence_tokenizer._params.abbrev_types.add('ret.')
 
 
         #self.extract()
@@ -98,11 +101,11 @@ class SatadishaModule():
                 if(temp):
                     temp=list(map(lambda elem: elem+')', temp))
                 # temp.append(temp1[-1])
-            elif (("-" in word)&(not word.endswith("-"))):
-                temp1=list(filter(lambda elem: elem!='',word.split("-")))
-                if(temp1):
-                    temp=list(map(lambda elem: elem+'-', temp1[:-1]))
-                temp.append(temp1[-1])
+            # elif (("-" in word)&(not word.endswith("-"))):
+            #     temp1=list(filter(lambda elem: elem!='',word.split("-")))
+            #     if(temp1):
+            #         temp=list(map(lambda elem: elem+'-', temp1[:-1]))
+            #     temp.append(temp1[-1])
             elif (("?" in word)&(not word.endswith("?"))):
                 temp1=list(filter(lambda elem: elem!='',word.split("?")))
                 if(temp1):
@@ -244,6 +247,7 @@ class SatadishaModule():
         
 
         df_holder=[]
+        quickRegex=re.compile("[a-z]+")
         # df= self.batch.filter(['TweetSentence','tweetID','sentID','tweetwordList','phase1Candidates','hashtags','user','entry_batch','annotation','stanford_candidates'])
 
         #--------------------------------------PHASE I---------------------------------------------------
@@ -552,7 +556,8 @@ class SatadishaModule():
                 #     print(candidateText)
                 combined=[]+cachedStopWords+cachedTitles+prep_list+chat_word_list+article_list+day_list
                 if not ((candidateText in combined)|(candidateText.isdigit())|(self.is_float(candidateText))):
-                    self.CTrie.__setitem__(candidateText.split(),len(candidateText.split()),candidate.features,batch_number)
+                    if(quickRegex.match(candidateText)):
+                        self.CTrie.__setitem__(candidateText.split(),len(candidateText.split()),candidate.features,batch_number)
             # if(index==371):
             # #     # print(sentence)
             #     self.printList(ne_List_final)
@@ -902,6 +907,7 @@ class SatadishaModule():
         NE_phrases=self.entity_info_check(NE_phrase_in)
         cap_phrases=NE_phrases.phraseText.strip()
         final_lst=[]
+
         #print (cap_phrases,NE_phrases.features[ne.date_indicator])
         if (re.compile(r'[^a-zA-Z0-9_\s]')).findall(cap_phrases):
             #case of intermediate punctuations: handles abbreviations
@@ -933,6 +939,8 @@ class SatadishaModule():
         combined=cachedStopWords+prep_list+article_list+day_list+chat_word_list
         splitList=re.split('["‘’“”()/,;:!?…]',cap_phrases)
         splitList=list(filter(lambda word: ((word!="")&(word.lstrip(string.punctuation).rstrip(string.punctuation).strip().lower() not in combined)), splitList))
+        # if(cap_phrases=='4-3'):
+        #     print(splitList,re.split('-',cap_phrases))
 
                
         wordlstU=list(map(lambda word: word.strip().strip(string.punctuation), splitList))
@@ -1128,7 +1136,10 @@ class SatadishaModule():
             # else:
             return False
         elif word[0].isdigit():
-            return True
+            if(word.isdigit()):
+                return False
+            else:
+                return True
         else:
             p=re.compile(r'^[\W]*[A-Z]')
             l= p.match(word)
@@ -1245,8 +1256,8 @@ class SatadishaModule():
             return True
         elif phrase in day_list:
             return True
-        #elif phrase in month_list:
-            #return True
+        elif phrase in month_list:
+            return True
         elif match_lst:
             return True
         else:
@@ -1475,6 +1486,10 @@ class SatadishaModule():
 
 
     # In[318]:
+    # def process_alphanumeric(self,ne_phrase):
+    #     words=ne_phrase.split()
+    #     for ind,word in enumerate(words):
+
 
     def trueEntity_process(self,tweet_index,tweetWordList_cappos,tweetWordList):
         
@@ -1600,7 +1615,7 @@ class SatadishaModule():
         #ne_List_capPatCheck= list(map(lambda element: self.capitalization_change(element), ne_List_tenseCheck))
         
         #check on length
-        ne_List_lengthCheck= list(filter(lambda element: element.length<7, ne_List_numCheck))
+        ne_List_lengthCheck= list(filter(lambda element: element.length<5, ne_List_numCheck))
         
         ne_List_badWordCheck= list(filter(lambda element:((element.phraseText.strip().strip(string.punctuation).lstrip('“‘’”')).rstrip('“‘’”').lower()) not in combined, ne_List_lengthCheck))
         ne_List_allCheck= list(filter(lambda element:(len((element.phraseText.strip().strip(string.punctuation).lstrip('“‘’”')).rstrip('“‘’”'))>1),ne_List_badWordCheck))

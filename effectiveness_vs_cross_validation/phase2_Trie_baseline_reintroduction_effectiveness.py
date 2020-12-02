@@ -30,20 +30,22 @@ from sklearn.cluster import KMeans, MeanShift
 from sklearn.metrics import silhouette_samples, silhouette_score
 
 cachedStopWords = stopwords.words("english")
-tempList=["i","and","or","other","another","across","unlike","anytime","were","you","then","still","till","nor","perhaps","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always","although"]
+tempList=["i","and","or","other","another","across","unlike","anytime","were","you","then","still","till","nor","perhaps","probably","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always","although"]
 for item in tempList:
     if item not in cachedStopWords:
         cachedStopWords.append(item)
 cachedStopWords.remove("don")
-cachedStopWords.remove("your")
-cachedStopWords.remove("up")
+# cachedStopWords.remove("your")
+# cachedStopWords.remove("us")
 cachedTitles = ["mr.","mr","mrs.","mrs","miss","ms","sen.","dr","dr.","prof.","president","congressman"]
-prep_list=["in","at","of","on","&;","v."] #includes common conjunction as well
+prep_list=["of","&;","v.","de"] #includes common conjunction as well
+# prep_list=[]
+# article_list=[]
 article_list=["a","an","the"]
 conjoiner=["de"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
-chat_word_list=["nope","gee","hmm","bye","please","4get","ooh","reppin","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
+chat_word_list=["nope","gee","hmm","bye","pls","please","yrs","4get","ooh","ouch","am","tv","ima","tmw","og","psst","b.s","thanku","em","qft","ip","icymi","bdsm","ah","http","https","pm","omw","pts","pt","ive","reppin","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
 string.punctuation=string.punctuation+'…‘’'
 
 
@@ -59,10 +61,12 @@ class EntityResolver ():
         # print(phase2stopwordList)
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         
-        # candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
+        candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=="c.j. mccollum"])
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='knows'])
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='democrat'])
+
+        # print(self.good_candidates)
 
         # SET TF 
         untrashed_tweets=self.set_tf(data_frame_holder,
@@ -85,7 +89,7 @@ class EntityResolver ():
         # tp,fp,f1,accuracy calculations.
         # input: tf .[good_candidates],[annotation]
         # output : incomplete tweets.['tp'],['fp'],[f1]
-        self.calculate_tp_fp_f1(z_score_threshold,untrashed_tweets,raw_tweets_for_others)
+        
         #######
         ######
         # SAVE INCOMING TWEETS FOR ANNOTATION FOR OTHERS
@@ -129,6 +133,10 @@ class EntityResolver ():
         self.aggregator_incomplete_tweets= self.aggregator_incomplete_tweets.append(self.incomplete_tweets)
         self.just_converted_tweets=self.just_converted_tweets.append(just_converted_tweets)
 
+        time_out=time.time()
+
+        # self.calculate_tp_fp_f1(z_score_threshold,untrashed_tweets,raw_tweets_for_others)
+
         if(self.counter==(max_batch_value+1)):
             # self.just_converted_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
             self.just_converted_tweets.drop(['2nd Iteration Candidates','2nd Iteration Candidates Unnormalized'], axis=1, inplace=True)
@@ -167,7 +175,7 @@ class EntityResolver ():
 
         #self.just_converted_tweets.to_csv("all_converteds.csv", sep=',', encoding='utf-8')
         #self.incomplete_tweets.to_csv("incomplete_for_last_batch.csv", sep=',', encoding='utf-8')
-        return candidate_featureBase_DF, converted_candidates, self.complete_tweet_dataframe_grouped_df_sorted
+        return candidate_featureBase_DF, converted_candidates, self.complete_tweet_dataframe_grouped_df_sorted,time_out
 
 
 
@@ -179,7 +187,11 @@ class EntityResolver ():
         self.false_positive_count=0
         self.false_negative_count=0
 
-        self.my_classifier= svm.SVM1('/home/satadisha/Desktop/GitProjects/TwiCSv2/production_code/training.csv')
+        # self.my_classifier= svm.SVM1('/home/satadisha/Desktop/GitProjects/TwiCSv2/production_code/training.csv')
+        
+        # self.my_classifier= svm.SVM1('/Users/satadisha/Documents/GitHub/TwiCSv2/production_code/training.csv')
+        # self.my_classifier= svm.SVM1('/Users/satadisha/Documents/GitHub/tweebo-parser/training.csv')
+        self.my_classifier= svm.SVM1('training.csv')
         self.complete_tweet_dataframe_grouped_df_sorted=pd.DataFrame([], columns=['tweetID', 'TweetSentence', 'ambiguous_candidates', 'annotation', 'candidates_with_label', 'completeness', 'current_minus_entry', 'entry_batch', 'hashtags', 'index', 'only_good_candidates', 'output_mentions', 'phase1Candidates', 'sentID', 'stanford_candidates', 'user'])
 
 
@@ -482,7 +494,7 @@ class EntityResolver ():
             output_mentions_list=list(map(lambda element: element.lower().strip(),output_mentions_list))
             output_mentions_list=list(filter(lambda element: (element !=''), output_mentions_list))
 
-            #print(annotated_mention_list,output_mentions_list)
+            print(annotated_mention_list,output_mentions_list)
 
             all_annotations.extend(annotated_mention_list)
             all_mentions.extend(output_mentions_list)
@@ -571,9 +583,11 @@ class EntityResolver ():
     def classify_candidate_base(self,z_score_threshold,candidate_featureBase_DF):
 
         # #filtering test set based on z_score
-        mert1=candidate_featureBase_DF['cumulative'].as_matrix()
+        # mert1=candidate_featureBase_DF['cumulative'].as_matrix()
         #frequency_array = np.array(list(map(lambda val: val[0], sortedCandidateDB.values())))
-        zscore_array1=stats.zscore(mert1)
+        # zscore_array1=stats.zscore(mert1)
+        zscore_array1=stats.zscore(candidate_featureBase_DF['cumulative'])
+        # z_score_threshold=2
 
         candidate_featureBase_DF['Z_ScoreUnweighted']=zscore_array1
         cumulative_threshold=z_score_threshold
@@ -1253,7 +1267,8 @@ class EntityResolver ():
 
             for candidate in sentence_level_candidates:
                 if candidate.lower() in candidate_featureBase_DF.index:
-                    label=candidate_featureBase_DF.get_value(candidate.lower(),'status')
+                    # label=candidate_featureBase_DF.get_value(candidate.lower(),'status')
+                    label=candidate_featureBase_DF.at[candidate.lower(),'status']
                     one_level.append((candidate,label))
                 else:
                     one_level.append((candidate,"na"))
@@ -1307,6 +1322,7 @@ class EntityResolver ():
         # input_to_eval_df_sorted['annotation']=input_to_eval_df_sorted['tweetID'].apply(lambda x: raw_tweets_for_others[raw_tweets_for_others['ID']==x]['annotation_limited types'].iloc[0])
 
         column_candidates_holder = input_to_eval_df_sorted['only_good_candidates'].tolist()
+        # column_candidates_holder = input_to_eval_df_sorted['phase1Candidates'].tolist()
         
 
         column_annot_holder= input_to_eval_df_sorted['annotation'].tolist()
@@ -1330,6 +1346,8 @@ class EntityResolver ():
         ambigious_not_in_annotation_holder=[]
         f_measure_holder=[]
 
+        quickRegex=re.compile("[a-z]+")
+
         print('=========================twics_candidates')
 
         for idx in range(len(column_annot_holder)):
@@ -1345,7 +1363,8 @@ class EntityResolver ():
                 sentence_level_cand_list= tweet_level_candidates.split(',')
                 annotated_mention_list.extend(sentence_level_cand_list)
             annotated_mention_list=list(map(lambda element: element.lower().strip(),annotated_mention_list))
-            annotated_mention_list=list(filter(lambda element: (element !=''), annotated_mention_list))
+            annotated_mention_list=list(filter(lambda element: quickRegex.match(element), annotated_mention_list))
+            annotated_mention_list=list(filter(lambda element: ((element !='')&(element !='nan')), annotated_mention_list))
 
             for lst in column_candidates_holder[idx]:
                 output_mentions_list.extend(lst)
@@ -1353,7 +1372,7 @@ class EntityResolver ():
             output_mentions_list=list(filter(lambda element: (element !=''), output_mentions_list))
             total_annotation+=len(annotated_mention_list)
 
-            # print(annotated_mention_list,output_mentions_list)
+            print(idx, annotated_mention_list,output_mentions_list)
 
             all_annotations.extend(annotated_mention_list)
             all_mentions.extend(output_mentions_list)
@@ -1363,7 +1382,7 @@ class EntityResolver ():
 
             while(annotated_mention_list):
                 if(len(output_mentions_list)):
-                    annotated_candidate= annotated_mention_list.pop()
+                    annotated_candidate= self.normalize(annotated_mention_list.pop())
                     if(annotated_candidate in output_mentions_list):
                         output_mentions_list.pop(output_mentions_list.index(annotated_candidate))
                         tp_counter_inner+=1
@@ -1383,7 +1402,7 @@ class EntityResolver ():
             self.false_positive_count+=fp_counter_inner
             self.false_negative_count+=fn_counter_inner
 
-        print(self.true_positive_count,self.false_positive_count,self.false_negative_count,total_mentions,total_annotation)
+        # print(self.true_positive_count,self.false_positive_count,self.false_negative_count,total_mentions,total_annotation)
 
         precision=(self.true_positive_count)/(self.true_positive_count+self.false_positive_count)
         recall=(self.true_positive_count)/(self.true_positive_count+self.false_negative_count)
@@ -1427,14 +1446,16 @@ class EntityResolver ():
         # fp_count+=false_positive_count_IPQ
         # fn_count+=false_negative_count_IPQ
 
-        # precision=(tp_count)/(tp_count+fp_count)
-        # recall=(tp_count)/(tp_count+fn_count)
+        # precision=(true_positive_count)/(true_positive_count+false_positive_count)
+        # recall=(true_positive_count)/(true_positive_count+false_negative_count)
         # f_measure=2*(precision*recall)/(precision+recall)
 
 
 
         self.accuracy_vals=(z_score_threshold,f_measure,precision,recall)
 
+        print(precision)
+        print(recall)
         print(f_measure)
 
         # print('z_score:', z_score_threshold , 'precision: ',precision,'recall: ',recall,'f measure: ',f_measure)
@@ -1547,8 +1568,8 @@ class EntityResolver ():
 
         #candidate_featureBase_DF['status'] = candidate_featureBase_DF['probability'].apply(lambda x: set(x).issubset(good_candidates))
         candidate_featureBase_DF['status']='ne'
-        candidate_featureBase_DF['status'][candidate_featureBase_DF['probability']>=0.8]='g'
-        candidate_featureBase_DF['status'][(candidate_featureBase_DF['probability'] > 0.4) & (candidate_featureBase_DF['probability'] < 0.8)] = 'a'
+        candidate_featureBase_DF['status'][candidate_featureBase_DF['probability']>=0.67]='g'
+        candidate_featureBase_DF['status'][(candidate_featureBase_DF['probability'] > 0.4) & (candidate_featureBase_DF['probability'] < 0.67)] = 'a'
         candidate_featureBase_DF['status'][candidate_featureBase_DF['probability']<=0.4]='b'
 
         return candidate_featureBase_DF
@@ -1742,11 +1763,11 @@ class EntityResolver ():
                 if(temp):
                     temp=list(map(lambda elem: elem+')', temp))
                 # temp.append(temp1[-1])
-            elif (("-" in word)&(not word.endswith("-"))):
-                temp1=list(filter(lambda elem: elem!='',word.split("-")))
-                if(temp1):
-                    temp=list(map(lambda elem: elem+'-', temp1[:-1]))
-                temp.append(temp1[-1])
+            # elif (("-" in word)&(not word.endswith("-"))):
+            #     temp1=list(filter(lambda elem: elem!='',word.split("-")))
+            #     if(temp1):
+            #         temp=list(map(lambda elem: elem+'-', temp1[:-1]))
+            #     temp.append(temp1[-1])
             elif (("?" in word)&(not word.endswith("?"))):
                 temp1=list(filter(lambda elem: elem!='',word.split("?")))
                 if(temp1):
@@ -2233,6 +2254,7 @@ class EntityResolver ():
 
             # if((tweetID=="524")):
             # print(tweetID,phase1Candidates)
+            phase1CandidatesList=[]
 
 
             if (phase1Candidates !='nan'):
@@ -2246,9 +2268,11 @@ class EntityResolver ():
                     position=entities_with_loc.split("::")[1]
                     #print(position)
                     phase1_holder.append((entity_to_store,position))
+                    phase1_holder.clear()
+                    phase1CandidatesList.append(entity_to_store.lower())
 
                 phase1_holder_holder.append(copy.deepcopy(phase1_holder))
-                phase1_holder.clear()
+                
 
             else:
                 non_discriminative_flag=True
@@ -2327,9 +2351,10 @@ class EntityResolver ():
 
             if((tweetID=="371")):
                 print(tweetID,phase1Candidates,"====",phase2_candidates,non_discriminative_flag)
-            dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1Candidates,'2nd Iteration Candidates':phase2_candidates,'2nd Iteration Candidates Unnormalized':phase2_candidates_unnormalized, 'annotation':annotation,'stanford_candidates':stanford}
+            dict1 = {'entry_batch':batch, 'tweetID':tweetID, 'sentID':sentID, 'hashtags':hashtags, 'user':user, 'TweetSentence':tweetText, 'phase1Candidates':phase1CandidatesList,'2nd Iteration Candidates':phase2_candidates,'2nd Iteration Candidates Unnormalized':phase2_candidates_unnormalized, 'annotation':annotation,'stanford_candidates':stanford}
 
             df_holder.append(dict1)
+            
             #-------------------------------------------------------------------END of 1st iteration: RESCAN+CANDIDATE_UPDATION-----------------------------------------------------------
 
         #df_holder is the immediate processing queue of the current batch converted into a dataframe---> data_frame_holder

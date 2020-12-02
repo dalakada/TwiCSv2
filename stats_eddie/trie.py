@@ -16,7 +16,7 @@ class Trie:
         self.feature_list.append(feature)
         
 
-    def __setitem__(self, candidateText,origLength, candidateFeatures, batch,id_tuple):
+    def __setitem__(self, candidateText,origLength, candidateFeatures, batch):
         
         head = candidateText[0]
         if head in self.path:
@@ -27,7 +27,7 @@ class Trie:
             
         if len(candidateText) > 1:
             remains = candidateText[1:]
-            node.__setitem__(remains,origLength, candidateFeatures, batch,id_tuple)
+            node.__setitem__(remains,origLength, candidateFeatures, batch)
         else:
             #INITIALIZATION/UPDATION ROUTINE
             if(node.feature_list[0]==0):
@@ -36,10 +36,7 @@ class Trie:
                 now=str(now.hour)+":"+str(now.minute)+":"+str(now.second)
                 node.feature_list[1]=origLength
                 node.feature_list.append(now)
-                node.feature_list.append(id_tuple)
                 node.feature_list.append(batch)
-                
-
             #common updations for either case
             node.feature_list[0]+=1
             '''for index in [0,1,2,3,4,5,6,7,9,10,11,13]:
