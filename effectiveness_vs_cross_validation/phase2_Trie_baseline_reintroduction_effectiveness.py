@@ -15,6 +15,7 @@ import emoji
 import SVM as svm
 import statistics
 import pandas as pd
+import numpy as np
 import time
 import datetime
 import trie as trie
@@ -28,6 +29,12 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn import linear_model
 from sklearn.cluster import KMeans, MeanShift
 from sklearn.metrics import silhouette_samples, silhouette_score
+
+import matplotlib.pyplot as plt
+import matplotlib.style
+import matplotlib
+from matplotlib import rc
+import matplotlib.font_manager as fm
 
 cachedStopWords = stopwords.words("english")
 tempList=["i","and","or","other","another","across","unlike","anytime","were","you","then","still","till","nor","perhaps","probably","otherwise","until","sometimes","sometime","seem","cannot","seems","because","can","like","into","able","unable","either","neither","if","we","it","else","elsewhere","how","not","what","who","when","where","who's","who’s","let","today","tomorrow","tonight","let's","let’s","lets","know","make","oh","via","i","yet","must","mustnt","mustn't","mustn’t","i'll","i’ll","you'll","you’ll","we'll","we’ll","done","doesnt","doesn't","doesn’t","dont","don't","don’t","did","didnt","didn't","didn’t","much","without","could","couldn't","couldn’t","would","wouldn't","wouldn’t","should","shouldn't","souldn’t","shall","isn't","isn’t","hasn't","hasn’t","wasn't","wasn’t","also","let's","let’s","let","well","just","everyone","anyone","noone","none","someone","theres","there's","there’s","everybody","nobody","somebody","anything","else","elsewhere","something","nothing","everything","i'd","i’d","i’m","won't","won’t","i’ve","i've","they're","they’re","we’re","we're","we'll","we’ll","we’ve","we've","they’ve","they've","they’d","they'd","they’ll","they'll","again","you're","you’re","you've","you’ve","thats","that's",'that’s','here’s',"here's","what's","what’s","i’m","i'm","a","so","except","arn't","aren't","arent","this","when","it","it’s","it's","he's","she's","she'd","he'd","he'll","she'll","she’ll","many","can't","cant","can’t","even","yes","no","these","here","there","to","maybe","<hashtag>","<hashtag>.","ever","every","never","there's","there’s","whenever","wherever","however","whatever","always","although"]
@@ -61,7 +68,7 @@ class EntityResolver ():
         # print(phase2stopwordList)
         candidate_featureBase_DF,data_frame_holder,phase2_candidates_holder,phase2_unnormalized_candidates_holder,correction_flag,candidates_to_annotate,converted_candidates=self.set_cb(TweetBase,CTrie,phase2stopwordList,z_score_threshold,reintroduction_threshold)
         
-        candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
+        # candidate_featureBase_DF.to_csv("candidate_base_new.csv", sep=',', encoding='utf-8')
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=="c.j. mccollum"])
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='knows'])
         # print(candidate_featureBase_DF[candidate_featureBase_DF.candidate=='democrat'])
@@ -135,7 +142,7 @@ class EntityResolver ():
 
         time_out=time.time()
 
-        # self.calculate_tp_fp_f1(z_score_threshold,untrashed_tweets,raw_tweets_for_others)
+        self.calculate_tp_fp_f1(candidate_featureBase_DF,z_score_threshold,untrashed_tweets,raw_tweets_for_others)
 
         if(self.counter==(max_batch_value+1)):
             # self.just_converted_tweets.drop('2nd Iteration Candidates', axis=1, inplace=True)
@@ -1309,7 +1316,7 @@ class EntityResolver ():
 
 
 
-    def calculate_tp_fp_f1(self,z_score_threshold,input_to_eval,raw_tweets_for_others):
+    def calculate_tp_fp_f1(self,candidate_featureBase_DF,z_score_threshold,input_to_eval,raw_tweets_for_others):
 
         input_to_eval_grouped_df= (input_to_eval.groupby('tweetID', as_index=False).aggregate(lambda x: x.tolist()))
         input_to_eval_grouped_df['tweetID']=input_to_eval_grouped_df['tweetID'].astype(int)
@@ -1326,7 +1333,9 @@ class EntityResolver ():
         
 
         column_annot_holder= input_to_eval_df_sorted['annotation'].tolist()
-
+        
+        # file1 = open("btc.txt", "w") 
+        output_str=''
         # print(column_candidates_holder)
 
         true_positive_count=0
@@ -1337,6 +1346,7 @@ class EntityResolver ():
         total_annotation=0
 
         all_annotations=[]
+        annotation_dict={}
         all_mentions=[]
 
         true_positive_holder = []
@@ -1372,7 +1382,14 @@ class EntityResolver ():
             output_mentions_list=list(filter(lambda element: (element !=''), output_mentions_list))
             total_annotation+=len(annotated_mention_list)
 
+            for annotated_entity in annotated_mention_list:
+                try:
+                    annotation_dict[annotated_entity]+=1
+                except KeyError:
+                    annotation_dict[annotated_entity]=1
+
             print(idx, annotated_mention_list,output_mentions_list)
+            output_str+=','.join(output_mentions_list)+'\n'
 
             all_annotations.extend(annotated_mention_list)
             all_mentions.extend(output_mentions_list)
@@ -1408,14 +1425,135 @@ class EntityResolver ():
         recall=(self.true_positive_count)/(self.true_positive_count+self.false_negative_count)
         f_measure=2*(precision*recall)/(precision+recall)
 
-        # all_annotations=set(all_annotations)
-        # all_mentions=set(all_mentions)
+        all_annotations=set(all_annotations)
+        all_mentions=set(all_mentions)
         
-        # true_positive_count= len(all_annotations.intersection(all_mentions))
-        # false_positive_count=len(all_mentions-all_annotations)
-        # false_negative_count=len(all_annotations-all_mentions)
-        # total_mentions=len(all_mentions)
-        # total_annotation=len(all_annotations)
+        true_positives = all_annotations.intersection(all_mentions)
+        true_positive_count= len(all_annotations.intersection(all_mentions))
+        false_positive_count=len(all_mentions-all_annotations)
+        false_negative_count=len(all_annotations-all_mentions)
+        total_mentions=len(all_mentions)
+        total_annotation=len(all_annotations)
+
+        freq_bucket = {} 
+        for candidate in all_annotations:
+            candidate_freq = annotation_dict[candidate]
+            flag = False
+            if(candidate in true_positives):
+                flag = True
+            try:
+                old_tup = freq_bucket[candidate_freq]
+                if flag:
+                    freq_bucket[candidate_freq] = (old_tup[0]+1,old_tup[1])
+                else:
+                    freq_bucket[candidate_freq] = (old_tup[0],old_tup[1]+1)
+            except KeyError:
+                if flag:
+                    freq_bucket[candidate_freq] = (1,0)
+                else:
+                    freq_bucket[candidate_freq] = (0,1)
+        
+        x_axis=[]
+        y_axis =[]
+        cumulative_tp=0
+        cumulative_annotated=0
+        freq_bucket_sorted = {k : freq_bucket[k] for k in sorted(freq_bucket)}
+
+        maxKey = list(freq_bucket_sorted.keys())[-1]
+        print(freq_bucket_sorted.keys(),maxKey)
+
+        step=0
+        for key in range(maxKey):
+            try:
+                tup = freq_bucket_sorted[key]
+            except KeyError:
+                tup = (0,0)
+
+            # freq_recall= tup[0]/(tup[0]+tup[1])
+
+            if(step==5):
+                if((cumulative_tp==0)&(cumulative_annotated==0)):
+                    freq_recall= y_axis[-1]
+                else:
+                    freq_recall= cumulative_tp/cumulative_annotated
+                # print(key, freq_recall)
+                x_axis.append(key)
+                y_axis.append(freq_recall)
+                step=0
+                cumulative_tp=0
+                cumulative_annotated=0
+
+
+            cumulative_tp+=tup[0]
+            cumulative_annotated+=(tup[0]+tup[1])
+            # freq_recall= cumulative_tp/cumulative_annotated
+            step+=1
+            # print(step)
+            
+
+
+            # if(key>20):
+            #     freq_recall = 1.0
+            # print(key, freq_recall)
+            # x_axis.append(key)
+            # y_axis.append(freq_recall)
+
+        print(x_axis)
+        print(y_axis)
+
+        # ### BIN OF 10
+        # # x_axis = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290]
+        # # y_axis = [0.5, 0.5631768953068592, 0.61, 0.8181818181818182 ,0.8333333333333334, 0.9259259259259259, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+
+        # x_axis = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 150, 160, 190, 290]
+        # y_axis = [0.5, 0.5631768953068592, 0.61, 0.8181818181818182 ,0.8333333333333334, 0.9259259259259259, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+
+        ### BIN OF 5
+        x_axis = [5, 10, 15, 20, 25, 30, 35, 45, 50, 55, 60, 80, 120, 150, 155, 185, 190, 250, 275, 295]
+        y_axis = [0.5423076923076923, 0.75, 0.8333333333333334, 0.8333333333333334, 0.875, 0.8823529411764706, 0.9473684210526315, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+
+
+        print(len(x_axis),len(y_axis))
+        assert len(x_axis) == len(y_axis)
+
+        ############################################# THE PLOT
+        fontPath = "/Users/satadisha/Downloads/abyssinica-sil/AbyssinicaSIL-R.ttf"
+        font_axis = fm.FontProperties(fname=fontPath, size=19)
+        fig, ax = plt.subplots()
+        ax.plot( x_axis, y_axis,marker='o' , markersize=5, linewidth=1)
+    
+        major_ticks = np.arange(0.0, 300, 50)                                              
+        # minor_ticks = np.arange(-1.0, 1.2, 0.1)                                               
+
+        ax.set_xticks(major_ticks)                                                       
+        # ax.set_xticks(minor_ticks, minor=True)                                           
+        # ax.set_yticks(major_ticks)                                                       
+        # ax.set_yticks(minor_ticks, minor=True)                                           
+
+        # and a corresponding grid                                                       
+
+        ax.grid(which='both')                                                            
+
+        # or if you want differnet settings for the grids:                               
+        # ax.grid(which='minor', alpha=0.2)                                                
+        # ax.grid(which='major', alpha=0.5)     
+        ax.set_ylim([0.0,1.2])
+        ax.set_xlim([0.0,300])
+        x_labels = ['','45-50','95-100','145-150','195-200','245-250']
+        labels = ['0.0','0.2','0.4','0.6','0.8','1.0','']
+        # labels[-1] = ""
+        ax.set_xticklabels(x_labels)
+        print(labels)
+        ax.set_yticklabels(labels)
+        # tick_spacing = 0.1
+        # ax.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
+
+        plt.xlabel('Mention Frequency Bins',fontproperties=font_axis)
+        plt.ylabel('Entity Detection Recall',fontproperties=font_axis)
+        plt.grid(True)
+        fig.savefig("entity-freq-recall-bin5.pdf",dpi=1200,bbox_inches='tight')
+        plt.show()
+        ################################################# THE PLOT
 
 
         # print(true_positive_count,false_positive_count,false_negative_count,total_mentions,total_annotation)
@@ -1450,13 +1588,16 @@ class EntityResolver ():
         # recall=(true_positive_count)/(true_positive_count+false_negative_count)
         # f_measure=2*(precision*recall)/(precision+recall)
 
+        # file1.write(output_str)
+        # file1.close()
+
 
 
         self.accuracy_vals=(z_score_threshold,f_measure,precision,recall)
 
-        print(precision)
-        print(recall)
-        print(f_measure)
+        # print(precision)
+        # print(recall)
+        # print(f_measure)
 
         # print('z_score:', z_score_threshold , 'precision: ',precision,'recall: ',recall,'f measure: ',f_measure)
         # print('trupe positive: ',tp_count, 'false positive: ',fp_count,'false negative: ', fn_count,'total mentions: ', tm_count)

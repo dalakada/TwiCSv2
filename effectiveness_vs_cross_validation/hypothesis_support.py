@@ -16,10 +16,12 @@ import SatadishaModule_final_trie as phase1
 import phase2_Trie_baseline_reintroduction_effectiveness as phase2
 
 
-list_of_filenames=['wnut17_test.annotated']#'tweets_3k' ,'venezuela','pikapika','ripcity','billnye']#,'roevwade','billdeblasio', 'wnut17_test.annotated','wnut17test.csv']
+list_of_filenames=['broad_twitter_corpus']#'tweets_3k' ,'venezuela','pikapika','ripcity','billnye']#,'roevwade','billdeblasio', 'wnut17_test.annotated','wnut17test.csv'],'wnut17_test.annotated'
 
 path="/Users/satadisha/Documents/GitHub/BIO_annotations/"
 path2="/Users/satadisha/Documents/GitHub/"
+
+path3="/Users/satadisha/Documents/GitHub/broad_twitter_corpus/h.conll"
 
 # cap       substr-cap      s-o-s cap       all-cap     non-cap     non disc
 all_mentions_syntax=[0,0,0,0,0,0]
@@ -213,7 +215,9 @@ def get_entities(word_tag_tuples):
 ################################# EXPERIMENT SUPPORTING HYPOTHESIS E-H2 #################################
 for name in list_of_filenames:
 
-    f= open(path+name, "r")
+    # f= open(path+name, "r")
+
+    f= open(path3, "r")
 
     file_text=f.read()
 

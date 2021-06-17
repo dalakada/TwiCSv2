@@ -1,2 +1,2 @@
-# EMD Enhancer
-# A 2-Phase Framework for Enhancing Entity Mention Detection in Microblog Streams
+# TwiCS
+# Lightweight Entity Mention Detection in Targeted Twitter Streams

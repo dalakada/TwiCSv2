@@ -38,7 +38,9 @@ total_time=0
 ## tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/TwiCSv2/production_code/tweets_3k_annotated.csv",sep =',', encoding='utf-8',keep_default_na=False)
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/tweets_3k_annotated.csv",sep =',', encoding='utf-8',keep_default_na=False)
-# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/TwiCSv2/data/tweets_3k_annotated.csv",sep =',',keep_default_na=False)
+tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/TwiCSv2/data/tweets_3k_annotated.csv",sep =',',keep_default_na=False)
+
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/broad_twitter_corpus.csv",sep =',',keep_default_na=False)
 
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/wnut17test.csv",sep =',',keep_default_na=False)
 
@@ -46,7 +48,7 @@ total_time=0
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/venezuela.csv",sep =',', encoding='utf-8',keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/venezuela.csv",sep =',', keep_default_na=False)
 
-tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/covid_2K.csv",sep =',',keep_default_na=False)
+# tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/covid_2K.csv",sep =',',keep_default_na=False)
 # tweets_unpartitoned=pd.read_csv("/Users/satadisha/Documents/GitHub/covid.csv",sep =',',keep_default_na=False)
 
 # tweets_unpartitoned=pd.read_csv("/home/satadisha/Desktop/GitProjects/data/roevwade.csv",sep =',', keep_default_na=False)
@@ -321,6 +323,8 @@ print('twics_recall:',twics_recall)
 print(sum(twics_f1)/len(twics_f1))
 print(sum(twics_precision)/len(twics_precision))
 print(sum(twics_recall)/len(twics_recall))
+
+# print(len(complete_tweet_dataframe_grouped_df_sorted))
 
 #f= 0.6846846846846847+0.6461538461538461+0.5912408759124088+0.6411764705882353+0.46956521739130436
 #p= 0.6229508196721312+0.6222222222222222+0.6183206106870229+0.6411764705882353+0.43548387096774194
