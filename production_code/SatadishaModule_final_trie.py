@@ -52,7 +52,7 @@ conjoiner=["de"]
 day_list=["sunday","monday","tuesday","wednesday","thursday","friday","saturday","mon","tues","wed","thurs","fri","sat","sun"]
 month_list=["january","february","march","april","may","june","july","august","september","october","november","december","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
 chat_word_list=["nope","gee","hmm","bye","vs","ouch","omw","qt","dj","dm","congrat","haueheuaeh","ahushaush","jr","please","retweet","2mrw","2moro","4get","ooh","reppin","idk","oops","yup","stfu","uhh","2b","dear","yay","btw","ahhh","b4","ugh","ty","cuz","coz","sorry","yea","asap","ur","bs","rt","lmfao","lfmao","slfmao","u","r","nah","umm","ummm","thank","thanks","congrats","whoa","rofl","ha","ok","okay","hey","hi","huh","ya","yep","yeah","fyi","duh","damn","lol","omg","congratulations","fucking","fuck","f*ck","wtf","wth","aka","wtaf","xoxo","rofl","imo","wow","fck","haha","hehe","hoho"]
-
+df_columns = ['tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence', 'tweetwordList', 'phase1Candidates','start_time','entry_batch','annotation','stanford_candidates','ritter_candidates','calai_candidates']
 #string.punctuation.extend('“','’','”')
 #---------------------Existing Lists--------------------
 
@@ -614,7 +614,7 @@ class SatadishaModule():
     # @profile
     def append_rows(self,df_holder):
     
-        self.df_out = pd.DataFrame(df_holder,columns=('tweetID', 'sentID', 'hashtags', 'user', 'TweetSentence','tweetwordList', 'phase1Candidates','start_time','entry_batch','annotation'))
+        self.df_out = pd.DataFrame(df_holder,columns=df_columns)
         # self.df_out=self.df_out.append(df)
                
 

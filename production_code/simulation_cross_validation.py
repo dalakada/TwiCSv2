@@ -2,8 +2,8 @@
 #import SatadishaModule as phase1
 import SatadishaModule_final_trie as phase1
 
-# import phase2_Trie_baseline_reintroduction_effectiveness as phase2
-import phase2_Trie_baseline_reintroduction_efficiency as phase2
+import phase2_Trie_baseline_reintroduction_effectiveness as phase2
+# import phase2_Trie_baseline_reintroduction_efficiency as phase2
 # import phase2_Trie_just_reintroduction as phase2 #just reintroduction, eviction without experimental result computation
 # import phase2_Trie_just_reintroduction_alternate as phase2 # testing reintroduction with various thresholds in unified framework
 # import phase2_Trie_reintroduction as phase2
@@ -216,8 +216,8 @@ batch_size=100000
 # dir_list=['20110208']
 # read_path="/home/satadisha/Desktop/GitProjects/twitter-corpus-tools-master/twitter-tools-core/"
 
-dir_list=['tweets_1million_for_others']
-read_path="/home/satadisha/Desktop/GitProjects/data/"
+# dir_list=['tweets_1million_for_others']
+# read_path="/home/satadisha/Desktop/GitProjects/data/"
 
 # reintroduction_threshold_array=[20,40,60,80,100]
 # reintroduction_threshold_array=[20]
@@ -252,14 +252,16 @@ Phase2 = phase2.EntityResolver()
 complete_tweet_dataframe_grouped_df_sorted_arr= []
 
 
-for list_index in range(len(dir_list)):
-    dir_name=dir_list[list_index]
-    full_read_path=read_path+dir_name+'.csv'
+# for list_index in range(len(dir_list)):
+for dummy_index in range(len([1])):
+    # dir_name=dir_list[list_index]
+    # full_read_path=read_path+dir_name+'.csv'
     
-    tweets=pd.read_csv(full_read_path,sep =',')
+    # tweets=pd.read_csv(full_read_path,sep =',')
+    tweets=pd.read_csv("tweets_3k_annotated.csv",sep =',')
     length=len(tweets)
     tweets_length_list.append(length)
-    print(dir_name,"***",length)
+    # print(dir_name,"***",length)
 
     val=math.ceil(length/batch_size)-1
 
@@ -339,10 +341,10 @@ for list_index in range(len(dir_list)):
 
     #phase2_Trie_baseline_reintroduction_efficiency
         reintroduction_threshold_dummy=2
-        candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted,phase2_output_time= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
+        candidate_base_post_Phase2, converted_candidates, complete_tweet_dataframe_grouped_df_sorted= Phase2.executor(max_batch_value,tweet_base,candidate_base,phase2stopwordList,z_score,reintroduction_threshold_dummy,tweet_base)
     # #taking phase2 output time in phase 2 class due to unrelated index reset operation at the end of last batch
-    # time_out=time.time()
-        time_out=phase2_output_time
+        time_out=time.time()
+        # time_out=phase2_output_time
 
     # print('disambiguation status: ',len((candidate_base_post_Phase2[((candidate_base_post_Phase2['batch']<g)&((candidate_base_post_Phase2.status=="g")|(candidate_base_post_Phase2.status=="b")))]).candidate.tolist()))
     

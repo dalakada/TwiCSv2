@@ -338,7 +338,7 @@ class EntityResolver ():
     def classify_candidate_base(self,z_score_threshold,candidate_featureBase_DF):
 
         # #filtering test set based on z_score
-        mert1=candidate_featureBase_DF['cumulative'].as_matrix()
+        mert1=candidate_featureBase_DF['cumulative']
         #frequency_array = np.array(list(map(lambda val: val[0], sortedCandidateDB.values())))
         zscore_array1=stats.zscore(mert1)
 
@@ -1016,7 +1016,7 @@ class EntityResolver ():
 
             for candidate in sentence_level_candidates:
                 if candidate.lower() in candidate_featureBase_DF.index:
-                    label=candidate_featureBase_DF.get_value(candidate.lower(),'status')
+                    label=candidate_featureBase_DF._get_value(candidate.lower(),'status')
                     one_level.append((candidate,label))
                 else:
                     one_level.append((candidate,"na"))

@@ -22,7 +22,7 @@ class SVM1():
     def __init__(self,train):
 
         #train the algorithm once
-        self.train = pd.read_csv(train,delimiter=",",sep='\s*,\s*')
+        self.train = pd.read_csv(train,delimiter=",")
 
         #'''
         self.train['normalized_cap']=self.train['cap']/self.train['cumulative']

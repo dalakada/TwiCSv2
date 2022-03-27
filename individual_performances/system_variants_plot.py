@@ -1,7 +1,5 @@
 
 
-import SatadishaModule_final_trie as phase1
-import phase2_Trie as phase2
 import datetime
 from threading import Thread
 import random
@@ -34,11 +32,19 @@ whole_level=[
 # [0.8779342723004694, 0.8281338627339762, 0.7853820598006644, 0.767388781431335, 0.7772618107125927, 0.785632041981788]
 
 #Aguilar
-[0.6577239290350497, 0.6462519936204147, 0.6522162688748174, 0.6501354448843509, 0.6757261763207066, 0.6755142667551426], 
-[0.7954461839530333, 0.7705381165919282, 0.7608163265306122, 0.7513487629688747, 0.7530497382198953, 0.7561253196930947],
-[0.8424461839530333, 0.8205381165919282, 0.7939328277356446, 0.7806926595352268, 0.7808119629573402, 0.7856838747960243],
-[0.8621036269430052, 0.8473116641273065, 0.8074525533163765, 0.8018626615071817, 0.8027107061503418, 0.8105470321343375]
+# [0.6577239290350497, 0.6462519936204147, 0.6522162688748174, 0.6501354448843509, 0.6757261763207066, 0.6755142667551426], 
+# [0.7954461839530333, 0.7705381165919282, 0.7608163265306122, 0.7513487629688747, 0.7530497382198953, 0.7561253196930947],
+# [0.8424461839530333, 0.8205381165919282, 0.7939328277356446, 0.7806926595352268, 0.7808119629573402, 0.7856838747960243],
+# [0.8621036269430052, 0.8473116641273065, 0.8074525533163765, 0.8018626615071817, 0.8027107061503418, 0.8105470321343375]
+
+[0.637, 0.656, 0.646, 0.642, 0.725, 0.697],
+[0.65, 0.67425, 0.68, 0.717, 0.755, 0.728],
+[0.695, 0.7125, 0.728, 0.792, 0.81, 0.78]
+
 ]
+
+# (0.65-0.637)/0.637*100+(0.67425-0.656)/0.656*100+(0.68-0.646)/0.646*100+(0.717-0.642)/0.642*100+(0.755-0.725)/0.725*100+(0.728-0.697)/0.697*100
+# (0.695-0.637)/0.637*100+(0.7125-0.656)/0.656*100+(0.728-0.646)/0.646*100+(0.792-0.642)/0.642*100+(0.81-0.725)/0.725*100+(0.78-0.697)/0.697*100
 
 tweets_been_processed_list=[2000,4000,6000,8000,10000,12000]
 incomplete_tweets=[6441,
@@ -78,10 +84,14 @@ matplotlib.rcParams.update(params)
 
 # plt.plot( iteration, percent_incomplete,marker='s' ,markersize=8,linewidth=1)
 
-plt.plot( tweets_been_processed_list, whole_level[3],marker='s' ,markersize=8,linewidth=1, label="Weak Tagger + Forward Scan(wClassifier)+ Rescan ")
-plt.plot( tweets_been_processed_list, whole_level[2],marker='o' ,markersize=8,linewidth=1, label="Weak Tagger + Forward Scan(wClassifier)")
-plt.plot( tweets_been_processed_list, whole_level[1],marker='>' ,markersize=8,linewidth=1, label="Weak Tagger + Forward Scan(w/oClassifier)")
-plt.plot( tweets_been_processed_list, whole_level[0],marker='x' ,markersize=8,linewidth=1, label="Weak Tagger (Aguilar et al.)")
+plt.plot( tweets_been_processed_list, whole_level[2],marker='o' ,markersize=8,linewidth=1, label="Local EMD + Global EMD")
+plt.plot( tweets_been_processed_list, whole_level[1],marker='>' ,markersize=8,linewidth=1, label="Local EMD+ Mention Extraction(w/oClassifier)")
+plt.plot( tweets_been_processed_list, whole_level[0],marker='x' ,markersize=8,linewidth=1, label="Local EMD (Aguilar et al.)")
+
+# plt.plot( tweets_been_processed_list, whole_level[3],marker='s' ,markersize=8,linewidth=1, label="Weak Tagger + Forward Scan(wClassifier)+ Rescan ")
+# plt.plot( tweets_been_processed_list, whole_level[2],marker='o' ,markersize=8,linewidth=1, label="Weak Tagger + Forward Scan(wClassifier)")
+# plt.plot( tweets_been_processed_list, whole_level[1],marker='>' ,markersize=8,linewidth=1, label="Weak Tagger + Forward Scan(w/oClassifier)")
+# plt.plot( tweets_been_processed_list, whole_level[0],marker='x' ,markersize=8,linewidth=1, label="Weak Tagger (Aguilar et al.)")
 
 # plt.plot( tweets_been_processed_list, whole_level[0],marker='s' ,markersize=8,linewidth=1, label="Phase I + Phase II(wClassifier)+ Multipass")
 # plt.plot( tweets_been_processed_list, whole_level[1],marker='o' ,markersize=8,linewidth=1, label="Phase I + Phase II(wClassifier)")
@@ -102,7 +112,8 @@ plt.ylim((0.5,1.0))
 plt.legend(loc="upper right",ncol=1,frameon=False,prop=font_legend)
 # plt.legend(loc="upper left", bbox_to_anchor=[0, 1],
 #            ncol=2,frameon=False,prop=font)
-fig.savefig("system-variants-Aguilar.pdf",dpi=1200,bbox_inches='tight')
+# fig.savefig("system-variants-Aguilar.pdf",dpi=1200,bbox_inches='tight')
+fig.savefig("system-variants-Aguilar-collectiveEMD.pdf",dpi=1200,bbox_inches='tight')
 # fig.savefig("percent-incomplete.pdf",dpi=1200,bbox_inches='tight')
 plt.show()
 
